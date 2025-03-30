@@ -1,5 +1,17 @@
 <resources>
-    <string name="app_name">ControleDeNotificacoes</string>
+    <string name="app_name">Controle de notificações</string>
     <string name="O_nome_n_o_pode_ficar_em_branco">O nome não pode ficar em branco.</string>
     <string name="O_nome_deve_ter_entre_e_caracteres">O nome deve ter entre %1$d e %2$d caracteres.</string>
+    <string name="Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados">As notificações só serão exibidas nos dias e horários selecionados.</string>
+    <string name="Permissiva">Permissiva</string>
+    <string name="Tipo_de_regra">Tipo de regra</string>
+    <string name="Restritiva">Restritiva</string>
+    <string name="Segunda">Segunda</string>
+    <string name="Terca">Terça</string>
+    <string name="Quarta">Quarta</string>
+    <string name="Quinta">Quinta</string>
+    <string name="Sexta">Sexta</string>
+    <string name="Sabado">Sábado</string>
+    <string name="Domingo">Domingo</string>
+    <string name="Dias_da_semana">Dias da semana</string>
 </resources>

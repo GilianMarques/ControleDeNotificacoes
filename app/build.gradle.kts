@@ -4,6 +4,11 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 
+    // Kotlin serialization plugin for type safe routes and navigation arguments
+    kotlin("plugin.serialization") version "2.0.21"
+
+    id("androidx.navigation.safeargs.kotlin")
+
 }
 
 android {
@@ -51,6 +56,9 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.fragment.ktx)
     androidTestImplementation(libs.androidx.espresso.core)
 
 
@@ -83,6 +91,20 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
     testImplementation("org.junit.vintage:junit-vintage-engine:5.10.1") // Necessário para rodar JUnit 4
     testImplementation(kotlin("test"))
+
+    //navigation
+    // Views/Fragments integration
+    implementation("androidx.navigation:navigation-fragment-ktx:2.8.9")
+    implementation("androidx.navigation:navigation-ui-ktx:2.8.9")
+
+    // Feature module support for Fragments
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.8.9")
+
+    // Testing Navigation
+    androidTestImplementation("androidx.navigation:navigation-testing:2.8.9")
+
+    // JSON serialization library, works with the Kotlin serialization plugin
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
 }
 

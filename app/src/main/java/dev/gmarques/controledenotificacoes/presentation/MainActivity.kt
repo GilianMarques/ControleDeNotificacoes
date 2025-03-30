@@ -6,7 +6,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.HomeFragmentDirections
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
 
@@ -19,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainActivityViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
+    lateinit var navController: NavController
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +38,11 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        viewModel.testRuleOperations()
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
+        if (navHostFragment.navController.currentDestination?.id == R.id.homeFragment) navController.navigate(
+            HomeFragmentDirections.actionHomeFragmentToAddRuleFragment()
+        )
     }
 }
