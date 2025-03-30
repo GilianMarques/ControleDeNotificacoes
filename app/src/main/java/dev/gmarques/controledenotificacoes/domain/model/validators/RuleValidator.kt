@@ -1,71 +1,80 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
-import TimeIntervalValidator
+import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
+import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import java.util.Locale
 
 /**
- *
- *  Criado por Gilian Marques
- *  Em sábado, 29 de março de 2025 as 22:19.
- *
- *
- * Valida as propriedades de um objeto [Rule].
- *
- * Esta classe fornece um ponto centralizado para validar os diferentes atributos de uma
- * [Rule], como seu nome, os dias da semana em que se aplica e os intervalos de tempo que
- * abrange. Ela garante que esses atributos atendam a critérios específicos antes que a regra
- * seja usada ou persistida.
+ * Criado por Gilian Marques
+ * Em domingo, 30 de março de 2025 as 13:30.
  */
 class RuleValidator {
-
     companion object {
 
+        private val baseException = Exception("A validação falhou mas não retornou exceção para lançar, isso é um bug!")
+
         /**
-         * Valida um objeto [Rule].
+         * Valida um objeto [Rule] verificando seu nome, dias e intervalos de tempo.
          *
-         * Esta função executa uma validação completa de um objeto [Rule] chamando as
-         * funções de validação individuais para seu nome, dias e horas. Se alguma das
-         * validações falhar, uma [IllegalArgumentException] será lançada.
+         * Esta função executa uma série de validações no objeto [Rule] fornecido:
+         * 1. **Validação de Nome:** Verifica se o nome da regra é válido usando [validateName].
+         * 2. **Validação de Dias:** Verifica se os dias da regra são válidos usando [validateDays].
+         * 3. **Validação de Intervalos de Tempo:** Verifica se os intervalos de tempo da regra são válidos usando [validateTimeIntervals].
+         *
+         * Se alguma dessas validações falhar, a função lança uma exceção. A exceção específica lançada
+         * depende do resultado da validação individual.
+         *
+         * - Se a função de validação (por exemplo, [validateName]) retornar um `Result.failure` e tiver uma exceção
+         *   associada, essa exceção será lançada.
+         * - Se a função de validação retornar um `Result.failure`, mas não tiver uma exceção associada,
+         *   uma `baseException` padrão será lançada.
          *
          * @param rule O objeto [Rule] a ser validado.
-         * @throws IllegalArgumentException se alguma das propriedades da regra for inválida.
-         *                                  A mensagem da exceção indicará a validação
-         *                                  específica que falhou.
+         * @throws Exception Uma exceção se alguma das verificações de validação falhar. O tipo de exceção depende
+         *                   da falha de validação específica, mas será a exceção retornada pela função de validação
+         *                   que falhou ou `baseException` se a validação que falhou não retornar uma exceção.
          */
         fun validate(rule: Rule) {
-            validateName(rule.name)
-            validateDays(rule.days)
-            validateHours(rule.timeIntervals)
+
+            validateName(rule.name).getOrThrow()
+
+            validateDays(rule.days).getOrThrow()
+
+            validateTimeIntervals(rule.timeIntervals).getOrThrow()
+
         }
 
         /**
-         * Valida o nome de uma regra.
+         * Valida uma string de nome fornecida de acordo com as seguintes regras:
          *
-         * Esta função verifica se o nome da regra atende aos seguintes critérios:
-         *  - Não está em branco (vazio ou contém apenas espaços em branco).
-         *  - Após remover espaços em branco iniciais/finais e substituir vários espaços por
-         *    espaços únicos, tem um comprimento entre 3 e 50 caracteres (inclusive).
-         *  - Cada palavra no nome é capitalizada (title case).
+         * 1. **Verificação de Branco:** O nome não deve estar em branco (vazio ou consistindo apenas de espaços em branco).
+         * 2. **Tratamento de Espaços em Branco:** Espaços em branco iniciais e finais são removidos. Múltiplos espaços entre palavras são reduzidos a um único espaço.
+         * 3. **Capitalização:** Cada palavra no nome é capitalizada (primeira letra maiúscula, o restante minúsculo).
+         * 4. **Verificação de Comprimento:** O nome capitalizado resultante deve estar dentro do intervalo de comprimento especificado (inclusivo).
          *
-         * Se o nome for inválido, uma [IllegalArgumentException] será lançada.
+         * @param name A string de nome a ser validada.
+         * @return Um objeto [Result].
+         *         - Se o nome for válido, retorna [Result.success] contendo o nome validado (sem espaços extras, corretamente espaçado e capitalizado).
+         *         - Se o nome for inválido, retorna [Result.failure] contendo uma exceção:
+         *           - [BlankNameException] se o nome estiver em branco.
+         *           - [OutOfRangeException] se o comprimento do nome capitalizado estiver fora do intervalo permitido.
          *
-         * @param name O nome da regra a ser validado.
-         * @return O nome validado e formatado (sem espaços extras, com espaços únicos e capitalizado).
-         * @throws IllegalArgumentException se o nome estiver em branco ou não atender aos requisitos
-         *                                  de comprimento. A mensagem da exceção descreverá a
-         *                                  falha de validação específica.
+         * @throws BlankNameException se o nome fornecido estiver em branco.
+         * @throws OutOfRangeException se o comprimento do nome capitalizado estiver fora do intervalo permitido.
          */
-        private fun validateName(name: String): String {
+        fun validateName(name: String): Result<String> {
+
+            val minNameLength = 3
+            val maxNameLength = 50
 
             if (name.isBlank()) {
-                throw IllegalArgumentException("O nome não pode ser vazio.")
+                return Result.failure(BlankNameException())
             }
 
             val trimmedName = name.trim().replace("\\s+".toRegex(), " ")
-
             val capitalizedName = trimmedName.split(" ").joinToString(" ") { word ->
                 word.replaceFirstChar { char ->
                     if (char.isLowerCase()) char.titlecase(Locale.getDefault())
@@ -73,27 +82,67 @@ class RuleValidator {
                 }
             }
 
-            if (capitalizedName.length < 3 || capitalizedName.length > 50) {
-                throw IllegalArgumentException("O nome deve ter entre 3 e 50 caracteres.")
+            if (capitalizedName.length !in minNameLength..maxNameLength) {
+                return Result.failure(
+                    OutOfRangeException("capitalizedName: ${capitalizedName.length}", minNameLength, maxNameLength)
+                )
             }
 
+            return Result.success(capitalizedName)
 
-            return capitalizedName
         }
 
-        private fun validateDays(days: List<WeekDay>) {
-            if (days.size !in 1..7) throw IllegalArgumentException("Regra deve ter entre 1 e 7 dias")
+        /**
+         * Valida uma lista de dias da semana.
+         *
+         * Garante que a quantidade de dias na lista esteja dentro de um intervalo específico.
+         *
+         * @param days A lista de dias da semana a ser validada.
+         * @return Um objeto Result que contém:
+         *         - Sucesso: A lista de dias da semana, se a validação for bem-sucedida.
+         *         - Falha: Uma exceção `OutOfRangeException` se a quantidade de dias estiver fora do intervalo permitido.
+         *
+         * @throws OutOfRangeException Se a quantidade de dias na lista estiver fora do intervalo permitido (entre 1 e 7, inclusive).
+         */
+        fun validateDays(days: List<WeekDay>): Result<List<WeekDay>> {
+            val minDays = 1
+            val maxDays = 7
+            return if (days.size !in minDays..maxDays) Result.failure(OutOfRangeException("days: ${days.size}", minDays, maxDays))
+            else Result.success(days)
         }
 
-        private fun validateHours(hours: List<TimeInterval>) {
-            hours.forEach { timeInterval ->
-                try {
-                    TimeIntervalValidator.validate(timeInterval)
-                } catch (ex: Exception) {
-                    throw ex
+        /**
+         * Valida uma lista de intervalos de tempo.
+         *
+         * Esta função verifica se o número de intervalos de tempo está dentro de um intervalo válido (1 a 10, inclusive)
+         * e se cada intervalo de tempo individual é válido de acordo com o `TimeIntervalValidator`.
+         *
+         * @param timeIntervals A lista de objetos [TimeInterval] a serem validados.
+         * @return Um objeto [Result]:
+         *   - Se a validação for bem-sucedida, retorna um [Result.success] contendo a lista original de objetos [TimeInterval].
+         *   - Se a validação falhar, retorna um [Result.failure] contendo uma exceção:
+         *     - [OutOfRangeException]: Se o número de intervalos de tempo estiver fora do intervalo permitido (1 a 10).
+         *     - Uma exceção de [TimeIntervalValidator.validate]: Se algum dos intervalos de tempo individuais for inválido.
+         *       A exceção pode ser qualquer uma que `TimeIntervalValidator.validate` possa retornar. Se o resultado do validador não contiver uma exceção, uma `baseException` genérica será retornada.
+         * @throws OutOfRangeException se o número de intervalos de tempo não estiver dentro do intervalo válido.
+         * @throws Exception se qualquer TimeInterval individual for inválido de acordo com TimeIntervalValidator.validate.
+         */
+        fun validateTimeIntervals(timeIntervals: List<TimeInterval>): Result<List<TimeInterval>> {
+
+            val minHours = 1
+            val maxHours = 10
+
+            if (timeIntervals.size !in minHours..maxHours) return Result.failure(
+                OutOfRangeException("hours: ${timeIntervals.size}", minHours, maxHours)
+            )
+
+            timeIntervals.forEach { timeInterval ->
+                with(TimeIntervalValidator.validate(timeInterval)) {
+                    if (isFailure) return Result.failure(exceptionOrNull() ?: baseException)
                 }
             }
-        }
 
+            return Result.success(timeIntervals)
+        }
     }
 }

@@ -1,0 +1,298 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RuleValidator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.gmarques.controledenotificacoes.domain.model.validators</a>
+</div>
+
+<h1>Coverage Summary for Class: RuleValidator (dev.gmarques.controledenotificacoes.domain.model.validators)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RuleValidator</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">RuleValidator$Companion</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    73,3%
+  </span>
+  <span class="absValue">
+    (22/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    96,7%
+  </span>
+  <span class="absValue">
+    (29/30)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    85,7%
+  </span>
+  <span class="absValue">
+    (6/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    73,3%
+  </span>
+  <span class="absValue">
+    (22/30)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93,8%
+  </span>
+  <span class="absValue">
+    (30/32)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.gmarques.controledenotificacoes.domain.model.validators
+&nbsp;
+&nbsp;import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
+&nbsp;import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
+&nbsp;import dev.gmarques.controledenotificacoes.domain.model.Rule
+&nbsp;import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+&nbsp;import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
+&nbsp;import java.util.Locale
+&nbsp;
+&nbsp;/**
+&nbsp; * Criado por Gilian Marques
+&nbsp; * Em domingo, 30 de março de 2025 as 13:30.
+&nbsp; */
+<b class="nc">&nbsp;class RuleValidator {</b>
+&nbsp;    companion object {
+&nbsp;
+<b class="fc">&nbsp;        private val baseException = Exception(&quot;A validação falhou mas não retornou exceção para lançar, isso é um bug!&quot;)</b>
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Valida um objeto [Rule] verificando seu nome, dias e intervalos de tempo.
+&nbsp;         *
+&nbsp;         * Esta função executa uma série de validações no objeto [Rule] fornecido:
+&nbsp;         * 1. **Validação de Nome:** Verifica se o nome da regra é válido usando [validateName].
+&nbsp;         * 2. **Validação de Dias:** Verifica se os dias da regra são válidos usando [validateDays].
+&nbsp;         * 3. **Validação de Intervalos de Tempo:** Verifica se os intervalos de tempo da regra são válidos usando [validateTimeIntervals].
+&nbsp;         *
+&nbsp;         * Se alguma dessas validações falhar, a função lança uma exceção. A exceção específica lançada
+&nbsp;         * depende do resultado da validação individual.
+&nbsp;         *
+&nbsp;         * - Se a função de validação (por exemplo, [validateName]) retornar um `Result.failure` e tiver uma exceção
+&nbsp;         *   associada, essa exceção será lançada.
+&nbsp;         * - Se a função de validação retornar um `Result.failure`, mas não tiver uma exceção associada,
+&nbsp;         *   uma `baseException` padrão será lançada.
+&nbsp;         *
+&nbsp;         * @param rule O objeto [Rule] a ser validado.
+&nbsp;         * @throws Exception Uma exceção se alguma das verificações de validação falhar. O tipo de exceção depende
+&nbsp;         *                   da falha de validação específica, mas será a exceção retornada pela função de validação
+&nbsp;         *                   que falhou ou `baseException` se a validação que falhou não retornar uma exceção.
+&nbsp;         */
+&nbsp;        fun validate(rule: Rule) {
+&nbsp;
+<b class="fc">&nbsp;            validateName(rule.name).getOrThrow()</b>
+&nbsp;
+<b class="fc">&nbsp;            validateDays(rule.days).getOrThrow()</b>
+&nbsp;
+<b class="fc">&nbsp;            validateTimeIntervals(rule.timeIntervals).getOrThrow()</b>
+&nbsp;
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Valida uma string de nome fornecida de acordo com as seguintes regras:
+&nbsp;         *
+&nbsp;         * 1. **Verificação de Branco:** O nome não deve estar em branco (vazio ou consistindo apenas de espaços em branco).
+&nbsp;         * 2. **Tratamento de Espaços em Branco:** Espaços em branco iniciais e finais são removidos. Múltiplos espaços entre palavras são reduzidos a um único espaço.
+&nbsp;         * 3. **Capitalização:** Cada palavra no nome é capitalizada (primeira letra maiúscula, o restante minúsculo).
+&nbsp;         * 4. **Verificação de Comprimento:** O nome capitalizado resultante deve estar dentro do intervalo de comprimento especificado (inclusivo).
+&nbsp;         *
+&nbsp;         * @param name A string de nome a ser validada.
+&nbsp;         * @return Um objeto [Result].
+&nbsp;         *         - Se o nome for válido, retorna [Result.success] contendo o nome validado (sem espaços extras, corretamente espaçado e capitalizado).
+&nbsp;         *         - Se o nome for inválido, retorna [Result.failure] contendo uma exceção:
+&nbsp;         *           - [BlankNameException] se o nome estiver em branco.
+&nbsp;         *           - [OutOfRangeException] se o comprimento do nome capitalizado estiver fora do intervalo permitido.
+&nbsp;         *
+&nbsp;         * @throws BlankNameException se o nome fornecido estiver em branco.
+&nbsp;         * @throws OutOfRangeException se o comprimento do nome capitalizado estiver fora do intervalo permitido.
+&nbsp;         */
+&nbsp;        fun validateName(name: String): Result&lt;String&gt; {
+&nbsp;
+<b class="fc">&nbsp;            val minNameLength = 3</b>
+<b class="fc">&nbsp;            val maxNameLength = 50</b>
+&nbsp;
+<b class="fc">&nbsp;            if (name.isBlank()) {</b>
+<b class="fc">&nbsp;                return Result.failure(BlankNameException())</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            val trimmedName = name.trim().replace(&quot;\\s+&quot;.toRegex(), &quot; &quot;)</b>
+<b class="fc">&nbsp;            val capitalizedName = trimmedName.split(&quot; &quot;).joinToString(&quot; &quot;) { word -&gt;</b>
+<b class="pc">&nbsp;                word.replaceFirstChar { char -&gt;</b>
+<b class="fc">&nbsp;                    if (char.isLowerCase()) char.titlecase(Locale.getDefault())</b>
+<b class="fc">&nbsp;                    else char.toString()</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            if (capitalizedName.length !in minNameLength..maxNameLength) {</b>
+<b class="fc">&nbsp;                return Result.failure(</b>
+<b class="fc">&nbsp;                    OutOfRangeException(&quot;capitalizedName: ${capitalizedName.length}&quot;, minNameLength, maxNameLength)</b>
+&nbsp;                )
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            return Result.success(capitalizedName)</b>
+&nbsp;
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Valida uma lista de dias da semana.
+&nbsp;         *
+&nbsp;         * Garante que a quantidade de dias na lista esteja dentro de um intervalo específico.
+&nbsp;         *
+&nbsp;         * @param days A lista de dias da semana a ser validada.
+&nbsp;         * @return Um objeto Result que contém:
+&nbsp;         *         - Sucesso: A lista de dias da semana, se a validação for bem-sucedida.
+&nbsp;         *         - Falha: Uma exceção `OutOfRangeException` se a quantidade de dias estiver fora do intervalo permitido.
+&nbsp;         *
+&nbsp;         * @throws OutOfRangeException Se a quantidade de dias na lista estiver fora do intervalo permitido (entre 1 e 7, inclusive).
+&nbsp;         */
+&nbsp;        fun validateDays(days: List&lt;WeekDay&gt;): Result&lt;List&lt;WeekDay&gt;&gt; {
+<b class="fc">&nbsp;            val minDays = 1</b>
+<b class="fc">&nbsp;            val maxDays = 7</b>
+<b class="fc">&nbsp;            return if (days.size !in minDays..maxDays) Result.failure(OutOfRangeException(&quot;days: ${days.size}&quot;, minDays, maxDays))</b>
+<b class="fc">&nbsp;            else Result.success(days)</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Valida uma lista de intervalos de tempo.
+&nbsp;         *
+&nbsp;         * Esta função verifica se o número de intervalos de tempo está dentro de um intervalo válido (1 a 10, inclusive)
+&nbsp;         * e se cada intervalo de tempo individual é válido de acordo com o `TimeIntervalValidator`.
+&nbsp;         *
+&nbsp;         * @param timeIntervals A lista de objetos [TimeInterval] a serem validados.
+&nbsp;         * @return Um objeto [Result]:
+&nbsp;         *   - Se a validação for bem-sucedida, retorna um [Result.success] contendo a lista original de objetos [TimeInterval].
+&nbsp;         *   - Se a validação falhar, retorna um [Result.failure] contendo uma exceção:
+&nbsp;         *     - [OutOfRangeException]: Se o número de intervalos de tempo estiver fora do intervalo permitido (1 a 10).
+&nbsp;         *     - Uma exceção de [TimeIntervalValidator.validate]: Se algum dos intervalos de tempo individuais for inválido.
+&nbsp;         *       A exceção pode ser qualquer uma que `TimeIntervalValidator.validate` possa retornar. Se o resultado do validador não contiver uma exceção, uma `baseException` genérica será retornada.
+&nbsp;         * @throws OutOfRangeException se o número de intervalos de tempo não estiver dentro do intervalo válido.
+&nbsp;         * @throws Exception se qualquer TimeInterval individual for inválido de acordo com TimeIntervalValidator.validate.
+&nbsp;         */
+&nbsp;        fun validateTimeIntervals(timeIntervals: List&lt;TimeInterval&gt;): Result&lt;List&lt;TimeInterval&gt;&gt; {
+&nbsp;
+<b class="fc">&nbsp;            val minHours = 1</b>
+<b class="fc">&nbsp;            val maxHours = 10</b>
+&nbsp;
+<b class="pc">&nbsp;            if (timeIntervals.size !in minHours..maxHours) return Result.failure(</b>
+<b class="nc">&nbsp;                OutOfRangeException(&quot;hours: ${timeIntervals.size}&quot;, minHours, maxHours)</b>
+&nbsp;            )
+&nbsp;
+<b class="fc">&nbsp;            timeIntervals.forEach { timeInterval -&gt;</b>
+<b class="fc">&nbsp;                with(TimeIntervalValidator.validate(timeInterval)) {</b>
+<b class="pc">&nbsp;                    if (isFailure) return Result.failure(exceptionOrNull() ?: baseException)</b>
+<b class="fc">&nbsp;                }</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;
+<b class="fc">&nbsp;            return Result.success(timeIntervals)</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-03-30 16:26</div>
+</div>
+</body>
+</html>

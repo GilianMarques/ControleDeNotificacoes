@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ControleDeNotificacoes</string>
+    <string name="O_nome_n_o_pode_ficar_em_branco">O nome não pode ficar em branco.</string>
+    <string name="O_nome_deve_ter_entre_e_caracteres">O nome deve ter entre %1$d e %2$d caracteres.</string>
 </resources>

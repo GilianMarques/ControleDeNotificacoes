@@ -9,13 +9,4 @@ enum class WeekDay(val dayNumber: Int) {
     FRIDAY(5),
     SATURDAY(6);
 
-    companion object {
-        fun fromNumber(number: Int): WeekDay {
-            return entries.first { it.dayNumber == number }
-        }
-
-        fun fromString(day: String): WeekDay {
-            return valueOf(day.uppercase())
-        }
-    }
 }

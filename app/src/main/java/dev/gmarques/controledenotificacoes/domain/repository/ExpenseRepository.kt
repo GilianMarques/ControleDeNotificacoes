@@ -10,6 +10,6 @@ interface RuleRepository {
     suspend fun addRule(rule: Rule)
     suspend fun updateRule(rule: Rule)
     suspend fun removeRule(rule: Rule)
-    suspend fun getRuleById(id: Long): Rule?
+    suspend fun getRuleById(id: String): Rule?
     suspend fun getAllRules(): List<Rule>
 }

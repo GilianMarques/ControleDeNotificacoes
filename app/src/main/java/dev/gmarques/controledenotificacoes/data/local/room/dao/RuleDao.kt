@@ -25,7 +25,7 @@ interface RuleDao {
     suspend fun deleteRule(ruleEntity: RuleEntity)
 
     @Query("SELECT * FROM rules WHERE id = :id")
-    suspend fun getRuleById(id: Long): RuleEntity?
+    suspend fun getRuleById(id: String): RuleEntity?
 
     @Query("SELECT * FROM rules")
     suspend fun getAllRules(): List<RuleEntity>

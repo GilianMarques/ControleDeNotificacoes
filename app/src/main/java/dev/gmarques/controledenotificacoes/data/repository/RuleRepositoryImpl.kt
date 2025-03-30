@@ -24,7 +24,7 @@ class RuleRepositoryImpl @Inject constructor(private val ruleDao: RuleDao) : Rul
         ruleDao.deleteRule(RuleMapper.mapToEntity(rule))
     }
 
-    override suspend fun getRuleById(id: Long): Rule? {
+    override suspend fun getRuleById(id: String): Rule? {
         return ruleDao.getRuleById(id)?.let { RuleMapper.mapToModel(it) }
     }
 

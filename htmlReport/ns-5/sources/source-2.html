@@ -1,0 +1,100 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RuleDao</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.gmarques.controledenotificacoes.data.local.room.dao</a>
+</div>
+
+<h1>Coverage Summary for Class: RuleDao (dev.gmarques.controledenotificacoes.data.local.room.dao)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">RuleDao</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.gmarques.controledenotificacoes.data.local.room.dao
+&nbsp;
+&nbsp;import androidx.room.Dao
+&nbsp;import androidx.room.Delete
+&nbsp;import androidx.room.Insert
+&nbsp;import androidx.room.Query
+&nbsp;import androidx.room.Update
+&nbsp;import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
+&nbsp;import dev.gmarques.controledenotificacoes.domain.model.Rule
+&nbsp;
+&nbsp;@Dao
+&nbsp;/**
+&nbsp; * Criado por Gilian Marques
+&nbsp; * Em sábado, 29 de março de 2025 às 14:39.
+&nbsp; */
+&nbsp;interface RuleDao {
+&nbsp;
+&nbsp;    @Insert
+&nbsp;    suspend fun insertRule(ruleEntity: RuleEntity)
+&nbsp;
+&nbsp;    @Update
+&nbsp;    suspend fun updateRule(ruleEntity: RuleEntity)
+&nbsp;
+&nbsp;    @Delete
+&nbsp;    suspend fun deleteRule(ruleEntity: RuleEntity)
+&nbsp;
+&nbsp;    @Query(&quot;SELECT * FROM rules WHERE id = :id&quot;)
+&nbsp;    suspend fun getRuleById(id: String): RuleEntity?
+&nbsp;
+&nbsp;    @Query(&quot;SELECT * FROM rules&quot;)
+&nbsp;    suspend fun getAllRules(): List&lt;RuleEntity&gt;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-03-30 16:26</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,250 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RuleMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.gmarques.controledenotificacoes.data.local.room.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: RuleMapper (dev.gmarques.controledenotificacoes.data.local.room.mapper)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RuleMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">RuleMapper$Companion</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/21)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package  dev.gmarques.controledenotificacoes.data.local.room.mapper
+&nbsp;
+&nbsp;import com.squareup.moshi.JsonAdapter
+&nbsp;import com.squareup.moshi.Moshi
+&nbsp;import com.squareup.moshi.Types
+&nbsp;import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+&nbsp;import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
+&nbsp;import dev.gmarques.controledenotificacoes.domain.model.Rule
+&nbsp;import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+&nbsp;import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
+&nbsp;import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
+&nbsp;
+&nbsp;/**
+&nbsp; * Criado por Gilian Marques
+&nbsp; * Em sábado, 29 de março de 2025 as 21:49.
+&nbsp; */
+<b class="nc">&nbsp;class RuleMapper {</b>
+&nbsp;
+&nbsp;    companion object {
+&nbsp;
+<b class="nc">&nbsp;        private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()</b>
+&nbsp;
+<b class="nc">&nbsp;        private val weekDayType = Types.newParameterizedType(List::class.java, WeekDay::class.java)</b>
+<b class="nc">&nbsp;        private val weekDayAdapter: JsonAdapter&lt;List&lt;WeekDay&gt;&gt; = moshi.adapter(weekDayType)</b>
+&nbsp;
+<b class="nc">&nbsp;        private val timeIntervalType = Types.newParameterizedType(List::class.java, TimeInterval::class.java)</b>
+<b class="nc">&nbsp;        private val timeIntervalAdapter: JsonAdapter&lt;List&lt;TimeInterval&gt;&gt; = moshi.adapter(timeIntervalType)</b>
+&nbsp;
+&nbsp;
+&nbsp;        fun mapToEntity(rule: Rule): RuleEntity {
+&nbsp;
+<b class="nc">&nbsp;            RuleValidator.validate(rule)</b>
+&nbsp;
+<b class="nc">&nbsp;            return RuleEntity(</b>
+<b class="nc">&nbsp;                id = rule.id,</b>
+<b class="nc">&nbsp;                name = rule.name,</b>
+<b class="nc">&nbsp;                days = daysToString(rule.days),</b>
+<b class="nc">&nbsp;                timeIntervals = hoursToString(rule.timeIntervals),</b>
+&nbsp;            )
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Converte uma lista de objetos [TimeInterval] em uma string JSON.
+&nbsp;         *
+&nbsp;         * Esta função usa um adaptador Moshi para serializar uma lista de objetos
+&nbsp;         * [TimeInterval] em sua representação de string JSON.
+&nbsp;         *
+&nbsp;         * @param timeIntervals A lista de objetos [TimeInterval] a ser convertida.
+&nbsp;         * @return Uma string JSON representando a lista de [TimeInterval]s.
+&nbsp;         */
+&nbsp;        private fun hoursToString(timeIntervals: List&lt;TimeInterval&gt;): String {
+<b class="nc">&nbsp;            return timeIntervalAdapter.toJson(timeIntervals)</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Converte uma lista de enums [WeekDay] em uma string JSON.
+&nbsp;         *
+&nbsp;         * Esta função usa um adaptador Moshi para serializar uma lista de enums [WeekDay]
+&nbsp;         * em sua representação de string JSON.
+&nbsp;         *
+&nbsp;         * @param days A lista de enums [WeekDay] a ser convertida.
+&nbsp;         * @return Uma string JSON representando a lista de [WeekDay]s.
+&nbsp;         */
+&nbsp;        private fun daysToString(days: List&lt;WeekDay&gt;): String {
+<b class="nc">&nbsp;            return weekDayAdapter.toJson(days)</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Converte uma entidade de banco de dados [RuleEntity] em um objeto de domínio [Rule].
+&nbsp;         *
+&nbsp;         * Esta função recebe um objeto [RuleEntity] e mapeia suas propriedades para um
+&nbsp;         * novo objeto [Rule]. As propriedades `days` e `timeIntervals`, que são
+&nbsp;         * armazenadas como strings na entidade, são desserializadas de volta em listas de
+&nbsp;         * tipos complexos usando adaptadores Moshi.
+&nbsp;         *
+&nbsp;         * @param entity O objeto [RuleEntity] a ser convertido.
+&nbsp;         * @return Um objeto [Rule] representando a mesma regra.
+&nbsp;         */
+&nbsp;        fun mapToModel(entity: RuleEntity): Rule {
+&nbsp;
+<b class="nc">&nbsp;            return Rule(</b>
+<b class="nc">&nbsp;                id = entity.id,</b>
+<b class="nc">&nbsp;                name = entity.name,</b>
+<b class="nc">&nbsp;                days = stringToDays(entity.days),</b>
+<b class="nc">&nbsp;                timeIntervals = stringToTimeInterval(entity.timeIntervals),</b>
+&nbsp;            )
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Converte uma string JSON representando uma lista de [TimeInterval]s em uma lista de objetos [TimeInterval].
+&nbsp;         *
+&nbsp;         * Esta função usa um adaptador Moshi para desserializar uma string JSON de volta
+&nbsp;         * em uma lista de objetos [TimeInterval].
+&nbsp;         *
+&nbsp;         * @param timeIntervals A string JSON a ser convertida.
+&nbsp;         * @return Uma lista de objetos [TimeInterval].
+&nbsp;         * @throws NullPointerException se a string de entrada não puder ser desserializada
+&nbsp;         * em uma lista de [TimeInterval].
+&nbsp;         */
+&nbsp;        private fun stringToTimeInterval(timeIntervals: String): List&lt;TimeInterval&gt; {
+<b class="nc">&nbsp;            return timeIntervalAdapter.fromJson(timeIntervals)!!</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Converte uma string JSON representando uma lista de [WeekDay]s em uma lista de enums [WeekDay].
+&nbsp;         *
+&nbsp;         * Esta função usa um adaptador Moshi para desserializar uma string JSON de volta
+&nbsp;         * em uma lista de enums [WeekDay].
+&nbsp;         *
+&nbsp;         * @param days A string JSON a ser convertida.
+&nbsp;         * @return Uma lista de enums [WeekDay].
+&nbsp;         * @throws NullPointerException se a string de entrada não puder ser desserializada
+&nbsp;         * em uma lista de [WeekDay].
+&nbsp;         */
+&nbsp;        private fun stringToDays(days: String): List&lt;WeekDay&gt; {
+<b class="nc">&nbsp;            return weekDayAdapter.fromJson(days)!!</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-03-30 16:26</div>
+</div>
+</body>
+</html>
