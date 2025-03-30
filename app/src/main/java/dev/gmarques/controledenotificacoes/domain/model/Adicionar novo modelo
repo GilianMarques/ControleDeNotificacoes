@@ -1,0 +1,26 @@
+Pra cada modelo criado deve existir:
+
+- Entity* (camada de dados)
+com propriedades de tipo adequado para inserção no database. Se o objeto nao tiver uma tabela propria no db ou outra necessidade
+ especifica talvez nao precise de uma entity
+
+- Validador (camada de domino)
+vai validar todas as propriedades do modelo assim que ele for criado.
+
+- Mapper* (camada de dados)
+vai converter o modelo para sua versao de entidade, string ou qualquer outra estrutura necessaria para uso e vice-versa.
+Se for um objeto atrelado a outro como o TimeInterval, talvez nao precise
+
+- Dao   (camada de dados)
+Pra uso com o Room (contrato)
+
+- Repositorio  (contrato na camada de dominio e implementação na camada de dados)
+Não esqueça de incluir o bind no modulo de dados do hilt
+
+- Usecases (camada de domino)
+
+- Teste tudo!
+
+Importante: o novo modelo deve chamar a classe validadora atraves de seu bloco init para se validar logo após sua instanciação.
+Ao adicionar um novo modelo recomendo fortemente que copie objeto [Rule] e modifique de acordo com as necessidades. Vai ser mais
+facil.
