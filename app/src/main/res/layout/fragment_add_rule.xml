@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     tools:context=".presentation.AddRuleFragment">
 
     <include
@@ -15,146 +16,232 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
 
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <LinearLayout
-            style="@style/containers_margins"
+
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/back_container"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-
-            <TextView
+            <LinearLayout
+                style="@style/containers_margins"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:fontFamily="@font/urbanist_extrabold"
-                android:text="@string/Tipo_de_regra"
-                android:textSize="20sp" />
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical">
 
-            <!--https://github.com/material-components/material-components-android/blob/master/docs/components/Button.md#toggle-button-->
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/mbt_type_rule"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_margin="8dp"
-                android:layout_weight="1"
-                app:selectionRequired="true"
-                app:singleSelection="true">
 
-                <Button
-                    android:id="@+id/btn_permissive"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/Permissiva" />
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/urbanist_extrabold"
+                    android:text="@string/Tipo_de_regra"
+                    android:textSize="20sp" />
 
-                <Button
-                    android:id="@+id/btn_restritive"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
+                <!--https://github.com/material-components/material-components-android/blob/master/docs/components/Button.md#toggle-button-->
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/mbt_type_rule"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <Button
+                        android:id="@+id/btn_permissive"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/Permissiva" />
+
+                    <Button
+                        android:id="@+id/btn_restritive"
+                        style="?attr/materialButtonOutlinedStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/Restritiva" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+                <TextView
+                    android:id="@+id/tv_rule_type_info"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/Restritiva" />
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+                    android:layout_margin="8dp"
+                    android:drawablePadding="8dp"
+                    android:text="@string/As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados"
+                    android:visibility="gone"
+                    app:drawableStartCompat="@drawable/vec_details"
+                    app:drawableTint="?attr/colorPrimary"
+                    tools:visibility="visible" />
 
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_info"
+            <LinearLayout
+                style="@style/containers_margins"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:drawablePadding="8dp"
-                android:text="@string/Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados"
-                app:drawableStartCompat="@drawable/vec_details"
-                app:drawableTint="?attr/colorPrimary" />
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/urbanist_extrabold"
+                    android:text="@string/Dias_da_semana"
+                    android:textSize="20sp" />
+
+                <!--https://github.com/material-components/material-components-android/blob/master/docs/components/Chip.md#filter-chip-->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:paddingBottom="8dp">
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/filter_chip_margins"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        android:text="@string/Segunda"
+                        app:ensureMinTouchTargetSize="false" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/filter_chip_margins"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/Terca"
+                        app:ensureMinTouchTargetSize="false" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/filter_chip_margins"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/Quarta"
+                        app:ensureMinTouchTargetSize="false" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/filter_chip_margins"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/Quinta"
+                        app:ensureMinTouchTargetSize="false" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/filter_chip_margins"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/Sexta"
+                        app:ensureMinTouchTargetSize="false" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/filter_chip_margins"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/Sabado"
+                        app:ensureMinTouchTargetSize="false" />
+
+                    <com.google.android.material.chip.Chip
+                        style="@style/filter_chip_margins"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/Domingo"
+                        app:ensureMinTouchTargetSize="false" />
+
+
+                </com.google.android.material.chip.ChipGroup>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/urbanist_extrabold"
+                        android:text="@string/Horarios"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/iv_add"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+
+                        android:id="@+id/iv_add"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/back_round"
+                        android:backgroundTint="?colorSecondaryContainer"
+                        android:contentDescription="@string/Bot_o_para_remover_o_intervalo_de_tempo"
+                        android:drawablePadding="4dp"
+                        android:drawableTint="?colorPrimary"
+                        android:paddingStart="4dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="4dp"
+                        android:text="Adicionar"
+                        app:drawableStartCompat="@drawable/vec_add"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <include layout="@layout/item_interval" />
+
+                <include layout="@layout/item_interval" />
+
+                <include layout="@layout/item_interval" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            style="@style/containers_margins"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/back_container"
-            android:orientation="vertical">
+    </androidx.core.widget.NestedScrollView>
 
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:fontFamily="@font/urbanist_extrabold"
-                android:text="@string/Dias_da_semana"
-                android:textSize="20sp" />
-
-            <!--https://github.com/material-components/material-components-android/blob/master/docs/components/Chip.md#filter-chip-->
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Segunda"
-                    app:ensureMinTouchTargetSize="true" />
-
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Terca"
-                    app:ensureMinTouchTargetSize="true" />
-
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Quarta"
-                    app:ensureMinTouchTargetSize="true" />
-
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Quinta"
-                    app:ensureMinTouchTargetSize="true" />
-
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Sexta"
-                    app:ensureMinTouchTargetSize="true" />
-
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Sabado"
-                    app:ensureMinTouchTargetSize="true" />
-
-                <com.google.android.material.chip.Chip
-                    style="@style/Widget.Material3.Chip.Filter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/Domingo"
-                    app:ensureMinTouchTargetSize="true" />
-
-
-            </com.google.android.material.chip.ChipGroup>
-
-
-        </LinearLayout>
-
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

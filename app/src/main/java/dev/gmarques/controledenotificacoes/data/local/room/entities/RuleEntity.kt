@@ -15,6 +15,6 @@ data class RuleEntity(
     val name: String,
     val days: String,
     val timeIntervals: String,
-    val ruleType: RuleType = RuleType.BLOCK,
+    val ruleType: RuleType = RuleType.RESTRITIVE,
 )
 

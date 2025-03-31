@@ -7,7 +7,7 @@ package dev.gmarques.controledenotificacoes.domain.exceptions
  * Util para ajudar a validar comprimentos minimos e maximos permitidos de strings (quantidade de caracteres)
  * e listas  (quantidade de objetos na lista) e ranges no geral
  *
- * A mensgem predefinida evita repetição de codigo e as propriedades permite a confeção de mensagens
+ * A mensgem predefinida evita repetição de codigo e as propriedades permitem a confeção de mensagens
  * personalizadas na camada de UI
  */
 class OutOfRangeException(

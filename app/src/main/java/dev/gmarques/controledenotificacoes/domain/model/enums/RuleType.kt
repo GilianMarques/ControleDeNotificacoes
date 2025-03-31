@@ -1,3 +1,3 @@
 package dev.gmarques.controledenotificacoes.domain.model.enums
 
-enum class RuleType(val value: Int) { ALLOW(1), BLOCK(0) }
+enum class RuleType(val value: Int) { PERMISSIVE(1), RESTRITIVE(0) }

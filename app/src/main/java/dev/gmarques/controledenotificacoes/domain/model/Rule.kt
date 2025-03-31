@@ -14,7 +14,7 @@ data class Rule(
     val name: String,
     val days: List<WeekDay>,
     val timeIntervals: List<TimeInterval>,
-    val ruleType: RuleType = RuleType.BLOCK,
+    val ruleType: RuleType = RuleType.RESTRITIVE,
 ) {
     init {
         RuleValidator.validate(this)

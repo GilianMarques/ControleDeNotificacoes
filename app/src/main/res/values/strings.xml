@@ -14,4 +14,12 @@
     <string name="Sabado">Sábado</string>
     <string name="Domingo">Domingo</string>
     <string name="Dias_da_semana">Dias da semana</string>
+    <string name="Remover">Remover</string>
+    <string name="Horarios">Horários</string>
+    <string name="De">De</string>
+    <string name="_08_30">08:30</string>
+    <string name="_11_30">11:30</string>
+    <string name="as">às</string>
+    <string name="Bot_o_para_remover_o_intervalo_de_tempo">Botão para remover o intervalo de tempo</string>
+    <string name="As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados">Bloquearemos as notificações nos dias e horários selecionados.</string>
 </resources>
