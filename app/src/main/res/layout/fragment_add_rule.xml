@@ -205,13 +205,13 @@
                         android:text="@string/Horarios"
                         android:textSize="20sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/iv_add"
+                        app:layout_constraintEnd_toStartOf="@id/iv_add_interval"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
 
-                        android:id="@+id/iv_add"
+                        android:id="@+id/iv_add_interval"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -232,12 +232,15 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <include layout="@layout/item_interval" />
+                <LinearLayout
+                    android:id="@+id/ll_conteiner_intervals"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
 
-                <include layout="@layout/item_interval" />
+                    android:orientation="vertical">
 
-                <include layout="@layout/item_interval" />
-
+                </LinearLayout>
             </LinearLayout>
 
         </LinearLayout>

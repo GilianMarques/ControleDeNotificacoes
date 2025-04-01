@@ -2,10 +2,12 @@ package dev.gmarques.controledenotificacoes.presentation
 
 import androidx.lifecycle.ViewModel
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 
 class AddRuleViewModel : ViewModel() {
 
+    val timeIntervals = mutableListOf<TimeInterval>()
     var ruleType: RuleType? = null
 
     fun addRule(rule: Rule) {

@@ -22,4 +22,7 @@
     <string name="as">às</string>
     <string name="Bot_o_para_remover_o_intervalo_de_tempo">Botão para remover o intervalo de tempo</string>
     <string name="As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados">Bloquearemos as notificações nos dias e horários selecionados.</string>
+    <string name="Selecione_o_fim_do_intervalo_de_tempo">Selecione o fim do intervalo de tempo</string>
+    <string name="Selecione_o_in_cio_do_intervalo_de_tempo">Selecione o início do intervalo de tempo</string>
+    <string name="format_time">%1$s:%2$s</string>
 </resources>
