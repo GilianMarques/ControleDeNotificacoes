@@ -25,4 +25,6 @@
     <string name="Selecione_o_fim_do_intervalo_de_tempo">Selecione o fim do intervalo de tempo</string>
     <string name="Selecione_o_in_cio_do_intervalo_de_tempo">Selecione o início do intervalo de tempo</string>
     <string name="format_time">%1$s:%2$s</string>
+    <string name="O_intervalo_selecionado_era_inv_lido">O  intervalo selecionado era inválido</string>
+    <string name="O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido">O limite máximo de intervalos de tempo (%1$d) foi atingido.</string>
 </resources>

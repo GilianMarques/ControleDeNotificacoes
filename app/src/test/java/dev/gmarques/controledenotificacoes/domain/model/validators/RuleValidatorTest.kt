@@ -53,23 +53,14 @@ class RuleValidatorTest {
     }
 
     @Test
-    fun `ao passar um listab de intervalos fora do intervalo permitido a funcao validadora deve retornar um result com falha`() {
+    fun `ao passar uma lista de intervalos de tempo fora do range permitido a funcao validadora deve retornar um result com falha`() {
 
         assertTrue(RuleValidator.validateTimeIntervals(emptyList()).isFailure)
 
-        val tooMuchIntervals = listOf(
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-        )
+        val tooMuchIntervals = mutableListOf<TimeInterval>()
+
+        repeat(RuleValidator.MAX_INTERVALS + 1)
+        { tooMuchIntervals.add(TimeInterval(1, 2, 3, 4)) }
 
         assertTrue(RuleValidator.validateTimeIntervals(tooMuchIntervals).isFailure)
     }

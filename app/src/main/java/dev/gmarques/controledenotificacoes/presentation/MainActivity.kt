@@ -10,9 +10,9 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
-import dev.gmarques.controledenotificacoes.HomeFragmentDirections
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
+import dev.gmarques.controledenotificacoes.presentation.home_fragment.HomeFragmentDirections
 
 @AndroidEntryPoint
 /**
