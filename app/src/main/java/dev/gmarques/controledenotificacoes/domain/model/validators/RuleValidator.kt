@@ -14,7 +14,7 @@ import java.util.Locale
 object RuleValidator {
 
     const val MAX_INTERVALS = 10
-    const val MIN_INTERVALS = 1
+    private const val MIN_INTERVALS = 1
 
     private val baseException = Exception("A validação falhou mas não retornou exceção para lançar, isso é um bug!")
 
