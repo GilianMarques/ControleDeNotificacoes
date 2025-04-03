@@ -2,7 +2,6 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
-import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
 import java.util.UUID
 
 /**
@@ -14,6 +13,6 @@ data class Rule(
     val name: String,
     val days: List<WeekDay>,
     val timeIntervals: List<TimeInterval>,
-    val ruleType: RuleType = RuleType.RESTRITIVE,
+    val ruleType: RuleType = RuleType.RESTRICTIVE,
 )
 

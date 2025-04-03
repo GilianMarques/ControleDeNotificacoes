@@ -20,16 +20,19 @@ import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
 import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
+import dev.gmarques.controledenotificacoes.domain.plataform.Vibrator
 import dev.gmarques.controledenotificacoes.domain.utils.TimeIntervalExtensionFun.endIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.utils.TimeIntervalExtensionFun.startIntervalFormatted
-import dev.gmarques.controledenotificacoes.framework.Vibrator
+import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class AddRuleFragment : Fragment() {
 
-
+    @Inject
+    lateinit var vibrator: Vibrator
     private val viewModel: AddRuleViewModel by viewModels()
     private lateinit var binding: FragmentAddRuleBinding
 
@@ -47,7 +50,7 @@ class AddRuleFragment : Fragment() {
         setupButtonTypeRule()
         setupChipDays()
         setupButtonAddInterval()
-        observeTimeIntervals()
+        observeStateChanges()
 
         super.onViewCreated(view, savedInstanceState)
     }
@@ -93,13 +96,13 @@ class AddRuleFragment : Fragment() {
 
             when (toggleButton.checkedButtonId) {
                 R.id.btn_permissive -> {
-                    viewModel.ruleType = RuleType.PERMISSIVE
+                    viewModel.updateRuleType(RuleType.PERMISSIVE)
                     tvRuleTypeInfo.text =
                         getString(R.string.Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados)
                 }
 
                 R.id.btn_restritive -> {
-                    viewModel.ruleType = RuleType.RESTRITIVE
+                    viewModel.updateRuleType(RuleType.RESTRICTIVE)
                     tvRuleTypeInfo.text =
                         getString(R.string.As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados)
                 }
@@ -121,10 +124,15 @@ class AddRuleFragment : Fragment() {
      */
     private fun setupButtonAddInterval() = with(binding) {
         ivAddInterval.setOnClickListener(AnimatedClickListener {
-            if ((viewModel.timeIntervalsLiveData.value?.size ?: 0) < RuleValidator.MAX_INTERVALS) {
+            if ((viewModel.uiState.value?.timeIntervals?.size ?: 0) < RuleValidator.MAX_INTERVALS) {
                 collectIntervalData()
             } else {
-            showErrorSnackBar(getString(R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido, RuleValidator.MAX_INTERVALS))
+                showErrorSnackBar(
+                    getString(
+                        R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido,
+                        RuleValidator.MAX_INTERVALS
+                    )
+                )
             }
         })
     }
@@ -249,104 +257,55 @@ class AddRuleFragment : Fragment() {
      *                 explicando a natureza do erro ao usuário.
      *
      * @see Snackbar
-     * @see Vibrator
+     * @see VibratorImpl
      */
     private fun showErrorSnackBar(errorMsg: String) {
         Snackbar.make(binding.root, errorMsg, Snackbar.LENGTH_LONG).show()
-        Vibrator.error()
+        vibrator.error()
     }
 
-    /**
-     * Observa as mudanças nos dados de intervalos de tempo provenientes da ViewModel.
-     *
-     * Esta função se inscreve na `timeIntervalsLiveData` na ViewModel. Sempre que a
-     * LiveData emite uma nova lista de intervalos de tempo, ela aciona a função
-     * `manageIntervalViews` para atualizar a UI de acordo.
-     *
-     * Este método é tipicamente chamado durante a configuração do ciclo de vida do
-     * Fragment/Activity, como no método `onViewCreated` de um Fragment ou no
-     * método `onCreate` de uma Activity.
-     *
-     * Ele usa `viewLifecycleOwner` como o LifecycleOwner, garantindo que o observador
-     * seja removido automaticamente quando a view do Fragment for destruída,
-     * evitando vazamentos de memória.
-     *
-     * @see viewModel.timeIntervalsLiveData O objeto LiveData na ViewModel que contém os intervalos de tempo.
-     * @see manageIntervalViews A função responsável por lidar com as atualizações da UI com base nos novos intervalos de tempo.
-     * @see viewLifecycleOwner O proprietário do ciclo de vida (LifecycleOwner) vinculado ao ciclo de vida da view do Fragment.
-     */
-    private fun observeTimeIntervals() {
-        viewModel.timeIntervalsLiveData.observe(viewLifecycleOwner) {
-            manageIntervalViews(it)
+    private fun observeStateChanges() {
+        viewModel.uiState.observe(viewLifecycleOwner) {
+            manageIntervalViews(it.timeIntervals)
         }
     }
 
     /**
-     * Tentei usar um RecyclerView para lidar com o dinamismo das views de TimeIntervals, mas ele não anima bem quando seu tamanho não é fixo.
-     * Afim de favorecer a estética do app por meio de animações, retornei a essa abordagem manual para lidar com as views.
+     * Gerencia dinamicamente as views de TimeInterval na UI, garantindo transições visuais suaves.
      *
-     * Gerencia a exibição das views de TimeInterval na UI.
+     * A função mantém a interface sincronizada com a lista de TimeIntervals fornecida,
+     * removendo views obsoletas e adicionando novas conforme necessário.
      *
-     * Esta função adiciona e remove dinamicamente views representando objetos TimeInterval, com base no mapa `timeIntervals`.
-     * Otimiza as transições visuais, manipulando manualmente a criação e remoção de views, em vez de usar um RecyclerView.
+     * **Comportamento:**
+     * - **Remoção de Views Obsoletas:** Remove views cujo TimeInterval correspondente não existe mais no mapa.
+     * - **Adição de Novas Views:** Adiciona novas views para TimeIntervals que ainda não possuem uma representação visual.
      *
-     * Comportamento:
-     * 1. **Remoção de Views Obsoletas:** Itera pelas views existentes em `onScreenViewsParent` (um LinearLayout) e verifica se o
-     *    TimeInterval correspondente ainda existe no mapa `timeIntervals`. Se uma view não tiver um TimeInterval associado no mapa,
-     *    ela é removida do layout.
+     * As novas views são criadas com data binding e adicionadas ao layout com uma animação suave.
      *
-     * 2. **Adição de Novas Views:** Itera sobre o mapa `timeIntervals`. Para cada TimeInterval, verifica se já existe uma view
-     *    correspondente na tela. Se não, uma nova view é criada e adicionada ao layout.
+     * Obs: Tentei usar um RecyclerView para lidar com o dinamismo das views de TimeIntervals, mas ele não anima bem quando seu tamanho não é fixo.
+     * Afim de favorecer a estética do app por meio de animações agradaveis, retornei a essa abordagem manual para lidar com as views.
      *
-     * 3. **Criação e Configuração de Views:** Novas views são criadas usando data binding (`ItemIntervalBinding`). Os horários de
-     *    início e fim do TimeInterval são exibidos na view. Uma ação de "remover" é definida na view. Cada view é marcada com o
-     *    ID do TimeInterval para fácil identificação.
-     *
-     * 4. **Adição Animada:** Novas views são adicionadas ao `onScreenViewsParent` usando a função personalizada
-     *    `addViewWithTwoStepsAnimation`, que fornece um efeito de animação visualmente atraente.
-     *
-     * @param timeIntervals Um HashMap onde a chave é o ID do TimeInterval (String) e o valor é o objeto TimeInterval
-     *                      correspondente. Este mapa representa o conjunto atual de TimeIntervals a serem exibidos.
+     * @param timeIntervals Um mapa de TimeIntervals, onde a chave é o ID do intervalo e o valor é o objeto TimeInterval.
      */
-    private fun manageIntervalViews(timeIntervals: HashMap<String, TimeInterval>) {
+    private fun manageIntervalViews(timeIntervals: Map<String, TimeInterval>) {
 
-        val onScreenViewsParent = this@AddRuleFragment.binding.llConteinerIntervals
+        val parent = binding.llConteinerIntervals
 
-        //removo as views cujo timeinterval foi removido
-        onScreenViewsParent.children.forEach {
+        parent.children
+            .filter { it.tag !in timeIntervals.keys }
+            .forEach { parent.removeView(it) }
 
-            if (timeIntervals[it.tag] == null) {
-                this@AddRuleFragment.binding.llConteinerIntervals.removeView(it)
-            }
-        }
-
-        // adiciono views para os timeintervals que nao tem uma view na tela
-        timeIntervals.values.forEach { interval ->
-
-            var addView = true
-            for (child in onScreenViewsParent.children) {
-                if (child.tag == interval.id) {
-                    addView = false
-                    break
+        timeIntervals.values
+            .filter { interval -> parent.children.none { it.tag == interval.id } }
+            .forEach { interval ->
+                with(ItemIntervalBinding.inflate(layoutInflater)) {
+                    tvStart.text = interval.startIntervalFormatted()
+                    tvEnd.text = interval.endIntervalFormatted()
+                    ivRemove.setOnClickListener(AnimatedClickListener { viewModel.removeTimeInterval(interval) })
+                    root.tag = interval.id
+                    parent.addViewWithTwoStepsAnimation(root)
                 }
             }
-
-            if (addView) with(ItemIntervalBinding.inflate(layoutInflater)) {
-
-                tvStart.text = interval.startIntervalFormatted()
-                tvEnd.text = interval.endIntervalFormatted()
-
-                ivRemove.setOnClickListener(AnimatedClickListener {
-                    viewModel.removeTimeIntervals(interval)
-                })
-                root.tag = interval.id
-
-                this@AddRuleFragment.binding.llConteinerIntervals
-                    .addViewWithTwoStepsAnimation(root)
-
-
-            }
-        }
     }
 
 }

@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.framework
+package dev.gmarques.controledenotificacoes.plataform
 
 import android.content.Context
 import android.os.Build
@@ -6,19 +6,21 @@ import android.os.CombinedVibration
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import dev.gmarques.controledenotificacoes.App
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 /**
  * Classe responsável por fornecer feedback de interface, como vibração.
  * Suporta APIs abaixo de 26 utilizando o méto_do `vibrate` legada para compatibilidade.
  */
-object Vibrator {
+class VibratorImpl @Inject constructor(@ApplicationContext private val context: Context) :
+    dev.gmarques.controledenotificacoes.domain.plataform.Vibrator {
 
     /**
      * Vibra o dispositivo para fornecer feedback tátil ao usuário em caso de sucesso.
      * Realiza uma vibração de duração moderada.
      */
-    fun error() {
+    override fun error() {
         vibrate(200)
     }
 
@@ -26,7 +28,7 @@ object Vibrator {
      * Vibra o dispositivo para fornecer feedback tátil ao usuário em caso de erro.
      * Realiza cinco vibrações rápidas.
      */
-    fun success() {
+    override fun success() {
         for (i in 1..3) {
             vibrate(25)
             Thread.sleep(75)
@@ -37,7 +39,7 @@ object Vibrator {
      * Vibra o dispositivo para fornecer feedback tátil ao usuário em caso de interação.
      * Realiza uma vibração curta.
      */
-    fun interaction() {
+    override fun interaction() {
         vibrate(25) // Duração curta
     }
 
@@ -49,7 +51,6 @@ object Vibrator {
      */
     @Suppress("DEPRECATION")
     private fun vibrate(duration: Long) {
-        val context = App.context!!
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {  // API 31 e superior (Android 12+)
 

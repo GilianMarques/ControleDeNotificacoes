@@ -3,7 +3,7 @@ package dev.gmarques.controledenotificacoes.presentation.utils
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.ScaleAnimation
-import dev.gmarques.controledenotificacoes.framework.Vibrator
+import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 
 /**
  * [AnimatedClickListener] é um [View.OnClickListener] personalizado que fornece um feedback visual
@@ -15,7 +15,7 @@ import dev.gmarques.controledenotificacoes.framework.Vibrator
 class AnimatedClickListener(private val action: () -> Any) : View.OnClickListener {
 
     override fun onClick(v: View) {
-        Vibrator.interaction()
+        VibratorImpl.interaction()
         animateView(v)
     }
 
