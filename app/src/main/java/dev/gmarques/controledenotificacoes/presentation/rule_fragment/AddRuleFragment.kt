@@ -4,6 +4,8 @@ import TimeIntervalValidator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.core.view.isGone
@@ -26,6 +28,7 @@ import dev.gmarques.controledenotificacoes.domain.utils.TimeIntervalExtensionFun
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -89,10 +92,7 @@ class AddRuleFragment : Fragment() {
         mbtTypeRule.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
 
 
-            if (tvRuleTypeInfo.isGone) {
-                val parent = tvRuleTypeInfo.parent as ViewGroup
-                lifecycleScope.launch { parent.addViewWithTwoStepsAnimation(tvRuleTypeInfo) }
-            }
+            if (tvRuleTypeInfo.isGone) tvRuleTypeInfo.visibility = VISIBLE
 
             when (toggleButton.checkedButtonId) {
                 R.id.btn_permissive -> {
