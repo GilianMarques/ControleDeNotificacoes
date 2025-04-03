@@ -4,6 +4,8 @@ import TimeIntervalValidator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.core.view.isGone
@@ -25,6 +27,7 @@ import dev.gmarques.controledenotificacoes.domain.utils.TimeIntervalExtensionFun
 import dev.gmarques.controledenotificacoes.framework.Vibrator
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class AddRuleFragment : Fragment() {
@@ -86,10 +89,7 @@ class AddRuleFragment : Fragment() {
         mbtTypeRule.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
 
 
-            if (tvRuleTypeInfo.isGone) {
-                val parent = tvRuleTypeInfo.parent as ViewGroup
-                lifecycleScope.launch { parent.addViewWithTwoStepsAnimation(tvRuleTypeInfo) }
-            }
+            if (tvRuleTypeInfo.isGone) tvRuleTypeInfo.visibility = VISIBLE
 
             when (toggleButton.checkedButtonId) {
                 R.id.btn_permissive -> {
@@ -124,7 +124,12 @@ class AddRuleFragment : Fragment() {
             if ((viewModel.timeIntervalsLiveData.value?.size ?: 0) < RuleValidator.MAX_INTERVALS) {
                 collectIntervalData()
             } else {
-            showErrorSnackBar(getString(R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido, RuleValidator.MAX_INTERVALS))
+                showErrorSnackBar(
+                    getString(
+                        R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido,
+                        RuleValidator.MAX_INTERVALS
+                    )
+                )
             }
         })
     }
