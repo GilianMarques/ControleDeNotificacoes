@@ -1,11 +1,10 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
-import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 
 class RuleValidatorTest {
 

@@ -62,20 +62,19 @@ class AddRuleFragment : Fragment() {
 
     private fun setupFabAddRule() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
-            tilName.clearFocus()
+            edtName.clearFocus()
         })
     }
 
     private fun setupNameInput() = with(binding) {
-        tietName.setOnFocusChangeListener { _, hasFocus ->
+        edtName.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                validateName(tietName.text.toString())
+                validateName(edtName.text.toString())
             }
 
         }
     }
 
-    // TODO: passar pro fragmento e ver o todo do r8 + hilt 
     private fun validateName(name: String) {
         val result = RuleValidator.validateName(name)
         if (result.isSuccess) {
@@ -84,7 +83,7 @@ class AddRuleFragment : Fragment() {
             when (val exception = result.exceptionOrNull()) {
                 is BlankNameException -> {
                     showErrorSnackBar(getString(R.string.O_nome_n_o_pode_ficar_em_branco))
-                    binding.tilName.error = getString(R.string.O_nome_n_o_pode_ficar_em_branco)
+                    binding.edtName.error = getString(R.string.O_nome_n_o_pode_ficar_em_branco)
                 }
 
                 is OutOfRangeException -> {
@@ -316,7 +315,7 @@ class AddRuleFragment : Fragment() {
             }
 
             with(it.ruleName) {
-                binding.tietName.setText(this)
+                binding.edtName.setText(this)
             }
         }
     }

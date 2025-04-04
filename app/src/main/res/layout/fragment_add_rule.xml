@@ -11,11 +11,11 @@
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
         android:clickable="true"
         android:contentDescription="@string/Bot_o_de_adicionar_regra"
         android:focusable="true"
         android:src="@drawable/vec_check"
-        android:layout_margin="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -43,6 +43,18 @@
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <EditText
+                android:id="@+id/edt_name"
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:padding="12dp"
+                android:layout_height="wrap_content"
+                android:autofillHints="name"
+                android:background="@drawable/back_container"
+                android:hint="@string/Nome_da_regra_opcional"
+                android:inputType="textAutoComplete" />
+
 
             <LinearLayout
                 style="@style/containers_margins"
@@ -255,19 +267,6 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_name"
-                style="@style/containers_margins"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/back_container"
-                android:hint="@string/Nome_da_regra">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tiet_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 

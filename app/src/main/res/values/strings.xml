@@ -27,8 +27,22 @@
     <string name="format_time">%1$s:%2$s</string>
     <string name="O_intervalo_selecionado_era_inv_lido">O  intervalo selecionado era inválido</string>
     <string name="O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido">O limite máximo de intervalos de tempo (%1$d) foi atingido.</string>
-    <string name="Nome_da_regra">Nome da regra</string>
+    <string name="Nome_da_regra_opcional">Nome da regra (opcional)</string>
     <string name="Bot_o_de_adicionar_regra">Botão de adicionar regra</string>
     <string name="Adicionar">Adicionar</string>
     <string name="Intervalos_de_tempo">Intervalos de tempo</string>
+
+    <!-- Dias da semana (abreviados) -->
+    <string name="segunda_abrev">Seg.</string>
+    <string name="terca_abrev">Ter.</string>
+    <string name="quarta_abrev">Qua.</string>
+    <string name="quinta_abrev">Qui.</string>
+    <string name="sexta_abrev">Sex.</string>
+    <string name="sabado_abrev">Sáb.</string>
+    <string name="domingo_abrev">Dom.</string>
+
+    <!-- Tipo de regra -->
+    <string name="regra_tipo_permissiva">Perm.</string>
+    <string name="regra_tipo_restritiva">Bloq.</string>
+
 </resources>
