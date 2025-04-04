@@ -7,14 +7,14 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
 import javax.inject.Inject
 
 /**
  * Classe responsável por fornecer feedback de interface, como vibração.
  * Suporta APIs abaixo de 26 utilizando o méto_do `vibrate` legada para compatibilidade.
  */
-class VibratorImpl @Inject constructor(@ApplicationContext private val context: Context) :
-    dev.gmarques.controledenotificacoes.domain.plataform.Vibrator {
+class VibratorImpl @Inject constructor(@ApplicationContext private val context: Context) : VibratorInterface {
 
     /**
      * Vibra o dispositivo para fornecer feedback tátil ao usuário em caso de sucesso.

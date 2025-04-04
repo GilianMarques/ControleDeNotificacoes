@@ -7,6 +7,18 @@
     android:animateLayoutChanges="true"
     tools:context=".presentation.rule_fragment.AddRuleFragment">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:contentDescription="@string/Bot_o_de_adicionar_regra"
+        android:focusable="true"
+        android:src="@drawable/vec_check"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <include
         android:id="@+id/toolbar"
         layout="@layout/view_activity_header"
@@ -202,7 +214,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/urbanist_extrabold"
-                        android:text="@string/Horarios"
+                        android:text="@string/Intervalos_de_tempo"
                         android:textSize="20sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/iv_add_interval"
@@ -219,13 +231,13 @@
                         android:backgroundTint="?colorSecondaryContainer"
                         android:contentDescription="@string/Bot_o_para_remover_o_intervalo_de_tempo"
                         android:drawablePadding="4dp"
-                        android:drawableTint="?colorPrimary"
                         android:paddingStart="4dp"
                         android:paddingTop="4dp"
                         android:paddingEnd="12dp"
                         android:paddingBottom="4dp"
-                        android:text="Adicionar"
+                        android:text="@string/Adicionar"
                         app:drawableStartCompat="@drawable/vec_add"
+                        app:drawableTint="?colorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -242,6 +254,20 @@
 
                 </LinearLayout>
             </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_name"
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/back_container"
+                android:hint="@string/Nome_da_regra">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tiet_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 

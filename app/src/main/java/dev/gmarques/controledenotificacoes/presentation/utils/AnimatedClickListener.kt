@@ -15,7 +15,6 @@ import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 class AnimatedClickListener(private val action: () -> Any) : View.OnClickListener {
 
     override fun onClick(v: View) {
-        VibratorImpl.interaction()
         animateView(v)
     }
 

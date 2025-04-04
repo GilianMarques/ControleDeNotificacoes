@@ -13,6 +13,9 @@ import java.util.Locale
  */
 object RuleValidator {
 
+    const val MIN_NAME_LENGTH = 3
+    const val MAX_NAME_LENGTH = 50
+
     const val MAX_INTERVALS = 10
     private const val MIN_INTERVALS = 1
 
@@ -52,7 +55,6 @@ object RuleValidator {
     /**
      * Valida uma string de nome fornecida de acordo com as seguintes regras:
      *
-     * 1. **Verificação de Branco:** O nome não deve estar em branco (vazio ou consistindo apenas de espaços em branco).
      * 2. **Tratamento de Espaços em Branco:** Espaços em branco iniciais e finais são removidos. Múltiplos espaços entre palavras são reduzidos a um único espaço.
      * 3. **Capitalização:** Cada palavra no nome é capitalizada (primeira letra maiúscula, o restante minúsculo).
      * 4. **Verificação de Comprimento:** O nome capitalizado resultante deve estar dentro do intervalo de comprimento especificado (inclusivo).
@@ -64,17 +66,11 @@ object RuleValidator {
      *           - [BlankNameException] se o nome estiver em branco.
      *           - [OutOfRangeException] se o comprimento do nome capitalizado estiver fora do intervalo permitido.
      *
-     * @throws BlankNameException se o nome fornecido estiver em branco.
      * @throws OutOfRangeException se o comprimento do nome capitalizado estiver fora do intervalo permitido.
      */
     fun validateName(name: String): Result<String> {
 
-        val minNameLength = 3
-        val maxNameLength = 50
 
-        if (name.isBlank()) {
-            return Result.failure(BlankNameException())
-        }
 
         val trimmedName = name.trim().replace("\\s+".toRegex(), " ")
         val capitalizedName = trimmedName.split(" ").joinToString(" ") { word ->
@@ -84,9 +80,9 @@ object RuleValidator {
             }
         }
 
-        if (capitalizedName.length !in minNameLength..maxNameLength) {
+        if (capitalizedName.length !in MIN_NAME_LENGTH..MAX_NAME_LENGTH) {
             return Result.failure(
-                OutOfRangeException("capitalizedName: ${capitalizedName.length}", minNameLength, maxNameLength)
+                OutOfRangeException("capitalizedName: ${capitalizedName.length}", MIN_NAME_LENGTH, MAX_NAME_LENGTH)
             )
         }
 

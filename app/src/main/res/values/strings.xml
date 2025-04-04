@@ -27,4 +27,8 @@
     <string name="format_time">%1$s:%2$s</string>
     <string name="O_intervalo_selecionado_era_inv_lido">O  intervalo selecionado era inválido</string>
     <string name="O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido">O limite máximo de intervalos de tempo (%1$d) foi atingido.</string>
+    <string name="Nome_da_regra">Nome da regra</string>
+    <string name="Bot_o_de_adicionar_regra">Botão de adicionar regra</string>
+    <string name="Adicionar">Adicionar</string>
+    <string name="Intervalos_de_tempo">Intervalos de tempo</string>
 </resources>

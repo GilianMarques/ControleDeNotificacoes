@@ -4,38 +4,38 @@ import TimeIntervalValidator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
+import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
+import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
+import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
-import dev.gmarques.controledenotificacoes.domain.plataform.Vibrator
+import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
 import dev.gmarques.controledenotificacoes.domain.utils.TimeIntervalExtensionFun.endIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.utils.TimeIntervalExtensionFun.startIntervalFormatted
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class AddRuleFragment : Fragment() {
 
     @Inject
-    lateinit var vibrator: Vibrator
+    lateinit var vibrator: VibratorInterface
     private val viewModel: AddRuleViewModel by viewModels()
     private lateinit var binding: FragmentAddRuleBinding
 
@@ -50,12 +50,54 @@ class AddRuleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        setupNameInput()
         setupButtonTypeRule()
         setupChipDays()
         setupButtonAddInterval()
+        setupFabAddRule()
         observeStateChanges()
 
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun setupFabAddRule() = with(binding) {
+        fabAdd.setOnClickListener(AnimatedClickListener {
+            tilName.clearFocus()
+        })
+    }
+
+    private fun setupNameInput() = with(binding) {
+        tietName.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                validateName(tietName.text.toString())
+            }
+
+        }
+    }
+
+    // TODO: passar pro fragmento e ver o todo do r8 + hilt 
+    private fun validateName(name: String) {
+        val result = RuleValidator.validateName(name)
+        if (result.isSuccess) {
+            viewModel.updateRuleName(result.getOrThrow())
+        } else {
+            when (val exception = result.exceptionOrNull()) {
+                is BlankNameException -> {
+                    showErrorSnackBar(getString(R.string.O_nome_n_o_pode_ficar_em_branco))
+                    binding.tilName.error = getString(R.string.O_nome_n_o_pode_ficar_em_branco)
+                }
+
+                is OutOfRangeException -> {
+                    showErrorSnackBar(
+                        getString(
+                            R.string.O_nome_deve_ter_entre_e_caracteres,
+                            exception.minLength,
+                            exception.maxLength
+                        )
+                    )
+                }
+            }
+        }
     }
 
     /**
@@ -84,13 +126,14 @@ class AddRuleFragment : Fragment() {
                 val index = chipGroup.indexOfChild(buttonView)
                 chipGroup.removeView(buttonView)
                 chipGroup.addView(buttonView, index)
+                vibrator.interaction()
             }
         }
     }
 
     private fun setupButtonTypeRule() = with(binding) {
         mbtTypeRule.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
-
+            vibrator.interaction()
 
             if (tvRuleTypeInfo.isGone) tvRuleTypeInfo.visibility = VISIBLE
 
@@ -124,6 +167,7 @@ class AddRuleFragment : Fragment() {
      */
     private fun setupButtonAddInterval() = with(binding) {
         ivAddInterval.setOnClickListener(AnimatedClickListener {
+            vibrator.interaction()
             if ((viewModel.uiState.value?.timeIntervals?.size ?: 0) < RuleValidator.MAX_INTERVALS) {
                 collectIntervalData()
             } else {
@@ -266,7 +310,14 @@ class AddRuleFragment : Fragment() {
 
     private fun observeStateChanges() {
         viewModel.uiState.observe(viewLifecycleOwner) {
-            manageIntervalViews(it.timeIntervals)
+
+            with(it.timeIntervals) {
+                manageIntervalViews(this)
+            }
+
+            with(it.ruleName) {
+                binding.tietName.setText(this)
+            }
         }
     }
 
@@ -301,7 +352,10 @@ class AddRuleFragment : Fragment() {
                 with(ItemIntervalBinding.inflate(layoutInflater)) {
                     tvStart.text = interval.startIntervalFormatted()
                     tvEnd.text = interval.endIntervalFormatted()
-                    ivRemove.setOnClickListener(AnimatedClickListener { viewModel.removeTimeInterval(interval) })
+                    ivRemove.setOnClickListener(AnimatedClickListener {
+                        vibrator.interaction()
+                        viewModel.removeTimeInterval(interval)
+                    })
                     root.tag = interval.id
                     parent.addViewWithTwoStepsAnimation(root)
                 }

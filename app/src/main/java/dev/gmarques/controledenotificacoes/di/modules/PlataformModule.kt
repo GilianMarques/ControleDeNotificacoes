@@ -4,7 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.gmarques.controledenotificacoes.domain.plataform.Vibrator
+import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 
 /**
@@ -16,7 +16,7 @@ import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class PlataformModule {
-
+    // TODO: ver anotaçao pro R8 nao ofuscar classes do hilt se necessario
     @Binds
-    abstract fun bindVibrator(vibrator: VibratorImpl): Vibrator
+    abstract fun bindVibrator(vibrator: VibratorImpl): VibratorInterface
 }
