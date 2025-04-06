@@ -15,7 +15,7 @@ import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
  */
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class PlataformModule {
+abstract class PlatformModule {
     @Binds
     abstract fun bindVibrator(vibrator: VibratorImpl): VibratorInterface
 }

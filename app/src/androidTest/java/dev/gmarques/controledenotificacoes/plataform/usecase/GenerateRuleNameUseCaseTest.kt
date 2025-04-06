@@ -29,9 +29,9 @@ class GenerateRuleNameUseCaseTest {
                     TimeInterval(8, 0, 12, 0),
                     TimeInterval(13, 0, 18, 0),
                 )
-            ) to "Bloq. Seg, Sex 08:00-18:00",
+            ) to "Bloq. Seg/Sex 08:00-18:00",
 
-            Rule( // TODO: ajustar esse teste 
+            Rule(
                 name = "",
                 ruleType = RuleType.PERMISSIVE,
                 days = listOf(WeekDay.MONDAY, WeekDay.SUNDAY, WeekDay.FRIDAY),
@@ -40,11 +40,16 @@ class GenerateRuleNameUseCaseTest {
                     TimeInterval(13, 0, 18, 0),
                     TimeInterval(19, 0, 19, 10),
                 )
-            ) to "Perm. Seg, Dom 08:00-19:10",
+            ) to "Perm. Dom/Seg/Sex 08:00-19:10",
         )
 
 
+        rulesPair.forEach {
+            val name = useCase.execute(it.first)
+            val name2 = it.second
 
-        rulesPair.forEach { assertEquals(useCase.execute(it.first), it.second) }
+            Log.d("USUK", "GenerateRuleNameUseCaseTest.tesReturnedName: \n$name\n$name2")
+            assertEquals(name, name2)
+        }
     }
 }

@@ -25,7 +25,7 @@ class GenerateRuleNameUseCase @Inject constructor(
 
     private fun formatDays(days: List<WeekDay>): String {
         return days.sortedBy { it.dayNumber }
-            .joinToString(", ") { abbreviatedDay(it) }
+            .joinToString("/") { abbreviatedDay(it) }
     }
 
     private fun abbreviatedDay(day: WeekDay): String {
