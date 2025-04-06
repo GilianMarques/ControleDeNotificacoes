@@ -15,13 +15,12 @@ import javax.inject.Inject
 class GenerateRuleNameUseCase @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
-    // TODO: testar  
     fun execute(rule: Rule): String {
         val formattedDays = formatDays(rule.days)
         val interval = formatTimeIntervals(rule)
         val ruleType = formatRuleType(rule.ruleType)
 
-        return "$formattedDays $interval $ruleType".trim()
+        return context.getString(R.string.Nome_padrao_de_regra, ruleType,formattedDays, interval).trim()
     }
 
     private fun formatDays(days: List<WeekDay>): String {
@@ -50,7 +49,7 @@ class GenerateRuleNameUseCase @Inject constructor(
         val startTime = formatTime(start.startHour, start.startMinute)
         val endTime = formatTime(end.endHour, end.endMinute)
 
-        return "$startTime-$endTime"
+        return context.getString(R.string.Intervalo_inicio_fim, startTime, endTime)
     }
 
     private fun formatTime(hour: Int, minute: Int): String {

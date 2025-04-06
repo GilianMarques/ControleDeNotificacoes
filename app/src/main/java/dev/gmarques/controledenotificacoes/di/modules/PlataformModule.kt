@@ -16,7 +16,6 @@ import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class PlataformModule {
-    // TODO: ver anotaçao pro R8 nao ofuscar classes do hilt se necessario
     @Binds
     abstract fun bindVibrator(vibrator: VibratorImpl): VibratorInterface
 }

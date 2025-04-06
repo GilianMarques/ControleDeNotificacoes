@@ -33,16 +33,19 @@
     <string name="Intervalos_de_tempo">Intervalos de tempo</string>
 
     <!-- Dias da semana (abreviados) -->
-    <string name="segunda_abrev">Seg.</string>
-    <string name="terca_abrev">Ter.</string>
-    <string name="quarta_abrev">Qua.</string>
-    <string name="quinta_abrev">Qui.</string>
-    <string name="sexta_abrev">Sex.</string>
-    <string name="sabado_abrev">Sáb.</string>
-    <string name="domingo_abrev">Dom.</string>
+    <string name="segunda_abrev">Seg</string>
+    <string name="terca_abrev">Ter</string>
+    <string name="quarta_abrev">Qua</string>
+    <string name="quinta_abrev">Qui</string>
+    <string name="sexta_abrev">Sex</string>
+    <string name="sabado_abrev">Sáb</string>
+    <string name="domingo_abrev">Dom</string>
 
     <!-- Tipo de regra -->
     <string name="regra_tipo_permissiva">Perm.</string>
     <string name="regra_tipo_restritiva">Bloq.</string>
+    <string name="Nome_da_regra">Nome da regra</string>
+    <string name="Intervalo_inicio_fim">%1$s-%2$s</string>
+    <string name="Nome_padrao_de_regra">%1$s %2$s %3$s</string>
 
 </resources>
