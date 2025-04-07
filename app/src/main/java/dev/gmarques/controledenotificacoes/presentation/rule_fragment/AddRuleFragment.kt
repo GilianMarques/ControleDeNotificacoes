@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.rule_fragment
 
-import TimeIntervalValidator
+import TimeRangeValidator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,12 +20,12 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentAddRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
 import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
 import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
-import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
-import dev.gmarques.controledenotificacoes.domain.utils.TimeIntervalExtensionFun.endIntervalFormatted
-import dev.gmarques.controledenotificacoes.domain.utils.TimeIntervalExtensionFun.startIntervalFormatted
+import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.endIntervalFormatted
+import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.startIntervalFormatted
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
@@ -165,15 +165,15 @@ class AddRuleFragment : Fragment() {
      * @see collectIntervalData A função chamada quando o botão é clicado.
      */
     private fun setupButtonAddInterval() = with(binding) {
-        ivAddInterval.setOnClickListener(AnimatedClickListener {
+        ivAddRange.setOnClickListener(AnimatedClickListener {
             vibrator.interaction()
-            if ((viewModel.uiState.value?.timeIntervals?.size ?: 0) < RuleValidator.MAX_INTERVALS) {
+            if ((viewModel.uiState.value?.timeRanges?.size ?: 0) < RuleValidator.MAX_RANGES) {
                 collectIntervalData()
             } else {
                 showErrorSnackBar(
                     getString(
                         R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido,
-                        RuleValidator.MAX_INTERVALS
+                        RuleValidator.MAX_RANGES
                     )
                 )
             }
@@ -204,7 +204,7 @@ class AddRuleFragment : Fragment() {
      * @throws IllegalStateException Se a função `showTimePicker` não estiver devidamente definida ou implementada na classe circundante.
      * @see showTimePicker
      * @see validateInterval
-     * @see TimeInterval
+     * @see TimeRange
      */
     private fun collectIntervalData() {
         val data = intArrayOf(8, 0, 18, 0)
@@ -213,7 +213,7 @@ class AddRuleFragment : Fragment() {
             showTimePicker(data[2], data[3], false) { hour, minute ->
                 data[2] = hour
                 data[3] = minute
-                validateInterval(TimeInterval(data[0], data[1], data[2], data[3]))
+                validateInterval(TimeRange(data[0], data[1], data[2], data[3]))
             }
         }
 
@@ -280,10 +280,10 @@ class AddRuleFragment : Fragment() {
         activity?.supportFragmentManager?.let { picker.show(it, "TimePicker") }
     }
 
-    private fun validateInterval(interval: TimeInterval) {
-        val validationResult = TimeIntervalValidator.validate(interval)
+    private fun validateInterval(range: TimeRange) {
+        val validationResult = TimeRangeValidator.validate(range)
         if (validationResult.isSuccess) {
-            viewModel.addTimeInterval(interval)
+            viewModel.addTimeRange(range)
         } else {
             showErrorSnackBar(getString(R.string.O_intervalo_selecionado_era_inv_lido))
         }
@@ -310,7 +310,7 @@ class AddRuleFragment : Fragment() {
     private fun observeStateChanges() {
         viewModel.uiState.observe(viewLifecycleOwner) {
 
-            with(it.timeIntervals) {
+            with(it.timeRanges) {
                 manageIntervalViews(this)
             }
 
@@ -321,41 +321,41 @@ class AddRuleFragment : Fragment() {
     }
 
     /**
-     * Gerencia dinamicamente as views de TimeInterval na UI, garantindo transições visuais suaves.
+     * Gerencia dinamicamente as views de TimeRange na UI, garantindo transições visuais suaves.
      *
-     * A função mantém a interface sincronizada com a lista de TimeIntervals fornecida,
+     * A função mantém a interface sincronizada com a lista de TimeRanges fornecida,
      * removendo views obsoletas e adicionando novas conforme necessário.
      *
      * **Comportamento:**
-     * - **Remoção de Views Obsoletas:** Remove views cujo TimeInterval correspondente não existe mais no mapa.
-     * - **Adição de Novas Views:** Adiciona novas views para TimeIntervals que ainda não possuem uma representação visual.
+     * - **Remoção de Views Obsoletas:** Remove views cujo TimeRange correspondente não existe mais no mapa.
+     * - **Adição de Novas Views:** Adiciona novas views para TimeRanges que ainda não possuem uma representação visual.
      *
      * As novas views são criadas com data binding e adicionadas ao layout com uma animação suave.
      *
-     * Obs: Tentei usar um RecyclerView para lidar com o dinamismo das views de TimeIntervals, mas ele não anima bem quando seu tamanho não é fixo.
+     * Obs: Tentei usar um RecyclerView para lidar com o dinamismo das views de TimeRanges, mas ele não anima bem quando seu tamanho não é fixo.
      * Afim de favorecer a estética do app por meio de animações agradaveis, retornei a essa abordagem manual para lidar com as views.
      *
-     * @param timeIntervals Um mapa de TimeIntervals, onde a chave é o ID do intervalo e o valor é o objeto TimeInterval.
+     * @param timeRanges Um mapa de TimeRanges, onde a chave é o ID do intervalo e o valor é o objeto TimeRange.
      */
-    private fun manageIntervalViews(timeIntervals: Map<String, TimeInterval>) {
+    private fun manageIntervalViews(timeRanges: Map<String, TimeRange>) {
 
-        val parent = binding.llConteinerIntervals
+        val parent = binding.llConteinerRanges
 
         parent.children
-            .filter { it.tag !in timeIntervals.keys }
+            .filter { it.tag !in timeRanges.keys }
             .forEach { parent.removeView(it) }
 
-        timeIntervals.values
-            .filter { interval -> parent.children.none { it.tag == interval.id } }
-            .forEach { interval ->
+        timeRanges.values
+            .filter { range -> parent.children.none { it.tag == range.id } }
+            .forEach { range ->
                 with(ItemIntervalBinding.inflate(layoutInflater)) {
-                    tvStart.text = interval.startIntervalFormatted()
-                    tvEnd.text = interval.endIntervalFormatted()
+                    tvStart.text = range.startIntervalFormatted()
+                    tvEnd.text = range.endIntervalFormatted()
                     ivRemove.setOnClickListener(AnimatedClickListener {
                         vibrator.interaction()
-                        viewModel.removeTimeInterval(interval)
+                        viewModel.removeTimeRange(range)
                     })
-                    root.tag = interval.id
+                    root.tag = range.id
                     parent.addViewWithTwoStepsAnimation(root)
                 }
             }

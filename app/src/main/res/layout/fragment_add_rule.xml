@@ -253,13 +253,13 @@
                         android:text="@string/Intervalos_de_tempo"
                         android:textSize="20sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/iv_add_interval"
+                        app:layout_constraintEnd_toStartOf="@id/iv_add_range"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
 
-                        android:id="@+id/iv_add_interval"
+                        android:id="@+id/iv_add_range"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -281,7 +281,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_conteiner_intervals"
+                    android:id="@+id/ll_conteiner_ranges"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:animateLayoutChanges="true"

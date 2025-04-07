@@ -2,7 +2,7 @@ import dev.gmarques.controledenotificacoes.data.local.room.dao.RuleDao
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.RuleMapper
 import dev.gmarques.controledenotificacoes.data.repository.RuleRepositoryImpl
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -26,7 +26,7 @@ class RuleRepositoryImplTest {
 
  @Test
  fun `addRule deve chamar insertRule no dao`() = runBlocking {
-  val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeInterval(8, 0, 12, 0)))
+  val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)))
 
   repository.addRule(rule)
 
@@ -35,7 +35,7 @@ class RuleRepositoryImplTest {
 
  @Test
  fun `updateRule deve chamar updateRule no dao`() = runBlocking {
-  val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeInterval(8, 0, 12, 0)))
+  val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)))
 
   repository.updateRule(rule)
 
@@ -44,7 +44,7 @@ class RuleRepositoryImplTest {
 
  @Test
  fun `removeRule deve chamar deleteRule no dao`() = runBlocking {
-  val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeInterval(8, 0, 12, 0)))
+  val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)))
 
   repository.removeRule(rule)
 
@@ -54,7 +54,7 @@ class RuleRepositoryImplTest {
  @Test
  fun `getRuleById deve retornar regra convertida`() = runBlocking {
   val ruleId = "1"
-  val ruleEntity = RuleMapper.mapToEntity(Rule(ruleId, "Teste", listOf(WeekDay.MONDAY), listOf(TimeInterval(8, 0, 12, 0))))
+  val ruleEntity = RuleMapper.mapToEntity(Rule(ruleId, "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0))))
   `when`(ruleDao.getRuleById(ruleId)).thenReturn(ruleEntity)
 
   val result = repository.getRuleById(ruleId)
@@ -66,8 +66,8 @@ class RuleRepositoryImplTest {
  @Test
  fun `getAllRules deve retornar lista de regras convertidas`() = runBlocking {
   val ruleEntityList = listOf(
-   RuleMapper.mapToEntity(Rule("1", "Teste 1", listOf(WeekDay.MONDAY), listOf(TimeInterval(8, 0, 12, 0)))),
-   RuleMapper.mapToEntity(Rule("2", "Teste 2", listOf(WeekDay.TUESDAY), listOf(TimeInterval(10, 0, 14, 0))))
+   RuleMapper.mapToEntity(Rule("1", "Teste 1", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)))),
+   RuleMapper.mapToEntity(Rule("2", "Teste 2", listOf(WeekDay.TUESDAY), listOf(TimeRange(10, 0, 14, 0))))
   )
   `when`(ruleDao.getAllRules()).thenReturn(ruleEntityList)
 

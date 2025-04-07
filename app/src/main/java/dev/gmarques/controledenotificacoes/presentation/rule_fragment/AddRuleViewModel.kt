@@ -3,7 +3,7 @@ package dev.gmarques.controledenotificacoes.presentation.rule_fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 
@@ -18,20 +18,20 @@ class AddRuleViewModel : ViewModel() {
         _uiState.value = _uiState.value?.copy(ruleType = type)
     }
 
-    fun addTimeInterval(interval: TimeInterval) {
+    fun addTimeRange(range: TimeRange) {
 
-        val update = state.timeIntervals.toMutableMap().apply {
-            this[interval.id] = interval
+        val update = state.timeRanges.toMutableMap().apply {
+            this[range.id] = range
         }
-        updateState(state.copy(timeIntervals = update))
+        updateState(state.copy(timeRanges = update))
     }
 
 
-    fun removeTimeInterval(interval: TimeInterval) {
-        val update = state.timeIntervals.toMutableMap().apply {
-            this.remove(interval.id)
+    fun removeTimeRange(range: TimeRange) {
+        val update = state.timeRanges.toMutableMap().apply {
+            this.remove(range.id)
         }
-        updateState(state.copy(timeIntervals = update))
+        updateState(state.copy(timeRanges = update))
     }
 
     fun updateSelectedDays(days: List<WeekDay>) {

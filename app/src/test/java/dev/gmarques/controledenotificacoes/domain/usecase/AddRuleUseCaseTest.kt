@@ -1,7 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase
 
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
 import kotlinx.coroutines.test.runTest
@@ -27,7 +27,7 @@ class AddRuleUseCaseTest {
         val rule = Rule(
             name = "Regra Teste",
             days = listOf(WeekDay.FRIDAY),
-            timeIntervals = listOf(TimeInterval(10, 30, 11, 35))
+            timeRanges = listOf(TimeRange(10, 30, 11, 35))
         )
 
         useCase.execute(rule)

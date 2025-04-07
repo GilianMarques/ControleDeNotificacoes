@@ -109,7 +109,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 &nbsp;import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
 &nbsp;import dev.gmarques.controledenotificacoes.domain.model.Rule
-&nbsp;import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+&nbsp;import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 &nbsp;import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 &nbsp;import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
 &nbsp;
@@ -126,8 +126,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;        private val weekDayType = Types.newParameterizedType(List::class.java, WeekDay::class.java)</b>
 <b class="nc">&nbsp;        private val weekDayAdapter: JsonAdapter&lt;List&lt;WeekDay&gt;&gt; = moshi.adapter(weekDayType)</b>
 &nbsp;
-<b class="nc">&nbsp;        private val timeIntervalType = Types.newParameterizedType(List::class.java, TimeInterval::class.java)</b>
-<b class="nc">&nbsp;        private val timeIntervalAdapter: JsonAdapter&lt;List&lt;TimeInterval&gt;&gt; = moshi.adapter(timeIntervalType)</b>
+<b class="nc">&nbsp;        private val timeRangeType = Types.newParameterizedType(List::class.java, TimeRange::class.java)</b>
+<b class="nc">&nbsp;        private val timeRangeAdapter: JsonAdapter&lt;List&lt;TimeRange&gt;&gt; = moshi.adapter(timeRangeType)</b>
 &nbsp;
 &nbsp;
 &nbsp;        fun mapToEntity(rule: Rule): RuleEntity {
@@ -138,21 +138,21 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;                id = rule.id,</b>
 <b class="nc">&nbsp;                name = rule.name,</b>
 <b class="nc">&nbsp;                days = daysToString(rule.days),</b>
-<b class="nc">&nbsp;                timeIntervals = hoursToString(rule.timeIntervals),</b>
+<b class="nc">&nbsp;                timeRanges = hoursToString(rule.timeRanges),</b>
 &nbsp;            )
 &nbsp;        }
 &nbsp;
 &nbsp;        /**
-&nbsp;         * Converte uma lista de objetos [TimeInterval] em uma string JSON.
+&nbsp;         * Converte uma lista de objetos [TimeRange] em uma string JSON.
 &nbsp;         *
 &nbsp;         * Esta função usa um adaptador Moshi para serializar uma lista de objetos
-&nbsp;         * [TimeInterval] em sua representação de string JSON.
+&nbsp;         * [TimeRange] em sua representação de string JSON.
 &nbsp;         *
-&nbsp;         * @param timeIntervals A lista de objetos [TimeInterval] a ser convertida.
-&nbsp;         * @return Uma string JSON representando a lista de [TimeInterval]s.
+&nbsp;         * @param timeRanges A lista de objetos [TimeRange] a ser convertida.
+&nbsp;         * @return Uma string JSON representando a lista de [TimeRange]s.
 &nbsp;         */
-&nbsp;        private fun hoursToString(timeIntervals: List&lt;TimeInterval&gt;): String {
-<b class="nc">&nbsp;            return timeIntervalAdapter.toJson(timeIntervals)</b>
+&nbsp;        private fun hoursToString(timeRanges: List&lt;TimeRange&gt;): String {
+<b class="nc">&nbsp;            return timeRangeAdapter.toJson(timeRanges)</b>
 &nbsp;        }
 &nbsp;
 &nbsp;        /**
@@ -172,7 +172,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;         * Converte uma entidade de banco de dados [RuleEntity] em um objeto de domínio [Rule].
 &nbsp;         *
 &nbsp;         * Esta função recebe um objeto [RuleEntity] e mapeia suas propriedades para um
-&nbsp;         * novo objeto [Rule]. As propriedades `days` e `timeIntervals`, que são
+&nbsp;         * novo objeto [Rule]. As propriedades `days` e `timeRanges`, que são
 &nbsp;         * armazenadas como strings na entidade, são desserializadas de volta em listas de
 &nbsp;         * tipos complexos usando adaptadores Moshi.
 &nbsp;         *
@@ -185,23 +185,23 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;                id = entity.id,</b>
 <b class="nc">&nbsp;                name = entity.name,</b>
 <b class="nc">&nbsp;                days = stringToDays(entity.days),</b>
-<b class="nc">&nbsp;                timeIntervals = stringToTimeInterval(entity.timeIntervals),</b>
+<b class="nc">&nbsp;                timeRanges = stringToTimeRange(entity.timeRanges),</b>
 &nbsp;            )
 &nbsp;        }
 &nbsp;
 &nbsp;        /**
-&nbsp;         * Converte uma string JSON representando uma lista de [TimeInterval]s em uma lista de objetos [TimeInterval].
+&nbsp;         * Converte uma string JSON representando uma lista de [TimeRange]s em uma lista de objetos [TimeRange].
 &nbsp;         *
 &nbsp;         * Esta função usa um adaptador Moshi para desserializar uma string JSON de volta
-&nbsp;         * em uma lista de objetos [TimeInterval].
+&nbsp;         * em uma lista de objetos [TimeRange].
 &nbsp;         *
-&nbsp;         * @param timeIntervals A string JSON a ser convertida.
-&nbsp;         * @return Uma lista de objetos [TimeInterval].
+&nbsp;         * @param timeRanges A string JSON a ser convertida.
+&nbsp;         * @return Uma lista de objetos [TimeRange].
 &nbsp;         * @throws NullPointerException se a string de entrada não puder ser desserializada
-&nbsp;         * em uma lista de [TimeInterval].
+&nbsp;         * em uma lista de [TimeRange].
 &nbsp;         */
-&nbsp;        private fun stringToTimeInterval(timeIntervals: String): List&lt;TimeInterval&gt; {
-<b class="nc">&nbsp;            return timeIntervalAdapter.fromJson(timeIntervals)!!</b>
+&nbsp;        private fun stringToTimeRange(timeRanges: String): List&lt;TimeRange&gt; {
+<b class="nc">&nbsp;            return timeRangeAdapter.fromJson(timeRanges)!!</b>
 &nbsp;        }
 &nbsp;
 &nbsp;        /**

@@ -1,42 +1,42 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
-import TimeIntervalValidator
-import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+import TimeRangeValidator
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class TimeIntervalValidatorTest {
+class TimeRangeValidatorTest {
 
     @Test
     fun `ao pasar um objeto invalido, o validador deve retornar um result com falha`() {
 
         //valores fora dos limites aceitos
         val invalidList = listOf(
-            TimeInterval(24, 30, 20, 45),
-            TimeInterval(8, 61, 20, 45),
-            TimeInterval(8, 30, -1, 45),
-            TimeInterval(8, 30, 20, 90),
+            TimeRange(24, 30, 20, 45),
+            TimeRange(8, 61, 20, 45),
+            TimeRange(8, 30, -1, 45),
+            TimeRange(8, 30, 20, 90),
         )
 
         invalidList.forEach {
-            assertTrue { TimeIntervalValidator.validate(it).isFailure }
+            assertTrue { TimeRangeValidator.validate(it).isFailure }
         }
     }
 
     @Test
     fun `ao pasar um intervalo invertido, o validador deve retornar um result com falha`() {
 
-        val i = TimeInterval(8, 30, 7, 29)
+        val i = TimeRange(8, 30, 7, 29)
 
-        assertTrue { TimeIntervalValidator.validate(i).isFailure }
+        assertTrue { TimeRangeValidator.validate(i).isFailure }
     }
 
     @Test
     fun `ao pasar um objeto valido, o validador deve retornar um result com sucesso`() {
 
-        val i = TimeInterval(8, 30, 20, 45)
+        val i = TimeRange(8, 30, 20, 45)
 
-        assertTrue { TimeIntervalValidator.validate(i).isSuccess }
+        assertTrue { TimeRangeValidator.validate(i).isSuccess }
     }
 }

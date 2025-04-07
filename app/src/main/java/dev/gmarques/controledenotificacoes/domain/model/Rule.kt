@@ -12,7 +12,7 @@ data class Rule(
     val id: String = UUID.randomUUID().toString(),
     val name: String,
     val days: List<WeekDay>,
-    val timeIntervals: List<TimeInterval>,
+    val timeRanges: List<TimeRange>,
     val ruleType: RuleType = RuleType.RESTRICTIVE,
 )
 

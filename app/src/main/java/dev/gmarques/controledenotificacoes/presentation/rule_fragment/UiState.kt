@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.rule_fragment
 
-import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 
@@ -13,7 +13,7 @@ import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
  */
 data class UiState(
     val ruleType: RuleType = RuleType.RESTRICTIVE,
-    val timeIntervals: Map<String, TimeInterval> = emptyMap(),
+    val timeRanges: Map<String, TimeRange> = emptyMap(),
     val selectedDays: List<WeekDay> = emptyList(),
     val ruleName: String? = null,
 )

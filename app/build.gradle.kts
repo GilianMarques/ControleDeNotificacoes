@@ -89,7 +89,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1") // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
-    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.1") // Necessário para rodar JUnit 4
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.1") // Necessário para rodar JUnit 4 com o 5
     testImplementation(kotlin("test"))
 
     //navigation

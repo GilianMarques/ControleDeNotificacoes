@@ -1,13 +1,13 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
-import TimeIntervalValidator
+import TimeRangeValidator
 import java.util.UUID
 
 /**
  * Criado por Gilian Marques
  * Em sábado, 29 de março de 2025 às 21:15.
  */
-data class TimeInterval(
+data class TimeRange(
     val startHour: Int,
     val startMinute: Int,
     val endHour: Int,

@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.GetAllRulesUseCase
@@ -33,7 +33,7 @@ class MainActivityViewModel @Inject constructor(
             val rule = Rule(
                 name = "Regra 1",
                 days = listOf(WeekDay.MONDAY, WeekDay.WEDNESDAY),
-                timeIntervals = listOf(TimeInterval(8, 0, 10, 0))
+                timeRanges = listOf(TimeRange(8, 0, 10, 0))
             )
 
             addRuleUseCase.execute(rule)

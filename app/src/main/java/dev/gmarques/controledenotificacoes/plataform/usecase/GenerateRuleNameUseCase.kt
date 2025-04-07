@@ -17,10 +17,10 @@ class GenerateRuleNameUseCase @Inject constructor(
 ) {
     fun execute(rule: Rule): String {
         val formattedDays = formatDays(rule.days)
-        val interval = formatTimeIntervals(rule)
+        val range = formatTimeRanges(rule)
         val ruleType = formatRuleType(rule.ruleType)
 
-        return context.getString(R.string.Nome_padrao_de_regra, ruleType,formattedDays, interval).trim()
+        return context.getString(R.string.Nome_padrao_de_regra, ruleType,formattedDays, range).trim()
     }
 
     private fun formatDays(days: List<WeekDay>): String {
@@ -40,11 +40,11 @@ class GenerateRuleNameUseCase @Inject constructor(
         }
     }
 
-    private fun formatTimeIntervals(rule: Rule): String {
-        if (rule.timeIntervals.isEmpty()) return ""
+    private fun formatTimeRanges(rule: Rule): String {
+        if (rule.timeRanges.isEmpty()) return ""
 
-        val start = rule.timeIntervals.minByOrNull { it.startHour * 60 + it.startMinute }!!
-        val end = rule.timeIntervals.maxByOrNull { it.endHour * 60 + it.endMinute }!!
+        val start = rule.timeRanges.minByOrNull { it.startHour * 60 + it.startMinute }!!
+        val end = rule.timeRanges.maxByOrNull { it.endHour * 60 + it.endMinute }!!
 
         val startTime = formatTime(start.startHour, start.startMinute)
         val endTime = formatTime(end.endHour, end.endMinute)

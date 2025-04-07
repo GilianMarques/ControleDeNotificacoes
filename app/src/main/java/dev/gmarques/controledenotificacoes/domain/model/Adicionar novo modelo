@@ -9,7 +9,7 @@ vai validar todas as propriedades do modelo assim que ele for criado.
 
 - Mapper* (camada de dados)
 vai converter o modelo para sua versao de entidade, string ou qualquer outra estrutura necessaria para uso e vice-versa.
-Se for um objeto atrelado a outro como o TimeInterval, talvez nao precise
+Se for um objeto atrelado a outro como o TimeRange, talvez nao precise
 
 - Dao   (camada de dados)
 Pra uso com o Room (contrato)

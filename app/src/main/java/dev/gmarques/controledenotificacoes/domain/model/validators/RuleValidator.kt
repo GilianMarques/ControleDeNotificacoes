@@ -1,10 +1,13 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
-import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
+import dev.gmarques.controledenotificacoes.domain.exceptions.IntersectedRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
+import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.endInMinutes
+import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.asRange
+import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.startInMinutes
 import java.util.Locale
 
 /**
@@ -16,8 +19,8 @@ object RuleValidator {
     const val MIN_NAME_LENGTH = 3
     const val MAX_NAME_LENGTH = 50
 
-    const val MAX_INTERVALS = 10
-    private const val MIN_INTERVALS = 1
+    const val MAX_RANGES = 10
+    private const val MIN_RANGES = 1
 
     private val baseException = Exception("A validação falhou mas não retornou exceção para lançar, isso é um bug!")
 
@@ -27,7 +30,7 @@ object RuleValidator {
      * Esta função executa uma série de validações no objeto [Rule] fornecido:
      * 1. **Validação de Nome:** Verifica se o nome da regra é válido usando [validateName].
      * 2. **Validação de Dias:** Verifica se os dias da regra são válidos usando [validateDays].
-     * 3. **Validação de Intervalos de Tempo:** Verifica se os intervalos de tempo da regra são válidos usando [validateTimeIntervals].
+     * 3. **Validação de Intervalos de Tempo:** Verifica se os intervalos de tempo da regra são válidos usando [validateTimeRanges].
      *
      * Se alguma dessas validações falhar, a função lança uma exceção. A exceção específica lançada
      * depende do resultado da validação individual.
@@ -48,7 +51,7 @@ object RuleValidator {
 
         validateDays(rule.days).getOrThrow()
 
-        validateTimeIntervals(rule.timeIntervals).getOrThrow()
+        validateTimeRanges(rule.timeRanges).getOrThrow()
 
     }
 
@@ -69,7 +72,6 @@ object RuleValidator {
      * @throws OutOfRangeException se o comprimento do nome capitalizado estiver fora do intervalo permitido.
      */
     fun validateName(name: String): Result<String> {
-
 
 
         val trimmedName = name.trim().replace("\\s+".toRegex(), " ")
@@ -109,34 +111,37 @@ object RuleValidator {
         else Result.success(days)
     }
 
-    /**
-     * Valida uma lista de intervalos de tempo.
-     *
-     * Esta função verifica se o número de intervalos de tempo está dentro de um intervalo válido (1 a 10, inclusive)
-     * e se cada intervalo de tempo individual é válido de acordo com o `TimeIntervalValidator`.
-     *
-     * @param timeIntervals A lista de objetos [TimeInterval] a serem validados.
-     * @return Um objeto [Result]:
-     *   - Se a validação for bem-sucedida, retorna um [Result.success] contendo a lista original de objetos [TimeInterval].
-     *   - Se a validação falhar, retorna um [Result.failure] contendo uma exceção:
-     *     - [OutOfRangeException]: Se o número de intervalos de tempo estiver fora do intervalo permitido (1 a 10).
-     *     - Uma exceção de [TimeIntervalValidator.validate]: Se algum dos intervalos de tempo individuais for inválido.
-     *       A exceção pode ser qualquer uma que `TimeIntervalValidator.validate` possa retornar. Se o resultado do validador não contiver uma exceção, uma `baseException` genérica será retornada.
-     * @throws OutOfRangeException se o número de intervalos de tempo não estiver dentro do intervalo válido.
-     * @throws Exception se qualquer TimeInterval individual for inválido de acordo com TimeIntervalValidator.validate.
-     */
-    fun validateTimeIntervals(timeIntervals: List<TimeInterval>): Result<List<TimeInterval>> {
+    // TODO: documentar
+    fun validateTimeRanges(tr: List<TimeRange>): Result<List<TimeRange>> {
 
-        if (timeIntervals.size !in MIN_INTERVALS..MAX_INTERVALS) return Result.failure(
-            OutOfRangeException("hours: ${timeIntervals.size}", MIN_INTERVALS, MAX_INTERVALS)
+
+        if (tr.size !in MIN_RANGES..MAX_RANGES) return Result.failure(
+            OutOfRangeException("hours: ${tr.size}", MIN_RANGES, MAX_RANGES)
         )
 
-        timeIntervals.forEach { timeInterval ->
-            with(TimeIntervalValidator.validate(timeInterval)) {
+        // TODO: separar essa parte da funçao 
+        val sortedRanges = tr.sortedByDescending { it.startInMinutes() }
+
+        for (i in 0 until sortedRanges.size) {
+            val range = sortedRanges[i]
+
+            if (i + 1 < sortedRanges.size) for (j in i + 1 until sortedRanges.size) {
+                val range2 = sortedRanges[j]
+
+                if (range.startInMinutes() in range2.asRange() ||
+                    range.endInMinutes() in range2.asRange()
+                ) return Result.failure(
+                    IntersectedRangeException(range, range2)
+                )
+            }
+        }
+
+        sortedRanges.forEach { timeRange ->
+            with(TimeRangeValidator.validate(timeRange)) {
                 if (isFailure) return Result.failure(exceptionOrNull() ?: baseException)
             }
         }
 
-        return Result.success(timeIntervals)
+        return Result.success(sortedRanges)
     }
 }
