@@ -1,4 +1,4 @@
-import dev.gmarques.controledenotificacoes.domain.exceptions.InversedIntervalException
+import dev.gmarques.controledenotificacoes.domain.exceptions.InversedRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 
@@ -24,7 +24,7 @@ object TimeRangeValidator {
      *     - **InversedIntervalException:** Se o horário de início for igual ou posterior ao horário de término. A mensagem de exceção fornece os horários de início e término em minutos.
      *
      * @throws OutOfRangeException Se a hora ou minuto não estiverem no intervalo especificado.
-     * @throws InversedIntervalException Se o horário de início for igual ou posterior ao horário de término.
+     * @throws InversedRangeException Se o horário de início for igual ou posterior ao horário de término.
      */
     fun validate(timeRange: TimeRange): Result<TimeRange> {
 
@@ -60,7 +60,7 @@ object TimeRangeValidator {
         val endPeriodMinutes = timeRange.endHour * 60 + timeRange.endMinute
 
         if (startPeriodMinutes >= endPeriodMinutes) return Result.failure(
-            InversedIntervalException(startPeriodMinutes, endPeriodMinutes)
+            InversedRangeException(startPeriodMinutes, endPeriodMinutes)
         )
 
         return Result.success(timeRange)

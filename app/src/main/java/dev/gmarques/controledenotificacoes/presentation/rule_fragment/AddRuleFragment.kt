@@ -283,6 +283,7 @@ class AddRuleFragment : Fragment() {
     private fun validateInterval(range: TimeRange) {
         val validationResult = TimeRangeValidator.validate(range)
         if (validationResult.isSuccess) {
+            // TODO: validar lista com todos os ranges aqui 
             viewModel.addTimeRange(range)
         } else {
             showErrorSnackBar(getString(R.string.O_intervalo_selecionado_era_inv_lido))

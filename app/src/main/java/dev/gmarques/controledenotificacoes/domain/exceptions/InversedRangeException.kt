@@ -4,7 +4,7 @@ package dev.gmarques.controledenotificacoes.domain.exceptions
  * Criado por Gilian Marques
  * Em domingo, 30 de março de 2025 as 15:00.
  */
-class InversedIntervalException(
+class InversedRangeException(
     private val startIntervalMinutes: Int,
     private val endIntervalMinutes: Int,
 ) :

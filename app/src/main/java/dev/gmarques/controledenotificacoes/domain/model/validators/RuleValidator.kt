@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
+import dev.gmarques.controledenotificacoes.domain.exceptions.DuplicateTimeRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.IntersectedRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.Rule
@@ -111,37 +112,83 @@ object RuleValidator {
         else Result.success(days)
     }
 
-    // TODO: documentar
-    fun validateTimeRanges(tr: List<TimeRange>): Result<List<TimeRange>> {
-
-
-        if (tr.size !in MIN_RANGES..MAX_RANGES) return Result.failure(
-            OutOfRangeException("hours: ${tr.size}", MIN_RANGES, MAX_RANGES)
-        )
-
-        // TODO: separar essa parte da funçao 
-        val sortedRanges = tr.sortedByDescending { it.startInMinutes() }
-
-        for (i in 0 until sortedRanges.size) {
-            val range = sortedRanges[i]
-
-            if (i + 1 < sortedRanges.size) for (j in i + 1 until sortedRanges.size) {
-                val range2 = sortedRanges[j]
-
-                if (range.startInMinutes() in range2.asRange() ||
-                    range.endInMinutes() in range2.asRange()
-                ) return Result.failure(
-                    IntersectedRangeException(range, range2)
-                )
-            }
+    /**
+     * Valida uma lista de [TimeRange] garantindo que:
+     * - A quantidade de intervalos está dentro dos limites permitidos
+     * - Não existem intervalos duplicados
+     * - Não existem interseções entre os intervalos
+     * - Cada intervalo individualmente é válido
+     *
+     * @return [Result.success] com os intervalos ordenados se válidos, ou [Result.failure] com a exceção correspondente
+     */
+    fun validateTimeRanges(ranges: List<TimeRange>): Result<List<TimeRange>> {
+        if (!isTimeRangeCountValid(ranges)) {
+            return Result.failure(OutOfRangeException("quantidade de intervalos: ${ranges.size}", MIN_RANGES, MAX_RANGES))
         }
 
-        sortedRanges.forEach { timeRange ->
-            with(TimeRangeValidator.validate(timeRange)) {
-                if (isFailure) return Result.failure(exceptionOrNull() ?: baseException)
-            }
-        }
+        findDuplicateRanges(ranges)?.let { return Result.failure(it) }
 
-        return Result.success(sortedRanges)
+        findIntersectedRanges(ranges)?.let { return Result.failure(it) }
+
+        validateEachTimeRange(ranges)?.let { return Result.failure(it) }
+
+        return Result.success(ranges)
     }
+
+    /**
+     * Verifica se há intervalos de tempo duplicados (com os mesmos valores de hora e minuto).
+     *
+     * @return [DuplicateTimeRangeException] se houver duplicatas, ou null caso contrário.
+     */
+    private fun findDuplicateRanges(ranges: List<TimeRange>): DuplicateTimeRangeException? {
+        // uso pares aninhados pra gerar uma chave, a estrutura é assim:  (((startHour, startMinute), endHour), endMinute)
+        val duplicates = ranges.groupBy { it.startHour to it.startMinute to it.endHour to it.endMinute }
+            .filter { it.value.size > 1 }
+        return if (duplicates.isNotEmpty()) DuplicateTimeRangeException(
+            duplicates.values.first()[0],
+            duplicates.values.first()[1]
+        ) else null
+    }
+
+    /**
+     * Verifica se a quantidade de intervalos está dentro dos limites permitidos.
+     */
+    private fun isTimeRangeCountValid(ranges: List<TimeRange>): Boolean {
+        return ranges.size in MIN_RANGES..MAX_RANGES
+    }
+
+
+    /**
+     * Verifica se há interseções entre os intervalos.
+     */
+    private fun findIntersectedRanges(r: List<TimeRange>): IntersectedRangeException? {
+
+        // necessario colocar do maior pro menor pra verificar as interceçoes em apenas um de dois intervalos
+        val sortedRanges = r.sortedByDescending { it.startInMinutes() }
+
+        for (i in 0 until sortedRanges.size - 1) {
+            val range = sortedRanges[i]
+            for (j in i + 1 until sortedRanges.size) {
+                val other = sortedRanges[j]
+                if (range.startInMinutes() in other.asRange() ||
+                    range.endInMinutes() in other.asRange()
+                ) {
+                    return IntersectedRangeException(range, other)
+                }
+            }
+        }
+        return null
+    }
+
+    /**
+     * Valida cada intervalo individualmente e retorna uma exceção se algum for inválido.
+     */
+    private fun validateEachTimeRange(ranges: List<TimeRange>): Throwable? {
+        ranges.forEach { range ->
+            val result = TimeRangeValidator.validate(range)
+            if (result.isFailure) return result.exceptionOrNull() ?: baseException
+        }
+        return null
+    }
+
 }
