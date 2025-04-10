@@ -122,46 +122,41 @@ class AddRuleFragment : Fragment() {
      */
     private fun setupChipDays() = with(binding) {
 
-        val animateChipCheck = { buttonView: View, index: Int ->
-            chipGroup.removeView(buttonView)
-            chipGroup.addView(buttonView, index)
+        val animateChipCheck = { chip: View, index: Int ->
+            chipGroup.removeView(chip)
+            chipGroup.addView(chip, index)
             vibrator.interaction()
         }
 
+        val weekDayByNumber = WeekDay.entries.associateBy { it.dayNumber }
+
         for (view in chipGroup.children) {
+            val chip = view as Chip
 
-
-            (view as Chip).setOnCheckedChangeListener { buttonView, checked ->
+            chip.setOnCheckedChangeListener { buttonView, _ ->
 
                 animateChipCheck(buttonView, chipGroup.indexOfChild(buttonView))
 
-                val days = chipGroup.children
+                val selectedDays = chipGroup.children
                     .filter { (it as Chip).isChecked }
                     .map {
-                        when (it.tag.toString().toInt()) {
-                            // TODO: tentar otimizar isso
-                            WeekDay.SUNDAY.dayNumber -> WeekDay.SUNDAY
-                            WeekDay.MONDAY.dayNumber -> WeekDay.MONDAY
-                            WeekDay.TUESDAY.dayNumber -> WeekDay.TUESDAY
-                            WeekDay.WEDNESDAY.dayNumber -> WeekDay.WEDNESDAY
-                            WeekDay.THURSDAY.dayNumber -> WeekDay.THURSDAY
-                            WeekDay.FRIDAY.dayNumber -> WeekDay.FRIDAY
-                            WeekDay.SATURDAY.dayNumber -> WeekDay.SATURDAY
-                            else -> throw IllegalStateException("Dia inválido: ${it.tag}")
-                        }
+                        val dayNum = it.tag.toString().toIntOrNull()
+                            ?: error("Tag não é um número inteiro: ${it.tag}")
+                        weekDayByNumber[dayNum]
+                            ?: error("Dia inválido: $dayNum")
                     }
 
-                viewModel.updateSelectedDays(days.toList())
-
+                viewModel.updateSelectedDays(selectedDays)
             }
         }
     }
 
+
     private fun setupButtonTypeRule() = with(binding) {
-        mbtTypeRule.addOnButtonCheckedListener { toggleButton, checkedId, isChecked ->
+        mbtTypeRule.addOnButtonCheckedListener { toggleButton, _, _ ->
             vibrator.interaction()
 
-            if (tvRuleTypeInfo.isGone) tvRuleTypeInfo.visibility = VISIBLE
+            tvRuleTypeInfo.visibility = VISIBLE
 
             when (toggleButton.checkedButtonId) {
                 R.id.btn_permissive -> {
@@ -396,22 +391,21 @@ class AddRuleFragment : Fragment() {
     }
 
     /**
-     * Atualiza o estado de seleção (marcado/desmarcado) dos chips no `chipGroup` com base na lista fornecida de objetos `WeekDay`
-     * obtida indiretamente atraves da observação do estado da ui no viewmodel
+     * Atualiza o estado de seleção dos chips no `chipGroup` com base na lista de `WeekDay`.
      *
-     * Esta função percorre cada chip no `chipGroup` e determina se ele deve ser marcado, verificando se o número do dia associado a ele está presente na lista de `days` fornecida.
+     * Cada chip é identificado pelo número do dia (0 a 6) definido em sua tag.
      *
-     * @param days Uma lista de objetos `WeekDay` representando os dias que devem ser selecionados (marcados).
+     * @param days Lista de objetos `WeekDay` representando os dias selecionados.
      */
     private fun updateSelectedDaysChips(days: List<WeekDay>) = with(binding) {
-        // TODO: tentar otimizar
-        val numberDays = days.map { it.dayNumber }
+        val numberDaysSet = days.map { it.dayNumber }.toSet()
 
-        // uso a tag que defini em cada chip pra associar o objeto [WeekDay] com a view correspondente
-        chipGroup.children.toList().forEach { chip ->
-            (chip as Chip).isChecked = numberDays.contains(chip.tag!!.toString().toInt())
+        chipGroup.children.forEach { chip ->
+            val dayNumber = chip.tag as Int
+            (chip as Chip).isChecked = dayNumber in numberDaysSet
         }
     }
+
 
     /**
      * Gerencia dinamicamente as views de TimeRange na UI, garantindo transições visuais suaves.
