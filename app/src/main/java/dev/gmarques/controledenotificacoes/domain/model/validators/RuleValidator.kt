@@ -23,7 +23,6 @@ object RuleValidator {
     const val MAX_RANGES = 10
     private const val MIN_RANGES = 1
 
-    private val baseException = Exception("A validação falhou mas não retornou exceção para lançar, isso é um bug!")
 
     /**
      * Valida um objeto [Rule] verificando seu nome, dias e intervalos de tempo.
@@ -113,13 +112,25 @@ object RuleValidator {
     }
 
     /**
-     * Valida uma lista de [TimeRange] garantindo que:
-     * - A quantidade de intervalos está dentro dos limites permitidos
-     * - Não existem intervalos duplicados
-     * - Não existem interseções entre os intervalos
-     * - Cada intervalo individualmente é válido
+     * Valida uma lista de objetos [TimeRange], garantindo que eles atendam aos seguintes critérios:
+     * - O número de intervalos de tempo está dentro dos limites permitidos (definidos por `MIN_RANGES` e `MAX_RANGES`).
+     * - Não há intervalos de tempo duplicados.
+     * - Nenhum intervalo de tempo se sobrepõe (intercepta) a outro.
+     * - Cada intervalo de tempo individual na lista é válido (por exemplo, o horário de início é anterior ao horário de término).
      *
-     * @return [Result.success] com os intervalos ordenados se válidos, ou [Result.failure] com a exceção correspondente
+     * Se todos os critérios forem atendidos, a função retorna um [Result.success] contendo a lista de intervalos de tempo, ordenados por seu horário de início.
+     * Se algum critério não for atendido, a função retorna um [Result.failure] contendo uma exceção que descreve o problema específico.
+     *
+     * @param ranges A lista de objetos [TimeRange] a serem validados.
+     * @return Um objeto [Result]:
+     *         - [Result.success] contendo a lista ordenada de [TimeRange] se todos os intervalos forem válidos.
+     *         - [Result.failure] contendo uma exceção se alguma validação falhar:
+     *           - [OutOfRangeException] se o número de intervalos estiver fora dos limites permitidos.
+     *           - Uma [DuplicateTimeRangeException] retornada por [findDuplicateRanges] se existirem intervalos duplicados.
+     *           - Uma  [IntersectedRangeException] por [findIntersectedRanges] se existirem intervalos sobrepostos.
+     *           - Uma exceção retornada por [validateEachTimeRange] se algum intervalo individual for inválido.
+     *           - [OutOfRangeException] se o número de intervalos estiver fora dos limites permitidos.
+     *
      */
     fun validateTimeRanges(ranges: List<TimeRange>): Result<List<TimeRange>> {
         if (!isTimeRangeCountValid(ranges)) {
@@ -157,7 +168,6 @@ object RuleValidator {
         return ranges.size in MIN_RANGES..MAX_RANGES
     }
 
-
     /**
      * Verifica se há interseções entre os intervalos.
      */
@@ -186,7 +196,7 @@ object RuleValidator {
     private fun validateEachTimeRange(ranges: List<TimeRange>): Throwable? {
         ranges.forEach { range ->
             val result = TimeRangeValidator.validate(range)
-            if (result.isFailure) return result.exceptionOrNull() ?: baseException
+            if (result.isFailure) return result.exceptionOrNull()!!
         }
         return null
     }

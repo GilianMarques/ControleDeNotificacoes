@@ -47,5 +47,7 @@
     <string name="Nome_da_regra">Nome da regra</string>
     <string name="Intervalo_inicio_fim">%1$s-%2$s</string>
     <string name="Nome_padrao_de_regra">%1$s %2$s %3$s</string>
+    <string name="Nao_e_possivel_adicionar_um_intervalo_de_tempo_duplicado">Não é possível adicionar um intervalo de tempo duplicado</string>
+    <string name="Nao_sao_permitidos_intervalos_de_tempo_que_se_interseccionam">"Não são permitidos intervalos de tempo que se sobrepõem. "</string>
 
 </resources>

@@ -19,9 +19,12 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
 import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
+import dev.gmarques.controledenotificacoes.domain.exceptions.DuplicateTimeRangeException
+import dev.gmarques.controledenotificacoes.domain.exceptions.IntersectedRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
+import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
 import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.endIntervalFormatted
@@ -119,13 +122,37 @@ class AddRuleFragment : Fragment() {
      */
     private fun setupChipDays() = with(binding) {
 
+        val animateChipCheck = { buttonView: View, index: Int ->
+            chipGroup.removeView(buttonView)
+            chipGroup.addView(buttonView, index)
+            vibrator.interaction()
+        }
+
         for (view in chipGroup.children) {
-            val chip = view as Chip
-            chip.setOnCheckedChangeListener { buttonView, _ ->
-                val index = chipGroup.indexOfChild(buttonView)
-                chipGroup.removeView(buttonView)
-                chipGroup.addView(buttonView, index)
-                vibrator.interaction()
+
+
+            (view as Chip).setOnCheckedChangeListener { buttonView, checked ->
+
+                animateChipCheck(buttonView, chipGroup.indexOfChild(buttonView))
+
+                val days = chipGroup.children
+                    .filter { (it as Chip).isChecked }
+                    .map {
+                        when (it.tag.toString().toInt()) {
+                            // TODO: tentar otimizar isso
+                            WeekDay.SUNDAY.dayNumber -> WeekDay.SUNDAY
+                            WeekDay.MONDAY.dayNumber -> WeekDay.MONDAY
+                            WeekDay.TUESDAY.dayNumber -> WeekDay.TUESDAY
+                            WeekDay.WEDNESDAY.dayNumber -> WeekDay.WEDNESDAY
+                            WeekDay.THURSDAY.dayNumber -> WeekDay.THURSDAY
+                            WeekDay.FRIDAY.dayNumber -> WeekDay.FRIDAY
+                            WeekDay.SATURDAY.dayNumber -> WeekDay.SATURDAY
+                            else -> throw IllegalStateException("Dia inválido: ${it.tag}")
+                        }
+                    }
+
+                viewModel.updateSelectedDays(days.toList())
+
             }
         }
     }
@@ -203,7 +230,7 @@ class AddRuleFragment : Fragment() {
      *
      * @throws IllegalStateException Se a função `showTimePicker` não estiver devidamente definida ou implementada na classe circundante.
      * @see showTimePicker
-     * @see validateInterval
+     * @see validateRange
      * @see TimeRange
      */
     private fun collectIntervalData() {
@@ -213,7 +240,7 @@ class AddRuleFragment : Fragment() {
             showTimePicker(data[2], data[3], false) { hour, minute ->
                 data[2] = hour
                 data[3] = minute
-                validateInterval(TimeRange(data[0], data[1], data[2], data[3]))
+                validateRange(TimeRange(data[0], data[1], data[2], data[3]))
             }
         }
 
@@ -280,14 +307,55 @@ class AddRuleFragment : Fragment() {
         activity?.supportFragmentManager?.let { picker.show(it, "TimePicker") }
     }
 
-    private fun validateInterval(range: TimeRange) {
+    /**
+     * Valida um [TimeRange] individualmente e caso seja um objeto válido
+     * chama a funçao responsavel por validar to_do o conjunto de TimeRanges do objeto regra
+     * para só entao, caso o objeto seja valido por si só e como parte de uma lista de outros objetos
+     * ser adicionao efetivamente a lista de TimeRanges do objeto regra.*/
+    private fun validateRange(range: TimeRange) {
+
         val validationResult = TimeRangeValidator.validate(range)
+
         if (validationResult.isSuccess) {
-            // TODO: validar lista com todos os ranges aqui 
-            viewModel.addTimeRange(range)
+            validateRangesSequence(range)
         } else {
             showErrorSnackBar(getString(R.string.O_intervalo_selecionado_era_inv_lido))
         }
+    }
+
+    /**
+     * Valida um novo TimeRange em relação à sequência existente de TimeRanges no estado do ViewModel.
+     *
+     * A função verifica se a adição do novo `range` à lista de TimeRanges existentes é válida,
+     * considerando regras como: limite máximo de intervalos, duplicatas e interseções.
+     *
+     * Se a validação for bem-sucedida, o `range` é adicionado ao ViewModel.
+     * Se falhar, uma mensagem de erro específica é exibida ao usuário, identificando a causa da falha.
+     *
+     * @param range O novo `TimeRange` a ser validado e potencialmente adicionado à sequência.
+     * @throws IllegalStateException Se a validação falhar com uma exceção inesperada, ou se não houver exceção quando a validação falha.
+     */
+    private fun validateRangesSequence(range: TimeRange) {
+
+        val ranges = viewModel.uiState.value?.timeRanges?.values.orEmpty() + range
+        val result = RuleValidator.validateTimeRanges(ranges)
+
+        if (result.isSuccess) {
+            viewModel.addTimeRange(range)
+            return
+        }
+
+        val exception = result.exceptionOrNull()
+            ?: throw IllegalStateException("Em caso de erro deve haver uma exceção para lançar. Isso é um bug!")
+
+        val messageResId = when (exception) {
+            is OutOfRangeException -> R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido
+            is DuplicateTimeRangeException -> R.string.Nao_e_possivel_adicionar_um_intervalo_de_tempo_duplicado
+            is IntersectedRangeException -> R.string.Nao_sao_permitidos_intervalos_de_tempo_que_se_interseccionam
+            else -> throw IllegalStateException("Exceção não prevista. Isso é um bug! ${exception.message}")
+        }
+
+        showErrorSnackBar(getString(messageResId, RuleValidator.MAX_RANGES))
     }
 
     /**
@@ -318,6 +386,30 @@ class AddRuleFragment : Fragment() {
             with(it.ruleName) {
                 binding.edtName.setText(this)
             }
+
+            with(it.selectedDays) {
+                updateSelectedDaysChips(this)
+            }
+
+
+        }
+    }
+
+    /**
+     * Atualiza o estado de seleção (marcado/desmarcado) dos chips no `chipGroup` com base na lista fornecida de objetos `WeekDay`
+     * obtida indiretamente atraves da observação do estado da ui no viewmodel
+     *
+     * Esta função percorre cada chip no `chipGroup` e determina se ele deve ser marcado, verificando se o número do dia associado a ele está presente na lista de `days` fornecida.
+     *
+     * @param days Uma lista de objetos `WeekDay` representando os dias que devem ser selecionados (marcados).
+     */
+    private fun updateSelectedDaysChips(days: List<WeekDay>) = with(binding) {
+        // TODO: tentar otimizar
+        val numberDays = days.map { it.dayNumber }
+
+        // uso a tag que defini em cada chip pra associar o objeto [WeekDay] com a view correspondente
+        chipGroup.children.toList().forEach { chip ->
+            (chip as Chip).isChecked = numberDays.contains(chip.tag!!.toString().toInt())
         }
     }
 
