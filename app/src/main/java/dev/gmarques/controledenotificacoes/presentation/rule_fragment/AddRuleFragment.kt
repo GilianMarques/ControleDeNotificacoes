@@ -146,10 +146,13 @@ class AddRuleFragment : Fragment() {
                             ?: error("Dia inválido: $dayNum")
                     }
 
-                viewModel.updateSelectedDays(selectedDays)
+                viewModel.updateSelectedDays(selectedDays.toList())
             }
         }
     }
+
+
+    
 
 
     private fun setupButtonTypeRule() = with(binding) {
