@@ -2,14 +2,19 @@ package dev.gmarques.controledenotificacoes.presentation.rule_fragment
 
 import TimeRangeValidator
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -32,10 +37,12 @@ import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.st
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class AddRuleFragment : Fragment() {
+
 
     @Inject
     lateinit var vibrator: VibratorInterface
@@ -59,13 +66,56 @@ class AddRuleFragment : Fragment() {
         setupButtonAddInterval()
         setupFabAddRule()
         observeStateChanges()
+        collectEvents()
 
         super.onViewCreated(view, savedInstanceState)
     }
 
+
+    private fun observeStateChanges() {
+        viewModel.uiState.observe(viewLifecycleOwner) {
+
+            with(it.timeRanges) {
+                manageIntervalViews(this)
+            }
+
+            with(it.ruleName) {
+                binding.edtName.setText(this)
+            }
+
+            with(it.selectedDays) {
+                updateSelectedDaysChips(this)
+            }
+
+            with(it.ruleType) {
+                updateButtonTypeRule(this)
+            }
+
+
+        }
+    }
+
+    private fun collectEvents() {
+        // TODO: sera que da pra usar menos codigo aqui??
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEvent.collect { event ->
+                    when (event) {
+                        is UiEvent.ErrorEvent -> {
+                            showErrorSnackBar(event.message)
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+
     private fun setupFabAddRule() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
             edtName.clearFocus()
+            viewModel.validateAndSaveRule()
         })
     }
 
@@ -92,9 +142,7 @@ class AddRuleFragment : Fragment() {
                 is OutOfRangeException -> {
                     showErrorSnackBar(
                         getString(
-                            R.string.O_nome_deve_ter_entre_e_caracteres,
-                            exception.minLength,
-                            exception.maxLength
+                            R.string.O_nome_deve_ter_entre_e_caracteres, exception.minLength, exception.maxLength
                         )
                     )
                 }
@@ -137,42 +185,26 @@ class AddRuleFragment : Fragment() {
 
                 animateChipCheck(buttonView, chipGroup.indexOfChild(buttonView))
 
-                val selectedDays = chipGroup.children
-                    .filter { (it as Chip).isChecked }
-                    .map {
-                        val dayNum = it.tag.toString().toIntOrNull()
-                            ?: error("Tag não é um número inteiro: ${it.tag}")
-                        weekDayByNumber[dayNum]
-                            ?: error("Dia inválido: $dayNum")
-                    }
+                val selectedDays = chipGroup.children.filter { (it as Chip).isChecked }.map {
+                    val dayNum = it.tag.toString().toInt()
+                    weekDayByNumber[dayNum]!!
+                }
 
                 viewModel.updateSelectedDays(selectedDays.toList())
             }
         }
     }
 
-
-    
-
-
     private fun setupButtonTypeRule() = with(binding) {
         mbtTypeRule.addOnButtonCheckedListener { toggleButton, _, _ ->
-            vibrator.interaction()
 
-            tvRuleTypeInfo.visibility = VISIBLE
+            vibrator.interaction()
+            viewModel.ignoreFirstCallToUpdateTypeRule = false
 
             when (toggleButton.checkedButtonId) {
-                R.id.btn_permissive -> {
-                    viewModel.updateRuleType(RuleType.PERMISSIVE)
-                    tvRuleTypeInfo.text =
-                        getString(R.string.Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados)
-                }
+                R.id.btn_permissive -> viewModel.updateRuleType(RuleType.PERMISSIVE)
 
-                R.id.btn_restritive -> {
-                    viewModel.updateRuleType(RuleType.RESTRICTIVE)
-                    tvRuleTypeInfo.text =
-                        getString(R.string.As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados)
-                }
+                R.id.btn_restritive -> viewModel.updateRuleType(RuleType.RESTRICTIVE)
             }
         }
     }
@@ -197,8 +229,7 @@ class AddRuleFragment : Fragment() {
             } else {
                 showErrorSnackBar(
                     getString(
-                        R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido,
-                        RuleValidator.MAX_RANGES
+                        R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido, RuleValidator.MAX_RANGES
                     )
                 )
             }
@@ -285,16 +316,12 @@ class AddRuleFragment : Fragment() {
         callback: (Int, Int) -> Unit,
     ) {
 
-        val picker = MaterialTimePicker.Builder()
-            .setTimeFormat(TimeFormat.CLOCK_24H)
-            .setHour(hour)
-            .setMinute(minute)
-            .setTitleText(
+        val picker =
+            MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).setHour(hour).setMinute(minute).setTitleText(
                 if (isStartTime) getString(R.string.Selecione_o_in_cio_do_intervalo_de_tempo) else getString(
                     R.string.Selecione_o_fim_do_intervalo_de_tempo
                 )
-            )
-            .build()
+            ).build()
 
         picker.isCancelable = false
 
@@ -374,23 +401,28 @@ class AddRuleFragment : Fragment() {
         vibrator.error()
     }
 
-    private fun observeStateChanges() {
-        viewModel.uiState.observe(viewLifecycleOwner) {
+    private fun updateButtonTypeRule(ruleType: RuleType) = with(binding) {
 
-            with(it.timeRanges) {
-                manageIntervalViews(this)
-            }
-
-            with(it.ruleName) {
-                binding.edtName.setText(this)
-            }
-
-            with(it.selectedDays) {
-                updateSelectedDaysChips(this)
-            }
-
-
+        if (viewModel.editingRule == null && viewModel.ignoreFirstCallToUpdateTypeRule) {
+            Log.d(
+                "USUK",
+                "AddRuleFragment.".plus("updateButtonTypeRule() ignorando atualizaçao do btntyperule ignoreFirstCallToUpdateTypeRule = ${viewModel.ignoreFirstCallToUpdateTypeRule}")
+            )
+            return@with
         }
+        Log.d("USUK", "AddRuleFragment.".plus("updateButtonTypeRule() atualizando botao"))
+
+        tvRuleTypeInfo.visibility = VISIBLE
+
+        if (ruleType == RuleType.PERMISSIVE) {
+            mbtTypeRule.check(R.id.btn_permissive)
+            tvRuleTypeInfo.text = getString(R.string.Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados)
+
+        } else {
+            mbtTypeRule.check(R.id.btn_restritive)
+            tvRuleTypeInfo.text = getString(R.string.As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados)
+        }
+
     }
 
     /**
@@ -404,11 +436,10 @@ class AddRuleFragment : Fragment() {
         val numberDaysSet = days.map { it.dayNumber }.toSet()
 
         chipGroup.children.forEach { chip ->
-            val dayNumber = chip.tag as Int
+            val dayNumber = chip.tag.toString().toInt()
             (chip as Chip).isChecked = dayNumber in numberDaysSet
         }
     }
-
 
     /**
      * Gerencia dinamicamente as views de TimeRange na UI, garantindo transições visuais suaves.
@@ -431,24 +462,20 @@ class AddRuleFragment : Fragment() {
 
         val parent = binding.llConteinerRanges
 
-        parent.children
-            .filter { it.tag !in timeRanges.keys }
-            .forEach { parent.removeView(it) }
+        parent.children.filter { it.tag !in timeRanges.keys }.forEach { parent.removeView(it) }
 
-        timeRanges.values
-            .filter { range -> parent.children.none { it.tag == range.id } }
-            .forEach { range ->
-                with(ItemIntervalBinding.inflate(layoutInflater)) {
-                    tvStart.text = range.startIntervalFormatted()
-                    tvEnd.text = range.endIntervalFormatted()
-                    ivRemove.setOnClickListener(AnimatedClickListener {
-                        vibrator.interaction()
-                        viewModel.removeTimeRange(range)
-                    })
-                    root.tag = range.id
-                    parent.addViewWithTwoStepsAnimation(root)
-                }
+        timeRanges.values.filter { range -> parent.children.none { it.tag == range.id } }.forEach { range ->
+            with(ItemIntervalBinding.inflate(layoutInflater)) {
+                tvStart.text = range.startIntervalFormatted()
+                tvEnd.text = range.endIntervalFormatted()
+                ivRemove.setOnClickListener(AnimatedClickListener {
+                    vibrator.interaction()
+                    viewModel.removeTimeRange(range)
+                })
+                root.tag = range.id
+                parent.addViewWithTwoStepsAnimation(root)
             }
+        }
     }
 
 }

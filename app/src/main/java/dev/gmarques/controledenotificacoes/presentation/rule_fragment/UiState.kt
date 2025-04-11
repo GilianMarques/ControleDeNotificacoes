@@ -9,7 +9,7 @@ import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
  * Em quarta-feira, 02 de abril de 2025 as 21:51.
  *
  *
- * Obs: Estao é algo imutavel. As propriedades devem ser imutaveis.
+ * Obs: Estado é algo imutavel. As propriedades devem ser imutaveis.
  */
 data class UiState(
     val ruleType: RuleType = RuleType.RESTRICTIVE,

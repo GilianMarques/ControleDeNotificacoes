@@ -3,19 +3,29 @@ package dev.gmarques.controledenotificacoes.presentation.rule_fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 class AddRuleViewModel : ViewModel() {
+
+    var ignoreFirstCallToUpdateTypeRule: Boolean = true
+
+    val editingRule: Rule? = null
 
     private var state = UiState()
 
     private val _uiState = MutableLiveData(state)
     val uiState: LiveData<UiState> get() = _uiState
 
+    private val _uiEvent = MutableSharedFlow<UiEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
+
     fun updateRuleType(type: RuleType) {
-        _uiState.value = _uiState.value?.copy(ruleType = type)
+        updateState(state.copy(ruleType = type))
     }
 
     fun addTimeRange(range: TimeRange) {
@@ -25,7 +35,6 @@ class AddRuleViewModel : ViewModel() {
         }
         updateState(state.copy(timeRanges = update))
     }
-
 
     fun removeTimeRange(range: TimeRange) {
         val update = state.timeRanges.toMutableMap().apply {
@@ -41,7 +50,6 @@ class AddRuleViewModel : ViewModel() {
     fun updateRuleName(name: String) {
         updateState(state.copy(ruleName = name))
     }
-
 
     /**
      * Atualiza o estado interno e publica o novo estado no LiveData.
@@ -64,6 +72,10 @@ class AddRuleViewModel : ViewModel() {
     private fun updateState(newState: UiState) {
         state = newState
         _uiState.postValue(state)
+    }
+
+    fun validateAndSaveRule() {
+        _uiEvent.tryEmit(UiEvent.ErrorEvent("Deu bosta!"))
     }
 
 }
