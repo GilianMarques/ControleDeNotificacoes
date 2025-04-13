@@ -14,9 +14,7 @@ import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
  * Criado por Gilian Marques
  * Em sábado, 29 de março de 2025 as 21:49.
  */
-class RuleMapper {
-
-    companion object {
+object RuleMapper {
 
         private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
@@ -116,5 +114,4 @@ class RuleMapper {
             return weekDayAdapter.fromJson(days)!!
         }
 
-    }
 }

@@ -1,7 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.rule_fragment
 
+import TimeRangeValidator
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,16 +19,17 @@ import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.usecase.AddRuleUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.UpdateRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.collections.plus
 
 @HiltViewModel
 class AddRuleViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addRuleUseCase: AddRuleUseCase,
+    private val updateRuleUseCase: UpdateRuleUseCase,
 ) : ViewModel() {
 
 
@@ -156,6 +157,15 @@ class AddRuleViewModel @Inject constructor(
 
     }
 
+    fun setEditingRule(rule: Rule) {
+        editingRule = rule
+
+        updateRuleName(rule.name)
+        updateRuleType(rule.ruleType)
+        updateSelectedDays(rule.days)
+        rule.timeRanges.forEach { addTimeRange(it) }
+    }
+
     fun validateAndSaveRule() {
 
         if (validateName(ruleName).isFailure) return
@@ -173,7 +183,10 @@ class AddRuleViewModel @Inject constructor(
     }
 
     private fun saveRule(rule: Rule) = viewModelScope.launch(IO) {
-        addRuleUseCase.execute(rule)
+
+        if (editingRule == null) addRuleUseCase.execute(rule)
+        else updateRuleUseCase.execute(rule)
+
         val event = _uiEvents.value!!
         _uiEvents.postValue(event.copy(navigateHomeEvent = EventWrapper(true)))
     }

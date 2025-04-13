@@ -11,6 +11,9 @@ import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
+import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
+import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.presentation.home_fragment.HomeFragmentDirections
 
 @AndroidEntryPoint
@@ -20,6 +23,7 @@ import dev.gmarques.controledenotificacoes.presentation.home_fragment.HomeFragme
  */
 class MainActivity : AppCompatActivity() {
 
+    @Suppress("unused")
     private val viewModel: MainActivityViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -40,8 +44,18 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
+        val rule = Rule(
+            name = "teste",
+            days = listOf(WeekDay.SATURDAY, WeekDay.SUNDAY),
+            timeRanges = listOf(
+                TimeRange(9, 16, 14, 27),
+                TimeRange(15, 0, 16, 49),
+                TimeRange(18, 0, 20, 49),
+            )
+        )
+
         if (navHostFragment.navController.currentDestination?.id == R.id.homeFragment) navController.navigate(
-            HomeFragmentDirections.actionHomeFragmentToAddRuleFragment()
+            HomeFragmentDirections.actionHomeFragmentToAddRuleFragment(rule)
         )
     }
 }

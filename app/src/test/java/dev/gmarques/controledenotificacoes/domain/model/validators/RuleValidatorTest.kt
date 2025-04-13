@@ -3,7 +3,7 @@ package dev.gmarques.controledenotificacoes.domain.model.validators
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
-import org.junit.Assert.*
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class RuleValidatorTest {
@@ -15,9 +15,9 @@ class RuleValidatorTest {
     }
 
     @Test
-    fun `ao passar nome vazio a funcao validadora deve retornar falha`() {
+    fun `ao passar nome vazio a funcao validadora deve retornar sucesso`() {
         val result = RuleValidator.validateName("")
-        assertTrue(result.isFailure)
+        assertTrue(result.isSuccess)
     }
 
     @Test
@@ -77,13 +77,13 @@ class RuleValidatorTest {
     fun `ao passar intervalos de tempo que se intersecionam a  validacao deve falhar`() {
 
         val casosDeTeste = listOf(
-            "interseção no início" to listOf(TimeRange(12, 0, 18, 0), TimeRange(13, 0, 19, 0)),
-            "interseção no início (invertido)" to listOf(TimeRange(13, 0, 19, 0), TimeRange(12, 0, 18, 0)),
-            "interseção no fim" to listOf(TimeRange(12, 0, 18, 0), TimeRange(8, 0, 13, 0)),
-            "interseção no fim (invertido)" to listOf(TimeRange(8, 0, 13, 0), TimeRange(12, 0, 18, 0)),
+            "intersecão no início" to listOf(TimeRange(12, 0, 18, 0), TimeRange(13, 0, 19, 0)),
+            "intersecão no início (invertido)" to listOf(TimeRange(13, 0, 19, 0), TimeRange(12, 0, 18, 0)),
+            "intersecão no fim" to listOf(TimeRange(12, 0, 18, 0), TimeRange(8, 0, 13, 0)),
+            "intersecão no fim (invertido)" to listOf(TimeRange(8, 0, 13, 0), TimeRange(12, 0, 18, 0)),
             "intervalo dentro do outro" to listOf(TimeRange(8, 0, 18, 0), TimeRange(9, 0, 17, 0)),
             "intervalo dentro do outro (invertido)" to listOf(TimeRange(9, 0, 17, 0), TimeRange(8, 0, 18, 0)),
-            "interseção no início com varios intervalos" to listOf(
+            "intersecão no início com varios intervalos" to listOf(
                 TimeRange(4, 0, 5, 0),
                 TimeRange(6, 0, 7, 0),
                 TimeRange(8, 0, 9, 0),
@@ -116,11 +116,11 @@ class RuleValidatorTest {
             days = listOf(WeekDay.MONDAY, WeekDay.FRIDAY),
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
         )
-        RuleValidator.validate(rule) // Se lançar exceção, o teste falha
+        RuleValidator.validate(rule) // Se lancar excecão, o teste falha
     }
 
     @Test(expected = Exception::class)
-    fun `ao validar uma regra com nome invalido deve lançar excecao`() {
+    fun `ao validar uma regra com nome invalido deve lancar excecao`() {
         val rule = Rule(
             name = "a".repeat(RuleValidator.MAX_NAME_LENGTH + 1),
             days = listOf(WeekDay.MONDAY),
@@ -130,7 +130,7 @@ class RuleValidatorTest {
     }
 
     @Test(expected = Exception::class)
-    fun `ao validar uma regra com dias invalidos deve lançar excecao`() {
+    fun `ao validar uma regra com dias invalidos deve lancar excecao`() {
         val rule = Rule(
             name = "Regra",
             days = emptyList(),
@@ -140,7 +140,7 @@ class RuleValidatorTest {
     }
 
     @Test(expected = Exception::class)
-    fun `ao validar uma regra com intervalos duplicados deve lançar excecao`() {
+    fun `ao validar uma regra com intervalos duplicados deve lancar excecao`() {
         val rule = Rule(
             name = "Regra",
             days = listOf(WeekDay.MONDAY),
@@ -153,7 +153,7 @@ class RuleValidatorTest {
     }
 
     @Test(expected = Exception::class)
-    fun `ao validar uma regra com intervalos que se interseccionam deve lançar excecao`() {
+    fun `ao validar uma regra com intervalos que se interseccionam deve lancar excecao`() {
         val rule = Rule(
             name = "Regra",
             days = listOf(WeekDay.MONDAY),

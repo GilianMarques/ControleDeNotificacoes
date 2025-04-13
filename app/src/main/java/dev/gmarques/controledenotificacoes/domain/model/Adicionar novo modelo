@@ -23,7 +23,6 @@ e entao sera enviado para o DAO pra ser salvo.
 
 - Teste tudo!
 
-todo    da pra chamar validaçao no init?????
-Importante: o novo modelo deve chamar a classe validadora atraves de seu bloco init para se validar logo após sua instanciação.
-Ao adicionar um novo modelo recomendo fortemente que copie objeto [Rule] e modifique de acordo com as necessidades. Vai ser mais
+
+Importante: Ao adicionar um novo modelo recomendo fortemente que copie objeto [Rule] e modifique de acordo com as necessidades. Vai ser mais
 facil.

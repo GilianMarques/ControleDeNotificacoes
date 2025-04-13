@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.rule_fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
@@ -46,6 +46,9 @@ class AddRuleFragment() : Fragment() {
 
     private lateinit var binding: FragmentAddRuleBinding
 
+    val args: AddRuleFragmentArgs by navArgs()
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -57,12 +60,14 @@ class AddRuleFragment() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+
         setupToolbar()
         setupNameInput()
         setupButtonTypeRule()
         setupChipDays()
         setupBtnAddTimeRange()
         setupFabAddRule()
+        setupEditingModeIfNeeded()
         observeEditingRule()
         observeRuleType()
         observeTimeRanges()
@@ -71,6 +76,12 @@ class AddRuleFragment() : Fragment() {
         observeEvents()
 
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun setupEditingModeIfNeeded() {
+        args.editingRule?.let {
+            viewModel.setEditingRule(it)
+        }
     }
 
     private fun goBack() {
@@ -203,32 +214,7 @@ class AddRuleFragment() : Fragment() {
         })
     }
 
-    /**
-     * Coleta e valida os dados de um intervalo de tempo do usuário através de um seletor de tempo (time picker).
-     *
-     * Esta função orquestra o processo de coleta dos horários de início e fim para um intervalo de tempo.
-     * Ela utiliza um seletor de tempo para obter os valores de hora e minuto do usuário. Primeiramente,
-     * solicita ao usuário que selecione o horário de início. Após a seleção do horário de início,
-     * solicita ao usuário que selecione o horário de fim. Finalmente, após ambos os horários de início
-     * e fim terem sido selecionados, ela valida se o intervalo selecionado é válido.
-     *
-     * Os dados de tempo são armazenados em um array de inteiros `data` com a seguinte estrutura:
-     * - `data[0]`: Hora de início (0-23)
-     * - `data[1]`: Minuto de início (0-59)
-     * - `data[2]`: Hora de fim (0-23)
-     * - `data[3]`: Minuto de fim (0-59)
-     *
-     * A função utiliza duas funções lambda:
-     * - `collectEndValues`: Coleta o horário de fim (hora e minuto) usando o seletor de tempo e atualiza os elementos correspondentes no array `data`. Após a coleta do horário de fim, ela chama `validateInterval` para validar o intervalo completo.
-     * - `collectStartValues`: Coleta o horário de início (hora e minuto) usando o seletor de tempo e atualiza os elementos correspondentes no array `data`. Após a coleta do horário de início, ela então chama `collectEndValues` para coletar o horário de fim.
-     *
-     * Finalmente, a função chama `collectStartValues` para iniciar o processo.
-     *
-     * @throws IllegalStateException Se a função `showTimePicker` não estiver devidamente definida ou implementada na classe circundante.
-     * @see showTimePicker
-     * @see validateRange
-     * @see TimeRange
-     */
+
     private fun collectIntervalData() {
         val data = intArrayOf(8, 0, 18, 0)
 
@@ -445,5 +431,7 @@ class AddRuleFragment() : Fragment() {
 
     }
 }
+
+
 
 
