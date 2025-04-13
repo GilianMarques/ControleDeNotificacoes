@@ -34,25 +34,25 @@ object TimeRangeValidator {
 
         if (timeRange.startHour !in hourRange) return Result.failure(
             OutOfRangeException(
-                "startHour: ${timeRange.startHour}", hourRange.first, hourRange.last
+                hourRange.first, hourRange.last, timeRange.startHour
             )
         )
 
         if (timeRange.endHour !in hourRange) return Result.failure(
             OutOfRangeException(
-                "endHour: ${timeRange.endHour}", hourRange.first, hourRange.last
+                hourRange.first, hourRange.last, timeRange.endHour
             )
         )
 
         if (timeRange.startMinute !in minuteRange) return Result.failure(
             OutOfRangeException(
-                "startMinute: ${timeRange.startMinute}", minuteRange.first, minuteRange.last
+                minuteRange.first, minuteRange.last, timeRange.startMinute
             )
         )
 
         if (timeRange.endMinute !in minuteRange) return Result.failure(
             OutOfRangeException(
-                "endMinute: ${timeRange.endMinute}", minuteRange.first, minuteRange.last
+                minuteRange.first, minuteRange.last, timeRange.endMinute
             )
         )
 

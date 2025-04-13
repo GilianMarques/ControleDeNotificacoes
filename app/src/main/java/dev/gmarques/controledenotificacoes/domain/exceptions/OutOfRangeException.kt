@@ -11,7 +11,7 @@ package dev.gmarques.controledenotificacoes.domain.exceptions
  * personalizadas na camada de UI
  */
 class OutOfRangeException(
-    val details: String,
     val minLength: Int,
     val maxLength: Int,
-) : Exception("O range valido é de $minLength a $maxLength. Detalhes: $details")
+    val actual: Int,
+) : Exception("O range valido é de $minLength a $maxLength. valor atual: $actual")

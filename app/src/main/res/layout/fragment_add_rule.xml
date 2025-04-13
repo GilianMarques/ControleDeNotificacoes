@@ -135,10 +135,9 @@
                     android:layout_margin="8dp"
                     android:drawablePadding="8dp"
                     android:text="@string/As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados"
-                    android:visibility="gone"
                     app:drawableStartCompat="@drawable/vec_details"
                     app:drawableTint="?attr/colorPrimary"
-                    tools:visibility="visible" />
+                     />
 
             </LinearLayout>
 

@@ -72,7 +72,7 @@ object RuleValidator {
      * @throws OutOfRangeException se o comprimento do nome capitalizado estiver fora do intervalo permitido.
      */
     fun validateName(name: String): Result<String> {
-
+        if (name.isEmpty()) return Result.success(name)
 
         val trimmedName = name.trim().replace("\\s+".toRegex(), " ")
         val capitalizedName = trimmedName.split(" ").joinToString(" ") { word ->
@@ -84,7 +84,7 @@ object RuleValidator {
 
         if (capitalizedName.length !in MIN_NAME_LENGTH..MAX_NAME_LENGTH) {
             return Result.failure(
-                OutOfRangeException("capitalizedName: ${capitalizedName.length}", MIN_NAME_LENGTH, MAX_NAME_LENGTH)
+                OutOfRangeException(MIN_NAME_LENGTH, MAX_NAME_LENGTH, capitalizedName.length)
             )
         }
 
@@ -107,8 +107,9 @@ object RuleValidator {
     fun validateDays(days: List<WeekDay>): Result<List<WeekDay>> {
         val minDays = 1
         val maxDays = 7
-        return if (days.size !in minDays..maxDays) Result.failure(OutOfRangeException("days: ${days.size}", minDays, maxDays))
-        else Result.success(days)
+        return if (days.size !in minDays..maxDays) {
+            Result.failure(OutOfRangeException(minDays, maxDays, days.size))
+        } else Result.success(days)
     }
 
     /**
@@ -134,7 +135,7 @@ object RuleValidator {
      */
     fun validateTimeRanges(ranges: List<TimeRange>): Result<List<TimeRange>> {
         if (!isTimeRangeCountValid(ranges)) {
-            return Result.failure(OutOfRangeException("quantidade de intervalos: ${ranges.size}", MIN_RANGES, MAX_RANGES))
+            return Result.failure(OutOfRangeException(MIN_RANGES, MAX_RANGES, ranges.size))
         }
 
         findDuplicateRanges(ranges)?.let { return Result.failure(it) }
@@ -153,11 +154,10 @@ object RuleValidator {
      */
     private fun findDuplicateRanges(ranges: List<TimeRange>): DuplicateTimeRangeException? {
         // uso pares aninhados pra gerar uma chave, a estrutura é assim:  (((startHour, startMinute), endHour), endMinute)
-        val duplicates = ranges.groupBy { it.startHour to it.startMinute to it.endHour to it.endMinute }
-            .filter { it.value.size > 1 }
+        val duplicates =
+            ranges.groupBy { it.startHour to it.startMinute to it.endHour to it.endMinute }.filter { it.value.size > 1 }
         return if (duplicates.isNotEmpty()) DuplicateTimeRangeException(
-            duplicates.values.first()[0],
-            duplicates.values.first()[1]
+            duplicates.values.first()[0], duplicates.values.first()[1]
         ) else null
     }
 
@@ -180,9 +180,7 @@ object RuleValidator {
             val range = sortedRanges[i]
             for (j in i + 1 until sortedRanges.size) {
                 val other = sortedRanges[j]
-                if (range.startInMinutes() in other.asRange() ||
-                    range.endInMinutes() in other.asRange()
-                ) {
+                if (range.startInMinutes() in other.asRange() || range.endInMinutes() in other.asRange()) {
                     return IntersectedRangeException(range, other)
                 }
             }

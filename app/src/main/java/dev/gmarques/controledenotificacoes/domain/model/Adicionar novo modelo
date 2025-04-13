@@ -5,7 +5,7 @@ com propriedades de tipo adequado para inserção no database. Se o objeto nao t
  especifica talvez nao precise de uma entity
 
 - Validador (camada de domino)
-vai validar todas as propriedades do modelo assim que ele for criado.
+vai validar todas as propriedades do modelo antes dele ser convertido em entity* pelo seu repositorio para ser salvo no db
 
 - Mapper* (camada de dados)
 vai converter o modelo para sua versao de entidade, string ou qualquer outra estrutura necessaria para uso e vice-versa.
@@ -18,9 +18,12 @@ Pra uso com o Room (contrato)
 Não esqueça de incluir o bind no modulo de dados do hilt
 
 - Usecases (camada de domino)
+Vai passar  o objeto para o usecase que vai passar ara o repositorio ondese sera feita a validaçao e conversao em entity
+e entao sera enviado para o DAO pra ser salvo.
 
 - Teste tudo!
 
+todo    da pra chamar validaçao no init?????
 Importante: o novo modelo deve chamar a classe validadora atraves de seu bloco init para se validar logo após sua instanciação.
 Ao adicionar um novo modelo recomendo fortemente que copie objeto [Rule] e modifique de acordo com as necessidades. Vai ser mais
 facil.

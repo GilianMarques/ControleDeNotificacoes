@@ -1,81 +1,254 @@
 package dev.gmarques.controledenotificacoes.presentation.rule_fragment
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
+import dev.gmarques.controledenotificacoes.domain.exceptions.DuplicateTimeRangeException
+import dev.gmarques.controledenotificacoes.domain.exceptions.IntersectedRangeException
+import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
+import dev.gmarques.controledenotificacoes.domain.usecase.AddRuleUseCase
+import dev.gmarques.controledenotificacoes.presentation.EventWrapper
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+import kotlin.collections.plus
 
-class AddRuleViewModel : ViewModel() {
+@HiltViewModel
+class AddRuleViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val addRuleUseCase: AddRuleUseCase,
+) : ViewModel() {
 
-    var ignoreFirstCallToUpdateTypeRule: Boolean = true
 
-    val editingRule: Rule? = null
+    private var editingRule: Rule? = null
+    private var ruleType: RuleType = RuleType.RESTRICTIVE
+    private var timeRanges: HashMap<String, TimeRange> = HashMap()
+    private var selectedDays: List<WeekDay> = emptyList()
+    private var ruleName: String = ""
 
-    private var state = UiState()
 
-    private val _uiState = MutableLiveData(state)
-    val uiState: LiveData<UiState> get() = _uiState
+    private val _editingRuleLd = MutableLiveData<Rule?>(null)
+    val editingRuleLd: LiveData<Rule?> = _editingRuleLd
 
-    private val _uiEvent = MutableSharedFlow<UiEvent>()
-    val uiEvent = _uiEvent.asSharedFlow()
+    private val _ruleTypeLd = MutableLiveData<RuleType>(RuleType.RESTRICTIVE)
+    val ruleTypeLd: LiveData<RuleType> = _ruleTypeLd
+
+    private val _timeRangesLd = MutableLiveData<Map<String, TimeRange>>(emptyMap())
+    val timeRangesLd: LiveData<Map<String, TimeRange>> = _timeRangesLd
+
+    private val _selectedDaysLd = MutableLiveData<List<WeekDay>>(emptyList())
+    val selectedDaysLd: LiveData<List<WeekDay>> = _selectedDaysLd
+
+    private val _ruleNameLd = MutableLiveData<String>("")
+    val ruleNameLd: LiveData<String> = _ruleNameLd
+
+    private val _uiEvents = MutableLiveData(UiEvents())
+    val uiEvents: LiveData<UiEvents> get() = _uiEvents
 
     fun updateRuleType(type: RuleType) {
-        updateState(state.copy(ruleType = type))
+        ruleType = type
+        _ruleTypeLd.postValue(ruleType)
     }
 
     fun addTimeRange(range: TimeRange) {
 
-        val update = state.timeRanges.toMutableMap().apply {
-            this[range.id] = range
-        }
-        updateState(state.copy(timeRanges = update))
+        timeRanges[range.id] = range
+        _timeRangesLd.postValue(timeRanges.toMap())
     }
 
     fun removeTimeRange(range: TimeRange) {
-        val update = state.timeRanges.toMutableMap().apply {
-            this.remove(range.id)
-        }
-        updateState(state.copy(timeRanges = update))
+
+        timeRanges.remove(range.id)
+        _timeRangesLd.postValue(timeRanges.toMap())
     }
 
     fun updateSelectedDays(days: List<WeekDay>) {
-        updateState(state.copy(selectedDays = days))
+        selectedDays = days
+        _selectedDaysLd.postValue(selectedDays)
     }
 
     fun updateRuleName(name: String) {
-        updateState(state.copy(ruleName = name))
+        ruleName = name
+        _ruleNameLd.postValue(ruleName)
+    }
+
+    fun canAddMoreRanges(): Boolean {
+        return timeRanges.size < RuleValidator.MAX_RANGES
     }
 
     /**
-     * Atualiza o estado interno e publica o novo estado no LiveData.
+     * Valida um [TimeRange] individualmente e caso seja um objeto válido
+     * chama a funçao responsavel por validar to_do o conjunto de TimeRanges do objeto regra
+     * para só entao, caso o objeto seja valido por si só e como parte de uma lista de outros objetos
+     * ser adicionao efetivamente a lista de TimeRanges do objeto regra.*/
+    fun validateRange(range: TimeRange): Result<TimeRange> {
+
+        val validationResult = TimeRangeValidator.validate(range)
+
+        if (validationResult.isFailure) {
+            val event = _uiEvents.value!!
+            _uiEvents.postValue(
+                event.copy(
+                    simpleErrorMessageEvent = EventWrapper(context.getString(R.string.O_intervalo_selecionado_era_inv_lido))
+                )
+            )
+        }
+
+        return validationResult
+    }
+
+    /**
+     *Essa função serve para validar se um range recém inserido é compatível com os demais ranges da lista antes de
+     * adicionar de fato. Esse funçao deve ser chamada pela camada de UI sempre que um novo range for adicionado.
      *
-     * Esta função é responsável por:
-     * 1. Atualizar a variável privada `state` com o `newState` fornecido.
-     * 2. Publicar o valor atualizado de `state` no LiveData `_uiState`, o que dispara notificações para os observadores sobre a mudança.
-     *
-     * Esta função deve ser chamada sempre que uma alteração no estado da UI (Interface do Usuário) ocorrer.
-     *
-     * **Observação sobre a decisão de projeto:**
-     * Inicialmente, a intenção era realizar a atualização do `_uiState` diretamente no *setter* (definidor) da variável `state`.
-     * No entanto, essa abordagem foi considerada uma **má prática**. Isso ocorre porque delegar a lógica de atualização do LiveData ao *setter* da variável `state` criaria uma **complexidade oculta**.
-     * Ou seja, haveria um ponto de alteração de estado não explícito, o que poderia levar a **bugs difíceis de rastrear e corrigir no futuro**, já que a mudança do `_uiState` ocorreria de forma indireta toda vez que `state` fosse alterado.
-     * Portanto, optamos por criar esta função `updateState` **explícita** para centralizar e tornar clara a lógica de atualização do estado e do LiveData.
-     * Dessa forma, a responsabilidade de atualizar o `_uiState` fica bem definida e visível, melhorando a **manutenibilidade e a legibilidade do código**, prevenindo assim os potenciais problemas de complexidade oculta.
-     *
-     * @param newState O novo estado da UI a ser definido.
+     * @param range O novo `TimeRange` a ser validado e potencialmente adicionado à sequência.
+     * @throws IllegalStateException Se a validação falhar com uma exceção inesperada, ou se não houver exceção quando a validação falha.
      */
-    private fun updateState(newState: UiState) {
-        state = newState
-        _uiState.postValue(state)
+    fun validateRangesWithSequenceAndAdd(range: TimeRange): Result<List<TimeRange>> {
+
+        val ranges = timeRanges.values + range
+        val result = RuleValidator.validateTimeRanges(ranges)
+
+        if (result.isSuccess) {
+            addTimeRange(range)
+            return result
+        }
+        notifyErrorValidatingRanges(result)
+        return result
+    }
+
+    /**Caso as validaçoes de [validateRangesWithSequenceAndAdd] e [validateRangesWithSequenceAndAdd] falhem
+     * essa função etrata o erro e envia uma mensagem pra ui
+     * @param result O resultado da validação dos ranges.
+     */
+    private fun notifyErrorValidatingRanges(result: Result<List<TimeRange>>) {
+
+        val exception = result.exceptionOrNull()
+            ?: throw IllegalStateException("Em caso de erro deve haver uma exceção para lançar. Isso é um bug!")
+
+        val message = when (exception) {
+            is OutOfRangeException -> {
+                if (exception.actual == 0) context.getString(R.string.adicione_pelo_menos_um_intervalo_de_tempo)
+                else context.getString(
+                    R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido, RuleValidator.MAX_RANGES
+                )
+            }
+
+            is DuplicateTimeRangeException -> context.getString(R.string.Nao_e_possivel_adicionar_um_intervalo_de_tempo_duplicado)
+            is IntersectedRangeException -> context.getString(R.string.Nao_sao_permitidos_intervalos_de_tempo_que_se_interseccionam)
+            else -> throw IllegalStateException("Exceção não prevista. Isso é um bug! ${exception.message}")
+        }
+
+        val event = _uiEvents.value!!
+        _uiEvents.postValue(event.copy(simpleErrorMessageEvent = EventWrapper(message)))
+
     }
 
     fun validateAndSaveRule() {
-        _uiEvent.tryEmit(UiEvent.ErrorEvent("Deu bosta!"))
+
+        if (validateName(ruleName).isFailure) return
+        if (validateDays(selectedDays).isFailure) return
+        if (validateRanges(timeRanges.map { it.value }).isFailure) return
+
+        val rule = Rule(
+            name = ruleName,
+            ruleType = ruleType,
+            days = selectedDays,
+            timeRanges = timeRanges.values.toList()
+        )
+
+        saveRule(rule)
+    }
+
+    private fun saveRule(rule: Rule) = viewModelScope.launch(IO) {
+        addRuleUseCase.execute(rule)
+        val event = _uiEvents.value!!
+        _uiEvents.postValue(event.copy(navigateHomeEvent = EventWrapper(true)))
+    }
+
+    /**
+     * Valida todos os ranges antes de criar um [Rule]
+     * */
+    private fun validateRanges(ranges: List<TimeRange>): Result<List<TimeRange>> {
+        val result = RuleValidator.validateTimeRanges(ranges)
+
+        if (result.isFailure) {
+            notifyErrorValidatingRanges(result)
+        }
+
+        return result
+
+    }
+
+    fun validateDays(days: List<WeekDay>): Result<List<WeekDay>> {
+
+        val result = RuleValidator.validateDays(days)
+
+        if (result.isFailure) {
+            when (result.getOrNull()) {
+
+                else -> {
+                    val event = _uiEvents.value!!
+                    _uiEvents.postValue(
+                        event.copy(
+                            simpleErrorMessageEvent = EventWrapper(
+                                context.getString(R.string.Selecione_pelo_menos_um_dia_da_semana)
+                            )
+                        )
+                    )
+                }
+            }
+        }
+        return result
+    }
+
+    fun validateName(name: String): Result<String> {
+
+        val result = RuleValidator.validateName(name)
+
+        if (result.isSuccess) {
+            updateRuleName(result.getOrThrow())
+        } else {
+
+            val event = _uiEvents.value!!
+
+            when (val exception = result.exceptionOrNull()) {
+
+                is BlankNameException -> _uiEvents.postValue(
+                    event.copy(
+                        nameErrorMessageEvent = EventWrapper(
+                            context.getString(R.string.O_nome_n_o_pode_ficar_em_branco)
+                        )
+                    )
+                )
+
+                is OutOfRangeException -> _uiEvents.postValue(
+                    event.copy(
+                        nameErrorMessageEvent = EventWrapper(
+                            context.getString(
+                                R.string.O_nome_deve_ter_entre_e_caracteres, exception.minLength, exception.maxLength
+                            )
+                        )
+                    )
+                )
+
+                else -> throw IllegalStateException("Exceção não tratada $exception")
+            }
+        }
+
+        return result
     }
 
 }

@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes.data.repository
 import dev.gmarques.controledenotificacoes.data.local.room.dao.RuleDao
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.RuleMapper
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
 import javax.inject.Inject
 
@@ -13,10 +14,12 @@ import javax.inject.Inject
 class RuleRepositoryImpl @Inject constructor(private val ruleDao: RuleDao) : RuleRepository {
 
     override suspend fun addRule(rule: Rule) {
+        RuleValidator.validate(rule)
         ruleDao.insertRule(RuleMapper.mapToEntity(rule))
     }
 
     override suspend fun updateRule(rule: Rule) {
+        RuleValidator.validate(rule)
         ruleDao.updateRule(RuleMapper.mapToEntity(rule))
     }
 

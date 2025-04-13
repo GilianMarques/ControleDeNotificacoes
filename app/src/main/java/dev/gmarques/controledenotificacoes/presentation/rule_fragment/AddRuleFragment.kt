@@ -1,20 +1,17 @@
 package dev.gmarques.controledenotificacoes.presentation.rule_fragment
 
-import TimeRangeValidator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -23,10 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
-import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
-import dev.gmarques.controledenotificacoes.domain.exceptions.DuplicateTimeRangeException
-import dev.gmarques.controledenotificacoes.domain.exceptions.IntersectedRangeException
-import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
@@ -37,16 +30,20 @@ import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.st
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddRuleFragment : Fragment() {
-
+class AddRuleFragment() : Fragment() {
+    var doNotNotifyViewModelTypeRule: Boolean = true
 
     @Inject
     lateinit var vibrator: VibratorInterface
+
     private val viewModel: AddRuleViewModel by viewModels()
+
     private lateinit var binding: FragmentAddRuleBinding
 
     override fun onCreateView(
@@ -60,92 +57,54 @@ class AddRuleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        setupToolbar()
         setupNameInput()
         setupButtonTypeRule()
         setupChipDays()
-        setupButtonAddInterval()
+        setupBtnAddTimeRange()
         setupFabAddRule()
-        observeStateChanges()
-        collectEvents()
+        observeEditingRule()
+        observeRuleType()
+        observeTimeRanges()
+        observeSelectedDays()
+        observeRuleName()
+        observeEvents()
 
         super.onViewCreated(view, savedInstanceState)
     }
 
-
-    private fun observeStateChanges() {
-        viewModel.uiState.observe(viewLifecycleOwner) {
-
-            with(it.timeRanges) {
-                manageIntervalViews(this)
-            }
-
-            with(it.ruleName) {
-                binding.edtName.setText(this)
-            }
-
-            with(it.selectedDays) {
-                updateSelectedDaysChips(this)
-            }
-
-            with(it.ruleType) {
-                updateButtonTypeRule(this)
-            }
-
-
-        }
+    private fun goBack() {
+        this@AddRuleFragment.findNavController().navigateUp()
     }
 
-    private fun collectEvents() {
-        // TODO: sera que da pra usar menos codigo aqui??
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiEvent.collect { event ->
-                    when (event) {
-                        is UiEvent.ErrorEvent -> {
-                            showErrorSnackBar(event.message)
-                        }
-                    }
-                }
-            }
-        }
+    private fun setupToolbar() = with(binding) {
+        toolbar.ivGoBack.setOnClickListener(AnimatedClickListener {
+            vibrator.interaction()
+            goBack()
+        })
+
+        toolbar.tvTitle.text = getString(R.string.Adicionar_regra)
+
+        toolbar.ivMenu.isGone = true
 
     }
-
 
     private fun setupFabAddRule() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
             edtName.clearFocus()
-            viewModel.validateAndSaveRule()
+            lifecycleScope.launch {
+                fabAdd.isEnabled = false
+                async { viewModel.validateAndSaveRule() }
+                delay(1500)
+                fabAdd.isEnabled = true
+            }
         })
     }
 
     private fun setupNameInput() = with(binding) {
         edtName.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
-                validateName(edtName.text.toString())
-            }
-
-        }
-    }
-
-    private fun validateName(name: String) {
-        val result = RuleValidator.validateName(name)
-        if (result.isSuccess) {
-            viewModel.updateRuleName(result.getOrThrow())
-        } else {
-            when (val exception = result.exceptionOrNull()) {
-                is BlankNameException -> {
-                    showErrorSnackBar(getString(R.string.O_nome_n_o_pode_ficar_em_branco))
-                    binding.edtName.error = getString(R.string.O_nome_n_o_pode_ficar_em_branco)
-                }
-
-                is OutOfRangeException -> {
-                    showErrorSnackBar(
-                        getString(
-                            R.string.O_nome_deve_ter_entre_e_caracteres, exception.minLength, exception.maxLength
-                        )
-                    )
-                }
+                viewModel.validateName(edtName.text.toString())
             }
         }
     }
@@ -182,30 +141,37 @@ class AddRuleFragment : Fragment() {
             val chip = view as Chip
 
             chip.setOnCheckedChangeListener { buttonView, _ ->
-
                 animateChipCheck(buttonView, chipGroup.indexOfChild(buttonView))
 
                 val selectedDays = chipGroup.children.filter { (it as Chip).isChecked }.map {
                     val dayNum = it.tag.toString().toInt()
                     weekDayByNumber[dayNum]!!
-                }
+                }.toList()
 
-                viewModel.updateSelectedDays(selectedDays.toList())
+                viewModel.updateSelectedDays(selectedDays)
+
+                viewModel.validateDays(selectedDays)
             }
         }
+
+        edtName.clearFocus()
     }
 
     private fun setupButtonTypeRule() = with(binding) {
-        mbtTypeRule.addOnButtonCheckedListener { toggleButton, _, _ ->
+        mbtTypeRule.addOnButtonCheckedListener { group: MaterialButtonToggleGroup, btnId: Int, checked: Boolean ->
+
+            if (doNotNotifyViewModelTypeRule) {
+                doNotNotifyViewModelTypeRule = false
+                return@addOnButtonCheckedListener
+            }
 
             vibrator.interaction()
-            viewModel.ignoreFirstCallToUpdateTypeRule = false
 
-            when (toggleButton.checkedButtonId) {
+            when (group.checkedButtonId) {
                 R.id.btn_permissive -> viewModel.updateRuleType(RuleType.PERMISSIVE)
-
                 R.id.btn_restritive -> viewModel.updateRuleType(RuleType.RESTRICTIVE)
             }
+            edtName.clearFocus()
         }
     }
 
@@ -221,10 +187,10 @@ class AddRuleFragment : Fragment() {
      * @see AnimatedClickListener Para detalhes sobre a animação aplicada ao clique.
      * @see collectIntervalData A função chamada quando o botão é clicado.
      */
-    private fun setupButtonAddInterval() = with(binding) {
+    private fun setupBtnAddTimeRange() = with(binding) {
         ivAddRange.setOnClickListener(AnimatedClickListener {
             vibrator.interaction()
-            if ((viewModel.uiState.value?.timeRanges?.size ?: 0) < RuleValidator.MAX_RANGES) {
+            if (viewModel.canAddMoreRanges()) {
                 collectIntervalData()
             } else {
                 showErrorSnackBar(
@@ -233,6 +199,7 @@ class AddRuleFragment : Fragment() {
                     )
                 )
             }
+            edtName.clearFocus()
         })
     }
 
@@ -269,7 +236,12 @@ class AddRuleFragment : Fragment() {
             showTimePicker(data[2], data[3], false) { hour, minute ->
                 data[2] = hour
                 data[3] = minute
-                validateRange(TimeRange(data[0], data[1], data[2], data[3]))
+
+                val range = TimeRange(data[0], data[1], data[2], data[3])
+                val rangeResult = viewModel.validateRange(range)
+                if (rangeResult.isSuccess) {
+                    viewModel.validateRangesWithSequenceAndAdd(range)
+                }
             }
         }
 
@@ -332,56 +304,6 @@ class AddRuleFragment : Fragment() {
         activity?.supportFragmentManager?.let { picker.show(it, "TimePicker") }
     }
 
-    /**
-     * Valida um [TimeRange] individualmente e caso seja um objeto válido
-     * chama a funçao responsavel por validar to_do o conjunto de TimeRanges do objeto regra
-     * para só entao, caso o objeto seja valido por si só e como parte de uma lista de outros objetos
-     * ser adicionao efetivamente a lista de TimeRanges do objeto regra.*/
-    private fun validateRange(range: TimeRange) {
-
-        val validationResult = TimeRangeValidator.validate(range)
-
-        if (validationResult.isSuccess) {
-            validateRangesSequence(range)
-        } else {
-            showErrorSnackBar(getString(R.string.O_intervalo_selecionado_era_inv_lido))
-        }
-    }
-
-    /**
-     * Valida um novo TimeRange em relação à sequência existente de TimeRanges no estado do ViewModel.
-     *
-     * A função verifica se a adição do novo `range` à lista de TimeRanges existentes é válida,
-     * considerando regras como: limite máximo de intervalos, duplicatas e interseções.
-     *
-     * Se a validação for bem-sucedida, o `range` é adicionado ao ViewModel.
-     * Se falhar, uma mensagem de erro específica é exibida ao usuário, identificando a causa da falha.
-     *
-     * @param range O novo `TimeRange` a ser validado e potencialmente adicionado à sequência.
-     * @throws IllegalStateException Se a validação falhar com uma exceção inesperada, ou se não houver exceção quando a validação falha.
-     */
-    private fun validateRangesSequence(range: TimeRange) {
-
-        val ranges = viewModel.uiState.value?.timeRanges?.values.orEmpty() + range
-        val result = RuleValidator.validateTimeRanges(ranges)
-
-        if (result.isSuccess) {
-            viewModel.addTimeRange(range)
-            return
-        }
-
-        val exception = result.exceptionOrNull()
-            ?: throw IllegalStateException("Em caso de erro deve haver uma exceção para lançar. Isso é um bug!")
-
-        val messageResId = when (exception) {
-            is OutOfRangeException -> R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido
-            is DuplicateTimeRangeException -> R.string.Nao_e_possivel_adicionar_um_intervalo_de_tempo_duplicado
-            is IntersectedRangeException -> R.string.Nao_sao_permitidos_intervalos_de_tempo_que_se_interseccionam
-            else -> throw IllegalStateException("Exceção não prevista. Isso é um bug! ${exception.message}")
-        }
-
-        showErrorSnackBar(getString(messageResId, RuleValidator.MAX_RANGES))
-    }
 
     /**
      * Exibe um Snackbar de erro com a mensagem de erro fornecida e aciona uma vibração como feedback.
@@ -402,17 +324,6 @@ class AddRuleFragment : Fragment() {
     }
 
     private fun updateButtonTypeRule(ruleType: RuleType) = with(binding) {
-
-        if (viewModel.editingRule == null && viewModel.ignoreFirstCallToUpdateTypeRule) {
-            Log.d(
-                "USUK",
-                "AddRuleFragment.".plus("updateButtonTypeRule() ignorando atualizaçao do btntyperule ignoreFirstCallToUpdateTypeRule = ${viewModel.ignoreFirstCallToUpdateTypeRule}")
-            )
-            return@with
-        }
-        Log.d("USUK", "AddRuleFragment.".plus("updateButtonTypeRule() atualizando botao"))
-
-        tvRuleTypeInfo.visibility = VISIBLE
 
         if (ruleType == RuleType.PERMISSIVE) {
             mbtTypeRule.check(R.id.btn_permissive)
@@ -478,4 +389,61 @@ class AddRuleFragment : Fragment() {
         }
     }
 
+    private fun observeEditingRule() {
+        viewModel.editingRuleLd.observe(viewLifecycleOwner) { rule ->
+            // Lógica para quando o editingRule mudar
+        }
+    }
+
+    private fun observeRuleType() {
+        viewModel.ruleTypeLd.observe(viewLifecycleOwner) { type ->
+            doNotNotifyViewModelTypeRule = true
+            updateButtonTypeRule(type)
+        }
+    }
+
+    private fun observeTimeRanges() {
+        viewModel.timeRangesLd.observe(viewLifecycleOwner) { ranges ->
+            manageIntervalViews(ranges)
+        }
+    }
+
+    private fun observeSelectedDays() {
+        viewModel.selectedDaysLd.observe(viewLifecycleOwner) { days ->
+            updateSelectedDaysChips(days)
+        }
+    }
+
+    private fun observeRuleName() {
+        viewModel.ruleNameLd.observe(viewLifecycleOwner) { name ->
+            binding.edtName.setText(name)
+        }
+    }
+
+    private fun observeEvents() {
+        viewModel.uiEvents.observe(viewLifecycleOwner) { event ->
+
+            with(event.simpleErrorMessageEvent.consume()) {
+                if (this != null) showErrorSnackBar(this)
+            }
+
+            with(event.nameErrorMessageEvent.consume()) {
+                if (this != null) {
+                    binding.edtName.error = this
+                    showErrorSnackBar(this)
+                }
+            }
+
+            with(event.navigateHomeEvent.consume()) {
+                if (this != null) {
+                    vibrator.success()
+                    goBack()
+                }
+            }
+
+        }
+
+    }
 }
+
+
