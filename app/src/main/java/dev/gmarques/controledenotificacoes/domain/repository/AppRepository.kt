@@ -10,8 +10,19 @@ import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
  */
 interface AppRepository {
 
+
     /**
-     * Retorna todos os aplicativos instalados que podem ser iniciados pelo usuário.
+     * Recupera uma lista de aplicativos instalados no dispositivo.
+     *
+     * Esta função retorna uma lista de objetos [InstalledApp] representando os aplicativos instalados no dispositivo.
+     * Você pode filtrar os resultados fornecendo um `targetName`.
+     *
+     * @param targetName A string usada para filtrar os aplicativos pelo nome.
+     *                   Se fornecida, apenas os aplicativos cujo nome começa com esta string serão retornados.
+     *                   Se a string estiver vazia, todos os aplicativos instalados serão retornados.
+     *
+     * @return Uma lista de objetos [InstalledApp] que correspondem aos critérios especificados.
+     *         Retorna uma lista vazia se nenhum aplicativo correspondente for encontrado.
      */
-    suspend fun getInstalledApps(): List<InstalledApp>
+    suspend fun getInstalledApps(targetName: String): List<InstalledApp>
 }

@@ -30,7 +30,7 @@ class AddRuleUseCaseTest {
             timeRanges = listOf(TimeRange(10, 30, 11, 35))
         )
 
-        useCase.execute(rule)
+        useCase(rule)
 
         verify(repository).addRule(rule)
     }

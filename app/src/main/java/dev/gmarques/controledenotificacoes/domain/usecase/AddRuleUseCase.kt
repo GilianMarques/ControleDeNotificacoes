@@ -9,7 +9,7 @@ import javax.inject.Inject
  */
 class AddRuleUseCase @Inject constructor(private val repository: RuleRepository) {
 
-    suspend fun execute(rule: Rule) {
+    suspend operator fun invoke(rule: Rule) {
         repository.addRule(rule)
     }
 }

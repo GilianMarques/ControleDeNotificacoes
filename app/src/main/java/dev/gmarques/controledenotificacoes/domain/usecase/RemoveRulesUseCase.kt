@@ -7,7 +7,7 @@ import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
  * Em sábado, 29 de março de 2025 às 14:39.
  */
 class RemoveRuleUseCase(private val repository: RuleRepository) {
-    suspend fun execute(ruleEntity: Rule) {
+    suspend operator fun invoke(ruleEntity: Rule) {
         repository.removeRule(ruleEntity)
     }
 }

@@ -36,9 +36,9 @@ class MainActivityViewModel @Inject constructor(
                 timeRanges = listOf(TimeRange(8, 0, 10, 0))
             )
 
-            addRuleUseCase.execute(rule)
+            addRuleUseCase(rule)
 
-            val rules = getAllRulesUseCase.execute()
+            val rules = getAllRulesUseCase()
             rules.forEach { Log.d("USUK", "MainActivityViewModel.testRuleOperations: $it") }
         }
 

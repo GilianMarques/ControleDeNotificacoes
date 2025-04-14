@@ -258,8 +258,8 @@ class AddRuleViewModel @Inject constructor(
      */
     private fun saveRule(rule: Rule) = viewModelScope.launch(IO) {
 
-        if (editingRule == null) addRuleUseCase.execute(rule)
-        else updateRuleUseCase.execute(rule)
+        if (editingRule == null) addRuleUseCase(rule)
+        else updateRuleUseCase(rule)
 
         val event = _uiEvents.value!!
         _uiEvents.postValue(event.copy(navigateHomeEvent = EventWrapper(true)))

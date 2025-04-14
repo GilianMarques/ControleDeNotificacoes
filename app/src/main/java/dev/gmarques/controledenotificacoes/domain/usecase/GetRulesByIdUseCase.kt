@@ -7,7 +7,7 @@ import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
  * Em sábado, 29 de março de 2025 às 14:39.
  */
 class GetRuleByIdUseCase(private val repository: RuleRepository) {
-    suspend fun execute(id: String): Rule? {
+    suspend operator fun invoke(id: String): Rule? {
         return repository.getRuleById(id)
     }
 }

@@ -5,11 +5,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dev.gmarques.controledenotificacoes.databinding.BottomsheetAppListBinding
+import dev.gmarques.controledenotificacoes.domain.usecase.GetInstalledAppsUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Criado por Gilian Marques
@@ -18,30 +25,34 @@ import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 class AppListBottomSheet() : BottomSheetDialogFragment() {
 
     companion object {
-        fun newInstance(apps: List<InstalledApp>, onAppSelected: (InstalledApp) -> Unit): AppListBottomSheet {
+        fun newInstance(
+            getInstalledAppsUseCase: GetInstalledAppsUseCase,
+            onAppChecked: (InstalledApp, Boolean) -> Unit,
+        ): AppListBottomSheet {
             return AppListBottomSheet().apply {
-                setDependencies(apps, onAppSelected)
+                this.getInstalledAppsUseCase = getInstalledAppsUseCase
+                this.onAppChecked = onAppChecked
+                this.initialized = true
             }
         }
     }
 
-    private var initialized = false
-    private lateinit var apps: List<InstalledApp>
-    private lateinit var onAppSelected: (InstalledApp) -> Unit
 
-    private fun setDependencies(apps: List<InstalledApp>, onAppSelected: (InstalledApp) -> Unit) {
-        this.apps = apps
-        this.onAppSelected = onAppSelected
-        initialized = true // previne crashes por recriação após mudança de configuração da ui
-    }
+    private lateinit var getInstalledAppsUseCase: GetInstalledAppsUseCase
+    private lateinit var onAppChecked: (InstalledApp, Boolean) -> Unit
+
+    private var initialized = false
 
     private var _binding: BottomsheetAppListBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: AppAdapter
 
+    private var loaderJob = Job()
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = BottomsheetAppListBinding.inflate(inflater, container, false)
@@ -56,9 +67,31 @@ class AppListBottomSheet() : BottomSheetDialogFragment() {
             return
         }
 
-        adapter = AppAdapter { app ->
-            onAppSelected(app)
-            //  dismiss()
+        setupRecyclerView()
+        setupSearchView()
+        loadApps() // todo   onviewcreated sendo chamado 2x - converer isso em um fragmento convencional
+
+    }
+
+    private fun setupSearchView() = with(binding) {
+        tietSearch.doOnTextChanged { text, _, _, _ ->
+            loadApps(binding.tietSearch.text.toString())
+        }
+    }
+
+    private fun loadApps(name: String = "") {
+        loaderJob.cancel()
+        loaderJob = Job()
+        lifecycleScope.launch(loaderJob) {
+            Log.d("USUK", "AppListBottomSheet.".plus("loadApps() name: '$name' "))
+            val apps = getInstalledAppsUseCase(binding.tietSearch.text.toString())
+            withContext(Main) { adapter.submitList(apps) }
+        }
+    }
+
+    private fun setupRecyclerView() {
+        adapter = AppAdapter { app, checked ->
+            onAppChecked(app, checked)
         }
 
         val layoutManager = LinearLayoutManager(requireContext())
@@ -80,8 +113,6 @@ class AppListBottomSheet() : BottomSheetDialogFragment() {
                 }
             }
         })
-
-        adapter.submitList(apps)
 
     }
 

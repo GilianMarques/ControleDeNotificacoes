@@ -7,12 +7,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dev.gmarques.controledenotificacoes.databinding.ItemAppBinding
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
+
 /**
  * Criado por Gilian Marques
  * Em terça-feira, 15 de abril de 2025 as 09:19.
  */
 class AppAdapter(
-    private val onItemCheck: (InstalledApp) -> Unit,
+    private val onItemCheck: (InstalledApp, Boolean) -> Unit,
 ) : ListAdapter<InstalledApp, AppAdapter.AppViewHolder>(DiffCallback()) {
 
 
@@ -34,7 +35,7 @@ class AppAdapter(
             binding.cbSelect.isChecked = false
 
             binding.cbSelect.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) onItemCheck(installedApp)
+                onItemCheck(installedApp, isChecked)
             }
         }
     }

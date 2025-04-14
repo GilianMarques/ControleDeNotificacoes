@@ -9,7 +9,7 @@ import javax.inject.Inject
  * Em sábado, 29 de março de 2025 às 14:39.
  */
 class UpdateRuleUseCase @Inject constructor(private val repository: RuleRepository) {
-    suspend fun execute(rule: Rule) {
+    suspend operator fun invoke(rule: Rule) {
         repository.updateRule(rule)
     }
 }

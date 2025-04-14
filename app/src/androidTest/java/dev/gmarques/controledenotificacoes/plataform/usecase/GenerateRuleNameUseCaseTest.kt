@@ -45,7 +45,7 @@ class GenerateRuleNameUseCaseTest {
 
 
         rulesPair.forEach {
-            val name = useCase.execute(it.first)
+            val name = useCase(it.first)
             val name2 = it.second
 
             Log.d("USUK", "GenerateRuleNameUseCaseTest.tesReturnedName: \n$name\n$name2")

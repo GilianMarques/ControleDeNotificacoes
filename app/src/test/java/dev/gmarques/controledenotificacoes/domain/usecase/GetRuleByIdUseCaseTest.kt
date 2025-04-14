@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.domain.usecase
 
-import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -22,7 +21,7 @@ class GetRuleByIdUseCaseTest {
     fun `dado um id, quando execute for chamado, então repositorio getRuleById deve ser invocado`() = runTest {
         val id = "radlkhjglç"
 
-        useCase.execute(id)
+        useCase(id)
 
         verify(repository).getRuleById(id)
     }
