@@ -8,6 +8,7 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
+import dev.gmarques.controledenotificacoes.domain.usecase.GenerateRuleNameUseCase
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

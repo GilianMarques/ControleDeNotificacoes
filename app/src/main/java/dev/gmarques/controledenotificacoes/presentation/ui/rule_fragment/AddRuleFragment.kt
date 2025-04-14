@@ -5,8 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
-import androidx.core.view.isGone
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -24,7 +22,6 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
-import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
 import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.endIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.startIntervalFormatted
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
@@ -33,7 +30,6 @@ import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListe
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class AddRuleFragment : MyFragment() {
@@ -100,9 +96,8 @@ class AddRuleFragment : MyFragment() {
      * Este méto-do é chamado para simular o pressionamento do botão voltar.
      */
     private fun goBack() {
-        this@AddRuleFragment.findNavController().navigateUp()
+        this@AddRuleFragment.findNavController().popBackStack()
     }
-
 
 
     private fun setupFabAddRule() = with(binding) {
@@ -380,20 +375,24 @@ class AddRuleFragment : MyFragment() {
 
         val parent = binding.llConteinerRanges
 
-        parent.children.filter { it.tag !in timeRanges.keys }.forEach { parent.removeView(it) }
+        parent.children
+            .filter { it.tag !in timeRanges.keys }
+            .forEach { parent.removeView(it) }
 
-        timeRanges.values.filter { range -> parent.children.none { it.tag == range.id } }.forEach { range ->
-            with(ItemIntervalBinding.inflate(layoutInflater)) {
-                tvStart.text = range.startIntervalFormatted()
-                tvEnd.text = range.endIntervalFormatted()
-                ivRemove.setOnClickListener(AnimatedClickListener {
-                    vibrator.interaction()
-                    viewModel.removeTimeRange(range)
-                })
-                root.tag = range.id
-                parent.addViewWithTwoStepsAnimation(root)
+        timeRanges.values
+            .filter { range -> parent.children.none { it.tag == range.id } }
+            .forEach { range ->
+                with(ItemIntervalBinding.inflate(layoutInflater)) {
+                    tvStart.text = range.startIntervalFormatted()
+                    tvEnd.text = range.endIntervalFormatted()
+                    ivRemove.setOnClickListener(AnimatedClickListener {
+                        vibrator.interaction()
+                        viewModel.removeTimeRange(range)
+                    })
+                    root.tag = range.id
+                    parent.addViewWithTwoStepsAnimation(root)
+                }
             }
-        }
     }
 
     private fun observeRuleType() {

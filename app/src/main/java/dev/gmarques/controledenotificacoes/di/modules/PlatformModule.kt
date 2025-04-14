@@ -5,6 +5,8 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
+import dev.gmarques.controledenotificacoes.domain.usecase.contracts.RuleStringsProvider
+import dev.gmarques.controledenotificacoes.plataform.RuleStringsProviderImpl
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 
 /**
@@ -16,6 +18,11 @@ import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class PlatformModule {
+
     @Binds
     abstract fun bindVibrator(vibrator: VibratorImpl): VibratorInterface
+
+    @Binds
+    abstract fun bindRuleStringsProvider(strProvider: RuleStringsProviderImpl): RuleStringsProvider
+
 }

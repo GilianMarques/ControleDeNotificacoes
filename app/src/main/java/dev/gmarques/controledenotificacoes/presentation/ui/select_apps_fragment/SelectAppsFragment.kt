@@ -1,11 +1,12 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,7 +16,6 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectAppsBinding
 import dev.gmarques.controledenotificacoes.presentation.ui.ManagedAppsSharedViewModel
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
-import kotlin.getValue
 
 /**
  * Criado por Gilian Marques
@@ -23,6 +23,8 @@ import kotlin.getValue
  */
 @AndroidEntryPoint
 class SelectAppsFragment : MyFragment() {
+
+    private var animatingFab = false
 
     private lateinit var binding: FragmentSelectAppsBinding
 
@@ -79,11 +81,25 @@ class SelectAppsFragment : MyFragment() {
     }
 
     private fun toggleFabVisibility(show: Boolean) = with(binding) {
+        if (animatingFab) return@with
+
+
         val translationY = if (show) 0f else (btnConclude.height * 2f)
         val alpha = if (show) 1f else 1f
 
         btnConclude.animate().translationY(translationY).alpha(alpha).setDuration(400L)
-            .setInterpolator(android.view.animation.AnticipateOvershootInterpolator()).start()
+            .setInterpolator(android.view.animation.AnticipateOvershootInterpolator())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator) {
+                    animatingFab = true
+                    super.onAnimationStart(animation)
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+                    animatingFab = false
+                    super.onAnimationEnd(animation)
+                }
+            }).start()
     }
 
     private fun setupObservers() {

@@ -5,9 +5,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import dev.gmarques.controledenotificacoes.databinding.ItemAppBinding
+import dev.gmarques.controledenotificacoes.databinding.ItemAppSelectableBinding
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
-import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 
 /**
  * Criado por Gilian Marques
@@ -19,7 +18,7 @@ class AppsAdapter(
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
-        val binding = ItemAppBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemAppSelectableBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return AppViewHolder(binding)
     }
 
@@ -27,7 +26,7 @@ class AppsAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class AppViewHolder(private val binding: ItemAppBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class AppViewHolder(private val binding: ItemAppSelectableBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(installedApp: InstalledApp) = with(binding) {
             tvStartDe.text = installedApp.name
