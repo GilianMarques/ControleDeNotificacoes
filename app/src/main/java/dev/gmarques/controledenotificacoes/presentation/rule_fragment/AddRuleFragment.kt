@@ -30,23 +30,20 @@ import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.st
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddRuleFragment() : Fragment() {
-    var doNotNotifyViewModelTypeRule: Boolean = true
+class AddRuleFragment : Fragment() {
+
+    private var doNotNotifyViewModelTypeRule: Boolean = true
 
     @Inject
     lateinit var vibrator: VibratorInterface
-
     private val viewModel: AddRuleViewModel by viewModels()
-
     private lateinit var binding: FragmentAddRuleBinding
-
-    val args: AddRuleFragmentArgs by navArgs()
+    private val args: AddRuleFragmentArgs by navArgs()
 
 
     override fun onCreateView(
@@ -60,7 +57,6 @@ class AddRuleFragment() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-
         setupToolbar()
         setupNameInput()
         setupButtonTypeRule()
@@ -68,7 +64,6 @@ class AddRuleFragment() : Fragment() {
         setupBtnAddTimeRange()
         setupFabAddRule()
         setupEditingModeIfNeeded()
-        observeEditingRule()
         observeRuleType()
         observeTimeRanges()
         observeSelectedDays()
@@ -78,12 +73,33 @@ class AddRuleFragment() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    /**
+     * Configura o modo de edição para a regra, caso uma regra para edição seja fornecida nos argumentos.
+     *
+     * Esta função verifica se `args.editingRule` não é nulo. Se não for nulo, isso significa que
+     * o usuário pretende editar uma regra existente. Portanto, ela chama `viewModel.setEditingRule()`
+     * com a regra fornecida. Essa ação informa ao ViewModel que estamos em modo de edição e
+     * fornece a regra que precisa ser editada.
+     *
+     * Se `args.editingRule` for nulo, esta função não faz nada, implicando que não estamos em
+     * modo de edição e que potencialmente estamos criando uma nova regra.
+     *
+     */
     private fun setupEditingModeIfNeeded() {
         args.editingRule?.let {
             viewModel.setEditingRule(it)
         }
     }
 
+    /**
+     * Navega o usuário de volta para a tela anterior na pilha de navegação.
+     *
+     * Esta função utiliza o méto-do `navigateUp()` do componente Navigation para
+     * mover o usuário de volta para o destino de onde ele veio. É uma maneira
+     * comum de implementar a funcionalidade "voltar" na interface do usuário de um aplicativo.
+     *
+     * Este méto-do é chamado para simular o pressionamento do botão voltar.
+     */
     private fun goBack() {
         this@AddRuleFragment.findNavController().navigateUp()
     }
@@ -104,10 +120,10 @@ class AddRuleFragment() : Fragment() {
         fabAdd.setOnClickListener(AnimatedClickListener {
             edtName.clearFocus()
             lifecycleScope.launch {
-                fabAdd.isEnabled = false
-                async { viewModel.validateAndSaveRule() }
+                fabAdd.isClickable = false
+                launch { viewModel.validateAndSaveRule() }
                 delay(1500)
-                fabAdd.isEnabled = true
+                fabAdd.isClickable = true
             }
         })
     }
@@ -196,13 +212,13 @@ class AddRuleFragment() : Fragment() {
      * O `AnimatedClickListener` fornece uma animação de escala padrão.
      *
      * @see AnimatedClickListener Para detalhes sobre a animação aplicada ao clique.
-     * @see collectIntervalData A função chamada quando o botão é clicado.
+     * @see collectTimeRangeData A função chamada quando o botão é clicado.
      */
     private fun setupBtnAddTimeRange() = with(binding) {
         ivAddRange.setOnClickListener(AnimatedClickListener {
             vibrator.interaction()
             if (viewModel.canAddMoreRanges()) {
-                collectIntervalData()
+                collectTimeRangeData()
             } else {
                 showErrorSnackBar(
                     getString(
@@ -214,8 +230,15 @@ class AddRuleFragment() : Fragment() {
         })
     }
 
-
-    private fun collectIntervalData() {
+    /**
+     * Coleta dados de intervalo de tempo, envolvendo horários de início e fim.
+     *
+     * Esta função gerencia a coleta de horários para um intervalo, utilizando um seletor de tempo.
+     * Primeiro, solicita ao usuário que selecione o horário de início e, em seguida, o horário de término.
+     * Após a seleção de ambos, valida o intervalo resultante e, se válido, o adiciona à sequência de intervalos do ViewModel.
+     *
+     */
+    private fun collectTimeRangeData() {
         val data = intArrayOf(8, 0, 18, 0)
 
         val collectEndValues = {
@@ -309,6 +332,15 @@ class AddRuleFragment() : Fragment() {
         vibrator.error()
     }
 
+    /**
+     * Atualiza, com base nos updates do viewmodel a interface com base no tipo de regra (Permissiva ou Restritiva) .
+     *
+     * Modifica o estado do [MaterialButtonToggleGroup] e do [TextView] de acordo com [ruleType].
+     *
+     * @param ruleType O tipo de regra a ser aplicada ([RuleType.PERMISSIVE] ou [RuleType.RESTRICTIVE]).
+     *
+     * @see RuleType
+     */
     private fun updateButtonTypeRule(ruleType: RuleType) = with(binding) {
 
         if (ruleType == RuleType.PERMISSIVE) {
@@ -355,7 +387,7 @@ class AddRuleFragment() : Fragment() {
      *
      * @param timeRanges Um mapa de TimeRanges, onde a chave é o ID do intervalo e o valor é o objeto TimeRange.
      */
-    private fun manageIntervalViews(timeRanges: Map<String, TimeRange>) {
+    private fun manageTimeRangesViews(timeRanges: Map<String, TimeRange>) {
 
         val parent = binding.llConteinerRanges
 
@@ -375,12 +407,6 @@ class AddRuleFragment() : Fragment() {
         }
     }
 
-    private fun observeEditingRule() {
-        viewModel.editingRuleLd.observe(viewLifecycleOwner) { rule ->
-            // Lógica para quando o editingRule mudar
-        }
-    }
-
     private fun observeRuleType() {
         viewModel.ruleTypeLd.observe(viewLifecycleOwner) { type ->
             doNotNotifyViewModelTypeRule = true
@@ -390,7 +416,7 @@ class AddRuleFragment() : Fragment() {
 
     private fun observeTimeRanges() {
         viewModel.timeRangesLd.observe(viewLifecycleOwner) { ranges ->
-            manageIntervalViews(ranges)
+            manageTimeRangesViews(ranges)
         }
     }
 
@@ -406,6 +432,23 @@ class AddRuleFragment() : Fragment() {
         }
     }
 
+    /**
+     * Observa os eventos `uiEvents` do ViewModel e os trata.
+     *
+     * Esta função escuta os eventos da LiveData `uiEvents`. Ao receber um novo evento, verifica seu tipo dentro de `UiEvents` e executa a ação correspondente.
+     *
+     * Eventos tratados:
+     * - `simpleErrorMessageEvent`: Exibe uma SnackBar com a mensagem de erro.
+     * - `nameErrorMessageEvent`: Define a mensagem de erro no campo `edtName` e exibe uma SnackBar.
+     * - `navigateHomeEvent`: Aciona uma vibração de sucesso e navega de volta usando `goBack()`.
+     *
+     * Cada evento é consumido (usando `consume()`) após o processamento, evitando reexecução. A observação usa `viewLifecycleOwner` para garantir que esteja ativa apenas quando a view está visível.
+     *
+     * @see UiEvents
+     * @see showErrorSnackBar
+     * @see vibrator
+     * @see goBack
+     */
     private fun observeEvents() {
         viewModel.uiEvents.observe(viewLifecycleOwner) { event ->
 
@@ -431,7 +474,3 @@ class AddRuleFragment() : Fragment() {
 
     }
 }
-
-
-
-

@@ -52,5 +52,8 @@
     <string name="Selecione_pelo_menos_um_dia_da_semana">Selecione pelo menos um dia da semana</string>
     <string name="Adicionar_regra">Adicionar regra</string>
     <string name="adicione_pelo_menos_um_intervalo_de_tempo">Adicione pelo menos um intervalo de tempo</string>
+    <string name="Aplicativos_alvo">Aplicativos alvo</string>
+    <string name="Selecionar">Selecionar</string>
+    <string name="Regra">Regra</string>
 
 </resources>

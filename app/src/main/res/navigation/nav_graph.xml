@@ -10,9 +10,6 @@
         android:name="dev.gmarques.controledenotificacoes.presentation.rule_fragment.AddRuleFragment"
         android:label="fragment_add_rule"
         tools:layout="@layout/fragment_add_rule">
-        <action
-            android:id="@+id/action_addRuleFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
 
         <argument
             android:name="editingRule"
@@ -28,7 +25,16 @@
         tools:layout="@layout/fragment_home">
 
         <action
-            android:id="@+id/action_homeFragment_to_addRuleFragment"
+            android:id="@+id/action_homeFragment_to_addManagedAppsFragement"
+            app:destination="@id/addManagedAppsFragement" />
+    </fragment>
+    <fragment
+        android:id="@+id/addManagedAppsFragement"
+        android:name="dev.gmarques.controledenotificacoes.presentation.managedapp_fragment.AddManagedAppsFragement"
+        android:label="fragment_add_managed_apps"
+        tools:layout="@layout/fragment_add_managed_apps" >
+        <action
+            android:id="@+id/action_addManagedAppsFragement_to_addRuleFragment"
             app:destination="@id/addRuleFragment" />
     </fragment>
 

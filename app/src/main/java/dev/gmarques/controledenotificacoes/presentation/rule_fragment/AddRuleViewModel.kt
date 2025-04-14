@@ -22,6 +22,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.UpdateRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,8 +33,9 @@ class AddRuleViewModel @Inject constructor(
     private val updateRuleUseCase: UpdateRuleUseCase,
 ) : ViewModel() {
 
-
     private var editingRule: Rule? = null
+
+    // propriedades do objeto [Rule] que será adicionado
     private var ruleType: RuleType = RuleType.RESTRICTIVE
     private var timeRanges: HashMap<String, TimeRange> = HashMap()
     private var selectedDays: List<WeekDay> = emptyList()
@@ -52,39 +54,80 @@ class AddRuleViewModel @Inject constructor(
     private val _selectedDaysLd = MutableLiveData<List<WeekDay>>(emptyList())
     val selectedDaysLd: LiveData<List<WeekDay>> = _selectedDaysLd
 
-    private val _ruleNameLd = MutableLiveData<String>("")
+    private val _ruleNameLd = MutableLiveData("")
     val ruleNameLd: LiveData<String> = _ruleNameLd
 
     private val _uiEvents = MutableLiveData(UiEvents())
     val uiEvents: LiveData<UiEvents> get() = _uiEvents
 
+    /**
+     * Atualiza o tipo de regra atual e notifica os observadores do LiveData.
+     *
+     * @param type O novo [RuleType] a ser definido.
+     */
     fun updateRuleType(type: RuleType) {
         ruleType = type
         _ruleTypeLd.postValue(ruleType)
     }
 
-    fun addTimeRange(range: TimeRange) {
+    /**
+     * Adiciona um intervalo de tempo à coleção interna e atualiza a LiveData associada.
+     *
+     * @param range O intervalo de tempo (TimeRange) a ser adicionado.
+     */
+    private fun addTimeRange(range: TimeRange) {
 
         timeRanges[range.id] = range
         _timeRangesLd.postValue(timeRanges.toMap())
     }
 
+    /**
+     * Remove um intervalo de tempo.
+     *
+     * Remove o intervalo de tempo especificado da lista, utilizando o ID e atualiza a Livedata associada.
+     *
+     * @param range O intervalo de tempo a ser removido.
+     */
     fun removeTimeRange(range: TimeRange) {
 
         timeRanges.remove(range.id)
         _timeRangesLd.postValue(timeRanges.toMap())
     }
 
+    /**
+     * Atualiza a lista de dias selecionados e notifica os observadores.
+     *
+     * @param days Nova lista de `WeekDay` representando os dias selecionados.
+     * @throws IllegalArgumentException Se a lista `days` for nula.
+     */
     fun updateSelectedDays(days: List<WeekDay>) {
         selectedDays = days
         _selectedDaysLd.postValue(selectedDays)
     }
 
-    fun updateRuleName(name: String) {
+    /**
+     * Atualiza o nome da regra (`ruleName`) e notifica os observadores de `_ruleNameLd` com o novo valor.
+     *
+     * Este méto-do atualiza a propriedade interna `ruleName` e emite o novo valor através do LiveData `_ruleNameLd`,
+     * garantindo que qualquer parte do código observando essa LiveData seja informada da mudança.
+     *
+     * @param name O novo nome da regra.
+     * @see ruleName
+     * @see _ruleNameLd
+     */
+    private fun updateRuleName(name: String) {
         ruleName = name
         _ruleNameLd.postValue(ruleName)
     }
 
+    /**
+     * Verifica se o usuário pode adicionar mais intervalos de tempo, conforme as regras de negócio.
+     *
+     * A função retorna `true` se o número atual de intervalos em `timeRanges` for menor que o máximo
+     * permitido definido por `RuleValidator.MAX_RANGES`; caso contrário, retorna `false`.
+     *
+     * @return `true` se o usuário pode adicionar mais intervalos, `false` caso contrário.
+     */
     fun canAddMoreRanges(): Boolean {
         return timeRanges.size < RuleValidator.MAX_RANGES
     }
@@ -157,15 +200,38 @@ class AddRuleViewModel @Inject constructor(
 
     }
 
+    /**
+     * Define a regra atual para edição e atualiza a interface com as propriedades da regra.
+     *
+     * @param rule A regra [Rule] a ser definida para edição.
+     */
     fun setEditingRule(rule: Rule) {
         editingRule = rule
 
         updateRuleName(rule.name)
         updateRuleType(rule.ruleType)
         updateSelectedDays(rule.days)
-        rule.timeRanges.forEach { addTimeRange(it) }
+        viewModelScope.launch {
+            rule.timeRanges.forEach {
+                addTimeRange(it)
+                delay(100) // pra ficar uma aniação bacana
+            }
+        }
     }
 
+    /**
+     * Valida e salva uma regra.
+     *
+     * Esta função verifica se o nome, os dias selecionados e os intervalos de tempo são válidos.
+     * Se todos forem válidos, uma nova `Rule` é criada e salva.
+     * Caso contrário, a função retorna sem salvar.
+     *
+     * Validações:
+     *   - `ruleName`: Usando `validateName`.
+     *   - `selectedDays`: Usando `validateDays`.
+     *   - `timeRanges`: Usando `validateRanges` (aplicado aos valores do mapa).
+     *
+     */
     fun validateAndSaveRule() {
 
         if (validateName(ruleName).isFailure) return
@@ -182,6 +248,14 @@ class AddRuleViewModel @Inject constructor(
         saveRule(rule)
     }
 
+    /**
+     * Salva uma regra, adicionando-a ou atualizando-a.
+     *
+     * Se `editingRule` for nulo, adiciona uma nova regra. Caso contrário, atualiza a regra existente.
+     * Após a operação, navega para a tela inicial.
+     *
+     * @param rule A regra [Rule] a ser salva.
+     */
     private fun saveRule(rule: Rule) = viewModelScope.launch(IO) {
 
         if (editingRule == null) addRuleUseCase.execute(rule)
@@ -205,6 +279,23 @@ class AddRuleViewModel @Inject constructor(
 
     }
 
+    /**
+     * Valida uma lista de objetos WeekDay.
+     *
+     * Utiliza [RuleValidator.validateDays] para verificar a validade dos dias.
+     * Em caso de falha, envia um evento UI para exibir uma mensagem de erro.
+     *
+     * @param days A lista de [WeekDay] a ser validada.
+     * @return Um [Result] contendo:
+     *         - Sucesso: A lista de [WeekDay] se a validação passar.
+     *         - Falha: Uma exceção, se a validação falhar. O tipo da exceção é determinado por [RuleValidator.validateDays].
+     *           Nesse caso, um evento de erro [EventWrapper] é enviado para `_uiEvents`.
+     * @throws Qualquer exceção lançada por [RuleValidator.validateDays].
+     *
+     * @see RuleValidator.validateDays
+     * @see WeekDay
+     * @see Result
+     */
     fun validateDays(days: List<WeekDay>): Result<List<WeekDay>> {
 
         val result = RuleValidator.validateDays(days)
@@ -227,6 +318,23 @@ class AddRuleViewModel @Inject constructor(
         return result
     }
 
+    /**
+     * Valida o nome fornecido usando [RuleValidator.validateName].
+     *
+     * Se o nome for válido, atualiza o nome da regra com [updateRuleName].
+     * Se inválido, envia uma mensagem de erro para [_uiEvents].
+     *
+     * @param name O nome a ser validado.
+     * @return Um [Result] contendo o nome validado (sucesso) ou uma exceção (falha).
+     *   - Sucesso: [Result.getOrThrow] retorna o nome (String).
+     *   - Falha: [Result.exceptionOrNull] retorna [BlankNameException] ou [OutOfRangeException].
+     * @throws IllegalStateException Se a validação falhar com uma exceção não tratada.
+     *
+     * Erros:
+     * - [BlankNameException]: Nome em branco. Envia "O nome não pode ficar em branco" para [_uiEvents].
+     * - [OutOfRangeException]: Tamanho do nome fora do intervalo. Envia "O nome deve ter entre {minLength} e {maxLength} caracteres" para [_uiEvents].
+     * - Outras Exceções: Lança [IllegalStateException] para exceções não previstas.
+     */
     fun validateName(name: String): Result<String> {
 
         val result = RuleValidator.validateName(name)
@@ -265,4 +373,3 @@ class AddRuleViewModel @Inject constructor(
     }
 
 }
-
