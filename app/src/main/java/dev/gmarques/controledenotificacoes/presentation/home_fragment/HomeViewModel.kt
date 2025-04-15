@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes
+package dev.gmarques.controledenotificacoes.presentation.home_fragment
 
 import androidx.lifecycle.ViewModel
 

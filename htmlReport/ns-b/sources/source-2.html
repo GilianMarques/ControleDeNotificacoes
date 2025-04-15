@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > TimeInterval</title>
+  <title>Coverage Report > TimeRange</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,7 +22,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">dev.gmarques.controledenotificacoes.domain.model</a>
 </div>
 
-<h1>Coverage Summary for Class: TimeInterval (dev.gmarques.controledenotificacoes.domain.model)</h1>
+<h1>Coverage Summary for Class: TimeRange (dev.gmarques.controledenotificacoes.domain.model)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -41,7 +41,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">TimeInterval</td>
+  <td class="name">TimeRange</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -77,15 +77,15 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package dev.gmarques.controledenotificacoes.domain.model
 &nbsp;
-&nbsp;import TimeIntervalValidator
+&nbsp;import TimeRangeValidator
 &nbsp;
 &nbsp;/**
 &nbsp; * Criado por Gilian Marques
 &nbsp; * Em sábado, 29 de março de 2025 às 21:15.
 &nbsp; */
-<b class="fc">&nbsp;data class TimeInterval(val startHour: Int, val startMinute: Int, val endHour: Int, val endMinute: Int) {</b>
+<b class="fc">&nbsp;data class TimeRange(val startHour: Int, val startMinute: Int, val endHour: Int, val endMinute: Int) {</b>
 <b class="fc">&nbsp;    init {</b>
-<b class="fc">&nbsp;        TimeIntervalValidator.validate(this)</b>
+<b class="fc">&nbsp;        TimeRangeValidator.validate(this)</b>
 <b class="fc">&nbsp;    }</b>
 &nbsp;}
 </code>

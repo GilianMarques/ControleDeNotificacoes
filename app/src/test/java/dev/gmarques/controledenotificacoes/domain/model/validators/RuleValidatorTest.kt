@@ -1,44 +1,48 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
+import org.junit.Assert.*
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.assertThrows
 
 class RuleValidatorTest {
 
     @Test
-    fun `ao passar um nome invalido a funcao validadora deve retornar um result com falha`() {
-
-        val invalidNames = listOf(
-            "a",
-            "",
-            "hdlmkohjfdlzdkjg~çdjkfgz´d~fijglkdjfgz~´dfjg~kdjkdjfgljflgkflgjflhgjz[]d´rpfgk]zd´~fkjhopdjhíodjfikhjkgjh54.6f54g65d4h.4d.fty4xd4tyh9seryt"
-        )
-
-        invalidNames.forEach {
-            assertTrue { RuleValidator.validateName(it).isFailure }
-        }
-    }
-
-
-    @Test
-    fun `ao passar um nome valido a funcao validadora deve retornar um result com o nome formatado`() {
-
-        val validName = " regra  1 "
-        val formatedName = "Regra 1"
-
-        assertEquals(formatedName, RuleValidator.validateName(validName).getOrNull()!!)
+    fun `ao passar nome valido a funcao validadora deve retornar sucesso`() {
+        val result = RuleValidator.validateName("Minha Regra")
+        assertTrue(result.isSuccess)
     }
 
     @Test
-    fun `ao passar um intervalo de dias invalido a funcao validadora deve retornar um result com falha`() {
+    fun `ao passar nome vazio a funcao validadora deve retornar falha`() {
+        val result = RuleValidator.validateName("")
+        assertTrue(result.isFailure)
+    }
 
-        // sem nenhum dia selecionado
-        assertTrue(RuleValidator.validateDays(emptyList()).isFailure)
+    @Test
+    fun `ao passar nome curto de mais a funcao validadora deve retornar falha`() {
+        val shortName = "a".repeat(RuleValidator.MIN_NAME_LENGTH - 1)
+        val result = RuleValidator.validateName(shortName)
+        assertTrue(result.isFailure)
+    }
 
+    @Test
+    fun `ao passar nome longo de mais a funcao validadora deve retornar falha`() {
+        val nomeLongo = "a".repeat(RuleValidator.MAX_NAME_LENGTH + 1)
+        val result = RuleValidator.validateName(nomeLongo)
+        assertTrue(result.isFailure)
+    }
+
+    @Test
+    fun `ao passar lista de dias valida a funcao validadora deve retornar sucesso`() {
+        val dias = listOf(WeekDay.MONDAY, WeekDay.FRIDAY)
+        val result = RuleValidator.validateDays(dias)
+        assertTrue(result.isSuccess)
+    }
+
+    @Test
+    fun `ao passar um intervalo de dias muito longo a validacao deve falhar`() {
         val eightDaysInAWeek = listOf(
             WeekDay.SUNDAY,
             WeekDay.SUNDAY,
@@ -49,28 +53,115 @@ class RuleValidatorTest {
             WeekDay.SUNDAY,
             WeekDay.SUNDAY,
         )
-        assertTrue(RuleValidator.validateDays(eightDaysInAWeek).isFailure)
+        val result = RuleValidator.validateDays(eightDaysInAWeek)
+        assertTrue(result.isFailure)
     }
 
     @Test
-    fun `ao passar um listab de intervalos fora do intervalo permitido a funcao validadora deve retornar um result com falha`() {
+    fun `ao passar lista de dias vazia a funcao validadora deve retornar falha`() {
+        val result = RuleValidator.validateDays(emptyList())
+        assertTrue(result.isFailure)
+    }
 
-        assertTrue(RuleValidator.validateTimeIntervals(emptyList()).isFailure)
+    @Test
+    fun `ao passar intervalos duplicados a funcao validadora deve retornar uma falha`() {
+        val intervalosDuplicados = listOf(
+            TimeRange(8, 0, 10, 0),
+            TimeRange(8, 0, 10, 0)
+        )
+        val result = RuleValidator.validateTimeRanges(intervalosDuplicados)
+        assertTrue(result.isFailure)
+    }
 
-        val tooMuchIntervals = listOf(
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
-            TimeInterval(1, 2, 3, 4),
+    @Test
+    fun `ao passar intervalos de tempo que se intersecionam a  validacao deve falhar`() {
+
+        val casosDeTeste = listOf(
+            "interseção no início" to listOf(TimeRange(12, 0, 18, 0), TimeRange(13, 0, 19, 0)),
+            "interseção no início (invertido)" to listOf(TimeRange(13, 0, 19, 0), TimeRange(12, 0, 18, 0)),
+            "interseção no fim" to listOf(TimeRange(12, 0, 18, 0), TimeRange(8, 0, 13, 0)),
+            "interseção no fim (invertido)" to listOf(TimeRange(8, 0, 13, 0), TimeRange(12, 0, 18, 0)),
+            "intervalo dentro do outro" to listOf(TimeRange(8, 0, 18, 0), TimeRange(9, 0, 17, 0)),
+            "intervalo dentro do outro (invertido)" to listOf(TimeRange(9, 0, 17, 0), TimeRange(8, 0, 18, 0)),
+            "interseção no início com varios intervalos" to listOf(
+                TimeRange(4, 0, 5, 0),
+                TimeRange(6, 0, 7, 0),
+                TimeRange(8, 0, 9, 0),
+                TimeRange(10, 0, 12, 0),
+                TimeRange(11, 0, 13, 0)
+            ),
         )
 
-        assertTrue(RuleValidator.validateTimeIntervals(tooMuchIntervals).isFailure)
+        casosDeTeste.forEach { (desc, list) ->
+            val result = RuleValidator.validateTimeRanges(list)
+            assertTrue("Falhou no caso '$desc': $list", result.isFailure)
+        }
+
+    }
+
+    @Test
+    fun `ao passar intervalos validos e nao sobrepostos a funcao validadora deve retornar sucesso`() {
+        val intervalosValidos = listOf(
+            TimeRange(8, 0, 10, 0),
+            TimeRange(10, 1, 12, 0)
+        )
+        val result = RuleValidator.validateTimeRanges(intervalosValidos)
+        assertTrue(result.isSuccess)
+    }
+
+    @Test
+    fun `ao validar uma regra completa com todos os dados corretos deve retornar sucesso`() {
+        val rule = Rule(
+            name = "Regra Válida",
+            days = listOf(WeekDay.MONDAY, WeekDay.FRIDAY),
+            timeRanges = listOf(TimeRange(8, 0, 12, 0))
+        )
+        RuleValidator.validate(rule) // Se lançar exceção, o teste falha
+    }
+
+    @Test(expected = Exception::class)
+    fun `ao validar uma regra com nome invalido deve lançar excecao`() {
+        val rule = Rule(
+            name = "a".repeat(RuleValidator.MAX_NAME_LENGTH + 1),
+            days = listOf(WeekDay.MONDAY),
+            timeRanges = listOf(TimeRange(8, 0, 12, 0))
+        )
+        RuleValidator.validate(rule)
+    }
+
+    @Test(expected = Exception::class)
+    fun `ao validar uma regra com dias invalidos deve lançar excecao`() {
+        val rule = Rule(
+            name = "Regra",
+            days = emptyList(),
+            timeRanges = listOf(TimeRange(8, 0, 12, 0))
+        )
+        RuleValidator.validate(rule)
+    }
+
+    @Test(expected = Exception::class)
+    fun `ao validar uma regra com intervalos duplicados deve lançar excecao`() {
+        val rule = Rule(
+            name = "Regra",
+            days = listOf(WeekDay.MONDAY),
+            timeRanges = listOf(
+                TimeRange(8, 0, 12, 0),
+                TimeRange(8, 0, 12, 0)
+            )
+        )
+        RuleValidator.validate(rule)
+    }
+
+    @Test(expected = Exception::class)
+    fun `ao validar uma regra com intervalos que se interseccionam deve lançar excecao`() {
+        val rule = Rule(
+            name = "Regra",
+            days = listOf(WeekDay.MONDAY),
+            timeRanges = listOf(
+                TimeRange(8, 0, 12, 0),
+                TimeRange(11, 0, 13, 0)
+            )
+        )
+        RuleValidator.validate(rule)
     }
 }

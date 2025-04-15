@@ -126,7 +126,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
 &nbsp;import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 &nbsp;import dev.gmarques.controledenotificacoes.domain.model.Rule
-&nbsp;import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+&nbsp;import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 &nbsp;import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 &nbsp;import java.util.Locale
 &nbsp;
@@ -145,7 +145,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;         * Esta função executa uma série de validações no objeto [Rule] fornecido:
 &nbsp;         * 1. **Validação de Nome:** Verifica se o nome da regra é válido usando [validateName].
 &nbsp;         * 2. **Validação de Dias:** Verifica se os dias da regra são válidos usando [validateDays].
-&nbsp;         * 3. **Validação de Intervalos de Tempo:** Verifica se os intervalos de tempo da regra são válidos usando [validateTimeIntervals].
+&nbsp;         * 3. **Validação de Intervalos de Tempo:** Verifica se os intervalos de tempo da regra são válidos usando [validateTimeRanges].
 &nbsp;         *
 &nbsp;         * Se alguma dessas validações falhar, a função lança uma exceção. A exceção específica lançada
 &nbsp;         * depende do resultado da validação individual.
@@ -166,7 +166,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 <b class="fc">&nbsp;            validateDays(rule.days).getOrThrow()</b>
 &nbsp;
-<b class="fc">&nbsp;            validateTimeIntervals(rule.timeIntervals).getOrThrow()</b>
+<b class="fc">&nbsp;            validateTimeRanges(rule.timeRanges).getOrThrow()</b>
 &nbsp;
 &nbsp;        }
 &nbsp;
@@ -238,34 +238,34 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;         * Valida uma lista de intervalos de tempo.
 &nbsp;         *
 &nbsp;         * Esta função verifica se o número de intervalos de tempo está dentro de um intervalo válido (1 a 10, inclusive)
-&nbsp;         * e se cada intervalo de tempo individual é válido de acordo com o `TimeIntervalValidator`.
+&nbsp;         * e se cada intervalo de tempo individual é válido de acordo com o `TimeRangeValidator`.
 &nbsp;         *
-&nbsp;         * @param timeIntervals A lista de objetos [TimeInterval] a serem validados.
+&nbsp;         * @param timeRanges A lista de objetos [TimeRange] a serem validados.
 &nbsp;         * @return Um objeto [Result]:
-&nbsp;         *   - Se a validação for bem-sucedida, retorna um [Result.success] contendo a lista original de objetos [TimeInterval].
+&nbsp;         *   - Se a validação for bem-sucedida, retorna um [Result.success] contendo a lista original de objetos [TimeRange].
 &nbsp;         *   - Se a validação falhar, retorna um [Result.failure] contendo uma exceção:
 &nbsp;         *     - [OutOfRangeException]: Se o número de intervalos de tempo estiver fora do intervalo permitido (1 a 10).
-&nbsp;         *     - Uma exceção de [TimeIntervalValidator.validate]: Se algum dos intervalos de tempo individuais for inválido.
-&nbsp;         *       A exceção pode ser qualquer uma que `TimeIntervalValidator.validate` possa retornar. Se o resultado do validador não contiver uma exceção, uma `baseException` genérica será retornada.
+&nbsp;         *     - Uma exceção de [TimeRangeValidator.validate]: Se algum dos intervalos de tempo individuais for inválido.
+&nbsp;         *       A exceção pode ser qualquer uma que `TimeRangeValidator.validate` possa retornar. Se o resultado do validador não contiver uma exceção, uma `baseException` genérica será retornada.
 &nbsp;         * @throws OutOfRangeException se o número de intervalos de tempo não estiver dentro do intervalo válido.
-&nbsp;         * @throws Exception se qualquer TimeInterval individual for inválido de acordo com TimeIntervalValidator.validate.
+&nbsp;         * @throws Exception se qualquer TimeRange individual for inválido de acordo com TimeRangeValidator.validate.
 &nbsp;         */
-&nbsp;        fun validateTimeIntervals(timeIntervals: List&lt;TimeInterval&gt;): Result&lt;List&lt;TimeInterval&gt;&gt; {
+&nbsp;        fun validateTimeRanges(timeRanges: List&lt;TimeRange&gt;): Result&lt;List&lt;TimeRange&gt;&gt; {
 &nbsp;
 <b class="fc">&nbsp;            val minHours = 1</b>
 <b class="fc">&nbsp;            val maxHours = 10</b>
 &nbsp;
-<b class="pc">&nbsp;            if (timeIntervals.size !in minHours..maxHours) return Result.failure(</b>
-<b class="nc">&nbsp;                OutOfRangeException(&quot;hours: ${timeIntervals.size}&quot;, minHours, maxHours)</b>
+<b class="pc">&nbsp;            if (timeRanges.size !in minHours..maxHours) return Result.failure(</b>
+<b class="nc">&nbsp;                OutOfRangeException(&quot;hours: ${timeRanges.size}&quot;, minHours, maxHours)</b>
 &nbsp;            )
 &nbsp;
-<b class="fc">&nbsp;            timeIntervals.forEach { timeInterval -&gt;</b>
-<b class="fc">&nbsp;                with(TimeIntervalValidator.validate(timeInterval)) {</b>
+<b class="fc">&nbsp;            timeRanges.forEach { timeRange -&gt;</b>
+<b class="fc">&nbsp;                with(TimeRangeValidator.validate(timeRange)) {</b>
 <b class="pc">&nbsp;                    if (isFailure) return Result.failure(exceptionOrNull() ?: baseException)</b>
 <b class="fc">&nbsp;                }</b>
 <b class="fc">&nbsp;            }</b>
 &nbsp;
-<b class="fc">&nbsp;            return Result.success(timeIntervals)</b>
+<b class="fc">&nbsp;            return Result.success(timeRanges)</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;}

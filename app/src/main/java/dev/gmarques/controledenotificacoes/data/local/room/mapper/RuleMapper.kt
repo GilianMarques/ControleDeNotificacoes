@@ -6,7 +6,7 @@ import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
 
@@ -23,8 +23,8 @@ class RuleMapper {
         private val weekDayType = Types.newParameterizedType(List::class.java, WeekDay::class.java)
         private val weekDayAdapter: JsonAdapter<List<WeekDay>> = moshi.adapter(weekDayType)
 
-        private val timeIntervalType = Types.newParameterizedType(List::class.java, TimeInterval::class.java)
-        private val timeIntervalAdapter: JsonAdapter<List<TimeInterval>> = moshi.adapter(timeIntervalType)
+        private val timeRangeType = Types.newParameterizedType(List::class.java, TimeRange::class.java)
+        private val timeRangeAdapter: JsonAdapter<List<TimeRange>> = moshi.adapter(timeRangeType)
 
 
         fun mapToEntity(rule: Rule): RuleEntity {
@@ -35,21 +35,21 @@ class RuleMapper {
                 id = rule.id,
                 name = rule.name,
                 days = daysToString(rule.days),
-                timeIntervals = hoursToString(rule.timeIntervals),
+                timeRanges = hoursToString(rule.timeRanges),
             )
         }
 
         /**
-         * Converte uma lista de objetos [TimeInterval] em uma string JSON.
+         * Converte uma lista de objetos [TimeRange] em uma string JSON.
          *
          * Esta função usa um adaptador Moshi para serializar uma lista de objetos
-         * [TimeInterval] em sua representação de string JSON.
+         * [TimeRange] em sua representação de string JSON.
          *
-         * @param timeIntervals A lista de objetos [TimeInterval] a ser convertida.
-         * @return Uma string JSON representando a lista de [TimeInterval]s.
+         * @param timeRanges A lista de objetos [TimeRange] a ser convertida.
+         * @return Uma string JSON representando a lista de [TimeRange]s.
          */
-        private fun hoursToString(timeIntervals: List<TimeInterval>): String {
-            return timeIntervalAdapter.toJson(timeIntervals)
+        private fun hoursToString(timeRanges: List<TimeRange>): String {
+            return timeRangeAdapter.toJson(timeRanges)
         }
 
         /**
@@ -69,7 +69,7 @@ class RuleMapper {
          * Converte uma entidade de banco de dados [RuleEntity] em um objeto de domínio [Rule].
          *
          * Esta função recebe um objeto [RuleEntity] e mapeia suas propriedades para um
-         * novo objeto [Rule]. As propriedades `days` e `timeIntervals`, que são
+         * novo objeto [Rule]. As propriedades `days` e `timeRanges`, que são
          * armazenadas como strings na entidade, são desserializadas de volta em listas de
          * tipos complexos usando adaptadores Moshi.
          *
@@ -82,23 +82,23 @@ class RuleMapper {
                 id = entity.id,
                 name = entity.name,
                 days = stringToDays(entity.days),
-                timeIntervals = stringToTimeInterval(entity.timeIntervals),
+                timeRanges = stringToTimeRange(entity.timeRanges),
             )
         }
 
         /**
-         * Converte uma string JSON representando uma lista de [TimeInterval]s em uma lista de objetos [TimeInterval].
+         * Converte uma string JSON representando uma lista de [TimeRange]s em uma lista de objetos [TimeRange].
          *
          * Esta função usa um adaptador Moshi para desserializar uma string JSON de volta
-         * em uma lista de objetos [TimeInterval].
+         * em uma lista de objetos [TimeRange].
          *
-         * @param timeIntervals A string JSON a ser convertida.
-         * @return Uma lista de objetos [TimeInterval].
+         * @param timeRanges A string JSON a ser convertida.
+         * @return Uma lista de objetos [TimeRange].
          * @throws NullPointerException se a string de entrada não puder ser desserializada
-         * em uma lista de [TimeInterval].
+         * em uma lista de [TimeRange].
          */
-        private fun stringToTimeInterval(timeIntervals: String): List<TimeInterval> {
-            return timeIntervalAdapter.fromJson(timeIntervals)!!
+        private fun stringToTimeRange(timeRanges: String): List<TimeRange> {
+            return timeRangeAdapter.fromJson(timeRanges)!!
         }
 
         /**

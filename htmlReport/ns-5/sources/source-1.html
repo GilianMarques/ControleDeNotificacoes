@@ -361,7 +361,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;      @Override
 &nbsp;      @NonNull
 &nbsp;      protected String createQuery() {
-<b class="nc">&nbsp;        return &quot;INSERT OR ABORT INTO `rules` (`id`,`name`,`days`,`timeIntervals`,`ruleType`) VALUES (?,?,?,?,?)&quot;;</b>
+<b class="nc">&nbsp;        return &quot;INSERT OR ABORT INTO `rules` (`id`,`name`,`days`,`timeRanges`,`ruleType`) VALUES (?,?,?,?,?)&quot;;</b>
 &nbsp;      }
 &nbsp;
 &nbsp;      @Override
@@ -382,10 +382,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        } else {
 <b class="nc">&nbsp;          statement.bindString(3, entity.getDays());</b>
 &nbsp;        }
-<b class="nc">&nbsp;        if (entity.getTimeIntervals() == null) {</b>
+<b class="nc">&nbsp;        if (entity.getTimeRanges() == null) {</b>
 <b class="nc">&nbsp;          statement.bindNull(4);</b>
 &nbsp;        } else {
-<b class="nc">&nbsp;          statement.bindString(4, entity.getTimeIntervals());</b>
+<b class="nc">&nbsp;          statement.bindString(4, entity.getTimeRanges());</b>
 &nbsp;        }
 <b class="nc">&nbsp;        statement.bindString(5, __RuleType_enumToString(entity.getRuleType()));</b>
 &nbsp;      }
@@ -411,7 +411,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;      @Override
 &nbsp;      @NonNull
 &nbsp;      protected String createQuery() {
-<b class="nc">&nbsp;        return &quot;UPDATE OR ABORT `rules` SET `id` = ?,`name` = ?,`days` = ?,`timeIntervals` = ?,`ruleType` = ? WHERE `id` = ?&quot;;</b>
+<b class="nc">&nbsp;        return &quot;UPDATE OR ABORT `rules` SET `id` = ?,`name` = ?,`days` = ?,`timeRanges` = ?,`ruleType` = ? WHERE `id` = ?&quot;;</b>
 &nbsp;      }
 &nbsp;
 &nbsp;      @Override
@@ -432,10 +432,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        } else {
 <b class="nc">&nbsp;          statement.bindString(3, entity.getDays());</b>
 &nbsp;        }
-<b class="nc">&nbsp;        if (entity.getTimeIntervals() == null) {</b>
+<b class="nc">&nbsp;        if (entity.getTimeRanges() == null) {</b>
 <b class="nc">&nbsp;          statement.bindNull(4);</b>
 &nbsp;        } else {
-<b class="nc">&nbsp;          statement.bindString(4, entity.getTimeIntervals());</b>
+<b class="nc">&nbsp;          statement.bindString(4, entity.getTimeRanges());</b>
 &nbsp;        }
 <b class="nc">&nbsp;        statement.bindString(5, __RuleType_enumToString(entity.getRuleType()));</b>
 <b class="nc">&nbsp;        if (entity.getId() == null) {</b>
@@ -524,7 +524,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;id&quot;);</b>
 <b class="nc">&nbsp;          final int _cursorIndexOfName = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;name&quot;);</b>
 <b class="nc">&nbsp;          final int _cursorIndexOfDays = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;days&quot;);</b>
-<b class="nc">&nbsp;          final int _cursorIndexOfTimeIntervals = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;timeIntervals&quot;);</b>
+<b class="nc">&nbsp;          final int _cursorIndexOfTimeRanges = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;timeRanges&quot;);</b>
 <b class="nc">&nbsp;          final int _cursorIndexOfRuleType = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;ruleType&quot;);</b>
 &nbsp;          final RuleEntity _result;
 <b class="nc">&nbsp;          if (_cursor.moveToFirst()) {</b>
@@ -546,15 +546,15 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;            } else {
 <b class="nc">&nbsp;              _tmpDays = _cursor.getString(_cursorIndexOfDays);</b>
 &nbsp;            }
-&nbsp;            final String _tmpTimeIntervals;
-<b class="nc">&nbsp;            if (_cursor.isNull(_cursorIndexOfTimeIntervals)) {</b>
-<b class="nc">&nbsp;              _tmpTimeIntervals = null;</b>
+&nbsp;            final String _tmpTimeRanges;
+<b class="nc">&nbsp;            if (_cursor.isNull(_cursorIndexOfTimeRanges)) {</b>
+<b class="nc">&nbsp;              _tmpTimeRanges = null;</b>
 &nbsp;            } else {
-<b class="nc">&nbsp;              _tmpTimeIntervals = _cursor.getString(_cursorIndexOfTimeIntervals);</b>
+<b class="nc">&nbsp;              _tmpTimeRanges = _cursor.getString(_cursorIndexOfTimeRanges);</b>
 &nbsp;            }
 &nbsp;            final RuleType _tmpRuleType;
 <b class="nc">&nbsp;            _tmpRuleType = __RuleType_stringToEnum(_cursor.getString(_cursorIndexOfRuleType));</b>
-<b class="nc">&nbsp;            _result = new RuleEntity(_tmpId,_tmpName,_tmpDays,_tmpTimeIntervals,_tmpRuleType);</b>
+<b class="nc">&nbsp;            _result = new RuleEntity(_tmpId,_tmpName,_tmpDays,_tmpTimeRanges,_tmpRuleType);</b>
 &nbsp;          } else {
 <b class="nc">&nbsp;            _result = null;</b>
 &nbsp;          }
@@ -581,7 +581,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;id&quot;);</b>
 <b class="nc">&nbsp;          final int _cursorIndexOfName = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;name&quot;);</b>
 <b class="nc">&nbsp;          final int _cursorIndexOfDays = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;days&quot;);</b>
-<b class="nc">&nbsp;          final int _cursorIndexOfTimeIntervals = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;timeIntervals&quot;);</b>
+<b class="nc">&nbsp;          final int _cursorIndexOfTimeRanges = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;timeRanges&quot;);</b>
 <b class="nc">&nbsp;          final int _cursorIndexOfRuleType = CursorUtil.getColumnIndexOrThrow(_cursor, &quot;ruleType&quot;);</b>
 <b class="nc">&nbsp;          final List&lt;RuleEntity&gt; _result = new ArrayList&lt;RuleEntity&gt;(_cursor.getCount());</b>
 <b class="nc">&nbsp;          while (_cursor.moveToNext()) {</b>
@@ -604,15 +604,15 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;            } else {
 <b class="nc">&nbsp;              _tmpDays = _cursor.getString(_cursorIndexOfDays);</b>
 &nbsp;            }
-&nbsp;            final String _tmpTimeIntervals;
-<b class="nc">&nbsp;            if (_cursor.isNull(_cursorIndexOfTimeIntervals)) {</b>
-<b class="nc">&nbsp;              _tmpTimeIntervals = null;</b>
+&nbsp;            final String _tmpTimeRanges;
+<b class="nc">&nbsp;            if (_cursor.isNull(_cursorIndexOfTimeRanges)) {</b>
+<b class="nc">&nbsp;              _tmpTimeRanges = null;</b>
 &nbsp;            } else {
-<b class="nc">&nbsp;              _tmpTimeIntervals = _cursor.getString(_cursorIndexOfTimeIntervals);</b>
+<b class="nc">&nbsp;              _tmpTimeRanges = _cursor.getString(_cursorIndexOfTimeRanges);</b>
 &nbsp;            }
 &nbsp;            final RuleType _tmpRuleType;
 <b class="nc">&nbsp;            _tmpRuleType = __RuleType_stringToEnum(_cursor.getString(_cursorIndexOfRuleType));</b>
-<b class="nc">&nbsp;            _item = new RuleEntity(_tmpId,_tmpName,_tmpDays,_tmpTimeIntervals,_tmpRuleType);</b>
+<b class="nc">&nbsp;            _item = new RuleEntity(_tmpId,_tmpName,_tmpDays,_tmpTimeRanges,_tmpRuleType);</b>
 <b class="nc">&nbsp;            _result.add(_item);</b>
 &nbsp;          }
 <b class="nc">&nbsp;          return _result;</b>

@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > TimeIntervalValidator</title>
+  <title>Coverage Report > TimeRangeValidator</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,7 +22,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">&lt;empty package name&gt;</a>
 </div>
 
-<h1>Coverage Summary for Class: TimeIntervalValidator (&lt;empty package name&gt;)</h1>
+<h1>Coverage Summary for Class: TimeRangeValidator (&lt;empty package name&gt;)</h1>
 
 <table class="coverageStats">
 
@@ -42,7 +42,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">TimeIntervalValidator</td>
+  <td class="name">TimeRangeValidator</td>
 <td class="coverageStat">
   <span class="percent">
     0%
@@ -61,7 +61,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 </tr>
   <tr>
-    <td class="name">TimeIntervalValidator$Companion</td>
+    <td class="name">TimeRangeValidator$Companion</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -123,27 +123,27 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;import dev.gmarques.controledenotificacoes.domain.exceptions.InversedIntervalException
 &nbsp;import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
-&nbsp;import dev.gmarques.controledenotificacoes.domain.model.TimeInterval
+&nbsp;import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 &nbsp;
 &nbsp;/**
 &nbsp; * Criado por Gilian Marques
 &nbsp; * Em sábado, 29 de março de 2025 as 21:49.
 &nbsp; */
-<b class="nc">&nbsp;class TimeIntervalValidator {</b>
+<b class="nc">&nbsp;class TimeRangeValidator {</b>
 &nbsp;
 &nbsp;    companion object {
 &nbsp;
 &nbsp;        /**
-&nbsp;         * Valida um TimeInterval para garantir que ele representa um intervalo de tempo válido.
+&nbsp;         * Valida um TimeRange para garantir que ele representa um intervalo de tempo válido.
 &nbsp;         *
 &nbsp;         * Esta função verifica o seguinte:
 &nbsp;         * 1. **Intervalo de Horas:** `startHour` e `endHour` devem estar dentro do intervalo de 0 a 23 (inclusive).
 &nbsp;         * 2. **Intervalo de Minutos:** `startMinute` e `endMinute` devem estar dentro do intervalo de 0 a 59 (inclusive).
 &nbsp;         * 3. **Ordem do Intervalo:** O horário de início deve ser anterior ao horário de término. Isso é determinado convertendo os horários de início e término para minutos desde a meia-noite e comparando-os.
 &nbsp;         *
-&nbsp;         * @param timeInterval O TimeInterval a ser validado.
+&nbsp;         * @param timeRange O TimeRange a ser validado.
 &nbsp;         * @return Um objeto Result.
-&nbsp;         *   - **Success:** Se o TimeInterval for válido, um Result.success contendo o TimeInterval original é retornado.
+&nbsp;         *   - **Success:** Se o TimeRange for válido, um Result.success contendo o TimeRange original é retornado.
 &nbsp;         *   - **Failure:** Se alguma das verificações de validação falhar, um Result.failure é retornado, contendo uma das seguintes exceções:
 &nbsp;         *     - **OutOfRangeException:** Se algum dos valores de hora ou minuto estiver fora de seus intervalos válidos. A mensagem de exceção indica qual campo está fora do intervalo e o intervalo permitido.
 &nbsp;         *     - **InversedIntervalException:** Se o horário de início for igual ou posterior ao horário de término. A mensagem de exceção fornece os horários de início e término em minutos.
@@ -151,44 +151,44 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;         * @throws OutOfRangeException Se a hora ou minuto não estiverem no intervalo especificado.
 &nbsp;         * @throws InversedIntervalException Se o horário de início for igual ou posterior ao horário de término.
 &nbsp;         */
-&nbsp;        fun validate(timeInterval: TimeInterval): Result&lt;TimeInterval&gt; {
+&nbsp;        fun validate(timeRange: TimeRange): Result&lt;TimeRange&gt; {
 &nbsp;
 <b class="fc">&nbsp;            val hourRange = 0..23</b>
 <b class="fc">&nbsp;            val minuteRange = 0..59</b>
 &nbsp;
 &nbsp;
-<b class="pc">&nbsp;            if (timeInterval.startHour !in hourRange) return Result.failure(</b>
+<b class="pc">&nbsp;            if (timeRange.startHour !in hourRange) return Result.failure(</b>
 <b class="fc">&nbsp;                OutOfRangeException(</b>
-<b class="fc">&nbsp;                    &quot;startHour: ${timeInterval.startHour}&quot;, hourRange.first, hourRange.last</b>
+<b class="fc">&nbsp;                    &quot;startHour: ${timeRange.startHour}&quot;, hourRange.first, hourRange.last</b>
 &nbsp;                )
 &nbsp;            )
 &nbsp;
-<b class="pc">&nbsp;            if (timeInterval.endHour !in hourRange) return Result.failure(</b>
+<b class="pc">&nbsp;            if (timeRange.endHour !in hourRange) return Result.failure(</b>
 <b class="fc">&nbsp;                OutOfRangeException(</b>
-<b class="fc">&nbsp;                    &quot;endHour: ${timeInterval.endHour}&quot;, hourRange.first, hourRange.last</b>
+<b class="fc">&nbsp;                    &quot;endHour: ${timeRange.endHour}&quot;, hourRange.first, hourRange.last</b>
 &nbsp;                )
 &nbsp;            )
 &nbsp;
-<b class="pc">&nbsp;            if (timeInterval.startMinute !in minuteRange) return Result.failure(</b>
+<b class="pc">&nbsp;            if (timeRange.startMinute !in minuteRange) return Result.failure(</b>
 <b class="fc">&nbsp;                OutOfRangeException(</b>
-<b class="fc">&nbsp;                    &quot;startMinute: ${timeInterval.startMinute}&quot;, minuteRange.first, minuteRange.last</b>
+<b class="fc">&nbsp;                    &quot;startMinute: ${timeRange.startMinute}&quot;, minuteRange.first, minuteRange.last</b>
 &nbsp;                )
 &nbsp;            )
 &nbsp;
-<b class="pc">&nbsp;            if (timeInterval.endMinute !in minuteRange) return Result.failure(</b>
+<b class="pc">&nbsp;            if (timeRange.endMinute !in minuteRange) return Result.failure(</b>
 <b class="fc">&nbsp;                OutOfRangeException(</b>
-<b class="fc">&nbsp;                    &quot;endMinute: ${timeInterval.endMinute}&quot;, minuteRange.first, minuteRange.last</b>
+<b class="fc">&nbsp;                    &quot;endMinute: ${timeRange.endMinute}&quot;, minuteRange.first, minuteRange.last</b>
 &nbsp;                )
 &nbsp;            )
 &nbsp;
-<b class="fc">&nbsp;            val startPeriodMinutes = timeInterval.startHour * 60 + timeInterval.startMinute</b>
-<b class="fc">&nbsp;            val endPeriodMinutes = timeInterval.endHour * 60 + timeInterval.endMinute</b>
+<b class="fc">&nbsp;            val startPeriodMinutes = timeRange.startHour * 60 + timeRange.startMinute</b>
+<b class="fc">&nbsp;            val endPeriodMinutes = timeRange.endHour * 60 + timeRange.endMinute</b>
 &nbsp;
 <b class="fc">&nbsp;            if (startPeriodMinutes &gt;= endPeriodMinutes) return Result.failure(</b>
 <b class="fc">&nbsp;                InversedIntervalException(startPeriodMinutes, endPeriodMinutes)</b>
 &nbsp;            )
 &nbsp;
-<b class="fc">&nbsp;            return Result.success(timeInterval)</b>
+<b class="fc">&nbsp;            return Result.success(timeRange)</b>
 &nbsp;        }
 &nbsp;
 &nbsp;    }

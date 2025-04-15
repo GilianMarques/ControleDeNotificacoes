@@ -22,4 +22,35 @@
     <string name="as">às</string>
     <string name="Bot_o_para_remover_o_intervalo_de_tempo">Botão para remover o intervalo de tempo</string>
     <string name="As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados">Bloquearemos as notificações nos dias e horários selecionados.</string>
+    <string name="Selecione_o_fim_do_intervalo_de_tempo">Selecione o fim do intervalo de tempo</string>
+    <string name="Selecione_o_in_cio_do_intervalo_de_tempo">Selecione o início do intervalo de tempo</string>
+    <string name="format_time">%1$s:%2$s</string>
+    <string name="O_intervalo_selecionado_era_inv_lido">O  intervalo selecionado era inválido</string>
+    <string name="O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido">O limite máximo de intervalos de tempo (%1$d) foi atingido.</string>
+    <string name="Nome_da_regra_opcional">Nome da regra (opcional)</string>
+    <string name="Bot_o_de_adicionar_regra">Botão de adicionar regra</string>
+    <string name="Adicionar">Adicionar</string>
+    <string name="Intervalos_de_tempo">Intervalos de tempo</string>
+
+    <!-- Dias da semana (abreviados) -->
+    <string name="segunda_abrev">Seg</string>
+    <string name="terca_abrev">Ter</string>
+    <string name="quarta_abrev">Qua</string>
+    <string name="quinta_abrev">Qui</string>
+    <string name="sexta_abrev">Sex</string>
+    <string name="sabado_abrev">Sáb</string>
+    <string name="domingo_abrev">Dom</string>
+
+    <!-- Tipo de regra -->
+    <string name="regra_tipo_permissiva">Perm.</string>
+    <string name="regra_tipo_restritiva">Bloq.</string>
+    <string name="Nome_da_regra">Nome da regra</string>
+    <string name="Intervalo_inicio_fim">%1$s-%2$s</string>
+    <string name="Nome_padrao_de_regra">%1$s %2$s %3$s</string>
+    <string name="Nao_e_possivel_adicionar_um_intervalo_de_tempo_duplicado">Não é possível adicionar um intervalo de tempo duplicado</string>
+    <string name="Nao_sao_permitidos_intervalos_de_tempo_que_se_interseccionam">"Não são permitidos intervalos de tempo que se sobrepõem. "</string>
+    <string name="Selecione_pelo_menos_um_dia_da_semana">Selecione pelo menos um dia da semana</string>
+    <string name="Adicionar_regra">Adicionar regra</string>
+    <string name="adicione_pelo_menos_um_intervalo_de_tempo">Adicione pelo menos um intervalo de tempo</string>
+
 </resources>

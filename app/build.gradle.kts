@@ -89,7 +89,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1") // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
-    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.1") // Necessário para rodar JUnit 4
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.1") // Necessário para rodar JUnit 4 com o 5
     testImplementation(kotlin("test"))
 
     //navigation
@@ -106,6 +106,13 @@ dependencies {
     // JSON serialization library, works with the Kotlin serialization plugin
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
+    // necessario para testes instrumentados pois ainda usam junit4 como padrao
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test:core:1.6.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+
+
 }
 
 // Allow references to generated code
@@ -114,5 +121,5 @@ kapt {
 }
 
 tasks.withType<Test> {
-    useJUnitPlatform() // Garante que JUnit 5 será usado
+    useJUnitPlatform() // Garante que JUnit 5 será usado nos testes unitarios
 }

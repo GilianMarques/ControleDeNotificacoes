@@ -5,7 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    tools:context=".presentation.AddRuleFragment">
+    tools:context=".presentation.rule_fragment.AddRuleFragment">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/Bot_o_de_adicionar_regra"
+        android:focusable="true"
+        android:src="@drawable/vec_check"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <include
         android:id="@+id/toolbar"
@@ -31,6 +43,42 @@
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <LinearLayout
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/urbanist_extrabold"
+                    android:text="@string/Nome_da_regra"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/edt_name"
+                    style="@style/containers_margins"
+                    android:layout_width="match_parent"
+                    android:padding="12dp"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="name"
+                    android:background="@drawable/back_container"
+                    android:hint="@string/Nome_da_regra_opcional"
+                    android:inputType="textAutoComplete" />
+
+
+
+            </LinearLayout>
+
+
 
             <LinearLayout
                 style="@style/containers_margins"
@@ -87,10 +135,9 @@
                     android:layout_margin="8dp"
                     android:drawablePadding="8dp"
                     android:text="@string/As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados"
-                    android:visibility="gone"
                     app:drawableStartCompat="@drawable/vec_details"
                     app:drawableTint="?attr/colorPrimary"
-                    tools:visibility="visible" />
+                     />
 
             </LinearLayout>
 
@@ -126,6 +173,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"
+                        android:id="@+id/chip_monday"
+                        android:tag="1"
                         android:text="@string/Segunda"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -133,7 +182,8 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
+                        android:id="@+id/chip_tuesday"
+                        android:tag="2"
                         android:text="@string/Terca"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -141,7 +191,8 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
+                        android:id="@+id/chip_wednesday"
+                        android:tag="3"
                         android:text="@string/Quarta"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -149,7 +200,8 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
+                        android:id="@+id/chip_thursday"
+                        android:tag="4"
                         android:text="@string/Quinta"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -157,7 +209,8 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
+                        android:id="@+id/chip_friday"
+                        android:tag="5"
                         android:text="@string/Sexta"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -165,7 +218,8 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
+                        android:id="@+id/chip_saturday"
+                        android:tag="6"
                         android:text="@string/Sabado"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -173,7 +227,8 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
+                        android:tag="0"
+                        android:id="@+id/chip_sunday"
                         android:text="@string/Domingo"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -202,16 +257,16 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/urbanist_extrabold"
-                        android:text="@string/Horarios"
+                        android:text="@string/Intervalos_de_tempo"
                         android:textSize="20sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/iv_add"
+                        app:layout_constraintEnd_toStartOf="@id/iv_add_range"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
 
-                        android:id="@+id/iv_add"
+                        android:id="@+id/iv_add_range"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -219,26 +274,30 @@
                         android:backgroundTint="?colorSecondaryContainer"
                         android:contentDescription="@string/Bot_o_para_remover_o_intervalo_de_tempo"
                         android:drawablePadding="4dp"
-                        android:drawableTint="?colorPrimary"
                         android:paddingStart="4dp"
                         android:paddingTop="4dp"
                         android:paddingEnd="12dp"
                         android:paddingBottom="4dp"
-                        android:text="Adicionar"
+                        android:text="@string/Adicionar"
                         app:drawableStartCompat="@drawable/vec_add"
+                        app:drawableTint="?colorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <include layout="@layout/item_interval" />
+                <LinearLayout
+                    android:id="@+id/ll_conteiner_ranges"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
 
-                <include layout="@layout/item_interval" />
+                    android:orientation="vertical">
 
-                <include layout="@layout/item_interval" />
-
+                </LinearLayout>
             </LinearLayout>
+
 
         </LinearLayout>
 

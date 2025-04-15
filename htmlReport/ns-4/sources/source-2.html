@@ -166,7 +166,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(1) {</b>
 &nbsp;      @Override
 &nbsp;      public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
-<b class="nc">&nbsp;        db.execSQL(&quot;CREATE TABLE IF NOT EXISTS `rules` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `days` TEXT NOT NULL, `timeIntervals` TEXT NOT NULL, `ruleType` TEXT NOT NULL, PRIMARY KEY(`id`))&quot;);</b>
+<b class="nc">&nbsp;        db.execSQL(&quot;CREATE TABLE IF NOT EXISTS `rules` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `days` TEXT NOT NULL, `timeRanges` TEXT NOT NULL, `ruleType` TEXT NOT NULL, PRIMARY KEY(`id`))&quot;);</b>
 <b class="nc">&nbsp;        db.execSQL(&quot;CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)&quot;);</b>
 <b class="nc">&nbsp;        db.execSQL(&quot;INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, &#39;9e806d4ec11a7e54b7b924df8a7b4321&#39;)&quot;);</b>
 &nbsp;      }
@@ -221,7 +221,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;        _columnsRules.put(&quot;id&quot;, new TableInfo.Column(&quot;id&quot;, &quot;TEXT&quot;, true, 1, null, TableInfo.CREATED_FROM_ENTITY));</b>
 <b class="nc">&nbsp;        _columnsRules.put(&quot;name&quot;, new TableInfo.Column(&quot;name&quot;, &quot;TEXT&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
 <b class="nc">&nbsp;        _columnsRules.put(&quot;days&quot;, new TableInfo.Column(&quot;days&quot;, &quot;TEXT&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
-<b class="nc">&nbsp;        _columnsRules.put(&quot;timeIntervals&quot;, new TableInfo.Column(&quot;timeIntervals&quot;, &quot;TEXT&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
+<b class="nc">&nbsp;        _columnsRules.put(&quot;timeRanges&quot;, new TableInfo.Column(&quot;timeRanges&quot;, &quot;TEXT&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
 <b class="nc">&nbsp;        _columnsRules.put(&quot;ruleType&quot;, new TableInfo.Column(&quot;ruleType&quot;, &quot;TEXT&quot;, true, 0, null, TableInfo.CREATED_FROM_ENTITY));</b>
 <b class="nc">&nbsp;        final HashSet&lt;TableInfo.ForeignKey&gt; _foreignKeysRules = new HashSet&lt;TableInfo.ForeignKey&gt;(0);</b>
 <b class="nc">&nbsp;        final HashSet&lt;TableInfo.Index&gt; _indicesRules = new HashSet&lt;TableInfo.Index&gt;(0);</b>
