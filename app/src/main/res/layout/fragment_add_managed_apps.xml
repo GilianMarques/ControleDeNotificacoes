@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    tools:context=".presentation.rule_fragment.AddRuleFragment">
+    tools:context=".presentation.ui.rule_fragment.AddRuleFragment">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
@@ -87,15 +87,14 @@
                         android:paddingBottom="4dp"
                         android:text="@string/Adicionar"
                         app:drawableStartCompat="@drawable/vec_add"
-                        app:drawableTint="?colorPrimary"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:drawableTint="?colorOnSecondaryContainer"                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_conteiner_ranges"
+                    android:id="@+id/ll_conteiner_apps"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:animateLayoutChanges="true"
@@ -148,7 +147,7 @@
                         android:paddingBottom="4dp"
                         android:text="@string/Selecionar"
                         app:drawableStartCompat="@drawable/vec_add"
-                        app:drawableTint="?colorPrimary"
+                        app:drawableTint="?colorOnSecondaryContainer"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -156,7 +155,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_conteiner_ranges"
+                    android:id="@+id/ll_conteiner_rules"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:animateLayoutChanges="true"

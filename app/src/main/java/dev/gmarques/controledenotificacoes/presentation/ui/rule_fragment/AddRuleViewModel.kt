@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.rule_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment
 
 import TimeRangeValidator
 import android.content.Context

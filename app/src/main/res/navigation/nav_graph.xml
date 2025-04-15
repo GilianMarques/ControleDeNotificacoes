@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/addRuleFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.rule_fragment.AddRuleFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment.AddRuleFragment"
         android:label="fragment_add_rule"
         tools:layout="@layout/fragment_add_rule">
 
@@ -20,7 +20,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.home_fragment.HomeFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.home_fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
 
@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/addManagedAppsFragement"
-        android:name="dev.gmarques.controledenotificacoes.presentation.managedapp_fragment.AddManagedAppsFragement"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.managedapp_fragment.AddManagedAppsFragment"
         android:label="fragment_add_managed_apps"
         tools:layout="@layout/fragment_add_managed_apps" >
         <action

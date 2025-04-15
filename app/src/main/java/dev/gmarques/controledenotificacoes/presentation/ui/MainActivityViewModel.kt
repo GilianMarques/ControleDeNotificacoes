@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation
+package dev.gmarques.controledenotificacoes.presentation.ui
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

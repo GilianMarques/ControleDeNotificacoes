@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.rule_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

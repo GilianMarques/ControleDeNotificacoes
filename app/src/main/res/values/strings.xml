@@ -55,5 +55,7 @@
     <string name="Aplicativos_alvo">Aplicativos alvo</string>
     <string name="Selecionar">Selecionar</string>
     <string name="Regra">Regra</string>
+    <string name="Buscar_aplicativo">Buscar aplicativo</string>
+    <string name="Concluir">Concluir</string>
 
 </resources>
