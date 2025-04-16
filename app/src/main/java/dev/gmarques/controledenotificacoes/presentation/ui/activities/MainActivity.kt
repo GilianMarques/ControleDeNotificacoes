@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui
+package dev.gmarques.controledenotificacoes.presentation.ui.activities
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -21,29 +21,23 @@ import dev.gmarques.controledenotificacoes.presentation.ui.home_fragment.HomeFra
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    @Suppress("unused")
-    private val viewModel: MainActivityViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
-    private lateinit var navController: NavController
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
+
         enableEdgeToEdge()
 
         setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.navController
 
-        if (navHostFragment.navController.currentDestination?.id == R.id.homeFragment) navController.navigate(
-            HomeFragmentDirections.actionHomeFragmentToAddManagedAppsFragement()
-        )
     }
 }

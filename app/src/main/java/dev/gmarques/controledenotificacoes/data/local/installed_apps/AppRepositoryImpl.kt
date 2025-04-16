@@ -4,10 +4,17 @@ package dev.gmarques.controledenotificacoes.data.local.installed_apps
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.repository.AppRepository
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -25,20 +32,27 @@ class AppRepositoryImpl @Inject constructor(@ApplicationContext context: Context
 
         val lowerTarget = targetName.lowercase()
 
-        return@withContext packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
-            .mapNotNull { appInfo ->
+        val apps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
 
+        val deferredList = apps.map { appInfo ->
+            async {
                 val appName = packageManager.getApplicationLabel(appInfo).toString()
 
-                if (!isAppValid(appName, appInfo, lowerTarget)) return@mapNotNull null
+                if (!isAppValid(appName, appInfo, lowerTarget)) return@async null
+
+                val icon = packageManager.getApplicationIcon(appInfo.packageName)
 
                 InstalledApp(
                     packageId = appInfo.packageName,
                     name = appName,
-                    icon = packageManager.getApplicationIcon(appInfo.packageName),
+                    icon = icon
                 )
             }
-            .sortedBy { it.name }
+        }
+
+        val resultList = deferredList.awaitAll().filterNotNull()
+
+        return@withContext resultList.sortedBy { it.name }
     }
 
     private fun isAppValid(appName: String, appInfo: ApplicationInfo, target: String): Boolean {

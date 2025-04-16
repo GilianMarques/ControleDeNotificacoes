@@ -57,5 +57,6 @@
     <string name="Regra">Regra</string>
     <string name="Buscar_aplicativo">Buscar aplicativo</string>
     <string name="Concluir">Concluir</string>
+    <string name="Gerenciar_aplicativos">Gerenciar aplicativos</string>
 
 </resources>

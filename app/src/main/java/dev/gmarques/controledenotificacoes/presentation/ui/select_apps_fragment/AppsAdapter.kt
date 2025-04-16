@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.managedapp_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,14 +7,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dev.gmarques.controledenotificacoes.databinding.ItemAppBinding
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
+import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 
 /**
  * Criado por Gilian Marques
  * Em terça-feira, 15 de abril de 2025 as 09:19.
  */
-class AppAdapter(
+class AppsAdapter(
     private val onItemCheck: (InstalledApp, Boolean) -> Unit,
-) : ListAdapter<InstalledApp, AppAdapter.AppViewHolder>(DiffCallback()) {
+) : ListAdapter<InstalledApp, AppsAdapter.AppViewHolder>(DiffCallback()) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
@@ -28,13 +29,17 @@ class AppAdapter(
 
     inner class AppViewHolder(private val binding: ItemAppBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(installedApp: InstalledApp) {
-            binding.tvStartDe.text = installedApp.name
-            binding.ivAppIcon.setImageDrawable(installedApp.icon)
-            binding.cbSelect.setOnCheckedChangeListener(null)
-            binding.cbSelect.isChecked = false
+        fun bind(installedApp: InstalledApp) = with(binding) {
+            tvStartDe.text = installedApp.name
+            ivAppIcon.setImageDrawable(installedApp.icon) // usar o glide para carregar
+            cbSelect.setOnCheckedChangeListener(null)
+            cbSelect.isChecked = false
 
-            binding.cbSelect.setOnCheckedChangeListener { _, isChecked ->
+            parent.setOnClickListener {
+                cbSelect.isChecked = !cbSelect.isChecked
+            }
+
+            cbSelect.setOnCheckedChangeListener { _, isChecked ->
                 onItemCheck(installedApp, isChecked)
             }
         }

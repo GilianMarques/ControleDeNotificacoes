@@ -5,18 +5,6 @@
     android:id="@+id/nav_graph.xml"
     app:startDestination="@id/homeFragment">
 
-    <fragment
-        android:id="@+id/addRuleFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment.AddRuleFragment"
-        android:label="fragment_add_rule"
-        tools:layout="@layout/fragment_add_rule">
-
-        <argument
-            android:name="editingRule"
-            android:defaultValue="@null"
-            app:argType="dev.gmarques.controledenotificacoes.domain.model.Rule"
-            app:nullable="true" />
-    </fragment>
 
     <fragment
         android:id="@+id/homeFragment"
@@ -25,17 +13,44 @@
         tools:layout="@layout/fragment_home">
 
         <action
-            android:id="@+id/action_homeFragment_to_addManagedAppsFragement"
-            app:destination="@id/addManagedAppsFragement" />
-    </fragment>
-    <fragment
-        android:id="@+id/addManagedAppsFragement"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.managedapp_fragment.AddManagedAppsFragment"
-        android:label="fragment_add_managed_apps"
-        tools:layout="@layout/fragment_add_managed_apps" >
-        <action
-            android:id="@+id/action_addManagedAppsFragement_to_addRuleFragment"
-            app:destination="@id/addRuleFragment" />
+            android:id="@+id/to_add_edit_managed_apps_graph"
+            app:destination="@id/nav_graph_manage_apps.xml" />
     </fragment>
 
+    <navigation
+        android:id="@+id/nav_graph_manage_apps.xml"
+        app:startDestination="@id/addManagedAppsFragment">
+
+        <fragment
+            android:id="@+id/addManagedAppsFragment"
+            android:name="dev.gmarques.controledenotificacoes.presentation.ui.managedapp_fragment.AddManagedAppsFragment"
+            android:label="fragment_add_managed_apps"
+            tools:layout="@layout/fragment_add_managed_apps" >
+            <action
+                android:id="@+id/to_addRuleFragment"
+                app:destination="@id/addRuleFragment" />
+            <action
+                android:id="@+id/to_SelectAppsFragment"
+                app:destination="@id/SelectAppsFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/addRuleFragment"
+            android:name="dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment.AddRuleFragment"
+            android:label="fragment_add_rule"
+            tools:layout="@layout/fragment_add_rule">
+
+            <argument
+                android:name="editingRule"
+                android:defaultValue="@null"
+                app:argType="dev.gmarques.controledenotificacoes.domain.model.Rule"
+                app:nullable="true" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/SelectAppsFragment"
+            android:name="dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment"
+            android:label="SelectAppsFragment" />
+
+    </navigation>
 </navigation>

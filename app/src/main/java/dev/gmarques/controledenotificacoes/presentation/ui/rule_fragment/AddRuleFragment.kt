@@ -28,6 +28,7 @@ import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
 import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.endIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.startIntervalFormatted
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
+import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
@@ -35,12 +36,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AddRuleFragment : Fragment() {
+class AddRuleFragment : MyFragment() {
 
     private var doNotNotifyViewModelTypeRule: Boolean = true
 
-    @Inject
-    lateinit var vibrator: VibratorInterface
     private val viewModel: AddRuleViewModel by viewModels()
     private lateinit var binding: FragmentAddRuleBinding
     private val args: AddRuleFragmentArgs by navArgs()
@@ -57,7 +56,7 @@ class AddRuleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        setupToolbar()
+        initActionBar(binding.toolbar)
         setupNameInput()
         setupButtonTypeRule()
         setupChipDays()
@@ -104,17 +103,7 @@ class AddRuleFragment : Fragment() {
         this@AddRuleFragment.findNavController().navigateUp()
     }
 
-    private fun setupToolbar() = with(binding) {
-        toolbar.ivGoBack.setOnClickListener(AnimatedClickListener {
-            vibrator.interaction()
-            goBack()
-        })
 
-        toolbar.tvTitle.text = getString(R.string.Adicionar_regra)
-
-        toolbar.ivMenu.isGone = true
-
-    }
 
     private fun setupFabAddRule() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {

@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 
-class HomeFragment : Fragment() {
+class HomeFragment : MyFragment() {
 
     companion object {
         fun newInstance() = HomeFragment()
@@ -27,5 +29,11 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         return inflater.inflate(R.layout.fragment_home, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        findNavController().navigate(HomeFragmentDirections.toAddEditManagedAppsGraph())
     }
 }
