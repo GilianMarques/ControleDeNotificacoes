@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class GetInstalledAppsUseCase @Inject constructor(private val repository: AppRepository) {
 
-    suspend operator fun invoke(targetName: String): List<InstalledApp> {
-        return repository.getInstalledApps(targetName)
+    suspend operator fun invoke(targetName: String, preSelectedPackages: HashSet<String>): List<InstalledApp> {
+        return repository.getInstalledApps(targetName, preSelectedPackages)
     }
 }

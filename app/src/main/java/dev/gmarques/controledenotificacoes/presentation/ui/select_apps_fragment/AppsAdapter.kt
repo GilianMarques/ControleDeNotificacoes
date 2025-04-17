@@ -29,10 +29,12 @@ class AppsAdapter(
     inner class AppViewHolder(private val binding: ItemAppSelectableBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(installedApp: InstalledApp) = with(binding) {
+            cbSelect.setOnCheckedChangeListener(null)
+
             tvStartDe.text = installedApp.name
             ivAppIcon.setImageDrawable(installedApp.icon) // usar o glide para carregar
             cbSelect.setOnCheckedChangeListener(null)
-            cbSelect.isChecked = false
+            cbSelect.isChecked = installedApp.preSelected
 
             parent.setOnClickListener {
                 cbSelect.isChecked = !cbSelect.isChecked

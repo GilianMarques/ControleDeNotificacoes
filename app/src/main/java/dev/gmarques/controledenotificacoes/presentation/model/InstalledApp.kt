@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.model
 
 import android.graphics.drawable.Drawable
+import java.io.Serializable
 
 /**
  * Criado por Gilian Marques
@@ -9,5 +10,6 @@ import android.graphics.drawable.Drawable
 data class InstalledApp(
     val name: String,
     val packageId: String,
-    val icon: Drawable
-)
+    val icon: Drawable,
+    val preSelected: Boolean = false,
+) : Serializable

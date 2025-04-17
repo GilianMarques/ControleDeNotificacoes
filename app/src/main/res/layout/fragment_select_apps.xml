@@ -54,7 +54,7 @@
         tools:listitem="@layout/item_app_selectable" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/btn_conclude"
+        android:id="@+id/fab_conclude"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

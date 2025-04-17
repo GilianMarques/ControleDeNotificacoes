@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,22 +23,41 @@ class SelectAppsViewModel @Inject constructor(
     private val _apps = MutableLiveData<List<InstalledApp>>()
     val apps: LiveData<List<InstalledApp>> = _apps
 
-    private var searchJob: Job? = null
+    var selectedApps = listOf<InstalledApp>()
+        private set
 
-    init {
-        searchApps() // carrega tudo inicialmente
-    }
+    var preSelectedPackages: HashSet<String> = hashSetOf()
+    private var preSelectedPackagesIncludedInList = false
+
+
+    private var searchJob: Job? = null
 
     fun searchApps(query: String = "") {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            val result = getInstalledAppsUseCase(query)
+            val result = getInstalledAppsUseCase(query, preSelectedPackages)
+            if (!preSelectedPackagesIncludedInList && preSelectedPackages.isNotEmpty()) includePreSelectedPackages(result)
+
             _apps.postValue(result)
         }
     }
 
+    /**
+     * Essa função inclui na lista de aplicativos selecionados todos os aplicativos que constam na lista de pacotes pré-selecionados.
+     * Pacotes pré selecionados são aplicativos que foram selecionados pelo usuário neste mesmo fragmento anteriormente e devem
+     * ser incluídos na lista para não se perderem já que a lista de aplicativos selecionados neste fragmento, quando retornada
+     * para o fragmento anterior substituirá a lista que está presente lá e se os pacotes pré selecionados não forem incluídos
+     * nesta lista eles desapareceram
+     * */
+    private fun includePreSelectedPackages(apps: List<InstalledApp>) {
+        apps.forEach {
+            if (preSelectedPackages.contains(it.packageId)) onAppChecked(it, true)
+        }
+    }
+
     fun onAppChecked(app: InstalledApp, checked: Boolean) {
-        // Lógica de marcação pode ser mantida aqui ou delegada a outro use case
-        Log.d("AppListViewModel", "App '${app.name}' checked: $checked")
+        selectedApps = selectedApps.toMutableList().apply {
+            if (checked) add(app) else remove(app)
+        }
     }
 }

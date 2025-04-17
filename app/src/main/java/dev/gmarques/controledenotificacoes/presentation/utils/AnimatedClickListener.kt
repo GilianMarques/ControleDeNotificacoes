@@ -3,7 +3,6 @@ package dev.gmarques.controledenotificacoes.presentation.utils
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.ScaleAnimation
-import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 
 /**
  * [AnimatedClickListener] é um [View.OnClickListener] personalizado que fornece um feedback visual
@@ -12,7 +11,7 @@ import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
  *
  * @property action Uma função lambda que representa a ação a ser executada após o término da animação de clique.
  */
-class AnimatedClickListener(private val action: () -> Any) : View.OnClickListener {
+class AnimatedClickListener(private val action: () -> Unit) : View.OnClickListener {
 
     override fun onClick(v: View) {
         animateView(v)

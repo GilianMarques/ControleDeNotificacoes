@@ -7,15 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
-import androidx.navigation.navGraphViewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectAppsBinding
-import dev.gmarques.controledenotificacoes.presentation.ui.ManagedAppsSharedViewModel
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 
 /**
  * Criado por Gilian Marques
@@ -24,12 +27,16 @@ import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 @AndroidEntryPoint
 class SelectAppsFragment : MyFragment() {
 
+    companion object {
+        const val RESULT_KEY = "selectAppsResult"
+        const val BUNDLED_SELECTED_APPS_KEY = "bundled_selectAppsResult"
+    }
+
     private var animatingFab = false
 
     private lateinit var binding: FragmentSelectAppsBinding
-
     private val viewModel: SelectAppsViewModel by viewModels()
-    private val sharedViewModel: ManagedAppsSharedViewModel by navGraphViewModels(R.id.nav_graph_manage_apps_xml)
+    private val args: SelectAppsFragmentArgs by navArgs()
 
     private lateinit var adapter: AppsAdapter
 
@@ -44,9 +51,44 @@ class SelectAppsFragment : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        getPreSelectedPackages()
         setupRecyclerView()
         setupSearch()
         setupObservers()
+        setupFabConclude()
+    }
+
+    private fun getPreSelectedPackages() {
+        viewModel.preSelectedPackages = args.preSelectedPackages.toHashSet()
+        viewModel.searchApps()
+
+    }
+
+    private fun setupFabConclude() = with(binding) {
+        fabConclude.setOnClickListener(AnimatedClickListener {
+
+            if (viewModel.selectedApps.isEmpty()) {
+                Snackbar.make(root, getString(R.string.Selecione_pelo_menos_um_aplicativo), Snackbar.LENGTH_SHORT).show()
+                vibrator.error()
+                return@AnimatedClickListener
+            }
+            vibrator.interaction()
+            setResultAndClose()
+        })
+
+
+    }
+
+    private fun setResultAndClose() {
+        val result = Bundle().apply {
+            putSerializable(
+                BUNDLED_SELECTED_APPS_KEY,
+                ArrayList(viewModel.selectedApps)
+            )
+        }
+
+        setFragmentResult(RESULT_KEY, result)
+        findNavController().popBackStack()
     }
 
     private fun setupSearch() {
@@ -56,8 +98,10 @@ class SelectAppsFragment : MyFragment() {
     }
 
     private fun setupRecyclerView() {
+
         adapter = AppsAdapter { app, checked ->
             viewModel.onAppChecked(app, checked)
+            vibrator.interaction()
         }
 
         binding.rvApps.apply {
@@ -78,16 +122,17 @@ class SelectAppsFragment : MyFragment() {
                 }
             })
         }
+
     }
 
     private fun toggleFabVisibility(show: Boolean) = with(binding) {
+
         if (animatingFab) return@with
 
-
-        val translationY = if (show) 0f else (btnConclude.height * 2f)
+        val translationY = if (show) 0f else (fabConclude.height * 2f)
         val alpha = if (show) 1f else 1f
 
-        btnConclude.animate().translationY(translationY).alpha(alpha).setDuration(400L)
+        fabConclude.animate().translationY(translationY).alpha(alpha).setDuration(400L)
             .setInterpolator(android.view.animation.AnticipateOvershootInterpolator())
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator) {

@@ -58,5 +58,6 @@
     <string name="Buscar_aplicativo">Buscar aplicativo</string>
     <string name="Concluir">Concluir</string>
     <string name="Gerenciar_aplicativos">Gerenciar aplicativos</string>
+    <string name="Selecione_pelo_menos_um_aplicativo">Selecione pelo menos um aplicativo</string>
 
 </resources>

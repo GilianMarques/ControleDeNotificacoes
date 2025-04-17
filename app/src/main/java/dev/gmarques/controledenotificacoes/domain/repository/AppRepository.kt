@@ -24,5 +24,5 @@ interface AppRepository {
      * @return Uma lista de objetos [InstalledApp] que correspondem aos critérios especificados.
      *         Retorna uma lista vazia se nenhum aplicativo correspondente for encontrado.
      */
-    suspend fun getInstalledApps(targetName: String): List<InstalledApp>
+    suspend fun getInstalledApps(targetName: String, preSelectedPackages: HashSet<String>): List<InstalledApp>
 }

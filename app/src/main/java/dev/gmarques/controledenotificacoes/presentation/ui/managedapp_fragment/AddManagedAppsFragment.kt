@@ -1,22 +1,22 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.managedapp_fragment
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import dagger.hilt.android.AndroidEntryPoint
-import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
-import dev.gmarques.controledenotificacoes.presentation.ui.ManagedAppsSharedViewModel
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import javax.inject.Inject
@@ -35,7 +35,6 @@ class AddManagedAppsFragment : MyFragment() {
     lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
 
     private val viewModel: AddManagedAppsFragmentViewModel by viewModels()
-    private val sharedViewModel: ManagedAppsSharedViewModel by navGraphViewModels(R.id.nav_graph_manage_apps_xml)
 
     private lateinit var binding: FragmentAddManagedAppsBinding
 
@@ -50,23 +49,43 @@ class AddManagedAppsFragment : MyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initActionBar(binding.toolbar)
-        setupAddAppButton()
-        setupAddRuleButton()
+        setupSelectAppsListener()
+        setupSelectAppsButton()
+        setupSelectRuleButton()
         observeSharedViewModel()
     }
 
-
-    private fun setupAddAppButton() = with(binding) {
+    private fun setupSelectAppsButton() = with(binding) {
 
         ivAddApp.setOnClickListener(AnimatedClickListener {
-            findNavController().navigate(AddManagedAppsFragmentDirections.toSelectAppsFragment())
+            vibrator.interaction()
+            findNavController().navigate(AddManagedAppsFragmentDirections.toSelectAppsFragment(viewModel.getSelectedPackages()))
         })
 
     }
 
-    private fun setupAddRuleButton() = with(binding) {
+    @Suppress("UNCHECKED_CAST")
+    private fun setupSelectAppsListener() {
+
+        setFragmentResultListener(SelectAppsFragment.RESULT_KEY) { _, bundle ->
+            val selectedApps = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                bundle.getSerializable(
+                    SelectAppsFragment.BUNDLED_SELECTED_APPS_KEY,
+                    ArrayList::class.java
+                ) as ArrayList<InstalledApp>
+            } else {
+                @Suppress("DEPRECATION")
+                bundle.getSerializable(SelectAppsFragment.BUNDLED_SELECTED_APPS_KEY) as ArrayList<InstalledApp>
+            }
+
+            viewModel.setApps(selectedApps)
+        }
+    }
+
+    private fun setupSelectRuleButton() = with(binding) {
 
         ivAddRule.setOnClickListener(AnimatedClickListener {
+            vibrator.interaction()
             findNavController().navigate(AddManagedAppsFragmentDirections.toAddRuleFragment())
         })
 
@@ -74,11 +93,11 @@ class AddManagedAppsFragment : MyFragment() {
 
     private fun observeSharedViewModel() {
 
-        sharedViewModel.selectedApps.observe(viewLifecycleOwner) { apps ->
+        viewModel.selectedApps.observe(viewLifecycleOwner) { apps ->
             manageAppsViews(apps)
         }
 
-        sharedViewModel.selectedRule.observe(viewLifecycleOwner) { rule ->
+        viewModel.selectedRule.observe(viewLifecycleOwner) { rule ->
             rule?.let { manageRuleView(rule) }
         }
 
