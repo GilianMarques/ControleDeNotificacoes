@@ -12,6 +12,7 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
 import dev.gmarques.controledenotificacoes.domain.exceptions.DuplicateTimeRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.IntersectedRangeException
+import dev.gmarques.controledenotificacoes.domain.exceptions.InversedRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
@@ -143,9 +144,16 @@ class AddRuleViewModel @Inject constructor(
 
         if (validationResult.isFailure) {
             val event = _uiEvents.value!!
+
+            val errorMessage = when (validationResult.exceptionOrNull()) {
+                is OutOfRangeException -> context.getString(R.string.O_intervalo_selecionado_era_inv_lido)
+                is InversedRangeException -> context.getString(R.string.O_final_do_intervalo_deve_ser_maior_que_o_inicio)
+                else -> throw IllegalStateException("Exceção não prevista. Isso é um bug!")
+            }
+
             _uiEvents.postValue(
                 event.copy(
-                    simpleErrorMessageEvent = EventWrapper(context.getString(R.string.O_intervalo_selecionado_era_inv_lido))
+                    simpleErrorMessageEvent = EventWrapper(errorMessage)
                 )
             )
         }

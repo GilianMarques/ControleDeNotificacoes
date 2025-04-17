@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isGone
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
@@ -58,10 +59,14 @@ class SelectAppsFragment : MyFragment() {
         setupFabConclude()
     }
 
+    /**
+     * Carrega os pacotes de apps que devem ser previamente marcados como selecionados em
+     * um hashset para otimizar o tempo de consulta. (O(1) ou O(n))
+     * Por fim, dispara a busca de aplicativos para aplicar a seleção inicial.
+     */
     private fun getPreSelectedPackages() {
         viewModel.preSelectedPackages = args.preSelectedPackages.toHashSet()
         viewModel.searchApps()
-
     }
 
     private fun setupFabConclude() = with(binding) {
@@ -82,8 +87,7 @@ class SelectAppsFragment : MyFragment() {
     private fun setResultAndClose() {
         val result = Bundle().apply {
             putSerializable(
-                BUNDLED_SELECTED_APPS_KEY,
-                ArrayList(viewModel.selectedApps)
+                BUNDLED_SELECTED_APPS_KEY, ArrayList(viewModel.selectedApps)
             )
         }
 
@@ -125,14 +129,22 @@ class SelectAppsFragment : MyFragment() {
 
     }
 
+    /**
+     * Alterna a visibilidade do Floating Action Button (FAB) com uma animação de transição.
+     *
+     * Se o FAB já estiver em processo de animação (`animatingFab` é `true`), a função retorna
+     * imediatamente para evitar animações concorrentes.  Caso contrário, define a translação Y
+     * do FAB para mostrar ou esconder o botão e inicia a animação.
+     *
+     * @param show `true` para mostrar o FAB, `false` para escondê-lo.
+     */
     private fun toggleFabVisibility(show: Boolean) = with(binding) {
 
         if (animatingFab) return@with
 
         val translationY = if (show) 0f else (fabConclude.height * 2f)
-        val alpha = if (show) 1f else 1f
 
-        fabConclude.animate().translationY(translationY).alpha(alpha).setDuration(400L)
+        fabConclude.animate().translationY(translationY).setDuration(400L)
             .setInterpolator(android.view.animation.AnticipateOvershootInterpolator())
             .setListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator) {
@@ -149,6 +161,7 @@ class SelectAppsFragment : MyFragment() {
 
     private fun setupObservers() {
         viewModel.apps.observe(viewLifecycleOwner) {
+            binding.progressBar.isGone = true
             adapter.submitList(it)
         }
     }

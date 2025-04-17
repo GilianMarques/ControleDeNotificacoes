@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +23,9 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
+import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.endIntervalFormatted
+import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.startIntervalFormatted
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -30,6 +33,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListe
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.min
 
 @AndroidEntryPoint
 class AddRuleFragment : MyFragment() {
@@ -98,7 +102,6 @@ class AddRuleFragment : MyFragment() {
     private fun goBack() {
         this@AddRuleFragment.findNavController().popBackStack()
     }
-
 
     private fun setupFabAddRule() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
@@ -374,25 +377,29 @@ class AddRuleFragment : MyFragment() {
     private fun manageTimeRangesViews(timeRanges: Map<String, TimeRange>) {
 
         val parent = binding.llConteinerRanges
+        val sortedRanges = timeRanges.values.toList().sortedBy { it.startHour }
 
+        /* remova o `toList()` e veja sua vida se transformar em um inferno! Brincadeiras a parte, deve-se criar
+                 uma lista de views a remover primeiro e só depois remova-las pra evitar inconsistencias na ui */
         parent.children
             .filter { it.tag !in timeRanges.keys }
+            .toList()
             .forEach { parent.removeView(it) }
 
-        timeRanges.values
-            .filter { range -> parent.children.none { it.tag == range.id } }
-            .forEach { range ->
-                with(ItemIntervalBinding.inflate(layoutInflater)) {
-                    tvStart.text = range.startIntervalFormatted()
-                    tvEnd.text = range.endIntervalFormatted()
-                    ivRemove.setOnClickListener(AnimatedClickListener {
-                        vibrator.interaction()
-                        viewModel.removeTimeRange(range)
-                    })
-                    root.tag = range.id
-                    parent.addViewWithTwoStepsAnimation(root)
-                }
+        sortedRanges.forEachIndexed { index, range ->
+            if (!parent.children.none { it.tag == range.id }) return@forEachIndexed
+
+            with(ItemIntervalBinding.inflate(layoutInflater)) {
+                tvStart.text = range.startIntervalFormatted()
+                tvEnd.text = range.endIntervalFormatted()
+                ivRemove.setOnClickListener(AnimatedClickListener {
+                    vibrator.interaction()
+                    viewModel.removeTimeRange(range)
+                })
+                root.tag = range.id
+                parent.addViewWithTwoStepsAnimation(root, min(index, parent.childCount))
             }
+        }
     }
 
     private fun observeRuleType() {

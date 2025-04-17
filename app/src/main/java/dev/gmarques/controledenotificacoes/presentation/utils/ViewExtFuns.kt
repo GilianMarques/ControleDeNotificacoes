@@ -14,6 +14,16 @@ import kotlinx.coroutines.withContext
  */
 object ViewExtFuns {
 
+    /**
+     * Adiciona uma view filha ao ViewGroup com uma animação de duas etapas.
+     *
+     * A view é adicionada ao container oculta e, após um breve atraso, torna-se visível,
+     * dando tempo do conteiner ajustar suas dimensoes antes da view ser exibida com um fade-in.
+     *
+     * @param child A view filha a ser adicionada.
+     * @param index O índice onde a view será adicionada. -1 para adicionar ao final (padrão).
+     * @throws IllegalArgumentException Se o índice estiver fora do intervalo (< -1 ou > childCount).
+     */
     fun ViewGroup.addViewWithTwoStepsAnimation(child: View, index: Int = -1) {
 
         child.visibility = View.INVISIBLE

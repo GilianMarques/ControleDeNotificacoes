@@ -85,9 +85,9 @@ dependencies {
     //testar corrotinas
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.1") // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.12.1") // JUnit 5
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.12.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.12.1")
     testImplementation("org.junit.vintage:junit-vintage-engine:5.10.1") // Necessário para rodar JUnit 4 com o 5
     testImplementation(kotlin("test"))
 
@@ -110,6 +110,10 @@ dependencies {
     androidTestImplementation("androidx.test:core:1.6.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")// imitar classes
+    testImplementation("io.mockk:mockk:1.13.10")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
 
 
 }

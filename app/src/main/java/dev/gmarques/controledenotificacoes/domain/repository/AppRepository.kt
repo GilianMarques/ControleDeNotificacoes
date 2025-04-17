@@ -17,9 +17,10 @@ interface AppRepository {
      * Esta função retorna uma lista de objetos [InstalledApp] representando os aplicativos instalados no dispositivo.
      * Você pode filtrar os resultados fornecendo um `targetName`.
      *
-     * @param targetName A string usada para filtrar os aplicativos pelo nome.
-     *                   Se fornecida, apenas os aplicativos cujo nome começa com esta string serão retornados.
-     *                   Se a string estiver vazia, todos os aplicativos instalados serão retornados.
+     * @param targetName Uma string usada para filtrar os aplicativos por nome.
+     *                   Se fornecido, somente aplicativos cujo nome contem esta string serão retornados.
+     *                   Se a string estiver vazia, a filtragem por nome será desabilitada.
+     * @param preSelectedPackages Um conjunto de nomes de pacotes que será usado para marcar os aplicativos selecionados.
      *
      * @return Uma lista de objetos [InstalledApp] que correspondem aos critérios especificados.
      *         Retorna uma lista vazia se nenhum aplicativo correspondente for encontrado.

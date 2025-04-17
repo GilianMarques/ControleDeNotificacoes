@@ -67,17 +67,15 @@
                     android:id="@+id/edt_name"
                     style="@style/containers_margins"
                     android:layout_width="match_parent"
-                    android:padding="12dp"
                     android:layout_height="wrap_content"
                     android:autofillHints="name"
-                    android:background="@drawable/back_container"
+                    android:background="@drawable/back_edittext"
                     android:hint="@string/Nome_da_regra_opcional"
-                    android:inputType="textAutoComplete" />
-
+                    android:inputType="textAutoComplete"
+                    android:padding="12dp" />
 
 
             </LinearLayout>
-
 
 
             <LinearLayout
@@ -136,8 +134,7 @@
                     android:drawablePadding="8dp"
                     android:text="@string/As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados"
                     app:drawableStartCompat="@drawable/vec_details"
-                    app:drawableTint="?attr/colorPrimary"
-                     />
+                    app:drawableTint="?attr/colorPrimary" />
 
             </LinearLayout>
 
@@ -169,66 +166,66 @@
                     android:paddingBottom="8dp">
 
                     <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_monday"
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="4dp"
-                        android:id="@+id/chip_monday"
                         android:tag="1"
                         android:text="@string/Segunda"
                         app:ensureMinTouchTargetSize="false" />
 
                     <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_tuesday"
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/chip_tuesday"
                         android:tag="2"
                         android:text="@string/Terca"
                         app:ensureMinTouchTargetSize="false" />
 
                     <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_wednesday"
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/chip_wednesday"
                         android:tag="3"
                         android:text="@string/Quarta"
                         app:ensureMinTouchTargetSize="false" />
 
                     <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_thursday"
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/chip_thursday"
                         android:tag="4"
                         android:text="@string/Quinta"
                         app:ensureMinTouchTargetSize="false" />
 
                     <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_friday"
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/chip_friday"
                         android:tag="5"
                         android:text="@string/Sexta"
                         app:ensureMinTouchTargetSize="false" />
 
                     <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_saturday"
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/chip_saturday"
                         android:tag="6"
                         android:text="@string/Sabado"
                         app:ensureMinTouchTargetSize="false" />
 
                     <com.google.android.material.chip.Chip
+                        android:id="@+id/chip_sunday"
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="0"
-                        android:id="@+id/chip_sunday"
                         android:text="@string/Domingo"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -274,11 +271,12 @@
                         android:backgroundTint="?colorSecondaryContainer"
                         android:contentDescription="@string/Bot_o_para_remover_o_intervalo_de_tempo"
                         android:drawablePadding="4dp"
-                        android:paddingStart="4dp"
-                        android:paddingTop="4dp"
+                        android:paddingStart="8dp"
+                        android:paddingTop="8dp"
                         android:paddingEnd="12dp"
-                        android:paddingBottom="4dp"
+                        android:paddingBottom="8dp"
                         android:text="@string/Adicionar"
+                        android:textColor="?colorOnSecondaryContainer"
                         app:drawableStartCompat="@drawable/vec_add"
                         app:drawableTint="?colorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"

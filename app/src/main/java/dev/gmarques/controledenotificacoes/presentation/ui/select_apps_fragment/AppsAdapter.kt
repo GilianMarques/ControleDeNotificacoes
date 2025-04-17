@@ -32,7 +32,7 @@ class AppsAdapter(
             cbSelect.setOnCheckedChangeListener(null)
 
             tvStartDe.text = installedApp.name
-            ivAppIcon.setImageDrawable(installedApp.icon) // usar o glide para carregar
+            ivAppIcon.setImageDrawable(installedApp.icon)
             cbSelect.setOnCheckedChangeListener(null)
             cbSelect.isChecked = installedApp.preSelected
 
@@ -47,6 +47,7 @@ class AppsAdapter(
     }
 
     class DiffCallback : DiffUtil.ItemCallback<InstalledApp>() {
+
         override fun areItemsTheSame(oldItem: InstalledApp, newItem: InstalledApp): Boolean {
             return oldItem.packageId == newItem.packageId
         }

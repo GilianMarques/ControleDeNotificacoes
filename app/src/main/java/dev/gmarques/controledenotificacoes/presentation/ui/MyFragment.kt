@@ -10,8 +10,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
+import dev.gmarques.controledenotificacoes.presentation.ui.home_fragment.HomeFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.managedapp_fragment.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment.AddRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import javax.inject.Inject
 
@@ -40,6 +42,13 @@ open class MyFragment : Fragment() {
     protected fun initActionBar(binding: ViewActivityHeaderBinding) {
 
         when (this@MyFragment) {
+
+            is HomeFragment -> {
+                setupGoBackButton(binding.ivGoBack)
+                binding.tvTitle.text = getString(R.string.app_name)
+                binding.ivMenu.isGone = true
+            }
+
             is AddManagedAppsFragment -> {
                 setupGoBackButton(binding.ivGoBack)
                 binding.tvTitle.text = getString(R.string.Gerenciar_aplicativos)
@@ -51,7 +60,17 @@ open class MyFragment : Fragment() {
                 binding.tvTitle.text = getString(R.string.Adicionar_regra)
                 binding.ivMenu.isGone = true
             }
-            // TODO: terminar de incluir os outro frags
+
+            is SelectAppsFragment -> {
+                setupGoBackButton(binding.ivGoBack)
+                binding.tvTitle.text = getString(R.string.Selecionar_aplicativos)
+                binding.ivMenu.isGone = true
+            }
+
+            else -> {
+                throw IllegalArgumentException("Inclua o codigo de inicializaçao da Actionbar para esse fragmento aqui")
+            }
+
         }
     }
 }
