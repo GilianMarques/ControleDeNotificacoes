@@ -6,18 +6,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectAppsBinding
+import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 
@@ -30,10 +28,11 @@ class SelectAppsFragment : MyFragment() {
 
     companion object {
         const val RESULT_KEY = "selectAppsResult"
-        const val BUNDLED_SELECTED_APPS_KEY = "bundled_selectAppsResult"
+        const val BUNDLED_PACKAGES_KEY = "bundled_packages"
     }
 
     private var animatingFab = false
+    private var isFabVisible = true
 
     private lateinit var binding: FragmentSelectAppsBinding
     private val viewModel: SelectAppsViewModel by viewModels()
@@ -52,47 +51,29 @@ class SelectAppsFragment : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getPreSelectedPackages()
+        getPreSelectedPackagesAndLoad()
         setupRecyclerView()
         setupSearch()
-        setupObservers()
+        observeViewModel()
+        observeEvents()
         setupFabConclude()
     }
 
     /**
-     * Carrega os pacotes de apps que devem ser previamente marcados como selecionados em
+     * Carrega os pacotes de apps que devem ser excluidos da busca em
      * um hashset para otimizar o tempo de consulta. (O(1) ou O(n))
      * Por fim, dispara a busca de aplicativos para aplicar a seleção inicial.
      */
-    private fun getPreSelectedPackages() {
-        viewModel.preSelectedPackages = args.preSelectedPackages.toHashSet()
-        viewModel.searchApps()
+    private fun getPreSelectedPackagesAndLoad() {
+        viewModel.preSelectedAppsToHide = args.excludePackages.toHashSet()
+        viewModel.loadAllApps()
     }
 
     private fun setupFabConclude() = with(binding) {
         fabConclude.setOnClickListener(AnimatedClickListener {
-
-            if (viewModel.selectedApps.isEmpty()) {
-                Snackbar.make(root, getString(R.string.Selecione_pelo_menos_um_aplicativo), Snackbar.LENGTH_SHORT).show()
-                vibrator.error()
-                return@AnimatedClickListener
-            }
-            vibrator.interaction()
-            setResultAndClose()
+            viewModel.validateSelection()
         })
 
-
-    }
-
-    private fun setResultAndClose() {
-        val result = Bundle().apply {
-            putSerializable(
-                BUNDLED_SELECTED_APPS_KEY, ArrayList(viewModel.selectedApps)
-            )
-        }
-
-        setFragmentResult(RESULT_KEY, result)
-        findNavController().popBackStack()
     }
 
     private fun setupSearch() {
@@ -104,15 +85,22 @@ class SelectAppsFragment : MyFragment() {
     private fun setupRecyclerView() {
 
         adapter = AppsAdapter { app, checked ->
+
             viewModel.onAppChecked(app, checked)
-            vibrator.interaction()
+
+            when (viewModel.canSelectMoreApps()) {
+                true -> vibrator.interaction()
+                false -> vibrator.error()
+            }
+
+            isFabVisible = true
+            toggleFabVisibility(true)
         }
 
         binding.rvApps.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@SelectAppsFragment.adapter
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                private var isFabVisible = true
 
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -159,11 +147,47 @@ class SelectAppsFragment : MyFragment() {
             }).start()
     }
 
-    private fun setupObservers() {
-        viewModel.apps.observe(viewLifecycleOwner) {
-            binding.progressBar.isGone = true
+    private fun observeViewModel() {
+
+        viewModel.installedApps.observe(viewLifecycleOwner) {
+            binding.progressBar.isVisible = false
             adapter.submitList(it)
         }
+
+        viewModel.blockUiSelection.observe(viewLifecycleOwner) {
+            adapter.setBlockSelection(it)
+        }
+
+    }
+
+    private fun observeEvents() {
+        viewModel.uiEvents.observe(viewLifecycleOwner) { event ->
+
+            with(event.cantSelectMoreApps.consume()) {
+                if (this != null) {
+                    showErrorSnackBar(this)
+                }
+            }
+
+            with(event.navigateHomeEvent.consume()) {
+                if (this != null) {
+                    setResultAndClose(this)
+                }
+            }
+
+        }
+    }
+
+    private fun setResultAndClose(apps: List<InstalledApp>) {
+        val result = Bundle().apply {
+            putSerializable(
+                BUNDLED_PACKAGES_KEY, ArrayList(apps)
+            )
+        }
+
+        setFragmentResult(RESULT_KEY, result)
+        vibrator.success()
+        goBack()
     }
 
 }

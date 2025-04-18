@@ -48,7 +48,7 @@
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment"
         android:label="SelectAppsFragment">
         <argument
-            android:name="preSelectedPackages"
+            android:name="excludePackages"
             app:argType="string[]"
             app:nullable="false" />
     </fragment>

@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="8dp">
+    android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_go_back"
@@ -26,8 +25,8 @@
         android:fontFamily="@font/urbanist_extrabold"
         android:text="@string/app_name"
         android:textAlignment="viewStart"
-        android:textSize="16sp"
         android:textAllCaps="true"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@id/iv_go_back"
         app:layout_constraintEnd_toStartOf="@id/iv_menu"
         app:layout_constraintStart_toEndOf="@id/iv_go_back"
@@ -60,4 +59,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/iv_go_back"
         app:tint="?colorOnBackground" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

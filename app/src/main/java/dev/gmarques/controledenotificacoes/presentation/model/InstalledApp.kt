@@ -11,5 +11,4 @@ data class InstalledApp(
     val name: String,
     val packageId: String,
     val icon: Drawable,
-    val preSelected: Boolean = false,
 ) : Serializable

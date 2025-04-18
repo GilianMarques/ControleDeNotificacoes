@@ -6,16 +6,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSelectableBinding
-import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
+import dev.gmarques.controledenotificacoes.presentation.model.SelectableApp
 
 /**
  * Criado por Gilian Marques
  * Em terça-feira, 15 de abril de 2025 as 09:19.
  */
 class AppsAdapter(
-    private val onItemCheck: (InstalledApp, Boolean) -> Unit,
-) : ListAdapter<InstalledApp, AppsAdapter.AppViewHolder>(DiffCallback()) {
+    private val onItemCheck: (SelectableApp, Boolean) -> Unit,
+) : ListAdapter<SelectableApp, AppsAdapter.AppViewHolder>(DiffCallback()) {
 
+    private var blockSelection = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
         val binding = ItemAppSelectableBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -26,33 +27,41 @@ class AppsAdapter(
         holder.bind(getItem(position))
     }
 
+    fun setBlockSelection(block: Boolean) {
+        this.blockSelection = block
+    }
+
+
     inner class AppViewHolder(private val binding: ItemAppSelectableBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(installedApp: InstalledApp) = with(binding) {
+        fun bind(selectedApp: SelectableApp) = with(binding) {
+
             cbSelect.setOnCheckedChangeListener(null)
 
-            tvStartDe.text = installedApp.name
-            ivAppIcon.setImageDrawable(installedApp.icon)
-            cbSelect.setOnCheckedChangeListener(null)
-            cbSelect.isChecked = installedApp.preSelected
+            tvStartDe.text = selectedApp.installedApp.name
+            ivAppIcon.setImageDrawable(selectedApp.installedApp.icon)
+            cbSelect.isChecked = selectedApp.isSelected
 
             parent.setOnClickListener {
                 cbSelect.isChecked = !cbSelect.isChecked
             }
 
             cbSelect.setOnCheckedChangeListener { _, isChecked ->
-                onItemCheck(installedApp, isChecked)
+
+                if (isChecked && blockSelection) cbSelect.isChecked = false
+
+                onItemCheck(selectedApp, isChecked)
             }
         }
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<InstalledApp>() {
+    class DiffCallback : DiffUtil.ItemCallback<SelectableApp>() {
 
-        override fun areItemsTheSame(oldItem: InstalledApp, newItem: InstalledApp): Boolean {
-            return oldItem.packageId == newItem.packageId
+        override fun areItemsTheSame(oldItem: SelectableApp, newItem: SelectableApp): Boolean {
+            return oldItem.installedApp.packageId == newItem.installedApp.packageId
         }
 
-        override fun areContentsTheSame(oldItem: InstalledApp, newItem: InstalledApp): Boolean {
+        override fun areContentsTheSame(oldItem: SelectableApp, newItem: SelectableApp): Boolean {
             return oldItem == newItem
         }
     }

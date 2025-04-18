@@ -1,18 +1,15 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,11 +20,8 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
-import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.endIntervalFormatted
-import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.utils.TimeRangeExtensionFun.startIntervalFormatted
-import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
@@ -88,19 +82,6 @@ class AddRuleFragment : MyFragment() {
         args.editingRule?.let {
             viewModel.setEditingRule(it)
         }
-    }
-
-    /**
-     * Navega o usuário de volta para a tela anterior na pilha de navegação.
-     *
-     * Esta função utiliza o méto-do `navigateUp()` do componente Navigation para
-     * mover o usuário de volta para o destino de onde ele veio. É uma maneira
-     * comum de implementar a funcionalidade "voltar" na interface do usuário de um aplicativo.
-     *
-     * Este méto-do é chamado para simular o pressionamento do botão voltar.
-     */
-    private fun goBack() {
-        this@AddRuleFragment.findNavController().popBackStack()
     }
 
     private fun setupFabAddRule() = with(binding) {
@@ -301,23 +282,6 @@ class AddRuleFragment : MyFragment() {
     }
 
 
-    /**
-     * Exibe um Snackbar de erro com a mensagem de erro fornecida e aciona uma vibração como feedback.
-     *
-     * Esta função é uma utilidade para mostrar mensagens de erro não críticas ao usuário. Ela utiliza
-     * o Snackbar do Android para uma exibição temporária da mensagem e a combina com uma breve vibração
-     * para fornecer feedback adicional.
-     *
-     * @param errorMsg A mensagem de erro a ser exibida no Snackbar. Esta deve ser uma string concisa
-     *                 explicando a natureza do erro ao usuário.
-     *
-     * @see Snackbar
-     * @see VibratorImpl
-     */
-    private fun showErrorSnackBar(errorMsg: String) {
-        Snackbar.make(binding.root, errorMsg, Snackbar.LENGTH_LONG).show()
-        vibrator.error()
-    }
 
     /**
      * Atualiza, com base nos updates do viewmodel a interface com base no tipo de regra (Permissiva ou Restritiva) .

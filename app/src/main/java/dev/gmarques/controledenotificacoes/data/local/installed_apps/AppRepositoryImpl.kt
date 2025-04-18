@@ -23,17 +23,22 @@ class AppRepositoryImpl @Inject constructor(@ApplicationContext context: Context
     private val packageManager: PackageManager = context.packageManager
 
     /**
-     * Retorna uma lista de aplicativos instalados no dispositivo que correspondem ao nome de destino
-     * e indica se cada aplicativo foi pré-selecionado.
+     * Busca e retorna uma lista de aplicativos instalados no dispositivo, filtrando-os opcionalmente
+     * por um nome alvo e excluindo aplicativos com base em uma lista de pacotes.
      *
-     * @param targetName O nome (ou parte do nome) do aplicativo a ser filtrado. A busca é
-     *  case-insensitive. Se vazio, retorna todos os aplicativos instalados (não de sistema).
-     * @param preSelectedPackages Um conjunto de IDs de pacotes de aplicativos que devem ser
-     *  marcados como pré-selecionados na lista resultante.
-     * @return Uma lista de [InstalledApp]s, ordenada por pré-seleção (decrescente) e, em seguida,
-     *  por nome (crescente).
+     * A função opera em background (usando `withContext(IO)`) para evitar bloqueios na thread principal
+     * durante a busca e o processamento dos dados.
+     *
+     * @param targetName O nome (ou parte do nome) a ser usado como filtro para os aplicativos. A busca
+     *   ignora maiúsculas e minúsculas. Se uma string vazia for fornecida, todos os aplicativos
+     *   (exceto os do sistema) serão retornados.
+     * @param excludePackages Um conjunto de IDs de pacotes. Aplicativos cujos IDs estejam neste conjunto
+     *   serão excluídos da lista de resultados. Além disso, aplicativos considerados inválidos pela
+     *   função `isAppValid` também serão excluídos.
+     * @return Uma lista de [InstalledApp]s, contendo informações sobre os aplicativos que correspondem
+     *   aos critérios de filtro e exclusão. A lista é ordenada alfabeticamente pelo nome do aplicativo.
      */
-    override suspend fun getInstalledApps(targetName: String, preSelectedPackages: HashSet<String>): List<InstalledApp> =
+    override suspend fun getInstalledApps(targetName: String, excludePackages: HashSet<String>): List<InstalledApp> =
         withContext(IO) {
 
             val lowerTarget = targetName.lowercase()
@@ -42,9 +47,16 @@ class AppRepositoryImpl @Inject constructor(@ApplicationContext context: Context
 
             val deferredList = apps.map { appInfo ->
                 async {
+
                     val appName = packageManager.getApplicationLabel(appInfo).toString()
 
-                    if (!isAppValid(appName, appInfo, lowerTarget)) return@async null
+                    if (excludePackages.contains(appInfo.packageName) ||
+                        !isAppValid(
+                            appName,
+                            appInfo,
+                            lowerTarget
+                        )
+                    ) return@async null
 
                     val icon = packageManager.getApplicationIcon(appInfo.packageName)
 
@@ -52,17 +64,14 @@ class AppRepositoryImpl @Inject constructor(@ApplicationContext context: Context
                         packageId = appInfo.packageName,
                         name = appName,
                         icon = icon,
-                        preSelected = preSelectedPackages.contains(appInfo.packageName)
                     )
                 }
             }
 
             val resultList = deferredList.awaitAll().filterNotNull()
 
-            return@withContext resultList.sortedWith(
-                compareByDescending<InstalledApp> { it.preSelected }
-                    .thenBy { it.name }
-            )
+            return@withContext resultList.sortedBy { it.name }
+
         }
 
     /**

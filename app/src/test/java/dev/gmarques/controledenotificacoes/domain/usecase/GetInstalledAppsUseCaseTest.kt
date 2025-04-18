@@ -11,7 +11,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import kotlin.test.assertFailsWith
 
 @ExperimentalCoroutinesApi
 class GetInstalledAppsUseCaseTest {
@@ -26,7 +25,7 @@ class GetInstalledAppsUseCaseTest {
     }
 
     @Test
-    fun `retorna lista vazia quando targetName e preSelectedPackages sao vazios`() = runTest {
+    fun `retorna lista vazia quando targetName e excludePackages sao vazios`() = runTest {
         coEvery { repository.getInstalledApps("", hashSetOf()) } returns emptyList()
 
         val result = useCase("", hashSetOf())
@@ -35,7 +34,7 @@ class GetInstalledAppsUseCaseTest {
     }
 
     @Test
-    fun `retorna apps que correspondem ao targetName quando preSelectedPackages esta vazio`() = runTest {
+    fun `retorna apps que correspondem ao targetName quando excludePackages esta vazio`() = runTest {
         val apps = listOf(
             mockApp("com.app.game", "GameApp", false),
             mockApp("com.app.galeria", "Galeria de Fotos", false)
@@ -49,7 +48,7 @@ class GetInstalledAppsUseCaseTest {
     }
 
     @Test
-    fun `retorna apps que correspondem ao targetName e marca os que estao em preSelectedPackages`() = runTest {
+    fun `retorna apps que correspondem ao targetName e marca os que estao em excludePackages`() = runTest {
         val preSelected = hashSetOf("com.app.jogo")
         val apps = listOf(
             mockApp("com.app.jogo", "Meu Jogo", true),
@@ -73,7 +72,7 @@ class GetInstalledAppsUseCaseTest {
     }
 
     @Test
-    fun `ignora pacotes invalidos em preSelectedPackages`() = runTest {
+    fun `ignora pacotes invalidos em excludePackages`() = runTest {
 
         val preSelected = hashSetOf("com.invalido.app", "com.app.valido")
 
@@ -109,7 +108,7 @@ class GetInstalledAppsUseCaseTest {
     }
 
     @Test
-    fun `processa grande volume de preSelectedPackages corretamente`() = runTest {
+    fun `processa grande volume de excludePackages corretamente`() = runTest {
 
         val preSelected = (1..1000).map { "com.app.$it" }.toHashSet()
         val apps = listOf(mockApp("com.app.500", "App 500", true))

@@ -89,10 +89,10 @@ class AddManagedAppsFragment : MyFragment() {
         @Suppress("UNCHECKED_CAST") setFragmentResultListener(SelectAppsFragment.RESULT_KEY) { _, bundle ->
             val selectedApps = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 bundle.getSerializable(
-                    SelectAppsFragment.BUNDLED_SELECTED_APPS_KEY, ArrayList::class.java
+                    SelectAppsFragment.BUNDLED_PACKAGES_KEY, ArrayList::class.java
                 ) as ArrayList<InstalledApp>
             } else {
-                @Suppress("DEPRECATION") bundle.getSerializable(SelectAppsFragment.BUNDLED_SELECTED_APPS_KEY) as ArrayList<InstalledApp>
+                @Suppress("DEPRECATION") bundle.getSerializable(SelectAppsFragment.BUNDLED_PACKAGES_KEY) as ArrayList<InstalledApp>
             }
 
             lifecycleScope.launch {
@@ -101,11 +101,11 @@ class AddManagedAppsFragment : MyFragment() {
                 var awaitTillAlLPreSelectedAppsAreLoadedOnUi = preselection > 0
 
                 while (awaitTillAlLPreSelectedAppsAreLoadedOnUi) {
-                    delay(50)
+                    delay(100)
                     awaitTillAlLPreSelectedAppsAreLoadedOnUi = binding.llConteinerApps.childCount < preselection
                 }
 
-                viewModel.setSelectedApps(selectedApps.apply { sortBy { it.name } })
+                viewModel.addNewlySelectedApps(selectedApps)
             }
 
         }
@@ -172,7 +172,7 @@ class AddManagedAppsFragment : MyFragment() {
                 parent.removeView(it)
             }
 
-        apps.values.forEachIndexed { index, app ->
+        apps.values.sortedBy { it.name }.forEachIndexed { index, app ->
             if (!parent.children.none { it.tag == app.packageId }) return@forEachIndexed
             with(ItemAppSmallBinding.inflate(layoutInflater)) {
                 name.text = app.name

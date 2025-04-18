@@ -8,7 +8,6 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import javax.inject.Inject
-import kotlin.text.isEmpty
 
 
 @HiltViewModel
@@ -23,8 +22,10 @@ class AddManagedAppsFragmentViewModel @Inject constructor(
     private val _selectedRule = MutableLiveData<Rule?>()
     val selectedRule: LiveData<Rule?> = _selectedRule
 
-    fun setSelectedApps(apps: List<InstalledApp>) {
-        _selectedApps.postValue(apps.associate { it.packageId to it })
+    fun addNewlySelectedApps(apps: List<InstalledApp>) {
+        _selectedApps.value = _selectedApps.value!!.values.toMutableList().apply {
+            addAll(apps)
+        }.associate { it.packageId to it }
     }
 
     fun setRule(rule: Rule) {

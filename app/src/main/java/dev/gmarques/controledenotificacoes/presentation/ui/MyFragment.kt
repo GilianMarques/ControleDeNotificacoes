@@ -6,10 +6,12 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
+import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.home_fragment.HomeFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.managedapp_fragment.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment.AddRuleFragment
@@ -33,7 +35,7 @@ open class MyFragment : Fragment() {
 
     private fun setupGoBackButton(ivGoBack: AppCompatImageView) {
         ivGoBack.setOnClickListener(AnimatedClickListener {
-            findNavController().popBackStack()
+            goBack()
             vibrator.interaction()
 
         })
@@ -72,5 +74,36 @@ open class MyFragment : Fragment() {
             }
 
         }
+    }
+
+    /**
+     * Exibe um Snackbar de erro com a mensagem de erro fornecida e aciona uma vibração como feedback.
+     *
+     * Esta função é uma utilidade para mostrar mensagens de erro não críticas ao usuário. Ela utiliza
+     * o Snackbar do Android para uma exibição temporária da mensagem e a combina com uma breve vibração
+     * para fornecer feedback adicional.
+     *
+     * @param errorMsg A mensagem de erro a ser exibida no Snackbar. Esta deve ser uma string concisa
+     *                 explicando a natureza do erro ao usuário.
+     *
+     * @see Snackbar
+     * @see VibratorImpl
+     */
+    protected fun showErrorSnackBar(errorMsg: String) {
+        Snackbar.make(requireView(), errorMsg, Snackbar.LENGTH_LONG).show()
+        vibrator.error()
+    }
+
+    /**
+     * Navega o usuário de volta para a tela anterior na pilha de navegação.
+     *
+     * Esta função utiliza o méto-do `navigateUp()` do componente Navigation para
+     * mover o usuário de volta para o destino de onde ele veio. É uma maneira
+     * comum de implementar a funcionalidade "voltar" na interface do usuário de um aplicativo.
+     *
+     * Este méto-do é chamado para simular o pressionamento do botão voltar.
+     */
+    protected fun goBack() {
+        findNavController().popBackStack()
     }
 }

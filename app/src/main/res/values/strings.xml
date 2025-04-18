@@ -61,5 +61,7 @@
     <string name="Selecione_pelo_menos_um_aplicativo">Selecione pelo menos um aplicativo</string>
     <string name="Selecionar_aplicativos">Selecionar aplicativos</string>
     <string name="O_final_do_intervalo_deve_ser_maior_que_o_inicio">O final do intervalo deve ser maior que o inicio</string>
+    <string name="Nao_possivel_selecionar_mais_que_x_aplicativos">Não é possível selecionar mais que %1$d aplicativos</string>
+    <string name="Lista_de_aplicativos_instalados_no_dispositivo">Lista de aplicativos instalados no dispositivo.</string>
 
 </resources>

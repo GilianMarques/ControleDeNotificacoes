@@ -12,18 +12,16 @@ interface AppRepository {
 
 
     /**
-     * Recupera uma lista de aplicativos instalados no dispositivo.
+     * Recupera a lista de aplicativos instalados no dispositivo, com a opção de filtrar e excluir resultados.
      *
-     * Esta função retorna uma lista de objetos [InstalledApp] representando os aplicativos instalados no dispositivo.
-     * Você pode filtrar os resultados fornecendo um `targetName`.
-     *
-     * @param targetName Uma string usada para filtrar os aplicativos por nome.
-     *                   Se fornecido, somente aplicativos cujo nome contem esta string serão retornados.
-     *                   Se a string estiver vazia, a filtragem por nome será desabilitada.
-     * @param preSelectedPackages Um conjunto de nomes de pacotes que será usado para marcar os aplicativos selecionados.
-     *
-     * @return Uma lista de objetos [InstalledApp] que correspondem aos critérios especificados.
-     *         Retorna uma lista vazia se nenhum aplicativo correspondente for encontrado.
+     * @param targetName O nome (ou parte do nome) do aplicativo a ser usado como filtro. A busca ignora
+     *   maiúsculas e minúsculas. Se uma string vazia for fornecida, todos os aplicativos (exceto os do sistema)
+     *   serão retornados.
+     * @param excludePackages Um conjunto de IDs de pacotes que serão excluídos da lista de resultados.
+     *   Além disso, outros critérios de exclusão podem ser aplicados internamente.
+     * @return Uma lista de [InstalledApp]s representando os aplicativos que correspondem aos critérios,
+     *   ordenada alfabeticamente pelo nome do aplicativo. Retorna uma lista vazia se nenhum aplicativo
+     *   corresponder.
      */
-    suspend fun getInstalledApps(targetName: String, preSelectedPackages: HashSet<String>): List<InstalledApp>
+    suspend fun getInstalledApps(targetName: String, excludePackages: HashSet<String>): List<InstalledApp>
 }
