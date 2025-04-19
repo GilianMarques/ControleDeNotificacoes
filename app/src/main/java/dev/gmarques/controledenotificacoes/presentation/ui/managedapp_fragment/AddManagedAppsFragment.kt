@@ -9,6 +9,7 @@ import androidx.core.view.children
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBinding
@@ -37,8 +38,9 @@ class AddManagedAppsFragment : MyFragment() {
 
 
     private val viewModel: AddManagedAppsFragmentViewModel by viewModels()
-
     private lateinit var binding: FragmentAddManagedAppsBinding
+
+    private val manageAppsViewsMutex = Mutex()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +49,7 @@ class AddManagedAppsFragment : MyFragment() {
         binding = FragmentAddManagedAppsBinding.inflate(layoutInflater)
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,9 +64,15 @@ class AddManagedAppsFragment : MyFragment() {
 
         ivAddApp.setOnClickListener(AnimatedClickListener {
             vibrator.interaction()
+
+
             findNavController().navigate(
-                AddManagedAppsFragmentDirections.toSelectAppsFragment(viewModel.getSelectedPackages())
+                AddManagedAppsFragmentDirections.toSelectAppsFragment(viewModel.getSelectedPackages()),
+                FragmentNavigatorExtras(
+                    fabAdd to fabAdd.transitionName
+                )
             )
+
         })
 
     }
@@ -117,7 +126,15 @@ class AddManagedAppsFragment : MyFragment() {
 
         ivAddRule.setOnClickListener(AnimatedClickListener {
             vibrator.interaction()
-            findNavController().navigate(AddManagedAppsFragmentDirections.toAddRuleFragment())
+
+            findNavController().navigate(
+                AddManagedAppsFragmentDirections.toAddRuleFragment(),
+                FragmentNavigatorExtras(
+                    fabAdd to fabAdd.transitionName,
+                    llRule to llRule.transitionName,
+                    tvRuleTittle to tvRuleTittle.transitionName,
+                )
+            )
         })
 
     }
@@ -132,8 +149,6 @@ class AddManagedAppsFragment : MyFragment() {
         }
 
     }
-
-    val manageAppsViewsMutex = Mutex() // TODO: garantir que isso nao vai causar inconsistencia
 
     /**
      * Gerencia as views que representam os aplicativos instalados dentro de um layout pai.
@@ -166,6 +181,7 @@ class AddManagedAppsFragment : MyFragment() {
      */
     private fun manageAppsViews(apps: Map<String, InstalledApp>) = lifecycleScope.launch {
         manageAppsViewsMutex.withLock {
+            delay(150)
             val parent = binding.llConteinerApps
 
             /* remova o `toList()` e veja sua vida se transformar em um inferno! Brincadeiras a parte, deve-se criar
@@ -188,8 +204,7 @@ class AddManagedAppsFragment : MyFragment() {
                         vibrator.interaction()
                     })
                     parent.addView(root, min(index, parent.childCount))
-                    delay((index.takeIf { it < 10 }?.times(50) ?: 50).toLong())
-
+                    delay(50)
                 }
             }
         }

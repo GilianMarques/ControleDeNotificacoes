@@ -34,7 +34,7 @@ class GenerateRuleNameUseCase @Inject constructor(
             WeekDay.THURSDAY -> ruleStringsProvider.thursday()
             WeekDay.FRIDAY -> ruleStringsProvider.friday()
             WeekDay.SATURDAY -> ruleStringsProvider.saturday()
-            WeekDay.SUNDAY -> ruleStringsProvider.saturday()
+            WeekDay.SUNDAY -> ruleStringsProvider.sunday()
         }
     }
 
@@ -47,7 +47,7 @@ class GenerateRuleNameUseCase @Inject constructor(
         val startTime = formatTime(start.startHour, start.startMinute)
         val endTime = formatTime(end.endHour, end.endMinute)
 
-        return "%02d-%02d".format(startTime, endTime)
+        return "%s-%s".format(startTime, endTime)
 
     }
 

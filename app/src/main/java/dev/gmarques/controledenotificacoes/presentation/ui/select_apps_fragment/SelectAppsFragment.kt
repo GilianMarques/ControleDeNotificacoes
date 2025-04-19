@@ -56,6 +56,7 @@ class SelectAppsFragment : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initActionBar(binding.toolbar)
         getPreSelectedPackagesAndLoad()
         setupRecyclerView()
@@ -63,6 +64,8 @@ class SelectAppsFragment : MyFragment() {
         observeViewModel()
         observeEvents()
         setupFabConclude()
+
+
     }
 
     override fun initActionBar(binding: ViewActivityHeaderBinding) {
@@ -94,7 +97,7 @@ class SelectAppsFragment : MyFragment() {
 
     private fun setupSearch() {
         binding.tietSearch.doOnTextChanged { text, _, _, _ ->
-            viewModel.installedApps.value?.let {
+            viewModel.installedAppsLd.value?.let {
 
                 adapter.submitList(it, text.toString())
             }
@@ -163,7 +166,7 @@ class SelectAppsFragment : MyFragment() {
 
     private fun observeViewModel() {
 
-        viewModel.installedApps.observe(viewLifecycleOwner) {
+        viewModel.installedAppsLd.observe(viewLifecycleOwner) {
             lifecycleScope.launch {
                 binding.progressBar.isVisible = false
                 adapter.submitList(it, binding.tietSearch.text.toString())

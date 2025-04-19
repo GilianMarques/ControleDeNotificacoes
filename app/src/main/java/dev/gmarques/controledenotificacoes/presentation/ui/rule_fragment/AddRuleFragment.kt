@@ -35,8 +35,10 @@ class AddRuleFragment : MyFragment() {
     private var doNotNotifyViewModelTypeRule: Boolean = true
 
     private val viewModel: AddRuleViewModel by viewModels()
-    private lateinit var binding: FragmentAddRuleBinding
     private val args: AddRuleFragmentArgs by navArgs()
+
+    private lateinit var binding: FragmentAddRuleBinding
+
 
 
     override fun onCreateView(
@@ -286,7 +288,7 @@ class AddRuleFragment : MyFragment() {
     /**
      * Atualiza, com base nos updates do viewmodel a interface com base no tipo de regra (Permissiva ou Restritiva) .
      *
-     * Modifica o estado do [MaterialButtonToggleGroup] e do [TextView] de acordo com [ruleType].
+     * Modifica o estado do [MaterialButtonToggleGroup] e do TextView de acordo com [ruleType].
      *
      * @param ruleType O tipo de regra a ser aplicada ([RuleType.PERMISSIVE] ou [RuleType.RESTRICTIVE]).
      *

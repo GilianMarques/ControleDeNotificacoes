@@ -18,7 +18,7 @@ class GetRuleByIdUseCaseTest {
     }
 
     @Test
-    fun `dado um id, quando execute for chamado, então repositorio getRuleById deve ser invocado`() = runTest {
+    fun `dado um id, quando execute for chamado, entao repositorio getRuleById deve ser invocado`() = runTest {
         val id = "radlkhjglç"
 
         useCase(id)

@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +14,6 @@ import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.SelectableApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -33,21 +31,19 @@ class SelectAppsViewModel @Inject constructor(
 
 
     private val _installedApps = MutableLiveData<List<SelectableApp>>()
-    val installedApps: LiveData<List<SelectableApp>> = _installedApps
+    val installedAppsLd: LiveData<List<SelectableApp>> = _installedApps
 
     private val _blockUiSelection = MutableLiveData<Boolean>(false)
     val blockUiSelection: LiveData<Boolean> = _blockUiSelection
 
     private val _uiEvents = MutableLiveData(UiEvents())
-
     val uiEvents: LiveData<UiEvents> get() = _uiEvents
 
-    private var initialized = false
-
+    private val installedApps = mutableListOf<SelectableApp>()
     private val selectedApps = HashSet<InstalledApp>()
-
     var preSelectedAppsToHide: HashSet<String> = hashSetOf()
 
+    private var initialized = false
     val onAppCheckedMutex = Mutex()
 
     fun searchApps() = viewModelScope.launch(IO) {
@@ -56,11 +52,11 @@ class SelectAppsViewModel @Inject constructor(
 
         initialized = true
 
-        val result = getInstalledAppsUseCase("", preSelectedAppsToHide).map {
-            Log.d("USUK", "SelectAppsViewModel.searchApps: ${it.name}")
+        installedApps.addAll(getInstalledAppsUseCase("", preSelectedAppsToHide).map {
             SelectableApp(it)
-        }
-        _installedApps.postValue(result)
+        })
+
+        _installedApps.postValue(installedApps.toList())
         _blockUiSelection.postValue(!canSelectMoreApps())
 
     }
@@ -74,11 +70,10 @@ class SelectAppsViewModel @Inject constructor(
                 return@launch
             }
 
-            val safeList = _installedApps.value!!.toMutableList()
-            val index = safeList.indexOfFirst { it.installedApp.packageId == app.installedApp.packageId }
-            safeList[index] = app.copy(isSelected = checked)
+            val index = installedApps.indexOfFirst { it.installedApp.packageId == app.installedApp.packageId }
+            installedApps[index] = app.copy(isSelected = checked)
 
-            _installedApps.postValue(safeList.toList())
+            _installedApps.postValue(installedApps.toList())
 
             selectedApps.apply {
                 if (checked) add(app.installedApp)
@@ -95,8 +90,7 @@ class SelectAppsViewModel @Inject constructor(
             _uiEvents.value!!.copy(
                 cantSelectMoreApps = EventWrapper(
                     context.getString(
-                        R.string.Nao_possivel_selecionar_mais_que_x_aplicativos,
-                        Rule.MAX_APPS_PER_RULE
+                        R.string.Nao_possivel_selecionar_mais_que_x_aplicativos, Rule.MAX_APPS_PER_RULE
                     )
                 )
             )
@@ -108,7 +102,7 @@ class SelectAppsViewModel @Inject constructor(
     }
 
     fun validateSelection() = viewModelScope.launch(IO) {
-        if (installedApps.value!!.isEmpty()) {
+        if (installedAppsLd.value!!.isEmpty()) {
 
             _uiEvents.postValue(
                 _uiEvents.value!!.copy(
@@ -131,8 +125,7 @@ class SelectAppsViewModel @Inject constructor(
     }
 
     fun selectAppsAllOrNone(all: Boolean) = viewModelScope.launch(IO) {
-        for (app in _installedApps.value!!) {
-            delay(75) // serve pra garantir que vai dar tempo do livedata postar a atualizaçao. A soluçao definitiva nao vale a pena implementar nesse momento.
+        for (app in installedApps) {
             onAppChecked(app, all)
             if (all && !canSelectMoreApps()) break
         }
@@ -140,8 +133,7 @@ class SelectAppsViewModel @Inject constructor(
 
     fun invertSelection() = viewModelScope.launch(IO) {
         var notifyAboutLimit = false
-        for (app in _installedApps.value!!) {
-            delay(75) // serve pra garantir que vai dar tempo do livedata postar a atualizaçao. A soluçao definitiva nao vale a pena implementar nesse momento.
+        for (app in installedApps) {
 
             val isAppGoingToBeChecked = !app.isSelected
 
@@ -153,6 +145,7 @@ class SelectAppsViewModel @Inject constructor(
             onAppChecked(app, isAppGoingToBeChecked)
 
         }
+
         if (notifyAboutLimit) notifyCantSelectMoreApps()
     }
 

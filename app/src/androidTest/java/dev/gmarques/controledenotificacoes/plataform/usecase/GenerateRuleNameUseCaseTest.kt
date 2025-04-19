@@ -9,6 +9,7 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.GenerateRuleNameUseCase
+import dev.gmarques.controledenotificacoes.plataform.RuleStringsProviderImpl
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,11 +18,13 @@ import org.junit.runner.RunWith
 class GenerateRuleNameUseCaseTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
-    private val useCase = GenerateRuleNameUseCase(context)
+    private val ruleStringsProvider = RuleStringsProviderImpl(context)
+    private val useCase = GenerateRuleNameUseCase(ruleStringsProvider)
 
     @Test
-    fun tesReturnedName() {
+    fun testReturnedName() {
         val rulesPair = listOf(
+
             Rule(
                 name = "",
                 ruleType = RuleType.RESTRICTIVE,
@@ -31,6 +34,7 @@ class GenerateRuleNameUseCaseTest {
                     TimeRange(13, 0, 18, 0),
                 )
             ) to "Bloq. Seg/Sex 08:00-18:00",
+
 
             Rule(
                 name = "",
@@ -42,7 +46,8 @@ class GenerateRuleNameUseCaseTest {
                     TimeRange(19, 0, 19, 10),
                 )
             ) to "Perm. Dom/Seg/Sex 08:00-19:10",
-        )
+
+            )
 
 
         rulesPair.forEach {
@@ -50,7 +55,7 @@ class GenerateRuleNameUseCaseTest {
             val name2 = it.second
 
             Log.d("USUK", "GenerateRuleNameUseCaseTest.tesReturnedName: \n$name\n$name2")
-            assertEquals(name, name2)
+            assertEquals("valores '$name' '$name2'", name, name2)
         }
     }
 }
