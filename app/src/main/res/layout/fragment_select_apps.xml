@@ -101,7 +101,7 @@
         android:layout_marginBottom="16dp"
         android:text="@string/Concluir"
         app:icon="@drawable/vec_check"
-        app:layout_anchor="@id/parent"
+        app:layout_anchor="@id/rvApps"
         app:layout_anchorGravity="center_horizontal|bottom" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

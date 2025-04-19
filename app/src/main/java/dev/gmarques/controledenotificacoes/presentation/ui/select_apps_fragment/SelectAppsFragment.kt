@@ -10,14 +10,19 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectAppsBinding
+import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import kotlinx.coroutines.launch
 
 /**
  * Criado por Gilian Marques
@@ -51,12 +56,23 @@ class SelectAppsFragment : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initActionBar(binding.toolbar)
         getPreSelectedPackagesAndLoad()
         setupRecyclerView()
         setupSearch()
         observeViewModel()
         observeEvents()
         setupFabConclude()
+    }
+
+    override fun initActionBar(binding: ViewActivityHeaderBinding) {
+        super.initActionBar(binding)
+        binding.ivMenu.isVisible = true
+        binding.ivMenu.setOnClickListener(AnimatedClickListener {
+            vibrator.interaction()
+            onSingleSectionWithIconsClicked(binding.ivMenu)
+        })
+
     }
 
     /**
@@ -66,7 +82,7 @@ class SelectAppsFragment : MyFragment() {
      */
     private fun getPreSelectedPackagesAndLoad() {
         viewModel.preSelectedAppsToHide = args.excludePackages.toHashSet()
-        viewModel.loadAllApps()
+        viewModel.searchApps()
     }
 
     private fun setupFabConclude() = with(binding) {
@@ -78,7 +94,10 @@ class SelectAppsFragment : MyFragment() {
 
     private fun setupSearch() {
         binding.tietSearch.doOnTextChanged { text, _, _, _ ->
-            viewModel.searchApps(text.toString())
+            viewModel.installedApps.value?.let {
+
+                adapter.submitList(it, text.toString())
+            }
         }
     }
 
@@ -87,12 +106,7 @@ class SelectAppsFragment : MyFragment() {
         adapter = AppsAdapter { app, checked ->
 
             viewModel.onAppChecked(app, checked)
-
-            when (viewModel.canSelectMoreApps()) {
-                true -> vibrator.interaction()
-                false -> vibrator.error()
-            }
-
+            vibrator.interaction()
             isFabVisible = true
             toggleFabVisibility(true)
         }
@@ -150,8 +164,10 @@ class SelectAppsFragment : MyFragment() {
     private fun observeViewModel() {
 
         viewModel.installedApps.observe(viewLifecycleOwner) {
-            binding.progressBar.isVisible = false
-            adapter.submitList(it)
+            lifecycleScope.launch {
+                binding.progressBar.isVisible = false
+                adapter.submitList(it, binding.tietSearch.text.toString())
+            }
         }
 
         viewModel.blockUiSelection.observe(viewLifecycleOwner) {
@@ -165,7 +181,7 @@ class SelectAppsFragment : MyFragment() {
 
             with(event.cantSelectMoreApps.consume()) {
                 if (this != null) {
-                    showErrorSnackBar(this)
+                    showErrorSnackBar(this, binding.fabConclude)
                 }
             }
 
@@ -189,5 +205,40 @@ class SelectAppsFragment : MyFragment() {
         vibrator.success()
         goBack()
     }
+
+    private fun onSingleSectionWithIconsClicked(view: View) {
+        val popupMenu = popupMenu {
+            section {
+
+                item {
+                    label = getString(R.string.Selecionar_todos)
+                    icon = R.drawable.vec_select_all
+                    callback = {
+                        viewModel.selectAppsAllOrNone(true)
+                    }
+                }
+
+                item {
+                    label = getString(R.string.Inverter_sele_o)
+                    icon = R.drawable.vec_invert_selection
+                    callback = {
+                        viewModel.invertSelection()
+                    }
+                }
+
+                item {
+                    label = getString(R.string.Desselecionar_todos)
+                    icon = R.drawable.vec_select_none
+                    callback = {
+                        viewModel.selectAppsAllOrNone(false)
+                    }
+                }
+
+
+            }
+        }
+        popupMenu.show(this@SelectAppsFragment.requireContext(), view)
+    }
+
 
 }

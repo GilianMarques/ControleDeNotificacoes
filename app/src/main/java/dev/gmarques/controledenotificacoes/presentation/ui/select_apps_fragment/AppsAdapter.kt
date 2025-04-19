@@ -31,6 +31,13 @@ class AppsAdapter(
         this.blockSelection = block
     }
 
+    fun submitList(apps: List<SelectableApp>, query: String) {
+        submitList(apps.filter {
+            it.installedApp.name.contains(query, ignoreCase = true)
+        })
+
+    }
+
 
     inner class AppViewHolder(private val binding: ItemAppSelectableBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -59,6 +66,8 @@ class AppsAdapter(
 
         override fun areItemsTheSame(oldItem: SelectableApp, newItem: SelectableApp): Boolean {
             return oldItem.installedApp.packageId == newItem.installedApp.packageId
+                    && oldItem.isSelected == newItem.isSelected
+
         }
 
         override fun areContentsTheSame(oldItem: SelectableApp, newItem: SelectableApp): Boolean {

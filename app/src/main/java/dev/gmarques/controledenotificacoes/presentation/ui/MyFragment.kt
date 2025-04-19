@@ -41,7 +41,7 @@ open class MyFragment : Fragment() {
         })
     }
 
-    protected fun initActionBar(binding: ViewActivityHeaderBinding) {
+    protected open fun initActionBar(binding: ViewActivityHeaderBinding) {
 
         when (this@MyFragment) {
 
@@ -89,8 +89,9 @@ open class MyFragment : Fragment() {
      * @see Snackbar
      * @see VibratorImpl
      */
-    protected fun showErrorSnackBar(errorMsg: String) {
-        Snackbar.make(requireView(), errorMsg, Snackbar.LENGTH_LONG).show()
+    protected open fun showErrorSnackBar(errorMsg: String, targetView: View = requireView()) {
+        Snackbar.make(requireView(), errorMsg, Snackbar.LENGTH_LONG)
+            .setAnchorView(targetView).show()
         vibrator.error()
     }
 

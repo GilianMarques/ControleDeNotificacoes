@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,7 +15,7 @@ import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.SelectableApp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -30,7 +31,6 @@ class SelectAppsViewModel @Inject constructor(
     @ApplicationContext private val context: android.content.Context,
 ) : ViewModel() {
 
-    private var filteredApps = listOf<InstalledApp>()
 
     private val _installedApps = MutableLiveData<List<SelectableApp>>()
     val installedApps: LiveData<List<SelectableApp>> = _installedApps
@@ -48,29 +48,20 @@ class SelectAppsViewModel @Inject constructor(
 
     var preSelectedAppsToHide: HashSet<String> = hashSetOf()
 
-    private var searchJob: Job? = null
     val onAppCheckedMutex = Mutex()
 
-    fun loadAllApps() {// TODO: a busca ja nao funciona
+    fun searchApps() = viewModelScope.launch(IO) {
 
-        if (initialized) return
+        if (initialized) return@launch
 
         initialized = true
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            val result = getInstalledAppsUseCase("", preSelectedAppsToHide).map {
-                SelectableApp(it)
-            }
-            _installedApps.postValue(result)
-            _blockUiSelection.postValue(!canSelectMoreApps())
+
+        val result = getInstalledAppsUseCase("", preSelectedAppsToHide).map {
+            Log.d("USUK", "SelectAppsViewModel.searchApps: ${it.name}")
+            SelectableApp(it)
         }
-    }
-
-    fun searchApps(query: String) = viewModelScope.launch(IO) {
-
-        _installedApps.value!!.forEach {
-
-        }
+        _installedApps.postValue(result)
+        _blockUiSelection.postValue(!canSelectMoreApps())
 
     }
 
@@ -112,7 +103,6 @@ class SelectAppsViewModel @Inject constructor(
         )
     }
 
-
     fun canSelectMoreApps(): Boolean {
         return (selectedApps.size + preSelectedAppsToHide.size) < Rule.MAX_APPS_PER_RULE
     }
@@ -139,4 +129,31 @@ class SelectAppsViewModel @Inject constructor(
             )
         )
     }
+
+    fun selectAppsAllOrNone(all: Boolean) = viewModelScope.launch(IO) {
+        for (app in _installedApps.value!!) {
+            delay(75) // serve pra garantir que vai dar tempo do livedata postar a atualizaçao. A soluçao definitiva nao vale a pena implementar nesse momento.
+            onAppChecked(app, all)
+            if (all && !canSelectMoreApps()) break
+        }
+    }
+
+    fun invertSelection() = viewModelScope.launch(IO) {
+        var notifyAboutLimit = false
+        for (app in _installedApps.value!!) {
+            delay(75) // serve pra garantir que vai dar tempo do livedata postar a atualizaçao. A soluçao definitiva nao vale a pena implementar nesse momento.
+
+            val isAppGoingToBeChecked = !app.isSelected
+
+            if (isAppGoingToBeChecked && !canSelectMoreApps()) {
+                notifyAboutLimit = true
+                continue
+            }
+
+            onAppChecked(app, isAppGoingToBeChecked)
+
+        }
+        if (notifyAboutLimit) notifyCantSelectMoreApps()
+    }
+
 }

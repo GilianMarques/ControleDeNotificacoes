@@ -412,13 +412,13 @@ class AddRuleFragment : MyFragment() {
         viewModel.uiEvents.observe(viewLifecycleOwner) { event ->
 
             with(event.simpleErrorMessageEvent.consume()) {
-                if (this != null) showErrorSnackBar(this)
+                if (this != null) showErrorSnackBar(this, binding.fabAdd)
             }
 
             with(event.nameErrorMessageEvent.consume()) {
                 if (this != null) {
                     binding.edtName.error = this
-                    showErrorSnackBar(this)
+                    showErrorSnackBar(this, binding.fabAdd)
                 }
             }
 

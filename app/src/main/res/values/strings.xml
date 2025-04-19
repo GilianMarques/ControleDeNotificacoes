@@ -63,5 +63,8 @@
     <string name="O_final_do_intervalo_deve_ser_maior_que_o_inicio">O final do intervalo deve ser maior que o inicio</string>
     <string name="Nao_possivel_selecionar_mais_que_x_aplicativos">Não é possível selecionar mais que %1$d aplicativos</string>
     <string name="Lista_de_aplicativos_instalados_no_dispositivo">Lista de aplicativos instalados no dispositivo.</string>
+    <string name="Selecionar_todos">Selecionar todos</string>
+    <string name="Inverter_sele_o">Inverter seleção</string>
+    <string name="Desselecionar_todos">Desselecionar todos</string>
 
 </resources>
