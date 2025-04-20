@@ -2,7 +2,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment
 
 import TimeRangeValidator
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -267,7 +266,6 @@ class AddRuleViewModel @Inject constructor(
         else updateRuleUseCase(rule.copy(id = editingRule!!.id))
 
         val event = _uiEvents.value!!
-        Log.d("USUK", "AddRuleViewModel.".plus("saveRule() rule: $rule"))
         _uiEvents.postValue(event.copy(navigateHomeEvent = EventWrapper(true)))
     }
 

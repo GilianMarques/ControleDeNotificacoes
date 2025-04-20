@@ -45,7 +45,7 @@ class GenerateRuleNameUseCaseTest {
                     TimeRange(13, 0, 18, 0),
                     TimeRange(19, 0, 19, 10),
                 )
-            ) to "Perm. Dom/Seg/Sex 08:00-19:10",
+            ) to "Perm. Dom-Seg/Sex 08:00-19:10",
 
             )
 

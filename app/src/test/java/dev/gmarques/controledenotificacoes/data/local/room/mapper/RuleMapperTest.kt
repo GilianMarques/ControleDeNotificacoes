@@ -20,7 +20,6 @@ class RuleMapperTest {
 
     private val weekDayType = Types.newParameterizedType(List::class.java, WeekDay::class.java)
     private val weekDayAdapter = moshi.adapter<List<WeekDay>>(weekDayType)
-// TODO: migrar pro kotlin sialization - ver gpt
 
 
     @Test
@@ -44,12 +43,15 @@ class RuleMapperTest {
 
     @Test
     fun `ao passar uma RuleEntity valida para mapToModel deve retornar uma Rule com valores correspondentes`() {
+
+        val range = TimeRange(14, 0, 16, 0)
+
         val entity = RuleEntity(
             id = "2",
             name = "Entidade Teste",
             ruleType = RuleType.RESTRICTIVE,
             days = weekDayAdapter.toJson(listOf(WeekDay.TUESDAY, WeekDay.THURSDAY)),
-            timeRanges = timeRangeAdapter.toJson(listOf(TimeRange(14, 0, 16, 0)))
+            timeRanges = timeRangeAdapter.toJson(listOf(range))
         )
 
         val rule = RuleMapper.mapToModel(entity)
@@ -58,7 +60,7 @@ class RuleMapperTest {
         assertEquals(entity.name, rule.name)
         assertEquals(entity.ruleType, rule.ruleType)
         assertEquals(listOf(WeekDay.TUESDAY, WeekDay.THURSDAY), rule.days)
-        assertEquals(listOf(TimeRange(14, 0, 16, 0)), rule.timeRanges)
+        assertEquals(listOf(range), rule.timeRanges)
     }
 
 

@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.GetAllRulesUseCase
@@ -21,7 +20,6 @@ import javax.inject.Inject
 class SelectRuleViewModel @Inject constructor(
     private val getAllRulesUseCase: GetAllRulesUseCase,
     val generateRuleNameUseCase: GenerateRuleNameUseCase,
-    @ApplicationContext private val context: android.content.Context,
 ) : ViewModel() {
 
 

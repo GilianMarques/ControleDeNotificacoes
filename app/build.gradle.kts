@@ -1,13 +1,9 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
-    // Kotlin serialization plugin for type safe routes and navigation arguments
-    kotlin("plugin.serialization") version "2.0.21"
-
     id("androidx.navigation.safeargs.kotlin")
-
 }
 
 android {
@@ -50,15 +46,15 @@ android {
 
 dependencies {
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.legacy.support.v4)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.androidx.fragment.ktx)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation("androidx.core:core-ktx:1.16.0")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.activity:activity-ktx:1.10.1")
+    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.fragment:fragment-ktx:1.8.6")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
 
     implementation("com.google.dagger:hilt-android:2.51.1")
@@ -78,20 +74,20 @@ dependencies {
     implementation("com.github.zawadz88:MaterialPopupMenu:4.1.0")
 
     //moshi pra uso com json
-    implementation("com.squareup.moshi:moshi:1.13.0")
+    implementation("com.squareup.moshi:moshi:1.15.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.13.0") // Para suporte a Kotlin
 
     //falsificar objetos
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
     testImplementation("org.mockito:mockito-core:5.16.1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     //testar corrotinas
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.12.1") // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.12.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.12.1")
-    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.1") // Necessário para rodar JUnit 4 com o 5
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.12.1") // Necessário para rodar JUnit 4 com o 5
     testImplementation(kotlin("test"))
 
     //navigation
@@ -104,9 +100,6 @@ dependencies {
 
     // Testing Navigation
     androidTestImplementation("androidx.navigation:navigation-testing:2.8.9")
-
-    // JSON serialization library, works with the Kotlin serialization plugin
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     // necessario para testes instrumentados pois ainda usam junit4 como padrao
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

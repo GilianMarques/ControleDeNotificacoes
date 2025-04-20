@@ -37,8 +37,6 @@ class AddManagedAppsFragment() : MyFragment() {
         }
     }
 
-    private var animateInsertionAppsViews = false
-    private var animateInsertionRuleView = false
 
     private val viewModel: AddManagedAppsFragmentViewModel by viewModels()
     private lateinit var binding: FragmentAddManagedAppsBinding
@@ -68,9 +66,6 @@ class AddManagedAppsFragment() : MyFragment() {
 
         ivAddApp.setOnClickListener(AnimatedClickListener {
             vibrator.interaction()
-
-            animateInsertionAppsViews = true
-            animateInsertionRuleView = false
 
             findNavController().navigate(
                 AddManagedAppsFragmentDirections.toSelectAppsFragment(viewModel.getSelectedPackages()),
@@ -151,9 +146,6 @@ class AddManagedAppsFragment() : MyFragment() {
         ivAddRule.setOnClickListener(AnimatedClickListener {
             vibrator.interaction()
 
-            animateInsertionAppsViews = false
-            animateInsertionRuleView = true
-
             findNavController().navigate(
                 AddManagedAppsFragmentDirections.toSelectRuleFragment(),
                 FragmentNavigatorExtras(
@@ -208,7 +200,6 @@ class AddManagedAppsFragment() : MyFragment() {
      */
     private fun manageAppsViews(apps: Map<String, InstalledApp>) = lifecycleScope.launch {
         manageAppsViewsMutex.withLock {
-            if (animateInsertionAppsViews) delay(200)
 
             val parent = binding.llConteinerApps
 
@@ -232,21 +223,17 @@ class AddManagedAppsFragment() : MyFragment() {
                         vibrator.interaction()
                     })
                     parent.addView(root, min(index, parent.childCount))
-                    if (animateInsertionAppsViews) delay(if (index <= 10) 150 else 1)
                 }
             }
-            animateInsertionAppsViews = false
         }
     }
 
     private fun manageRuleView(rule: Rule) = with(binding) {
         lifecycleScope.launch {
-            if (animateInsertionRuleView) delay(800)//precisa dar tempo de animar as views de apps pra que essa nao fique com a animaçao travada
             with(rule.name) {
                 tvSelectedRule.text = viewModel.getRuleName(rule)
                 tvSelectedRule.isVisible = true
             }
-            animateInsertionRuleView = false
         }
     }
 }
