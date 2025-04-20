@@ -72,7 +72,6 @@ class SelectAppsViewModel @Inject constructor(
 
             val index = installedApps.indexOfFirst { it.installedApp.packageId == app.installedApp.packageId }
             installedApps[index] = app.copy(isSelected = checked)
-
             _installedApps.postValue(installedApps.toList())
 
             selectedApps.apply {

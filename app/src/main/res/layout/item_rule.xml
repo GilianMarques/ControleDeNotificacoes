@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/back_container"
         android:foreground="?selectableItemBackground"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
+        android:foregroundTint="?colorPrimary"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,46 +23,47 @@
 
         <ImageView
 
-            android:id="@+id/iv_app_icon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:contentDescription="@string/Icone_do_aplicativo"
-            android:padding="4dp"
+            android:id="@+id/iv_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="6dp"
+            android:src="@drawable/vec_rule"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/vec_add" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_start_de"
+            android:id="@+id/tv_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:padding="4dp"
-            android:text="@string/De"
             android:textAlignment="viewStart"
-            android:textSize="16sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/cb_select"
-            app:layout_constraintStart_toEndOf="@id/iv_app_icon"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toStartOf="@id/iv_edit"
+            app:layout_constraintStart_toEndOf="@id/iv_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Lista de compras" />
 
+        <ImageView
 
-        <CheckBox
-
-            android:id="@+id/cb_select"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/iv_edit"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="4dp"
             android:layout_marginBottom="8dp"
-            android:background="?android:selectableItemBackgroundBorderless"
+            android:background="@drawable/back_circle"
+            android:backgroundTint="?colorSecondaryContainer"
             android:contentDescription="@string/Bot_o_para_remover_o_intervalo_de_tempo"
-            android:src="@drawable/vec_remove"
+            android:padding="6dp"
+            android:src="@drawable/vec_edit_rule"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?colorPrimary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

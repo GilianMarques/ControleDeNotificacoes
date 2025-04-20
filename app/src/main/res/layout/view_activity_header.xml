@@ -7,6 +7,7 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_go_back"
+        android:contentDescription="@string/Bot_o_de_voltar"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_gravity="center"
@@ -49,6 +50,7 @@
         android:id="@+id/iv_menu"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:contentDescription="@string/Bot_o_de_menu"
         android:layout_gravity="center"
         android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"

@@ -16,8 +16,9 @@ import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
  */
 object RuleMapper {
 
-        private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-
+    private val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
         private val weekDayType = Types.newParameterizedType(List::class.java, WeekDay::class.java)
         private val weekDayAdapter: JsonAdapter<List<WeekDay>> = moshi.adapter(weekDayType)
 
@@ -32,6 +33,7 @@ object RuleMapper {
             return RuleEntity(
                 id = rule.id,
                 name = rule.name,
+                ruleType = rule.ruleType,
                 days = daysToString(rule.days),
                 timeRanges = hoursToString(rule.timeRanges),
             )
@@ -79,6 +81,7 @@ object RuleMapper {
             return Rule(
                 id = entity.id,
                 name = entity.name,
+                ruleType = entity.ruleType,
                 days = stringToDays(entity.days),
                 timeRanges = stringToTimeRange(entity.timeRanges),
             )

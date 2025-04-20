@@ -17,6 +17,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.home_fragment.HomeFra
 import dev.gmarques.controledenotificacoes.presentation.ui.managedapp_fragment.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment.AddRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import javax.inject.Inject
 
@@ -80,6 +81,12 @@ open class MyFragment : Fragment() {
             is SelectAppsFragment -> {
                 setupGoBackButton(binding.ivGoBack)
                 binding.tvTitle.text = getString(R.string.Selecionar_aplicativos)
+                binding.ivMenu.isGone = true
+            }
+
+            is SelectRuleFragment -> {
+                setupGoBackButton(binding.ivGoBack)
+                binding.tvTitle.text = getString(R.string.Selecionar_regra)
                 binding.ivMenu.isGone = true
             }
 

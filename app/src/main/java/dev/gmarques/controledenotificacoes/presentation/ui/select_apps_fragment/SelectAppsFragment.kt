@@ -98,7 +98,6 @@ class SelectAppsFragment : MyFragment() {
     private fun setupSearch() {
         binding.tietSearch.doOnTextChanged { text, _, _, _ ->
             viewModel.installedAppsLd.value?.let {
-
                 adapter.submitList(it, text.toString())
             }
         }

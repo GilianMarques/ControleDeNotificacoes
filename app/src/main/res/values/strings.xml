@@ -66,5 +66,10 @@
     <string name="Selecionar_todos">Selecionar todos</string>
     <string name="Inverter_sele_o">Inverter seleção</string>
     <string name="Desselecionar_todos">Desselecionar todos</string>
+    <string name="Icone_do_aplicativo">Ícone do aplicativo</string>
+    <string name="Icone_do_intervalo_de_tempo">Ícone do intervalo de tempo</string>
+    <string name="Bot_o_de_voltar">Botão de voltar</string>
+    <string name="Bot_o_de_menu">Botão de menu</string>
+    <string name="Selecionar_regra">Selecionar regra</string>
 
 </resources>

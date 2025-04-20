@@ -97,7 +97,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="88dp"
-                android:clipToPadding="false"
                 android:contentDescription="@string/Lista_de_aplicativos_instalados_no_dispositivo"
                 android:overScrollMode="always"
                 android:paddingStart="16dp"

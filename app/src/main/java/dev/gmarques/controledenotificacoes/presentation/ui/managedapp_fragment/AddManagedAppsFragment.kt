@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -18,6 +19,7 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
@@ -27,8 +29,7 @@ import kotlinx.coroutines.sync.withLock
 import kotlin.math.min
 
 @AndroidEntryPoint
-class AddManagedAppsFragment : MyFragment() {
-
+class AddManagedAppsFragment() : MyFragment() {
 
     companion object {
         fun newInstance(): AddManagedAppsFragment {
@@ -36,6 +37,8 @@ class AddManagedAppsFragment : MyFragment() {
         }
     }
 
+    private var animateInsertionAppsViews = false
+    private var animateInsertionRuleView = false
 
     private val viewModel: AddManagedAppsFragmentViewModel by viewModels()
     private lateinit var binding: FragmentAddManagedAppsBinding
@@ -55,6 +58,7 @@ class AddManagedAppsFragment : MyFragment() {
         super.onViewCreated(view, savedInstanceState)
         initActionBar(binding.toolbar)
         setupSelectAppsListener()
+        setupSelectRuleListener()
         setupSelectAppsButton()
         setupSelectRuleButton()
         observeViewModel()
@@ -65,6 +69,8 @@ class AddManagedAppsFragment : MyFragment() {
         ivAddApp.setOnClickListener(AnimatedClickListener {
             vibrator.interaction()
 
+            animateInsertionAppsViews = true
+            animateInsertionRuleView = false
 
             findNavController().navigate(
                 AddManagedAppsFragmentDirections.toSelectAppsFragment(viewModel.getSelectedPackages()),
@@ -122,13 +128,34 @@ class AddManagedAppsFragment : MyFragment() {
         }
     }
 
+    private fun setupSelectRuleListener() {
+
+        setFragmentResultListener(SelectRuleFragment.RESULT_KEY) { _, bundle ->
+            val rule = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                bundle.getSerializable(
+                    SelectRuleFragment.BUNDLED_RULE_KEY, Rule::class.java
+                )
+            } else {
+                @Suppress("DEPRECATION") bundle.getSerializable(SelectRuleFragment.BUNDLED_RULE_KEY) as Rule
+            }
+
+            lifecycleScope.launch {
+                viewModel.setRule(rule!!)
+            }
+
+        }
+    }
+
     private fun setupSelectRuleButton() = with(binding) {
 
         ivAddRule.setOnClickListener(AnimatedClickListener {
             vibrator.interaction()
 
+            animateInsertionAppsViews = false
+            animateInsertionRuleView = true
+
             findNavController().navigate(
-                AddManagedAppsFragmentDirections.toAddRuleFragment(),
+                AddManagedAppsFragmentDirections.toSelectRuleFragment(),
                 FragmentNavigatorExtras(
                     fabAdd to fabAdd.transitionName,
                     llRule to llRule.transitionName,
@@ -181,7 +208,8 @@ class AddManagedAppsFragment : MyFragment() {
      */
     private fun manageAppsViews(apps: Map<String, InstalledApp>) = lifecycleScope.launch {
         manageAppsViewsMutex.withLock {
-            delay(150)
+            if (animateInsertionAppsViews) delay(200)
+
             val parent = binding.llConteinerApps
 
             /* remova o `toList()` e veja sua vida se transformar em um inferno! Brincadeiras a parte, deve-se criar
@@ -204,17 +232,21 @@ class AddManagedAppsFragment : MyFragment() {
                         vibrator.interaction()
                     })
                     parent.addView(root, min(index, parent.childCount))
-                    delay(50)
+                    if (animateInsertionAppsViews) delay(if (index <= 10) 150 else 1)
                 }
             }
+            animateInsertionAppsViews = false
         }
     }
 
     private fun manageRuleView(rule: Rule) = with(binding) {
-
-        with(rule.name) {
-            tvSelectedRule.text = viewModel.getRuleName(rule)
+        lifecycleScope.launch {
+            if (animateInsertionRuleView) delay(800)//precisa dar tempo de animar as views de apps pra que essa nao fique com a animaçao travada
+            with(rule.name) {
+                tvSelectedRule.text = viewModel.getRuleName(rule)
+                tvSelectedRule.isVisible = true
+            }
+            animateInsertionRuleView = false
         }
-
     }
 }

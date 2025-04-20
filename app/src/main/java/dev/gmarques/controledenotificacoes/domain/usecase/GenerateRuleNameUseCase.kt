@@ -14,17 +14,47 @@ class GenerateRuleNameUseCase @Inject constructor(
     private val ruleStringsProvider: RuleStringsProvider,
 ) {
     operator fun invoke(rule: Rule): String {
-        val formattedDays = formatDays(rule.days)
+        val formattedDays = formatCondensedDays(rule.days)
         val range = formatTimeRanges(rule)
         val ruleType = formatRuleType(rule.ruleType)
 
         return "$ruleType $formattedDays $range"
     }
 
-    private fun formatDays(days: List<WeekDay>): String {
-        return days.sortedBy { it.dayNumber }
-            .joinToString("/") { abbreviatedDay(it) }
+    private fun formatCondensedDays(days: List<WeekDay>): String {
+        if (days.isEmpty()) return ""
+
+        val sortedDays = days.sortedBy { it.dayNumber }
+
+        val sequences = mutableListOf<List<WeekDay>>()
+        var currentSequence = mutableListOf<WeekDay>()
+
+        for ((index, day) in sortedDays.withIndex()) {
+            if (currentSequence.isEmpty()) {
+                currentSequence.add(day)
+            } else {
+                val lastDay = currentSequence.last()
+                if (day.dayNumber == lastDay.dayNumber + 1) {
+                    currentSequence.add(day)
+                } else {
+                    sequences.add(currentSequence)
+                    currentSequence = mutableListOf(day)
+                }
+            }
+
+            if (index == sortedDays.lastIndex) {
+                sequences.add(currentSequence)
+            }
+        }
+
+        return sequences.joinToString("/") { sequence ->
+            when {
+                sequence.size == 1 -> abbreviatedDay(sequence.first())
+                else -> "${abbreviatedDay(sequence.first())}-${abbreviatedDay(sequence.last())}"
+            }
+        }
     }
+
 
     private fun abbreviatedDay(day: WeekDay): String {
         return when (day) {

@@ -40,7 +40,6 @@ class AddRuleFragment : MyFragment() {
     private lateinit var binding: FragmentAddRuleBinding
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -216,13 +215,14 @@ class AddRuleFragment : MyFragment() {
                 data[2] = hour
                 data[3] = minute
 
-                val range = TimeRange(data[0], data[1], data[2], data[3])
+                val range = TimeRange(data[0], data[1], data[2], data[3], "s")
                 val rangeResult = viewModel.validateRange(range)
                 if (rangeResult.isSuccess) {
                     viewModel.validateRangesWithSequenceAndAdd(range)
                 }
             }
         }
+        // TODO: testar se a ediçao de todos os propos da Rule funciona 
 
         val collectStartValues = {
             showTimePicker(data[0], data[1], true) { hour, minute ->
@@ -282,7 +282,6 @@ class AddRuleFragment : MyFragment() {
 
         activity?.supportFragmentManager?.let { picker.show(it, "TimePicker") }
     }
-
 
 
     /**

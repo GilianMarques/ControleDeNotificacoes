@@ -23,8 +23,8 @@
         android:label="fragment_add_managed_apps"
         tools:layout="@layout/fragment_add_managed_apps">
         <action
-            android:id="@+id/to_addRuleFragment"
-            app:destination="@id/addRuleFragment" />
+            android:id="@+id/to_selectRuleFragment"
+            app:destination="@id/selectRuleFragment" />
         <action
             android:id="@+id/to_SelectAppsFragment"
             app:destination="@id/SelectAppsFragment" />
@@ -51,6 +51,14 @@
             android:name="excludePackages"
             app:argType="string[]"
             app:nullable="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectRuleFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment.SelectRuleFragment"
+        android:label="SelectRuleFragment">
+        <action
+            android:id="@+id/to_addRuleFragment"
+            app:destination="@id/addRuleFragment" />
     </fragment>
 
 </navigation>

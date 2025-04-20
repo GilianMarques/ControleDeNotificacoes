@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment
 
 import TimeRangeValidator
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -41,10 +42,6 @@ class AddRuleViewModel @Inject constructor(
     private var timeRanges: HashMap<String, TimeRange> = HashMap()
     private var selectedDays: List<WeekDay> = emptyList()
     private var ruleName: String = ""
-
-
-    private val _editingRuleLd = MutableLiveData<Rule?>(null)
-    val editingRuleLd: LiveData<Rule?> = _editingRuleLd
 
     private val _ruleTypeLd = MutableLiveData<RuleType>(RuleType.RESTRICTIVE)
     val ruleTypeLd: LiveData<RuleType> = _ruleTypeLd
@@ -222,7 +219,7 @@ class AddRuleViewModel @Inject constructor(
         viewModelScope.launch {
             rule.timeRanges.forEach {
                 addTimeRange(it)
-                delay(100) // pra ficar uma aniação bacana
+                delay(100) // pra ficar uma animação bacana
             }
         }
     }
@@ -267,9 +264,10 @@ class AddRuleViewModel @Inject constructor(
     private fun saveRule(rule: Rule) = viewModelScope.launch(IO) {
 
         if (editingRule == null) addRuleUseCase(rule)
-        else updateRuleUseCase(rule)
+        else updateRuleUseCase(rule.copy(id = editingRule!!.id))
 
         val event = _uiEvents.value!!
+        Log.d("USUK", "AddRuleViewModel.".plus("saveRule() rule: $rule"))
         _uiEvents.postValue(event.copy(navigateHomeEvent = EventWrapper(true)))
     }
 
@@ -298,7 +296,7 @@ class AddRuleViewModel @Inject constructor(
      *         - Sucesso: A lista de [WeekDay] se a validação passar.
      *         - Falha: Uma exceção, se a validação falhar. O tipo da exceção é determinado por [RuleValidator.validateDays].
      *           Nesse caso, um evento de erro [EventWrapper] é enviado para `_uiEvents`.
-     * @throws Qualquer exceção lançada por [RuleValidator.validateDays].
+     * @throws 'Qualquer exceção lançada por [RuleValidator.validateDays].
      *
      * @see RuleValidator.validateDays
      * @see WeekDay

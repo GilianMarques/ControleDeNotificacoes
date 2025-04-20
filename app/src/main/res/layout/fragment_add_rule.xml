@@ -18,8 +18,8 @@
         android:text="@string/Concluir"
         android:transitionName="fab"
         app:icon="@drawable/vec_check"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <include
