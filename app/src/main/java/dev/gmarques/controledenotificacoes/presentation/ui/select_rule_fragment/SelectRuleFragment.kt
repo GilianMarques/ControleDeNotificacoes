@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -61,6 +63,7 @@ class SelectRuleFragment : MyFragment() {
 
     private fun setupFabAddRule() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
+            vibrator.interaction()
             navigateToAddEditRuleFragment()
         })
 
@@ -153,10 +156,12 @@ class SelectRuleFragment : MyFragment() {
 
     private fun observeViewModel() {
 
-        viewModel.rulesLd.observe(viewLifecycleOwner) {
-            lifecycleScope.launch {
-                binding.progressBar.isVisible = false
-                adapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.rules.collect { rules ->
+                    binding.progressBar.isVisible = false
+                    adapter.submitList(rules)
+                }
             }
         }
 

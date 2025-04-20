@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import dev.gmarques.controledenotificacoes.data.local.room.entities.RuleEntity
-import dev.gmarques.controledenotificacoes.domain.model.Rule
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 /**
@@ -29,4 +29,7 @@ interface RuleDao {
 
     @Query("SELECT * FROM rules")
     suspend fun getAllRules(): List<RuleEntity>
+
+    @Query("SELECT * FROM rules")
+    fun observeAllRules(): Flow<List<RuleEntity>>
 }

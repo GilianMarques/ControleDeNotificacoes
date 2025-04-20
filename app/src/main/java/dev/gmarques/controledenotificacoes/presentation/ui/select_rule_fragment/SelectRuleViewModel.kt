@@ -1,15 +1,14 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.GenerateRuleNameUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.GetAllRulesUseCase
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
+import dev.gmarques.controledenotificacoes.domain.usecase.ObserveRulesUseCase
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 /**
@@ -18,22 +17,14 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class SelectRuleViewModel @Inject constructor(
-    private val getAllRulesUseCase: GetAllRulesUseCase,
+    observeRulesUseCase: ObserveRulesUseCase,
     val generateRuleNameUseCase: GenerateRuleNameUseCase,
 ) : ViewModel() {
 
-
-    private val _rules = MutableLiveData<List<Rule>>(emptyList<Rule>())
-    val rulesLd: LiveData<List<Rule>> = _rules
-
-
-    init {
-        loadRules()
-    }
-
-    private fun loadRules() = viewModelScope.launch(IO) {
-
-        val loadedRules = getAllRulesUseCase()
-        _rules.postValue(loadedRules)
-    }
+    val rules: StateFlow<List<Rule>> = observeRulesUseCase()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 }

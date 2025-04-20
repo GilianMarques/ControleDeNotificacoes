@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.repository
 
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Criado por Gilian Marques
@@ -12,4 +13,5 @@ interface RuleRepository {
     suspend fun removeRule(rule: Rule)
     suspend fun getRuleById(id: String): Rule?
     suspend fun getAllRules(): List<Rule>
+    fun observeAllRules(): Flow<List<Rule>>
 }

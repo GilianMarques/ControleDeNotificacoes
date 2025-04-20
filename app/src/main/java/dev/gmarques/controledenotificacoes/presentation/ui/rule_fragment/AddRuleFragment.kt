@@ -215,7 +215,7 @@ class AddRuleFragment : MyFragment() {
                 data[2] = hour
                 data[3] = minute
 
-                val range = TimeRange(data[0], data[1], data[2], data[3], "s")
+                val range = TimeRange(data[0], data[1], data[2], data[3])
                 val rangeResult = viewModel.validateRange(range)
                 if (rangeResult.isSuccess) {
                     viewModel.validateRangesWithSequenceAndAdd(range)
