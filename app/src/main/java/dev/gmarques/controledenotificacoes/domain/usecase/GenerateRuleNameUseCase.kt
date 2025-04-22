@@ -55,7 +55,6 @@ class GenerateRuleNameUseCase @Inject constructor(
         }
     }
 
-
     private fun abbreviatedDay(day: WeekDay): String {
         return when (day) {
             WeekDay.MONDAY -> ruleStringsProvider.monday()

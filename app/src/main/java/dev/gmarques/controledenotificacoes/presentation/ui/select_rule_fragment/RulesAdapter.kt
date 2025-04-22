@@ -9,6 +9,7 @@ import dev.gmarques.controledenotificacoes.databinding.ItemRuleBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
 
 /**
  * Criado por Gilian Marques
@@ -20,8 +21,6 @@ class RulesAdapter(
     private val onRuleEditClick: (Rule) -> Unit,
 ) : ListAdapter<Rule, RulesAdapter.AppViewHolder>(DiffCallback()) {
 
-    private var blockSelection = false
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
         val binding = ItemRuleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return AppViewHolder(binding)
@@ -31,15 +30,13 @@ class RulesAdapter(
         holder.bind(getItem(position))
     }
 
-    fun setBlockSelection(block: Boolean) {
-        this.blockSelection = block
-    }
 
     inner class AppViewHolder(private val binding: ItemRuleBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(rule: Rule) = with(binding) {
 
             tvName.text = rule.name.ifBlank { ruleNameGenerator(rule) }
+            ivIcon.setImageResource(rule.getAdequateIconReference())
 
             parent.setOnClickListener(AnimatedClickListener {
                 onRuleSelected(rule)

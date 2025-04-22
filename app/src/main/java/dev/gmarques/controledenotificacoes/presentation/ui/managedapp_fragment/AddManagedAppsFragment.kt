@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
@@ -21,6 +22,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -230,10 +232,15 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private fun manageRuleView(rule: Rule) = with(binding) {
         lifecycleScope.launch {
-            with(rule.name) {
-                tvSelectedRule.text = viewModel.getRuleName(rule)
-                tvSelectedRule.isVisible = true
-            }
+            tvSelectedRule.text = viewModel.getRuleName(rule)
+            tvSelectedRule.setCompoundDrawablesWithIntrinsicBounds(
+                ResourcesCompat.getDrawable(resources, rule.getAdequateIconReference(), requireActivity().theme),
+                null,
+                null,
+                null
+            )
+            tvSelectedRule.isVisible = true
+
         }
     }
 }
