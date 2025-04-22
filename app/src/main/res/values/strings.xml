@@ -71,5 +71,7 @@
     <string name="Bot_o_de_voltar">Botão de voltar</string>
     <string name="Bot_o_de_menu">Botão de menu</string>
     <string name="Selecionar_regra">Selecionar regra</string>
+    <string name="Icone_da_regra">Icone da regra</string>
+    <string name="Botao_para_editar_a_regra">Botão para editar a regra</string>
 
 </resources>
