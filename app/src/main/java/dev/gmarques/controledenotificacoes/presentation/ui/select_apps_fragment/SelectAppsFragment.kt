@@ -242,5 +242,4 @@ class SelectAppsFragment : MyFragment() {
         popupMenu.show(this@SelectAppsFragment.requireContext(), view)
     }
 
-
 }

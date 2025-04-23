@@ -43,14 +43,14 @@
             android:textAlignment="viewStart"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/iv_edit"
+            app:layout_constraintEnd_toStartOf="@id/iv_menu"
             app:layout_constraintStart_toEndOf="@id/iv_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Lista de compras" />
 
         <ImageView
 
-            android:id="@+id/iv_edit"
+            android:id="@+id/iv_menu"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginStart="4dp"
@@ -59,9 +59,9 @@
             android:layout_marginBottom="8dp"
             android:background="@drawable/back_circle"
             android:backgroundTint="?colorSecondaryContainer"
-            android:contentDescription="@string/Botao_para_editar_a_regra"
+            android:contentDescription="@string/Botao_de_menu_da_regra"
             android:padding="6dp"
-            android:src="@drawable/vec_edit_rule"
+            android:src="@drawable/vec_menu"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

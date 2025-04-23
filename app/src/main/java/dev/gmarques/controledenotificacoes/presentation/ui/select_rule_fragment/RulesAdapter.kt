@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -18,7 +19,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFu
 class RulesAdapter(
     private val ruleNameGenerator: GenerateRuleNameUseCase,
     private val onRuleSelected: (Rule) -> Unit,
-    private val onRuleEditClick: (Rule) -> Unit,
+    private val onRuleMenuClick: (View, Rule) -> Unit,
 ) : ListAdapter<Rule, RulesAdapter.AppViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
@@ -42,11 +43,13 @@ class RulesAdapter(
                 onRuleSelected(rule)
             })
 
-            ivEdit.setOnClickListener(AnimatedClickListener {
-                onRuleEditClick(rule)
+            ivMenu.setOnClickListener(AnimatedClickListener {
+                onRuleMenuClick(binding.ivMenu, rule)
             })
 
         }
+
+
     }
 
     class DiffCallback : DiffUtil.ItemCallback<Rule>() {

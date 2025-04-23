@@ -107,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
                     android:background="@drawable/back_edittext"
-                    android:drawablePadding="8dp"
+                    android:drawablePadding="16dp"
                     android:gravity="center_vertical"
                     android:padding="16dp"
                     android:textAlignment="gravity"

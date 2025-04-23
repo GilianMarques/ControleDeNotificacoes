@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,10 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.zawadz88.materialpopupmenu.popupMenu
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectRuleBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -138,9 +142,48 @@ class SelectRuleFragment : MyFragment() {
         goBack()
     }
 
-    private fun rvOnRuleEditClick(rule: Rule) {
-        navigateToAddEditRuleFragment(rule)
+    private fun rvOnRuleEditClick(targetView: View, rule: Rule) {
+
+
+        val popupMenu = popupMenu {
+            section {
+
+                item {
+                    label = getString(R.string.Editar_regra)
+                    icon = R.drawable.vec_edit_rule
+                    callback = {
+                        navigateToAddEditRuleFragment(rule)
+                    }
+                }
+
+                item {
+                    label = getString(R.string.Remover_regra)
+                    icon = R.drawable.vec_remove
+                    callback = {
+                        this@SelectRuleFragment.confirmRuleRemoval(rule)
+                    }
+                }
+
+            }
+        }
+        popupMenu.show(requireContext(), targetView)
+
+
     }
+
+    private fun confirmRuleRemoval(rule: Rule) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.Por_favor_confirme))
+            .setMessage(getString(R.string.Deseja_mesmo_remover_a_regra_essa_a_o_n_o_poder_ser_desfeita, rule.name))
+            .setPositiveButton(getString(R.string.Remover), object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    // TODO:   viewModel.removeRule(rule)
+                }
+
+            })
+
+    }
+
 
     private fun navigateToAddEditRuleFragment(rule: Rule? = null) {
 
