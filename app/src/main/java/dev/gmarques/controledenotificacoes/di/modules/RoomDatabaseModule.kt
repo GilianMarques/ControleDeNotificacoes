@@ -24,7 +24,9 @@ object RoomDatabaseModule {
     @Provides
     @Singleton
     fun provideRoomDatabase(@ApplicationContext context: Context): RoomDatabase {
-        return Room.databaseBuilder(context, RoomDatabase::class.java, "room_database").build()
+        return Room.databaseBuilder(context, RoomDatabase::class.java, "room_database")
+            .fallbackToDestructiveMigrationOnDowngrade(true)
+            .build()
     }
 
     @Provides

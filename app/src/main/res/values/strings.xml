@@ -77,6 +77,6 @@
     <string name="Editar_regra">Editar regra</string>
     <string name="Remover_regra">Remover regra</string>
     <string name="Por_favor_confirme">Por favor, confirme:</string>
-    <string name="Deseja_mesmo_remover_a_regra_essa_a_o_n_o_poder_ser_desfeita">Deseja mesmo remover a regra %1$s?\n\nEssa ação não poderá ser desfeita</string>
+    <string name="Deseja_mesmo_remover_a_regra_essa_a_o_n_o_poder_ser_desfeita">Deseja mesmo remover a regra \"%1$s\" ?\n\nEssa ação não poderá ser desfeita</string>
 
 </resources>

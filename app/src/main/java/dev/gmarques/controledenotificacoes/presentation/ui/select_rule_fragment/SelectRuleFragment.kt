@@ -174,16 +174,20 @@ class SelectRuleFragment : MyFragment() {
     private fun confirmRuleRemoval(rule: Rule) {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.Por_favor_confirme))
-            .setMessage(getString(R.string.Deseja_mesmo_remover_a_regra_essa_a_o_n_o_poder_ser_desfeita, rule.name))
+            .setMessage(
+                getString(
+                    R.string.Deseja_mesmo_remover_a_regra_essa_a_o_n_o_poder_ser_desfeita,
+                    rule.name.ifBlank { viewModel.generateRuleNameUseCase(rule) })
+            )
             .setPositiveButton(getString(R.string.Remover), object : DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
-                    // TODO:   viewModel.removeRule(rule)
+                    viewModel.removeRule(rule)
                 }
 
             })
+            .show()
 
     }
-
 
     private fun navigateToAddEditRuleFragment(rule: Rule? = null) {
 
@@ -206,6 +210,14 @@ class SelectRuleFragment : MyFragment() {
                     adapter.submitList(rules)
                 }
             }
+        }
+
+        viewModel.ruleRemovalResult.observe(viewLifecycleOwner) { event ->
+
+            val result = event?.consume()
+            if (result?.isSuccess == true) vibrator.success()
+            if (result?.isFailure == true) vibrator.error()
+
         }
 
 
