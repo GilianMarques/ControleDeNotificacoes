@@ -63,7 +63,7 @@ class SelectRuleFragment : MyFragment() {
 
     private fun setupFabAddRule() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
-            vibrator.interaction()
+
             navigateToAddEditRuleFragment()
         })
 

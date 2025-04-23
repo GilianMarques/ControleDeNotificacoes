@@ -128,7 +128,7 @@ class AddRuleFragment : MyFragment() {
         val animateChipCheck = { chip: View, index: Int ->
             chipGroup.removeView(chip)
             chipGroup.addView(chip, index)
-            vibrator.interaction()
+
         }
 
         val weekDayByNumber = WeekDay.entries.associateBy { it.dayNumber }
@@ -161,7 +161,7 @@ class AddRuleFragment : MyFragment() {
                 return@addOnButtonCheckedListener
             }
 
-            vibrator.interaction()
+
 
             when (group.checkedButtonId) {
                 R.id.btn_permissive -> viewModel.updateRuleType(RuleType.PERMISSIVE)
@@ -185,7 +185,7 @@ class AddRuleFragment : MyFragment() {
      */
     private fun setupBtnAddTimeRange() = with(binding) {
         ivAddRange.setOnClickListener(AnimatedClickListener {
-            vibrator.interaction()
+
             if (viewModel.canAddMoreRanges()) {
                 collectTimeRangeData()
             } else {
@@ -358,7 +358,7 @@ class AddRuleFragment : MyFragment() {
                 tvStart.text = range.startIntervalFormatted()
                 tvEnd.text = range.endIntervalFormatted()
                 ivRemove.setOnClickListener(AnimatedClickListener {
-                    vibrator.interaction()
+
                     viewModel.removeTimeRange(range)
                 })
                 root.tag = range.id

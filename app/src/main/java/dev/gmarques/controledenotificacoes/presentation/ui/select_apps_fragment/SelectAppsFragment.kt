@@ -72,7 +72,7 @@ class SelectAppsFragment : MyFragment() {
         super.initActionBar(binding)
         binding.ivMenu.isVisible = true
         binding.ivMenu.setOnClickListener(AnimatedClickListener {
-            vibrator.interaction()
+
             onSingleSectionWithIconsClicked(binding.ivMenu)
         })
 
@@ -108,7 +108,7 @@ class SelectAppsFragment : MyFragment() {
         adapter = AppsAdapter { app, checked ->
 
             viewModel.onAppChecked(app, checked)
-            vibrator.interaction()
+
             isFabVisible = true
             toggleFabVisibility(true)
         }

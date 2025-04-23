@@ -51,7 +51,7 @@ open class MyFragment : Fragment() {
     private fun setupGoBackButton(ivGoBack: AppCompatImageView) {
         ivGoBack.setOnClickListener(AnimatedClickListener {
             goBack()
-            vibrator.interaction()
+
 
         })
     }

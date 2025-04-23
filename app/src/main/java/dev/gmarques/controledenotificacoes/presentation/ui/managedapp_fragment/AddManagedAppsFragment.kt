@@ -67,7 +67,7 @@ class AddManagedAppsFragment() : MyFragment() {
     private fun setupSelectAppsButton() = with(binding) {
 
         ivAddApp.setOnClickListener(AnimatedClickListener {
-            vibrator.interaction()
+
 
             findNavController().navigate(
                 AddManagedAppsFragmentDirections.toSelectAppsFragment(viewModel.getSelectedPackages()),
@@ -146,7 +146,7 @@ class AddManagedAppsFragment() : MyFragment() {
     private fun setupSelectRuleButton() = with(binding) {
 
         ivAddRule.setOnClickListener(AnimatedClickListener {
-            vibrator.interaction()
+
 
             findNavController().navigate(
                 AddManagedAppsFragmentDirections.toSelectRuleFragment(),
@@ -222,7 +222,7 @@ class AddManagedAppsFragment() : MyFragment() {
                     root.tag = app.packageId
                     ivRemove.setOnClickListener(AnimatedClickListener {
                         viewModel.removeApp(app)
-                        vibrator.interaction()
+
                     })
                     parent.addView(root, min(index, parent.childCount))
                 }
