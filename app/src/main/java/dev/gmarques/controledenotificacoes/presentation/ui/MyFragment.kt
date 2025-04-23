@@ -2,11 +2,14 @@ package dev.gmarques.controledenotificacoes.presentation.ui
 
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.transition.Fade
 import androidx.transition.TransitionInflater
+import androidx.transition.TransitionSet
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
@@ -19,6 +22,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment.AddRule
 import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import dev.gmarques.controledenotificacoes.presentation.utils.SmallSlideTransition
 import javax.inject.Inject
 
 /**
@@ -36,12 +40,38 @@ open class MyFragment : Fragment() {
 
         val inflater = TransitionInflater.from(requireContext())
 
-        enterTransition = inflater.inflateTransition(android.R.transition.fade)
-        exitTransition = inflater.inflateTransition(android.R.transition.fade)
 
-        sharedElementEnterTransition = TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
-        sharedElementReturnTransition = TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
+        val fadeTransition = Fade().apply {
+            interpolator = AccelerateDecelerateInterpolator()
+            duration = 200
+        }
 
+
+        val slide = SmallSlideTransition().apply {
+            duration = 180
+            interpolator = AccelerateDecelerateInterpolator()
+        }
+
+        val transitionSet = TransitionSet().apply {
+            ordering = TransitionSet.ORDERING_TOGETHER
+            addTransition(fadeTransition)
+            addTransition(slide)
+        }
+
+
+        exitTransition = transitionSet // saida do fragmento 1
+        enterTransition = transitionSet // entrada do fragmento 2
+        //    returnTransition = transitionSetExit2 // saida do fragmento 2
+        //   reenterTransition = transitionSetEnter1 // retorno do fragmento 1
+
+
+        sharedElementEnterTransition = inflater.inflateTransition(android.R.transition.move)!!.apply {
+            interpolator = android.view.animation.OvershootInterpolator()
+        }
+
+        sharedElementReturnTransition = inflater.inflateTransition(android.R.transition.move)!!.apply {
+            interpolator = android.view.animation.OvershootInterpolator()
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
