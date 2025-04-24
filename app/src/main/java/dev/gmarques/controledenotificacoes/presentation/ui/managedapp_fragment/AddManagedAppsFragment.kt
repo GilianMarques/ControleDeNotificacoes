@@ -17,6 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.usecase.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment
@@ -28,6 +29,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import javax.inject.Inject
 import kotlin.math.min
 
 @AndroidEntryPoint
@@ -39,6 +41,8 @@ class AddManagedAppsFragment() : MyFragment() {
         }
     }
 
+    @Inject
+    lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
 
     private val viewModel: AddManagedAppsFragmentViewModel by viewModels()
     private lateinit var binding: FragmentAddManagedAppsBinding
@@ -125,6 +129,23 @@ class AddManagedAppsFragment() : MyFragment() {
         }
     }
 
+    private fun setupSelectRuleButton() = with(binding) {
+
+        ivAddRule.setOnClickListener(AnimatedClickListener {
+
+
+            findNavController().navigate(
+                AddManagedAppsFragmentDirections.toSelectRuleFragment(),
+                FragmentNavigatorExtras(
+                    fabAdd to fabAdd.transitionName,
+                    llRule to llRule.transitionName,
+                    tvRuleTittle to tvRuleTittle.transitionName,
+                )
+            )
+        })
+
+    }
+
     private fun setupSelectRuleListener() {
 
         setFragmentResultListener(SelectRuleFragment.RESULT_KEY) { _, bundle ->
@@ -141,23 +162,6 @@ class AddManagedAppsFragment() : MyFragment() {
             }
 
         }
-    }
-
-    private fun setupSelectRuleButton() = with(binding) {
-
-        ivAddRule.setOnClickListener(AnimatedClickListener {
-
-
-            findNavController().navigate(
-                AddManagedAppsFragmentDirections.toSelectRuleFragment(),
-                FragmentNavigatorExtras(
-                    fabAdd to fabAdd.transitionName,
-                    llRule to llRule.transitionName,
-                    tvRuleTittle to tvRuleTittle.transitionName,
-                )
-            )
-        })
-
     }
 
     private fun observeViewModel() {
@@ -232,7 +236,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private fun manageRuleView(rule: Rule) = with(binding) {
         lifecycleScope.launch {
-            tvSelectedRule.text = viewModel.getRuleName(rule)
+            tvSelectedRule.text = rule.name.ifBlank { generateRuleNameUseCase(rule) }
             tvSelectedRule.setCompoundDrawablesWithIntrinsicBounds(
                 ResourcesCompat.getDrawable(resources, rule.getAdequateIconReference(), requireActivity().theme),
                 null,

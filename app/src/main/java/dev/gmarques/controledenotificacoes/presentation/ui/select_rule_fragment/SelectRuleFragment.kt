@@ -23,9 +23,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectRuleBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.usecase.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
@@ -41,6 +43,9 @@ class SelectRuleFragment : MyFragment() {
 
     private lateinit var binding: FragmentSelectRuleBinding
     private val viewModel: SelectRuleViewModel by viewModels()
+
+    @Inject
+    lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
 
     private var animatingFab = false
     private var isFabVisible = true
@@ -76,7 +81,7 @@ class SelectRuleFragment : MyFragment() {
     private fun setupRecyclerView() {
 
         adapter = RulesAdapter(
-            viewModel.generateRuleNameUseCase, ::rvOnRuleSelected, ::rvOnRuleEditClick
+            generateRuleNameUseCase, ::rvOnRuleSelected, ::rvOnRuleEditClick
         )
 
         binding.rvApps.apply {
@@ -138,7 +143,6 @@ class SelectRuleFragment : MyFragment() {
         }
 
         setFragmentResult(RESULT_KEY, result)
-        vibrator.success()
         goBack()
     }
 
@@ -172,20 +176,16 @@ class SelectRuleFragment : MyFragment() {
     }
 
     private fun confirmRuleRemoval(rule: Rule) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.Por_favor_confirme))
-            .setMessage(
+        MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Por_favor_confirme)).setMessage(
                 getString(
                     R.string.Deseja_mesmo_remover_a_regra_essa_a_o_n_o_poder_ser_desfeita,
-                    rule.name.ifBlank { viewModel.generateRuleNameUseCase(rule) })
-            )
-            .setPositiveButton(getString(R.string.Remover), object : DialogInterface.OnClickListener {
+                    rule.name.ifBlank { generateRuleNameUseCase(rule) })
+            ).setPositiveButton(getString(R.string.Remover), object : DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
                     viewModel.removeRule(rule)
                 }
 
-            })
-            .show()
+            }).show()
 
     }
 
@@ -216,7 +216,9 @@ class SelectRuleFragment : MyFragment() {
 
             val result = event?.consume()
             if (result?.isSuccess == true) vibrator.success()
-            if (result?.isFailure == true) vibrator.error()
+            if (result?.isFailure == true) {
+                showErrorSnackBar(getString(R.string.Hhouve_um_erro_ao_remover_a_regra_tente_novamente))
+            }
 
         }
 

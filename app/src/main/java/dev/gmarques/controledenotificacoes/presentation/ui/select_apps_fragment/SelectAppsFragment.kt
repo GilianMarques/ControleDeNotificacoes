@@ -204,7 +204,6 @@ class SelectAppsFragment : MyFragment() {
         }
 
         setFragmentResult(RESULT_KEY, result)
-        vibrator.success()
         goBack()
     }
 

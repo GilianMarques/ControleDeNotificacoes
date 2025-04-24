@@ -23,7 +23,6 @@ import dev.gmarques.controledenotificacoes.domain.usecase.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.UpdateRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -218,7 +217,6 @@ class AddRuleViewModel @Inject constructor(
         viewModelScope.launch {
             rule.timeRanges.forEach {
                 addTimeRange(it)
-                delay(100) // pra ficar uma animação bacana
             }
         }
     }

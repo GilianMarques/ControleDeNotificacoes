@@ -24,7 +24,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SelectRuleViewModel @Inject constructor(
     observeRulesUseCase: ObserveRulesUseCase,
-    val generateRuleNameUseCase: GenerateRuleNameUseCase,
     private val removeRuleUseCase: RemoveRuleUseCase,
 ) : ViewModel() {
 
