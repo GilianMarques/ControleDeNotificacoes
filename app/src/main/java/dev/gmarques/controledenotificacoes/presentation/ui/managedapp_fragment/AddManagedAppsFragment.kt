@@ -65,7 +65,14 @@ class AddManagedAppsFragment() : MyFragment() {
         setupSelectRuleListener()
         setupSelectAppsButton()
         setupSelectRuleButton()
+        setupConcludeFab()
         observeViewModel()
+    }
+
+    private fun setupConcludeFab() = with(binding) {
+        fabConclude.setOnClickListener(AnimatedClickListener {
+            viewModel.validateSelection()
+        })
     }
 
     private fun setupSelectAppsButton() = with(binding) {
@@ -76,7 +83,7 @@ class AddManagedAppsFragment() : MyFragment() {
             findNavController().navigate(
                 AddManagedAppsFragmentDirections.toSelectAppsFragment(viewModel.getSelectedPackages()),
                 FragmentNavigatorExtras(
-                    fabAdd to fabAdd.transitionName
+                    fabConclude to fabConclude.transitionName
                 )
             )
 
@@ -116,11 +123,11 @@ class AddManagedAppsFragment() : MyFragment() {
             lifecycleScope.launch {
 
                 val preselection = viewModel.selectedApps.value?.size ?: 0
-                var awaitTillAlLPreSelectedAppsAreLoadedOnUi = preselection > 0
+                var awaitUntilAllPreSelectedAppsAreLoadedOnUi = preselection > 0
 
-                while (awaitTillAlLPreSelectedAppsAreLoadedOnUi) {
-                    delay(100)
-                    awaitTillAlLPreSelectedAppsAreLoadedOnUi = binding.llConteinerApps.childCount < preselection
+                while (awaitUntilAllPreSelectedAppsAreLoadedOnUi) {
+                    delay(10)
+                    awaitUntilAllPreSelectedAppsAreLoadedOnUi = binding.llConteinerApps.childCount < preselection
                 }
 
                 viewModel.addNewlySelectedApps(selectedApps)
@@ -137,7 +144,7 @@ class AddManagedAppsFragment() : MyFragment() {
             findNavController().navigate(
                 AddManagedAppsFragmentDirections.toSelectRuleFragment(),
                 FragmentNavigatorExtras(
-                    fabAdd to fabAdd.transitionName,
+                    fabConclude to fabConclude.transitionName,
                     llRule to llRule.transitionName,
                     tvRuleTittle to tvRuleTittle.transitionName,
                 )
@@ -156,11 +163,7 @@ class AddManagedAppsFragment() : MyFragment() {
             } else {
                 @Suppress("DEPRECATION") bundle.getSerializable(SelectRuleFragment.BUNDLED_RULE_KEY) as Rule
             }
-
-            lifecycleScope.launch {
-                viewModel.setRule(rule!!)
-            }
-
+            viewModel.setRule(rule!!)
         }
     }
 
@@ -172,6 +175,20 @@ class AddManagedAppsFragment() : MyFragment() {
         viewModel.selectedRule.observe(viewLifecycleOwner) { rule ->
             rule?.let { manageRuleView(rule) }
         }
+
+        viewModel.showError.observe(viewLifecycleOwner) {
+
+            with(it.consume()) {
+                if (this == null) return@with
+                showErrorSnackBar(this, binding.fabConclude)
+            }
+        }
+
+        viewModel.successCloseFragment.observe(viewLifecycleOwner) {
+            vibrator.success()
+            goBack()
+        }
+
 
     }
 

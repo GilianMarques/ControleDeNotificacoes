@@ -5,8 +5,10 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.data.local.installed_apps.AppRepositoryImpl
+import dev.gmarques.controledenotificacoes.data.repository.ManagedAppRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.RuleRepositoryImpl
 import dev.gmarques.controledenotificacoes.domain.repository.AppRepository
+import dev.gmarques.controledenotificacoes.domain.repository.ManagedAppRepository
 import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
 import javax.inject.Singleton
 
@@ -27,4 +29,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindAppRepository(impl: AppRepositoryImpl): AppRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindManagedAppRepository(impl: ManagedAppRepositoryImpl): ManagedAppRepository
 }

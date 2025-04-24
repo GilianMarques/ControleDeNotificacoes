@@ -79,5 +79,6 @@
     <string name="Por_favor_confirme">Por favor, confirme:</string>
     <string name="Deseja_mesmo_remover_a_regra_essa_a_o_n_o_poder_ser_desfeita">Deseja mesmo remover a regra \"%1$s\" ?\n\nEssa ação não poderá ser desfeita</string>
     <string name="Hhouve_um_erro_ao_remover_a_regra_tente_novamente">Houve um erro ao remover a regra, tente novamente</string>
+    <string name="Selecione_uma_regra">Selecione uma regra</string>
 
 </resources>
