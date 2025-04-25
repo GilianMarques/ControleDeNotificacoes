@@ -68,6 +68,18 @@ class AddManagedAppsFragmentViewModel @Inject constructor(
         _selectedApps.value = _selectedApps.value!!.toMutableMap().apply { remove(app.packageId) }
     }
 
+    /**
+     * Valida a seleção atual de aplicativos e regra.
+     *
+     * Esta função verifica se uma regra foi selecionada e se pelo menos um aplicativo foi selecionado.
+     * Se a regra ou nenhum aplicativo foi selecionado, um erro correspondente é exibido ao usuário.
+     * Caso contrário, adiciona os aplicativos selecionados à lista de aplicativos gerenciados
+     * associados à regra selecionada.
+     * Após a adição bem-sucedida, notifica os observadores para fechar o fragmento.
+     *
+     * Esta operação é realizada em um [viewModelScope] e no [Main] dispatcher para garantir
+     * que as atualizações da UI ocorram na thread principal.
+     */
     fun validateSelection() = viewModelScope.launch(Main) {
 
         val rule = _selectedRule.value
@@ -91,6 +103,13 @@ class AddManagedAppsFragmentViewModel @Inject constructor(
 
     }
 
+    /**
+     * Adiciona um aplicativo gerenciado ao armazenamento de dados.
+     *
+     * @param app O objeto [ManagedApp] a ser adicionado.
+     *
+     * Esta função suspensa chama o [addManagedAppUseCase] para adicionar o aplicativo gerenciado.
+     */
     private suspend fun addManagedApp(app: ManagedApp) {
         addManagedAppUseCase(app)
     }

@@ -50,21 +50,22 @@ class AddRuleFragment : MyFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        initActionBar(binding.toolbar)
-        setupNameInput()
-        setupButtonTypeRule()
-        setupChipDays()
-        setupBtnAddTimeRange()
-        setupFabAddRule()
-        setupEditingModeIfNeeded()
-        observeRuleType()
-        observeTimeRanges()
-        observeSelectedDays()
-        observeRuleName()
-        observeEvents()
-
         super.onViewCreated(view, savedInstanceState)
+
+        lifecycleScope.launch {
+            delay(500)
+            setupNameInput()
+            setupButtonTypeRule()
+            setupChipDays()
+            setupBtnAddTimeRange()
+            setupFabAddRule()
+            setupEditingModeIfNeeded()
+            observeRuleType()
+            observeTimeRanges()
+            observeSelectedDays()
+            observeRuleName()
+            observeEvents()
+        }
     }
 
     /**

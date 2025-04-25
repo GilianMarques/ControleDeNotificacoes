@@ -178,9 +178,8 @@ class AddManagedAppsFragment() : MyFragment() {
 
         viewModel.showError.observe(viewLifecycleOwner) {
 
-            with(it.consume()) {
-                if (this == null) return@with
-                showErrorSnackBar(this, binding.fabConclude)
+            it.consume()?.let {
+                showErrorSnackBar(it, binding.fabConclude)
             }
         }
 
@@ -188,7 +187,6 @@ class AddManagedAppsFragment() : MyFragment() {
             vibrator.success()
             goBack()
         }
-
 
     }
 
