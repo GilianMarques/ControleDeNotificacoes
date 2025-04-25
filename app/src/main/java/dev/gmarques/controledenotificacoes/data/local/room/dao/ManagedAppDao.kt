@@ -15,10 +15,10 @@ import dev.gmarques.controledenotificacoes.data.local.room.entities.ManagedAppEn
 interface ManagedAppDao {
 
     @Insert
-    suspend fun insertManagedApp(managedAppEntity: ManagedAppEntity)
+    suspend fun insertManagedAppOrThrow(managedAppEntity: ManagedAppEntity)
 
     @Update
-    suspend fun updateManagedApp(managedAppEntity: ManagedAppEntity)
+    suspend fun updateManagedAppOrThrow(managedAppEntity: ManagedAppEntity)
 
     @Delete
     suspend fun deleteManagedApp(managedAppEntity: ManagedAppEntity)

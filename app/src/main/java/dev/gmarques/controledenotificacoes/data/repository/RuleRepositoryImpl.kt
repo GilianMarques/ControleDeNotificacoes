@@ -15,14 +15,14 @@ import javax.inject.Inject
  */
 class RuleRepositoryImpl @Inject constructor(private val ruleDao: RuleDao) : RuleRepository {
 
-    override suspend fun addRule(rule: Rule) {
+    override suspend fun addRuleOrThrow(rule: Rule) {
         RuleValidator.validate(rule)
-        ruleDao.insertRule(RuleMapper.mapToEntity(rule))
+        ruleDao.insertRuleOrThrow(RuleMapper.mapToEntity(rule))
     }
 
-    override suspend fun updateRule(rule: Rule) {
+    override suspend fun updateRuleOrThrow(rule: Rule) {
         RuleValidator.validate(rule)
-        ruleDao.updateRule(RuleMapper.mapToEntity(rule))
+        ruleDao.updateRuleOrThrow(RuleMapper.mapToEntity(rule))
     }
 
     override suspend fun removeRule(rule: Rule) {

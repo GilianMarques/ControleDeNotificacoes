@@ -16,10 +16,10 @@ import kotlinx.coroutines.flow.Flow
 interface RuleDao {
 
     @Insert
-    suspend fun insertRule(ruleEntity: RuleEntity)
+    suspend fun insertRuleOrThrow(ruleEntity: RuleEntity)
 
     @Update
-    suspend fun updateRule(ruleEntity: RuleEntity)
+    suspend fun updateRuleOrThrow(ruleEntity: RuleEntity)
 
     @Delete
     suspend fun deleteRule(ruleEntity: RuleEntity)

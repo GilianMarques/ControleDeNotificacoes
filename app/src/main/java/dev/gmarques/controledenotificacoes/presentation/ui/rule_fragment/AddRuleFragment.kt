@@ -223,7 +223,6 @@ class AddRuleFragment : MyFragment() {
                 }
             }
         }
-        // TODO: testar se a ediçao de todos os propos da Rule funciona 
 
         val collectStartValues = {
             showTimePicker(data[0], data[1], true) { hour, minute ->

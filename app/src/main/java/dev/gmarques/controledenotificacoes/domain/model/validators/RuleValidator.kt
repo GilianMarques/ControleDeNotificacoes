@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
+import dev.gmarques.controledenotificacoes.domain.exceptions.BlankStringException
 import dev.gmarques.controledenotificacoes.domain.exceptions.DuplicateTimeRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.IntersectedRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
@@ -25,25 +26,21 @@ object RuleValidator {
 
 
     /**
-     * Valida um objeto [Rule] verificando seu nome, dias e intervalos de tempo.
+     * Valida um objeto [Rule].
      *
-     * Esta função executa uma série de validações no objeto [Rule] fornecido:
-     * 1. **Validação de Nome:** Verifica se o nome da regra é válido usando [validateName].
-     * 2. **Validação de Dias:** Verifica se os dias da regra são válidos usando [validateDays].
-     * 3. **Validação de Intervalos de Tempo:** Verifica se os intervalos de tempo da regra são válidos usando [validateTimeRanges].
+     * Essa função realiza uma série de validações em um objeto [Rule], incluindo:
+     * - **Nome**: Verifica a validade do nome usando [validateName].
+     * - **Dias**: Verifica a validade dos dias usando [validateDays].
+     * - **Intervalos de Tempo**: Verifica a validade dos intervalos de tempo usando [validateTimeRanges].
+     * - **Id**: Verifica se a Id está vazia [validateId].
      *
-     * Se alguma dessas validações falhar, a função lança uma exceção. A exceção específica lançada
-     * depende do resultado da validação individual.
+     * Se alguma dessas validações falhar, uma exceção será lançada. A exceção lançada
+     * corresponde à falha específica da validação.
      *
-     * - Se a função de validação (por exemplo, [validateName]) retornar um `Result.failure` e tiver uma exceção
-     *   associada, essa exceção será lançada.
-     * - Se a função de validação retornar um `Result.failure`, mas não tiver uma exceção associada,
-     *   uma `baseException` padrão será lançada.
-     *
-     * @param rule O objeto [Rule] a ser validado.
-     * @throws Exception Uma exceção se alguma das verificações de validação falhar. O tipo de exceção depende
-     *                   da falha de validação específica, mas será a exceção retornada pela função de validação
-     *                   que falhou ou `baseException` se a validação que falhou não retornar uma exceção.
+     * @param rule O objeto [Rule] que será validado.
+     * @throws Exception Lançada quando uma das validações falha. O tipo de exceção depende da falha específica.
+     * - se a função de validação ([validateName], [validateDays], [validateTimeRanges]) retornar um [Result.failure] e conter uma exceção, essa exceção será lançada.
+     * - Se não tiver exceção, o sistema lançará uma exceção padrão.
      */
     fun validate(rule: Rule) {
 
@@ -52,6 +49,8 @@ object RuleValidator {
         validateDays(rule.days).getOrThrow()
 
         validateTimeRanges(rule.timeRanges).getOrThrow()
+
+        validateId(rule.id).getOrThrow()
 
     }
 
@@ -197,6 +196,26 @@ object RuleValidator {
             if (result.isFailure) return result.exceptionOrNull()!!
         }
         return null
+    }
+
+    /**
+     * Valida o ID fornecido, verificando se ele está vazio.
+     *
+     * Esta função verifica se a string de ID fornecida está vazia. Se estiver, ela retorna
+     * um [Result.failure] contendo uma exceção [BlankStringException] com uma mensagem
+     * detalhada explicando que a ID de um objeto não pode estar vazia. Se a ID não estiver
+     * vazia, ela retorna um [Result.success] contendo a própria ID.
+     *
+     * @param id A string de ID a ser validada.
+     * @return Um objeto [Result]:
+     *         - [Result.success] contendo a string de ID se ela não estiver vazia.
+     *         - [Result.failure] contendo uma [BlankStringException] se a string de ID estiver vazia.
+     */
+    fun validateId(id: String): Result<String> {
+        if (id.isEmpty()) {
+            return Result.failure(BlankStringException("Em hipótese alguma a id de um objeto pode ficar vazia. Ela é gerada automaticamente e imutavel, por tanto algo deu muito errado pra isso acontecer."))
+        }
+        return Result.success(id)
     }
 
 }

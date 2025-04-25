@@ -10,7 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.usecase.AddManagedAppUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import kotlinx.coroutines.Dispatchers.Main

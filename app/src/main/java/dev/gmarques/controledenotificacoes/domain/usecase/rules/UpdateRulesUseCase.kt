@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.usecase
+package dev.gmarques.controledenotificacoes.domain.usecase.rules
 
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
@@ -10,6 +10,6 @@ import javax.inject.Inject
  */
 class UpdateRuleUseCase @Inject constructor(private val repository: RuleRepository) {
     suspend operator fun invoke(rule: Rule) {
-        repository.updateRule(rule)
+        repository.updateRuleOrThrow(rule)
     }
 }

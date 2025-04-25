@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.Flow
  * Em sábado, 29 de março de 2025 às 14:39.
  */
 interface RuleRepository {
-    suspend fun addRule(rule: Rule)
-    suspend fun updateRule(rule: Rule)
+    suspend fun addRuleOrThrow(rule: Rule)
+    suspend fun updateRuleOrThrow(rule: Rule)
     suspend fun removeRule(rule: Rule)
     suspend fun getRuleById(id: String): Rule?
     suspend fun getAllRules(): List<Rule>

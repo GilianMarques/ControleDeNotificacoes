@@ -6,9 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.usecase.GenerateRuleNameUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.ObserveRulesUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.RemoveRuleUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRulesUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.RemoveRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.SharingStarted

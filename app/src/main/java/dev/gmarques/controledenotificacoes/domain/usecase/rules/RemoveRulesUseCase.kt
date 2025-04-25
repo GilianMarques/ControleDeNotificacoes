@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.usecase
+package dev.gmarques.controledenotificacoes.domain.usecase.rules
 
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository

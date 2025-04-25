@@ -4,6 +4,7 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -29,6 +30,6 @@ class UpdateRuleUseCaseTest {
         )
         useCase(rule)
 
-        verify(repository).updateRule(rule)
+        verify(repository).updateRuleOrThrow(rule)
     }
 }

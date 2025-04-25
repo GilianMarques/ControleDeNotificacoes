@@ -1,4 +1,33 @@
-import org.junit.jupiter.api.Assertions.*
+package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
+
+import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
+import dev.gmarques.controledenotificacoes.domain.repository.ManagedAppRepository
+import io.mockk.coVerify
+import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
+import org.junit.Before
+import org.junit.Test
+
 class AddManagedAppUseCaseTest {
-  
+
+    private lateinit var repository: ManagedAppRepository
+    private lateinit var useCase: AddManagedAppUseCase
+
+    @Before
+    fun configurar() {
+        repository = mockk(relaxed = true)
+        useCase = AddManagedAppUseCase(repository)
+    }
+
+    @Test
+    fun `deve chamar add do repositorio com o managed app correto`() = runTest {
+        // Arrange
+        val managedApp = ManagedApp(packageId = "com.instagram.android", ruleId = "regra-456")
+
+        // Act
+        useCase(managedApp)
+
+        // Assert
+        coVerify(exactly = 1) { repository.addManagedAppOrThrow(managedApp) }
+    }
 }

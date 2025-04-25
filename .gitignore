@@ -15,6 +15,9 @@ captures/
 *.apk
 output.json
 
+# arquivos gerados pelo relatorio da cobertura de codigo
+htmlReport/
+
 # IntelliJ
 *.iml
 .idea/

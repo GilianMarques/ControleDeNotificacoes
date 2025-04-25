@@ -19,8 +19,8 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
-import dev.gmarques.controledenotificacoes.domain.usecase.AddRuleUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.UpdateRuleUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch

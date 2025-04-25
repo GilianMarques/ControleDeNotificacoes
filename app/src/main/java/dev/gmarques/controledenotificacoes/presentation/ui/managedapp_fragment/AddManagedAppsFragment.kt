@@ -17,7 +17,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.usecase.GenerateRuleNameUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment

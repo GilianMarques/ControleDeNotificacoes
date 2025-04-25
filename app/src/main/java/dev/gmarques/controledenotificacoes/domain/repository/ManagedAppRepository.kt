@@ -7,8 +7,8 @@ import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
  * Em sábado, 13 de abril de 2025 às 16:55.
  */
 interface ManagedAppRepository {
-    suspend fun addManagedApp(rule: ManagedApp)
-    suspend fun updateManagedApp(rule: ManagedApp)
+    suspend fun addManagedAppOrThrow(rule: ManagedApp)
+    suspend fun updateManagedAppOrThrow(rule: ManagedApp)
     suspend fun removeManagedApp(rule: ManagedApp)
     suspend fun getManagedAppById(id: String): ManagedApp?
     suspend fun getAllManagedApps(): List<ManagedApp>
