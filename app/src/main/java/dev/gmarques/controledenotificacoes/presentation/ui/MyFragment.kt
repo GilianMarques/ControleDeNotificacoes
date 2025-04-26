@@ -22,7 +22,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment.AddRule
 import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
-import dev.gmarques.controledenotificacoes.presentation.utils.SmallSlideTransition
+import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import javax.inject.Inject
 
 /**
@@ -47,7 +47,7 @@ open class MyFragment : Fragment() {
         }
 
 
-        val slide = SmallSlideTransition().apply {
+        val slide = SlideTransition().apply {
             duration = 180
             interpolator = AccelerateDecelerateInterpolator()
         }

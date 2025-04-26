@@ -11,7 +11,7 @@ import androidx.transition.Visibility
  * Criado por Gilian Marques
  * Em terça-feira, 22 de abril de 2025 as 22:29.
  */
-class SmallSlideTransition : Visibility() {
+class SlideTransition : Visibility() {
     override fun onAppear(
         sceneRoot: ViewGroup,
         view: View,

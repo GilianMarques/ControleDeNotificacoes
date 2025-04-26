@@ -7,7 +7,7 @@ import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 /**
  * Criado por Gilian Marques
  * Em terça-feira, 22 de abril de 2025 as 20:26.
- * Aqui ficam as funçoes de extençao relacionadas ao modelos de objetos de dominio dos quais a aplicação depende
+ * Aqui ficam as funçoes de extençao relacionadas aos modelos de objetos de dominio dos quais a aplicação depende
  */
 object DomainRelatedExtFuns {
 
