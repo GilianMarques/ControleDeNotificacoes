@@ -11,7 +11,7 @@ import javax.inject.Inject
  * Observa a tabela de regras e emite atualizações sempre que houver mudanças.
  *
  */
-class ObserveRulesUseCase @Inject constructor(
+class ObserveAllRulesUseCase @Inject constructor(
     private val repository: RuleRepository,
 ) {
 

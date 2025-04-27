@@ -3,9 +3,11 @@ package dev.gmarques.controledenotificacoes.data.local.room.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import dev.gmarques.controledenotificacoes.data.local.room.entities.ManagedAppEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 /**
@@ -14,11 +16,11 @@ import dev.gmarques.controledenotificacoes.data.local.room.entities.ManagedAppEn
  */
 interface ManagedAppDao {
 
-    @Insert
-    suspend fun insertManagedAppOrThrow(managedAppEntity: ManagedAppEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdateManagedApp(managedAppEntity: ManagedAppEntity)
 
     @Update
-    suspend fun updateManagedAppOrThrow(managedAppEntity: ManagedAppEntity)
+    suspend fun updateManagedApp(managedAppEntity: ManagedAppEntity)
 
     @Delete
     suspend fun deleteManagedApp(managedAppEntity: ManagedAppEntity)
@@ -27,5 +29,5 @@ interface ManagedAppDao {
     suspend fun getManagedAppByPackageId(id: String): ManagedAppEntity?
 
     @Query("SELECT * FROM managed_apps")
-    suspend fun getAllManagedApps(): List<ManagedAppEntity>
+    fun observeAllManagedApps(): Flow<List<ManagedAppEntity>>
 }

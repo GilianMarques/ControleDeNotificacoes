@@ -9,7 +9,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.fail
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 
 class RuleRepositoryImplTest {
@@ -30,7 +31,7 @@ class RuleRepositoryImplTest {
 
         repository.addRuleOrThrow(rule)
 
-        verify(ruleDao).insertRuleOrThrow(RuleMapper.mapToEntity(rule))
+        verify(ruleDao).insertRule(RuleMapper.mapToEntity(rule))
     }
 
     @Test
@@ -45,7 +46,7 @@ class RuleRepositoryImplTest {
             try {
                 repository.addRuleOrThrow(rule)
                 fail { "Objeto invalido entrou no DB. Chamada deveria ter lançado uma exceção. ${rule.name}" }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 true
             }
         }
@@ -64,7 +65,7 @@ class RuleRepositoryImplTest {
             try {
                 repository.updateRuleOrThrow(rule)
                 fail { "Objeto invalido entrou no DB. Chamada deveria ter lançado uma exceção. ${rule.name}" }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 true
             }
         }
@@ -77,7 +78,7 @@ class RuleRepositoryImplTest {
 
         repository.updateRuleOrThrow(rule)
 
-        verify(ruleDao).updateRuleOrThrow(RuleMapper.mapToEntity(rule))
+        verify(ruleDao).updateRule(RuleMapper.mapToEntity(rule))
     }
 
     @Test

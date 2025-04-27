@@ -8,9 +8,9 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em terça-feira, 15 de abril de 2025 as 21:05.
  */
-class GetInstalledAppsUseCase @Inject constructor(private val repository: AppRepository) {
+class GetInstalledAppByPackageUseCase @Inject constructor(private val repository: AppRepository) {
 
-    suspend operator fun invoke(targetName: String, excludePackages: HashSet<String>): List<InstalledApp> {
-        return repository.getInstalledApps(targetName, excludePackages)
+    suspend operator fun invoke(targetPackage: String): InstalledApp? {
+        return repository.getInstalledAppByPackage(targetPackage)
     }
 }

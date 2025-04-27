@@ -2,14 +2,17 @@ package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.repository.ManagedAppRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
- * Em sábado, 24 de abril de 2025 às 17:36.
+ * Em sábado, 26 de abril de 2025 as 18:46.
  */
-class AddManagedAppUseCase @Inject constructor(private val repository: ManagedAppRepository) {
-    suspend operator fun invoke(app: ManagedApp) {
-        repository.addOrUpdateManagedAppOrThrow(app)
+class ObserveAllManagedApps @Inject constructor(
+    private val repository: ManagedAppRepository,
+) {
+    operator fun invoke(): Flow<List<ManagedApp>> {
+        return repository.observeAllManagedApps()
     }
 }

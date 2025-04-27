@@ -24,4 +24,6 @@ interface AppRepository {
      *   corresponder.
      */
     suspend fun getInstalledApps(targetName: String, excludePackages: HashSet<String>): List<InstalledApp>
+
+    suspend fun getInstalledAppByPackage(packageId: String): InstalledApp?
 }

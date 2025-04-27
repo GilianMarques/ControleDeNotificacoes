@@ -1,10 +1,12 @@
+@file:Suppress("unused")
+
 package dev.gmarques.controledenotificacoes.di.modules
 
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.gmarques.controledenotificacoes.data.local.installed_apps.AppRepositoryImpl
+import dev.gmarques.controledenotificacoes.data.local.installed_apps.InstalledAppRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.ManagedAppRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.RuleRepositoryImpl
 import dev.gmarques.controledenotificacoes.domain.repository.AppRepository
@@ -28,7 +30,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindAppRepository(impl: AppRepositoryImpl): AppRepository
+    abstract fun bindAppRepository(impl: InstalledAppRepositoryImpl): AppRepository
 
     @Binds
     @Singleton

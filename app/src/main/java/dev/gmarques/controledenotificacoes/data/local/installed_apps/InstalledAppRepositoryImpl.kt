@@ -18,7 +18,7 @@ import javax.inject.Inject
  * Em terça-feira, 15 de abril de 2025 as 14:57.
  * Implementação da camada de dados para obtenção de apps instalados.
  */
-class AppRepositoryImpl @Inject constructor(@ApplicationContext context: Context) : AppRepository {
+class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context: Context) : AppRepository {
 
     private val packageManager: PackageManager = context.packageManager
 
@@ -45,7 +45,7 @@ class AppRepositoryImpl @Inject constructor(@ApplicationContext context: Context
 
             val apps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
 
-            val deferredList = apps.map { appInfo ->
+            return@withContext apps.map { appInfo ->
                 async {
 
                     val appName = packageManager.getApplicationLabel(appInfo).toString()
@@ -67,10 +67,9 @@ class AppRepositoryImpl @Inject constructor(@ApplicationContext context: Context
                     )
                 }
             }
-
-            val resultList = deferredList.awaitAll().filterNotNull()
-
-            return@withContext resultList.sortedBy { it.name }
+                .awaitAll()
+                .filterNotNull()
+                .sortedBy { it.name }
 
         }
 
@@ -91,6 +90,36 @@ class AppRepositoryImpl @Inject constructor(@ApplicationContext context: Context
         val isSystemApp = appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
         if (isSystemApp) return false
         return target.isEmpty() || appName.lowercase().contains(target)
+    }
+
+    /**
+     * Recupera um aplicativo instalado específico pelo seu ID de pacote.
+     *
+     * Esta função procura na lista de aplicativos instalados por um que corresponda ao ID
+     * de pacote fornecido. Se encontrado, retorna um objeto [InstalledApp] que contém informações
+     * sobre o aplicativo.
+     *
+     * @param packageId O ID do pacote do aplicativo a ser buscado.
+     * @return O [InstalledApp] correspondente ao ID de pacote fornecido, ou `null` se nenhum
+     * aplicativo com o ID especificado for encontrado.
+     */
+    override suspend fun getInstalledAppByPackage(packageId: String): InstalledApp? = withContext(IO) {
+
+        packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+            .map { appInfo ->
+                if (packageId != appInfo.packageName) return@map
+                val icon = packageManager.getApplicationIcon(appInfo.packageName)
+                val appName = packageManager.getApplicationLabel(appInfo).toString()
+
+                return@withContext InstalledApp(
+                    packageId = appInfo.packageName,
+                    name = appName,
+                    icon = icon,
+                )
+
+            }
+
+        return@withContext null
     }
 
 }

@@ -17,12 +17,12 @@ class RuleRepositoryImpl @Inject constructor(private val ruleDao: RuleDao) : Rul
 
     override suspend fun addRuleOrThrow(rule: Rule) {
         RuleValidator.validate(rule)
-        ruleDao.insertRuleOrThrow(RuleMapper.mapToEntity(rule))
+        ruleDao.insertRule(RuleMapper.mapToEntity(rule))
     }
 
     override suspend fun updateRuleOrThrow(rule: Rule) {
         RuleValidator.validate(rule)
-        ruleDao.updateRuleOrThrow(RuleMapper.mapToEntity(rule))
+        ruleDao.updateRule(RuleMapper.mapToEntity(rule))
     }
 
     override suspend fun removeRule(rule: Rule) {

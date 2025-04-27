@@ -14,7 +14,9 @@
         android:background="@drawable/back_container"
         android:foreground="?selectableItemBackground"
         android:paddingStart="8dp"
+        android:paddingTop="4dp"
         android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,44 +27,61 @@
 
             android:id="@+id/iv_app_icon"
             android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_height="0dp"
             android:contentDescription="@string/Icone_do_aplicativo"
             android:padding="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/tv_rule_name"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_app_name"
             tools:src="@drawable/vec_edit_rule" />
 
         <TextView
-            android:id="@+id/tv_start_de"
+            android:id="@+id/tv_app_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:fontFamily="@font/urbanist_semibold"
+            android:maxLines="1"
             android:padding="4dp"
             android:textAlignment="viewStart"
             android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/cb_select"
+            app:layout_constraintEnd_toStartOf="@id/iv_open"
             app:layout_constraintStart_toEndOf="@id/iv_app_icon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/De" />
+            tools:text="Whatsapp" />
 
 
-        <CheckBox
-
-            android:id="@+id/cb_select"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tv_rule_name"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="8dp"
-            android:background="?android:selectableItemBackgroundBorderless"
-            android:contentDescription="@string/Caixa_de_sele_o_para_o_aplicativo"
-            android:src="@drawable/vec_remove"
+            android:drawablePadding="8dp"
+            android:gravity="center_vertical"
+            android:maxLines="2"
+            android:padding="4dp"
+            android:textAlignment="gravity"
+            android:textSize="12sp"
+            app:drawableStartCompat="@drawable/vec_rule_permissive"
+            app:drawableTint="?colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tv_app_name"
+            app:layout_constraintStart_toStartOf="@id/tv_app_name"
+
+            app:layout_constraintTop_toBottomOf="@id/tv_app_name"
+            tools:text="Bloq. Seg-Sex. 08:00 as 18:00" />
+
+        <ImageView
+            android:id="@+id/iv_open"
+            android:layout_width="48dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/Bot_o_para_abrir_a_tela_de_edi_o"
+            android:padding="16dp"
+            android:rotation="180"
+            android:src="@drawable/vec_go_back"
+            app:layout_constraintBottom_toBottomOf="@id/tv_rule_name"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/tv_app_name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
+

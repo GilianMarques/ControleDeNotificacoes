@@ -8,7 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.usecase.GetInstalledAppsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.GetAllInstalledAppsUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.SelectableApp
@@ -25,7 +25,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class SelectAppsViewModel @Inject constructor(
-    private val getInstalledAppsUseCase: GetInstalledAppsUseCase,
+    private val getAllInstalledAppsUseCase: GetAllInstalledAppsUseCase,
     @ApplicationContext private val context: android.content.Context,
 ) : ViewModel() {
 
@@ -52,7 +52,7 @@ class SelectAppsViewModel @Inject constructor(
 
         initialized = true
 
-        installedApps.addAll(getInstalledAppsUseCase("", preSelectedAppsToHide).map {
+        installedApps.addAll(getAllInstalledAppsUseCase("", preSelectedAppsToHide).map {
             SelectableApp(it)
         })
 

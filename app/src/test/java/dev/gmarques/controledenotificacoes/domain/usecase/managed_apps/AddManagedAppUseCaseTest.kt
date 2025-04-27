@@ -28,6 +28,6 @@ class AddManagedAppUseCaseTest {
         useCase(managedApp)
 
         // Assert
-        coVerify(exactly = 1) { repository.addManagedAppOrThrow(managedApp) }
+        coVerify(exactly = 1) { repository.addOrUpdateManagedAppOrThrow(managedApp) }
     }
 }

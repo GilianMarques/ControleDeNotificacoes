@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRulesUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.RemoveRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import kotlinx.coroutines.Dispatchers.IO
@@ -22,7 +22,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class SelectRuleViewModel @Inject constructor(
-    observeRulesUseCase: ObserveRulesUseCase,
+    observeAllRulesUseCase: ObserveAllRulesUseCase,
     private val removeRuleUseCase: RemoveRuleUseCase,
 ) : ViewModel() {
 
@@ -30,7 +30,7 @@ class SelectRuleViewModel @Inject constructor(
     val ruleRemovalResult: LiveData<EventWrapper<Result<Unit>>> = _ruleRemovalResult
 
 
-    val rules: StateFlow<List<Rule>> = observeRulesUseCase()
+    val rules: StateFlow<List<Rule>> = observeAllRulesUseCase()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

@@ -54,18 +54,19 @@ dependencies {
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
     implementation("androidx.fragment:fragment-ktx:1.8.6")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
 
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
-    implementation("androidx.room:room-runtime:2.7.0")
-    implementation("androidx.room:room-ktx:2.7.0")
+    implementation("androidx.room:room-runtime:2.7.1")
+    implementation("androidx.room:room-ktx:2.7.1")
     //noinspection KaptUsageInsteadOfKsp
-    kapt("androidx.room:room-compiler:2.7.0")
+    kapt("androidx.room:room-compiler:2.7.1")
     // optional - Test helpers
-    testImplementation("androidx.room:room-testing:2.7.0")
+    testImplementation("androidx.room:room-testing:2.7.1")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation("androidx.activity:activity-ktx:1.10.1")
@@ -105,6 +106,8 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test:core:1.6.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")// imitar classes

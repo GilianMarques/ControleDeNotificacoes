@@ -80,5 +80,8 @@
     <string name="Deseja_mesmo_remover_a_regra_essa_a_o_n_o_poder_ser_desfeita">Deseja mesmo remover a regra \"%1$s\" ?\n\nEssa ação não poderá ser desfeita</string>
     <string name="Hhouve_um_erro_ao_remover_a_regra_tente_novamente">Houve um erro ao remover a regra, tente novamente</string>
     <string name="Selecione_uma_regra">Selecione uma regra</string>
+    <string name="Caixa_de_sele_o_para_o_aplicativo">Caixa de seleção para o aplicativo</string>
+    <string name="Bot_o_para_abrir_a_tela_de_edi_o">Botão para abrir a tela de edição</string>
+    <string name="App_nao_encontrado">App não encontrado</string>
 
 </resources>

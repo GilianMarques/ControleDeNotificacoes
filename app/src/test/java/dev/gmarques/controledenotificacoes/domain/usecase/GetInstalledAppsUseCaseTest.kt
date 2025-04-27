@@ -14,13 +14,13 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetInstalledAppsUseCaseTest {
 
-    private lateinit var useCase: GetInstalledAppsUseCase
+    private lateinit var useCase: GetAllInstalledAppsUseCase
     private lateinit var repository: AppRepository
 
     @BeforeEach
     fun configurar() {
         repository = mock()
-        useCase = GetInstalledAppsUseCase(repository)
+        useCase = GetAllInstalledAppsUseCase(repository)
     }
 
     @Test

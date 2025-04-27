@@ -6,6 +6,9 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.transition.Fade
 import androidx.transition.TransitionInflater
@@ -23,6 +26,8 @@ import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.
 import dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -155,5 +160,20 @@ open class MyFragment : Fragment() {
      */
     protected fun goBack() {
         findNavController().popBackStack()
+    }
+
+    /**
+     * Favorece o DRY evitando boilerplate code
+     * Observa um Flow de maneira segura no Fragment, garantindo que a coleta só aconteça enquanto
+     * o Fragment estiver ativo (STARTED).
+     */
+    fun <T> collectFlow(flow: Flow<T>, onCollect: (T) -> Unit) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                flow.collect { value ->
+                    onCollect(value)
+                }
+            }
+        }
     }
 }

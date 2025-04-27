@@ -9,11 +9,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 class ManagedAppRepositoryImplTest {
 
@@ -33,24 +33,24 @@ class ManagedAppRepositoryImplTest {
         val app = ManagedApp("com.app1", "rule1")
         val appEntity = ManagedAppMapper.mapToEntity(app)
 
-        `when`(dao.insertManagedAppOrThrow(appEntity)).thenAnswer { }
+        `when`(dao.insertOrUpdateManagedApp(appEntity)).thenAnswer { }
 
-        repository.addManagedAppOrThrow(app)
+        repository.addOrUpdateManagedAppOrThrow(app)
 
-        verify(dao).insertManagedAppOrThrow(appEntity)
+        verify(dao).insertOrUpdateManagedApp(appEntity)
     }
 
     @Test(expected = BlankStringException::class)
     fun `ao adicionar app com package id em branco deve lancar excecao`() = runTest {
         val app = ManagedApp("", "rule1")
-        repository.addManagedAppOrThrow(app)
+        repository.addOrUpdateManagedAppOrThrow(app)
     }
 
 
     @Test(expected = BlankStringException::class)
     fun `ao adicionar app com rule id em branco deve lancar excecao`() = runTest {
         val app = ManagedApp("dev.gmarques.app", "")
-        repository.addManagedAppOrThrow(app)
+        repository.addOrUpdateManagedAppOrThrow(app)
     }
 
     @Test
@@ -61,13 +61,13 @@ class ManagedAppRepositoryImplTest {
         val updatedApp = app.copy(ruleId = "rule2")
         val updatedAppEntity = ManagedAppMapper.mapToEntity(updatedApp)
 
-        `when`(dao.insertManagedAppOrThrow(appEntity)).thenAnswer { }
-        `when`(dao.updateManagedAppOrThrow(updatedAppEntity)).thenAnswer { }
+        `when`(dao.insertOrUpdateManagedApp(appEntity)).thenAnswer { }
+        `when`(dao.updateManagedApp(updatedAppEntity)).thenAnswer { }
 
-        repository.addManagedAppOrThrow(app)
+        repository.addOrUpdateManagedAppOrThrow(app)
         repository.updateManagedAppOrThrow(updatedApp)
 
-        verify(dao).updateManagedAppOrThrow(updatedAppEntity)
+        verify(dao).updateManagedApp(updatedAppEntity)
     }
 
     @Test(expected = BlankStringException::class)
@@ -81,10 +81,10 @@ class ManagedAppRepositoryImplTest {
         val app = ManagedApp("com.app3", "rule3")
         val appEntity = ManagedAppMapper.mapToEntity(app)
 
-        `when`(dao.insertManagedAppOrThrow(appEntity)).thenAnswer { }
+        `when`(dao.insertOrUpdateManagedApp(appEntity)).thenAnswer { }
         `when`(dao.deleteManagedApp(appEntity)).thenAnswer { }
 
-        repository.addManagedAppOrThrow(app)
+        repository.addOrUpdateManagedAppOrThrow(app)
         repository.removeManagedApp(app)
 
         verify(dao).deleteManagedApp(appEntity)
@@ -113,20 +113,5 @@ class ManagedAppRepositoryImplTest {
         assertNull(resultado)
     }
 
-    @Test
-    fun `ao buscar todos os apps deve retornar lista completa`() = runTest {
-        val apps = listOf(
-            ManagedApp("com.a", "ruleA"),
-            ManagedApp("com.b", "ruleB"),
-            ManagedApp("com.c", "ruleC")
-        )
-        val appEntities = apps.map { ManagedAppMapper.mapToEntity(it) }
 
-        `when`(dao.getAllManagedApps()).thenReturn(appEntities)
-
-        val resultado = repository.getAllManagedApps()
-
-        assertEquals(3, resultado.size)
-        assertTrue(resultado.containsAll(apps))
-    }
 }
