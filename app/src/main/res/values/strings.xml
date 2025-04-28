@@ -1,4 +1,5 @@
 <resources>
+    <string name="default_web_client_id" translatable="false">webClientId.apps.googleusercontent.com</string>
     <string name="app_name">Controle de notificações</string>
     <string name="O_nome_n_o_pode_ficar_em_branco">O nome não pode ficar em branco.</string>
     <string name="O_nome_deve_ter_entre_e_caracteres">O nome deve ter entre %1$d e %2$d caracteres.</string>
@@ -45,12 +46,63 @@
     <string name="regra_tipo_permissiva">Perm.</string>
     <string name="regra_tipo_restritiva">Bloq.</string>
     <string name="Nome_da_regra">Nome da regra</string>
-    <string name="Intervalo_inicio_fim">%1$s-%2$s</string>
+
     <string name="Nome_padrao_de_regra">%1$s %2$s %3$s</string>
     <string name="Nao_e_possivel_adicionar_um_intervalo_de_tempo_duplicado">Não é possível adicionar um intervalo de tempo duplicado</string>
     <string name="Nao_sao_permitidos_intervalos_de_tempo_que_se_interseccionam">"Não são permitidos intervalos de tempo que se sobrepõem. "</string>
     <string name="Selecione_pelo_menos_um_dia_da_semana">Selecione pelo menos um dia da semana</string>
     <string name="Adicionar_regra">Adicionar regra</string>
     <string name="adicione_pelo_menos_um_intervalo_de_tempo">Adicione pelo menos um intervalo de tempo</string>
+    <string name="Aplicativos_alvo">Aplicativos alvo</string>
+    <string name="Selecionar">Selecionar</string>
+    <string name="Regra">Regra</string>
+    <string name="Buscar_aplicativo">Buscar aplicativo</string>
+    <string name="Concluir">Concluir</string>
+    <string name="Gerenciar_aplicativos">Gerenciar aplicativos</string>
+    <string name="Selecione_pelo_menos_um_aplicativo">Selecione pelo menos um aplicativo</string>
+    <string name="Selecionar_aplicativos">Selecionar aplicativos</string>
+    <string name="O_final_do_intervalo_deve_ser_maior_que_o_inicio">O final do intervalo deve ser maior que o inicio</string>
+    <string name="Nao_possivel_selecionar_mais_que_x_aplicativos">Não é possível selecionar mais que %1$d aplicativos</string>
+    <string name="Lista_de_aplicativos_instalados_no_dispositivo">Lista de aplicativos instalados no dispositivo.</string>
+    <string name="Selecionar_todos">Selecionar todos</string>
+    <string name="Inverter_sele_o">Inverter seleção</string>
+    <string name="Desselecionar_todos">Desselecionar todos</string>
+    <string name="Icone_do_aplicativo">Ícone do aplicativo</string>
+    <string name="Icone_do_intervalo_de_tempo">Ícone do intervalo de tempo</string>
+    <string name="Bot_o_de_voltar">Botão de voltar</string>
+    <string name="Bot_o_de_menu">Botão de menu</string>
+    <string name="Selecionar_regra">Selecionar regra</string>
+    <string name="Icone_da_regra">Icone da regra</string>
+    <string name="Botao_para_editar_a_regra">Botão para editar a regra</string>
+    <string name="Botao_de_menu_da_regra">Botão de menu da regra</string>
+    <string name="Editar_regra">Editar regra</string>
+    <string name="Remover_regra">Remover regra</string>
+    <string name="Por_favor_confirme">Por favor, confirme:</string>
+    <string name="Deseja_mesmo_remover_a_regra_essa_a_o_n_o_poder_ser_desfeita">Deseja mesmo remover a regra \"%1$s\" ?\n\nEssa ação não poderá ser desfeita</string>
+    <string name="Hhouve_um_erro_ao_remover_a_regra_tente_novamente">Houve um erro ao remover a regra, tente novamente</string>
+    <string name="Selecione_uma_regra">Selecione uma regra</string>
+    <string name="Caixa_de_sele_o_para_o_aplicativo">Caixa de seleção para o aplicativo</string>
+    <string name="Bot_o_para_abrir_a_tela_de_edi_o">Botão para abrir a tela de edição</string>
+    <string name="App_nao_encontrado">App não encontrado</string>
+    <string name="Botao_de_adicionar_novo_app_gerenciado">Botão de adicionar novo app gerenciado</string>
+    <string name="Foto_de_perfil_do_usuario">Foto de perfil do usuário\n</string>
+    <string name="Tentar_novamente">Tentar novamente</string>
+    <string name="Voce_cancelou_o_login">Você cancelou o login</string>
+    <string name="Hamaisdeumprocessodeloginemandamentoquantas">Há mais de um processo de login em andamento. Quantas vezes você apertou esse botão?</string>
+    <string name="Houveumerroaoautenticarsuacontatente">Houve um erro ao autenticar sua conta, tente novamente. Causa: {0}</string>
+    <string name="BemvindoX">Bem-vindo(a) %1$s</string>
+    <string name="Ologinfalhou">O login falhou. Código: %1$d \nMensagem: %2$s</string>
+    <string name="Houveumerroaocontactaraapidogoole">Houve um erro ao contactar a API do Google, verifique sua conexão e tente reiniciar o app.  Código: {%1$d}</string>
+    <string name="O_login_falhou_por_um_erro_de_desenvolvimento_da_aplica_o_contate_o_desenvolvedor_c_digo_de_erro_1_mensagem_2">O login falhou por um erro de desenvolvimento da aplicação, contate o desenvolvedor. Código de erro:%1$d \nMensagem: %2$s</string>
+    <string name="O_login_falhou_por_um_erro_no_provedor_de_login">O login falhou por um erro no provedor de login, tente novamente mais tarde. Código de erro: %1$d \nMensagem: %2$s</string>
+    <string name="Vocenaoestaconectadoainternetouadata">Você não está conectado à internet ou a data do dispositivo está incorreta</string>
+    <string name="Bom_dia">Bom dia</string>
+    <string name="Boa_tarde">Boa tarde</string>
+    <string name="Boa_noite">Boa noite</string>
+    <string name="Sua_conta">Sua conta</string>
+    <string name="Sair">Sair</string>
+    <string name="Perfil">Perfil</string>
+    <string name="Voce_sera_desconectado_a_e_todos_os_dados_locais_ser_o_removidos_deseja_mesmo_continuar">Você será desconectado(a) e todos os dados locais serão removidos, deseja mesmo continuar?</string>
+    <string name="Houve_um_erro_ao_desconectar_a_conta_tente_novamente">Houve um erro ao desconectar a conta. Tente novamente</string>
 
 </resources>

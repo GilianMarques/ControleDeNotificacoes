@@ -16,6 +16,7 @@ class App : Application() {
 
     override fun onCreate() {
         context = this
+
         super.onCreate()
     }
 }

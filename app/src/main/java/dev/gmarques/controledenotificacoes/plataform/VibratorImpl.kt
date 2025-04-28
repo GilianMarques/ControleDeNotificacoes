@@ -21,7 +21,7 @@ class VibratorImpl @Inject constructor(@ApplicationContext private val context: 
      * Realiza uma vibração de duração moderada.
      */
     override fun error() {
-        vibrate(200)
+        vibrate(300)
     }
 
     /**
@@ -29,9 +29,9 @@ class VibratorImpl @Inject constructor(@ApplicationContext private val context: 
      * Realiza cinco vibrações rápidas.
      */
     override fun success() {
-        for (i in 1..3) {
-            vibrate(25)
-            Thread.sleep(75)
+        repeat(5) {
+            vibrate(35)
+            Thread.sleep(85)
         }
     }
 
@@ -40,6 +40,7 @@ class VibratorImpl @Inject constructor(@ApplicationContext private val context: 
      * Realiza uma vibração curta.
      */
     override fun interaction() {
+        throw RuntimeException("Não é permitido o uso de vibração para interações. Apenas sucesso e erro estão liberadas")
         vibrate(25) // Duração curta
     }
 

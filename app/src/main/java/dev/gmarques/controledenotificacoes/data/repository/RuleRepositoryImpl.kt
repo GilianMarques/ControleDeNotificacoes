@@ -5,6 +5,8 @@ import dev.gmarques.controledenotificacoes.data.local.room.mapper.RuleMapper
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
@@ -13,12 +15,12 @@ import javax.inject.Inject
  */
 class RuleRepositoryImpl @Inject constructor(private val ruleDao: RuleDao) : RuleRepository {
 
-    override suspend fun addRule(rule: Rule) {
+    override suspend fun addRuleOrThrow(rule: Rule) {
         RuleValidator.validate(rule)
         ruleDao.insertRule(RuleMapper.mapToEntity(rule))
     }
 
-    override suspend fun updateRule(rule: Rule) {
+    override suspend fun updateRuleOrThrow(rule: Rule) {
         RuleValidator.validate(rule)
         ruleDao.updateRule(RuleMapper.mapToEntity(rule))
     }
@@ -33,5 +35,11 @@ class RuleRepositoryImpl @Inject constructor(private val ruleDao: RuleDao) : Rul
 
     override suspend fun getAllRules(): List<Rule> {
         return ruleDao.getAllRules().map { RuleMapper.mapToModel(it) }
+    }
+
+    override fun observeAllRules(): Flow<List<Rule>> {
+        return ruleDao.observeAllRules().map { entities ->
+            entities.map { RuleMapper.mapToModel(it) }
+        }
     }
 }

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="4dp">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back_container"
+        android:foreground="?selectableItemBackground"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+
+        <ImageView
+
+            android:id="@+id/iv_app_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="@string/Icone_do_aplicativo"
+            android:padding="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/vec_edit_rule" />
+
+        <TextView
+            android:id="@+id/tv_start_de"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:padding="4dp"
+            android:textAlignment="viewStart"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/cb_select"
+            app:layout_constraintStart_toEndOf="@id/iv_app_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/De" />
+
+
+        <CheckBox
+
+            android:id="@+id/cb_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="8dp"
+            android:background="?android:selectableItemBackgroundBorderless"
+            android:contentDescription="@string/Caixa_de_sele_o_para_o_aplicativo"
+            android:src="@drawable/vec_remove"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

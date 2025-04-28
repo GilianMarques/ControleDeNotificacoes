@@ -47,7 +47,6 @@ object TimeRangeExtensionFun {
      */
     fun TimeRange.endInMinutes() = this.endHour * 60 + this.endMinute
 
-
     /**
      * Converte um TimeRange em um intervalo fechado de inteiros representando os minutos de início e fim.
      *

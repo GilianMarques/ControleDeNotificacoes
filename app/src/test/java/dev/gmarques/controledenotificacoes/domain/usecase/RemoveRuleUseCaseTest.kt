@@ -4,6 +4,7 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.RemoveRuleUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,7 +28,7 @@ class RemoveRuleUseCaseTest {
             days = listOf(WeekDay.FRIDAY),
             timeRanges = listOf(TimeRange(10, 30, 11, 35))
         )
-        useCase.execute(rule)
+        useCase(rule)
 
         verify(repository).removeRule(rule)
     }

@@ -3,27 +3,84 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph.xml"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/loginFragment">
 
-    <fragment
-        android:id="@+id/addRuleFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.rule_fragment.AddRuleFragment"
-        android:label="fragment_add_rule"
-        tools:layout="@layout/fragment_add_rule">
-        <action
-            android:id="@+id/action_addRuleFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.home_fragment.HomeFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.home_fragment.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
 
         <action
-            android:id="@+id/action_homeFragment_to_addRuleFragment"
+            android:id="@+id/to_addManagedAppsFragment"
+            app:destination="@id/addManagedAppsFragment" />
+        <action
+            android:id="@+id/to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.login.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/to_homeFragment"
+            app:destination="@id/homeFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/addManagedAppsFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp_fragment.AddManagedAppsFragment"
+        android:label="fragment_add_managed_apps"
+        tools:layout="@layout/fragment_add_managed_apps">
+        <action
+            android:id="@+id/to_selectRuleFragment"
+            app:destination="@id/selectRuleFragment" />
+        <action
+            android:id="@+id/to_SelectAppsFragment"
+            app:destination="@id/SelectAppsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addRuleFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.rule_fragment.AddRuleFragment"
+        android:label="fragment_add_rule"
+        tools:layout="@layout/fragment_add_rule">
+
+        <argument
+            android:name="editingRule"
+            android:defaultValue="@null"
+            app:argType="dev.gmarques.controledenotificacoes.domain.model.Rule"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/SelectAppsFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps_fragment.SelectAppsFragment"
+        android:label="SelectAppsFragment"
+        tools:layout="@layout/fragment_select_apps">
+        <argument
+            android:name="excludePackages"
+            app:argType="string[]"
+            app:nullable="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectRuleFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule_fragment.SelectRuleFragment"
+        android:label="SelectRuleFragment"
+        tools:layout="@layout/fragment_select_rule">
+        <action
+            android:id="@+id/to_addRuleFragment"
             app:destination="@id/addRuleFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment"
+        android:label="ProfileFragment"
+
+        tools:layout="@layout/fragment_profile" />
 
 </navigation>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    tools:context=".presentation.ui.rule_fragment.AddRuleFragment">
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_conclude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/Bot_o_de_adicionar_regra"
+        android:focusable="true"
+        app:icon="@drawable/vec_check"
+        android:text="@string/Concluir"
+        android:transitionName="fab"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/view_activity_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.core.widget.NestedScrollView
+
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/ll_rule"
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical"
+                android:transitionName="rule_parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:animateLayoutChanges="true"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_rule_tittle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/urbanist_extrabold"
+                        android:text="@string/Regra"
+                        android:textSize="20sp"
+                        android:transitionName="rule_parent_tv"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/iv_add_rule"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+
+                        android:id="@+id/iv_add_rule"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/back_round"
+                        android:backgroundTint="?colorSecondaryContainer"
+                        android:contentDescription="@string/Bot_o_para_remover_o_intervalo_de_tempo"
+                        android:drawablePadding="4dp"
+                        android:paddingStart="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="8dp"
+                        android:text="@string/Selecionar"
+                        android:textColor="?colorOnSecondaryContainer"
+                        app:drawableStartCompat="@drawable/vec_add"
+                        app:drawableTint="?colorOnSecondaryContainer"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:id="@+id/tv_selected_rule"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/back_edittext"
+                    android:drawablePadding="16dp"
+                    android:gravity="center_vertical"
+                    android:padding="16dp"
+                    android:textAlignment="gravity"
+                    android:visibility="gone"
+                    tools:drawableStartCompat="@drawable/vec_rule_restrictive"
+                    app:drawableTint="?colorPrimary"
+                    tools:text="Regra X"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:fontFamily="@font/urbanist_extrabold"
+                        android:text="@string/Aplicativos_alvo"
+                        android:textSize="20sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/iv_add_app"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+
+                        android:id="@+id/iv_add_app"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/back_round"
+                        android:backgroundTint="?colorSecondaryContainer"
+                        android:contentDescription="@string/Bot_o_para_remover_o_intervalo_de_tempo"
+                        android:drawablePadding="4dp"
+                        android:paddingStart="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="8dp"
+                        android:text="@string/Selecionar"
+                        android:textColor="?colorOnSecondaryContainer"
+                        app:drawableStartCompat="@drawable/vec_add"
+                        app:drawableTint="?colorOnSecondaryContainer"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_conteiner_apps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,12 +14,11 @@ import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
  * Criado por Gilian Marques
  * Em sábado, 29 de março de 2025 as 21:49.
  */
-class RuleMapper {
+object RuleMapper {
 
-    companion object {
-
-        private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-
+    private val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
         private val weekDayType = Types.newParameterizedType(List::class.java, WeekDay::class.java)
         private val weekDayAdapter: JsonAdapter<List<WeekDay>> = moshi.adapter(weekDayType)
 
@@ -34,6 +33,7 @@ class RuleMapper {
             return RuleEntity(
                 id = rule.id,
                 name = rule.name,
+                ruleType = rule.ruleType,
                 days = daysToString(rule.days),
                 timeRanges = hoursToString(rule.timeRanges),
             )
@@ -81,6 +81,7 @@ class RuleMapper {
             return Rule(
                 id = entity.id,
                 name = entity.name,
+                ruleType = entity.ruleType,
                 days = stringToDays(entity.days),
                 timeRanges = stringToTimeRange(entity.timeRanges),
             )
@@ -116,5 +117,4 @@ class RuleMapper {
             return weekDayAdapter.fromJson(days)!!
         }
 
-    }
 }

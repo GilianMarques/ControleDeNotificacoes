@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingBottom="8dp">
+    android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_go_back"
@@ -13,6 +12,7 @@
         android:layout_gravity="center"
         android:layout_margin="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/Bot_o_de_voltar"
         android:padding="14dp"
         android:src="@drawable/vec_go_back"
         android:tint="?colorOnBackground"
@@ -26,8 +26,8 @@
         android:fontFamily="@font/urbanist_extrabold"
         android:text="@string/app_name"
         android:textAlignment="viewStart"
-        android:textSize="20sp"
         android:textAllCaps="true"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@id/iv_go_back"
         app:layout_constraintEnd_toStartOf="@id/iv_menu"
         app:layout_constraintStart_toEndOf="@id/iv_go_back"
@@ -53,11 +53,12 @@
         android:layout_gravity="center"
         android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/Bot_o_de_menu"
         android:elevation="5dp"
         android:padding="12dp"
-        android:rotation="90"
         android:src="@drawable/vec_menu"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/iv_go_back"
         app:tint="?colorOnBackground" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
