@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.rule_fragment
 
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 

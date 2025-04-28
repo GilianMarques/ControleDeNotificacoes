@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule_fragment
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -64,7 +64,7 @@ class SelectRuleFragment : MyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initActionBar(binding.toolbar)
+        setupActionBar(binding.toolbar)
         setupRecyclerView()
         setupFabAddRule()
         observeViewModel()

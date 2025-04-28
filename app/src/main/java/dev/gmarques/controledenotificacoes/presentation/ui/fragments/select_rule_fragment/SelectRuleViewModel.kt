@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule_fragment
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.managedapp_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp_fragment
 
 import android.os.Build
 import android.os.Bundle
@@ -20,8 +20,8 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment.SelectRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps_fragment.SelectAppsFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule_fragment.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
@@ -60,7 +60,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initActionBar(binding.toolbar)
+        setupActionBar(binding.toolbar)
         setupSelectAppsListener()
         setupSelectRuleListener()
         setupSelectAppsButton()

@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.home_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home_fragment
 
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
@@ -30,6 +30,12 @@ class ManagedAppsAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(iconPermissive, iconRestrictive, getName, getItem(position))
+    }
+
+    fun submitList(apps: List<ManagedAppWithRule>, query: String) {
+        submitList(apps.filter {
+            it.name.contains(query, ignoreCase = true)
+        })
     }
 
     class ViewHolder(private val binding: ItemManagedAppBinding) : RecyclerView.ViewHolder(binding.root) {

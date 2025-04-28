@@ -3,13 +3,16 @@ package dev.gmarques.controledenotificacoes.presentation.ui
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.OvershootInterpolator
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isGone
+import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.transition.ChangeBounds
 import androidx.transition.Fade
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionSet
@@ -19,11 +22,13 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
-import dev.gmarques.controledenotificacoes.presentation.ui.home_fragment.HomeFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.managedapp_fragment.AddManagedAppsFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.rule_fragment.AddRuleFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment.SelectAppsFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.select_rule_fragment.SelectRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home_fragment.HomeFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.login.LoginFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp_fragment.AddManagedAppsFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.rule_fragment.AddRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps_fragment.SelectAppsFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule_fragment.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import kotlinx.coroutines.flow.Flow
@@ -43,7 +48,7 @@ open class MyFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val inflater = TransitionInflater.from(requireContext())
+        TransitionInflater.from(requireContext())
 
 
         val fadeTransition = Fade().apply {
@@ -70,13 +75,25 @@ open class MyFragment : Fragment() {
         //   reenterTransition = transitionSetEnter1 // retorno do fragmento 1
 
 
-        sharedElementEnterTransition = inflater.inflateTransition(android.R.transition.move)!!.apply {
-            interpolator = android.view.animation.OvershootInterpolator()
+        // Transição de entrada
+        sharedElementEnterTransition = TransitionSet().apply {
+            addTransition(ChangeBounds())
+            addTransition(Fade())
+            addTransition(SlideTransition())
+            interpolator = OvershootInterpolator(1f)
+            duration = 400
         }
 
-        sharedElementReturnTransition = inflater.inflateTransition(android.R.transition.move)!!.apply {
-            interpolator = android.view.animation.OvershootInterpolator()
+        // Transição de retorno
+        sharedElementReturnTransition = TransitionSet().apply {
+            addTransition(ChangeBounds())
+            addTransition(Fade())
+            addTransition(SlideTransition())
+            interpolator = OvershootInterpolator(1f)
+            duration = 400
         }
+
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -89,14 +106,14 @@ open class MyFragment : Fragment() {
         })
     }
 
-    protected open fun initActionBar(binding: ViewActivityHeaderBinding) {
+    protected open fun setupActionBar(binding: ViewActivityHeaderBinding) {
 
         when (this@MyFragment) {
 
             is HomeFragment -> {
-                setupGoBackButton(binding.ivGoBack)
                 binding.tvTitle.text = getString(R.string.app_name)
                 binding.ivMenu.isGone = true
+                binding.ivGoBack.isInvisible = true
             }
 
             is AddManagedAppsFragment -> {
@@ -120,6 +137,20 @@ open class MyFragment : Fragment() {
             is SelectRuleFragment -> {
                 setupGoBackButton(binding.ivGoBack)
                 binding.tvTitle.text = getString(R.string.Selecionar_regra)
+                binding.ivMenu.isGone = true
+            }
+
+            is LoginFragment -> {
+
+                binding.tvTitle.text = ""
+                binding.ivMenu.isGone = true
+                binding.ivGoBack.isGone = true
+            }
+
+            is ProfileFragment -> {
+
+                setupGoBackButton(binding.ivGoBack)
+                binding.tvTitle.text = getString(R.string.Perfil)
                 binding.ivMenu.isGone = true
             }
 
@@ -176,4 +207,5 @@ open class MyFragment : Fragment() {
             }
         }
     }
+
 }

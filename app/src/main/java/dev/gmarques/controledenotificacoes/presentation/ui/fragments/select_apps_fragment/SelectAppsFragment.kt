@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps_fragment
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -57,7 +57,7 @@ class SelectAppsFragment : MyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initActionBar(binding.toolbar)
+        setupActionBar(binding.toolbar)
         getPreSelectedPackagesAndLoad()
         setupRecyclerView()
         setupSearch()
@@ -68,8 +68,8 @@ class SelectAppsFragment : MyFragment() {
 
     }
 
-    override fun initActionBar(binding: ViewActivityHeaderBinding) {
-        super.initActionBar(binding)
+    override fun setupActionBar(binding: ViewActivityHeaderBinding) {
+        super.setupActionBar(binding)
         binding.ivMenu.isVisible = true
         binding.ivMenu.setOnClickListener(AnimatedClickListener {
 

@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.home_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home_fragment
 
 import android.content.Context
 import androidx.core.content.ContextCompat

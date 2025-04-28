@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.select_apps_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps_fragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

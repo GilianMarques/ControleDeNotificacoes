@@ -4,6 +4,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -59,6 +60,14 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
 
     implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation("com.google.firebase:firebase-auth:23.2.0")
+    implementation("androidx.credentials:credentials:1.5.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
+    implementation("com.firebaseui:firebase-ui-auth:9.0.0")
+
+
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
     implementation("androidx.room:room-runtime:2.7.1")
@@ -71,17 +80,17 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation("androidx.activity:activity-ktx:1.10.1")
 
-// https://mvnrepository.com/artifact/com.github.zawadz88.materialpopupmenu/material-popup-menu
+    // https://mvnrepository.com/artifact/com.github.zawadz88.materialpopupmenu/material-popup-menu
     implementation("com.github.zawadz88:MaterialPopupMenu:4.1.0")
 
     //moshi pra uso com json
     implementation("com.squareup.moshi:moshi:1.15.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.13.0") // Para suporte a Kotlin
 
-    //falsificar objetos
     // https://mvnrepository.com/artifact/org.mockito/mockito-core
     testImplementation("org.mockito:mockito-core:5.16.1")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+
     //testar corrotinas
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
 
@@ -113,6 +122,10 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")// imitar classes
     testImplementation("io.mockk:mockk:1.13.10")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
+
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    //noinspection KaptUsageInsteadOfKsp
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
 
 
 }
