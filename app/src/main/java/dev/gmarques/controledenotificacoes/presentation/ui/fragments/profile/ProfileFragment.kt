@@ -86,7 +86,7 @@ class ProfileFragment : MyFragment() {
 
         AuthUI.getInstance().signOut(requireActivity()).await()
         FirebaseAuth.getInstance().signOut()
-        roomDatabase.clearAllTables()
+        // TODO:    roomDatabase.clearAllTables()
         vibrator.success()
         requireActivity().finish()
 

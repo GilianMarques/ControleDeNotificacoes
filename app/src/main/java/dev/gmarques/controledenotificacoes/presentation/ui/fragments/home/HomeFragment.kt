@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 
 import android.graphics.drawable.Drawable
@@ -6,14 +6,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isGone
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.transition.ChangeBounds
+import androidx.transition.TransitionSet
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +25,7 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
-import kotlinx.coroutines.delay
+import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
@@ -33,16 +36,34 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : MyFragment() {
 
-    companion object {
-        fun newInstance() = HomeFragment()
-    }
 
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel: HomeViewModel by activityViewModels()
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: ManagedAppsAdapter
 
     @Inject
     lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Transição de entrada
+        sharedElementEnterTransition = TransitionSet().apply {
+            addTransition(ChangeBounds())
+            addTransition(SlideTransition())
+            interpolator = AccelerateDecelerateInterpolator()
+            duration = 350
+        }
+
+        // Transição de retorno
+        sharedElementReturnTransition = TransitionSet().apply {
+            addTransition(ChangeBounds())
+            addTransition(SlideTransition())
+            interpolator = AccelerateDecelerateInterpolator()
+            duration = 350
+        }
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,15 +78,10 @@ class HomeFragment : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launch {
-            /*dou esse delay pa dar tempo da ui carregas as fontes nos campos de texto antes do trabalho pesado começar */
-            delay(10)
-            viewModel = ViewModelProvider(this@HomeFragment)[HomeViewModel::class.java]
-            setupRecyclerView()
-            observeViewModel()
-            setupFabAddManagedApp()
-            setupSearch()
-        }
+        setupRecyclerView()
+        observeViewModel()
+        setupFabAddManagedApp()
+        setupSearch()
     }
 
     private fun setupUiWithUserData() = binding.apply {
@@ -91,15 +107,17 @@ class HomeFragment : MyFragment() {
             tvGreetings.visibility = View.GONE
         }
 
+        val views = listOf(ivProfilePicture, tvUserName, tvGreetings, ivMenu)
 
-        ivMenu.setOnClickListener(AnimatedClickListener {
-            val extras = FragmentNavigatorExtras(
-                tvUserName to tvUserName.transitionName,
-                ivProfilePicture to ivProfilePicture.transitionName,
-            )
-            findNavController().navigate(HomeFragmentDirections.toProfileFragment(), extras)
-        })
-
+        views.forEach {
+            it.setOnClickListener(AnimatedClickListener {
+                val extras = FragmentNavigatorExtras(
+                    tvUserName to tvUserName.transitionName,
+                    ivProfilePicture to ivProfilePicture.transitionName,
+                )
+                findNavController().navigate(HomeFragmentDirections.toProfileFragment(), extras)
+            })
+        }
     }
 
     private fun setupFabAddManagedApp() = with(binding) {
@@ -137,14 +155,14 @@ class HomeFragment : MyFragment() {
     private fun observeViewModel() = lifecycleScope.launch {
         collectFlow(viewModel.managedAppsWithRules) { apps ->
             adapter.submitList(apps)
-            binding.progressBar.isGone = true
+            binding.progressBar.isGone = apps != null
         }
     }
 
     private fun setupSearch() {
         binding.tietSearch.doOnTextChanged { text, _, _, _ ->
             viewModel.managedAppsWithRules.value.let {
-                adapter.submitList(it, text.toString())
+                it?.let { adapter.submitList(it, text.toString()) }
             }
         }
     }

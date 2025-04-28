@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.home_fragment.HomeFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home">
 
@@ -22,18 +22,20 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.login.LoginFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash.SplashFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
 
     </fragment>
 
     <fragment
         android:id="@+id/addManagedAppsFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp_fragment.AddManagedAppsFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp.AddManagedAppsFragment"
         android:label="fragment_add_managed_apps"
         tools:layout="@layout/fragment_add_managed_apps">
         <action
@@ -46,7 +48,7 @@
 
     <fragment
         android:id="@+id/addRuleFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.rule_fragment.AddRuleFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_edit_rule.AddRuleFragment"
         android:label="fragment_add_rule"
         tools:layout="@layout/fragment_add_rule">
 
@@ -59,7 +61,7 @@
 
     <fragment
         android:id="@+id/SelectAppsFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps_fragment.SelectAppsFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.SelectAppsFragment"
         android:label="SelectAppsFragment"
         tools:layout="@layout/fragment_select_apps">
         <argument
@@ -69,7 +71,7 @@
     </fragment>
     <fragment
         android:id="@+id/selectRuleFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule_fragment.SelectRuleFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment"
         android:label="SelectRuleFragment"
         tools:layout="@layout/fragment_select_rule">
         <action

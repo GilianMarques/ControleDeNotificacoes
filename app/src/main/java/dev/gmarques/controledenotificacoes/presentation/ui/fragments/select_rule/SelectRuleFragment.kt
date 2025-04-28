@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter

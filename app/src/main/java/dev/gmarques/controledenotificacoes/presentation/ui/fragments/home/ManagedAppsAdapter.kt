@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater

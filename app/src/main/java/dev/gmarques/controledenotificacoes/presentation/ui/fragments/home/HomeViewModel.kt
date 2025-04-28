@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 import android.content.Context
 import androidx.core.content.ContextCompat
@@ -44,10 +44,10 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private val installedApps = MutableStateFlow<HashMap<String, InstalledApp>>(hashMapOf())
-    private val rules = observeAllRulesUseCase().init(emptyList())
-    private val managedApps = observeAllManagedApps().init(emptyList())
-    val managedAppsWithRules = combine(rules, managedApps, installedApps, ::combineFlows).init(emptyList())
+    private val installedApps = MutableStateFlow<HashMap<String, InstalledApp>?>(null)
+    private val rules = observeAllRulesUseCase().init(null)
+    private val managedApps = observeAllManagedApps().init(null)
+    val managedAppsWithRules = combine(rules, managedApps, installedApps, ::combineFlows).init(null)
 
     init {
         viewModelScope.launch {
@@ -75,12 +75,12 @@ class HomeViewModel @Inject constructor(
      * @return Lista de [ManagedAppWithRule].
      */
     private fun combineFlows(
-        rules: List<Rule>,
-        managedApps: List<ManagedApp>,
-        installedAppsCache: HashMap<String, InstalledApp>,
-    ): List<ManagedAppWithRule> {
+        rules: List<Rule>?,
+        managedApps: List<ManagedApp>?,
+        installedAppsCache: HashMap<String, InstalledApp>?,
+    ): List<ManagedAppWithRule>? {
 
-        if (rules.isEmpty() || managedApps.isEmpty() || installedAppsCache.isEmpty()) return emptyList()
+        if (rules == null || managedApps == null || installedAppsCache == null) return null
 
         val rulesMap = rules.associateBy { it.id }
 
@@ -93,7 +93,7 @@ class HomeViewModel @Inject constructor(
                 packageId = installedApp.packageId,
                 icon = installedApp.icon,
                 rule = rulesMap[managedApp.ruleId]
-                    ?: error("Todo aplicativo gerenciado deve ter uma regra relacionada. Verifique se não existe um bug na hora de buscar a regra ou se a regra não foi removida i por algum motivo o aplicativo gerenciado não foi removido junto.")
+                    ?: error("Todo aplicativo gerenciado deve ter uma regra relacionada. Verifique se não existe um bug na hora de buscar a regra ou se a regra foi removida e por algum motivo o aplicativo gerenciado não foi removido junto.")
             )
 
         }.sortedBy { it.name }

@@ -22,13 +22,13 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home_fragment.HomeFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.login.LoginFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp_fragment.AddManagedAppsFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_edit_rule.AddRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.rule_fragment.AddRuleFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps_fragment.SelectAppsFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule_fragment.SelectRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.SelectAppsFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash.SplashFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import kotlinx.coroutines.flow.Flow
@@ -140,7 +140,7 @@ open class MyFragment : Fragment() {
                 binding.ivMenu.isGone = true
             }
 
-            is LoginFragment -> {
+            is SplashFragment -> {
 
                 binding.tvTitle.text = ""
                 binding.ivMenu.isGone = true

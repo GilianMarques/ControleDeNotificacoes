@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp_fragment
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp
 
 import android.content.Context
 import androidx.lifecycle.LiveData
