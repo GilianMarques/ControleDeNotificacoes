@@ -1,18 +1,18 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.activities
 
+import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.findNavController
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash.SplashFragment
 
 
 /**
@@ -44,6 +44,9 @@ class MainActivity : AppCompatActivity() {
 
         observeNavigationChanges()
 
+        if (resources.getBoolean(R.bool.portrait_only)) {
+            requestedOrientation = SCREEN_ORIENTATION_PORTRAIT
+        }
     }
 
     private fun observeNavigationChanges() {
@@ -53,20 +56,22 @@ class MainActivity : AppCompatActivity() {
 
         val navController = navHostFragment.navController
 
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (!backgroundChanged) applyDefaultBackgroundColor()
-        }
+        navController.addOnDestinationChangedListener(::applyDefaultBackgroundColor)
     }
-
 
     /**
      * Os fragmentos são transparentes por isso preciso remover o background do splashscreen e definir uma cor sólida
      * na activity
      */
-    private fun applyDefaultBackgroundColor() {
+    @Suppress("unused")
+    private fun applyDefaultBackgroundColor(navController: NavController, destination: NavDestination, bundle: Bundle?) {
+
+        if (backgroundChanged) return
+
         val typedValue = TypedValue()
         theme.resolveAttribute(R.attr.colorBackground, typedValue, true)
         window.decorView.setBackgroundColor(typedValue.data)
+
         backgroundChanged = true
     }
 }
