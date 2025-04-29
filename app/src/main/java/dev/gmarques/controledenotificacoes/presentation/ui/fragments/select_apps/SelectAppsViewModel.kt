@@ -101,7 +101,7 @@ class SelectAppsViewModel @Inject constructor(
     }
 
     fun validateSelection() = viewModelScope.launch(IO) {
-        if (installedAppsLd.value!!.isEmpty()) {
+        if (selectedApps.isEmpty()) {
 
             _uiEvents.postValue(
                 _uiEvents.value!!.copy(
