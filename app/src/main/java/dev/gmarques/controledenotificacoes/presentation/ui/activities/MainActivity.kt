@@ -1,13 +1,18 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.activities
 
 import android.os.Bundle
+import android.util.Log
+import android.util.TypedValue
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash.SplashFragment
 
 
 /**
@@ -18,11 +23,14 @@ import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var splashLabel: String
+    private var backgroundChanged = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
+        splashLabel = getString(R.string.Splash_fragment)
 
         enableEdgeToEdge()
 
@@ -34,5 +42,31 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        observeNavigationChanges()
+
+    }
+
+    private fun observeNavigationChanges() {
+
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+
+        val navController = navHostFragment.navController
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (!backgroundChanged) applyDefaultBackgroundColor()
+        }
+    }
+
+
+    /**
+     * Os fragmentos são transparentes por isso preciso remover o background do splashscreen e definir uma cor sólida
+     * na activity
+     */
+    private fun applyDefaultBackgroundColor() {
+        val typedValue = TypedValue()
+        theme.resolveAttribute(R.attr.colorBackground, typedValue, true)
+        window.decorView.setBackgroundColor(typedValue.data)
+        backgroundChanged = true
     }
 }

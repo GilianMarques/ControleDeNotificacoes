@@ -58,8 +58,6 @@ class SplashFragment : MyFragment() {
         setupFabTryAgain()
         observeSharedViewModel()
         viewModel.checkUserLoggedIn()
-        applyDefaultBackgroundColor()
-
     }
 
     /**
@@ -186,16 +184,6 @@ class SplashFragment : MyFragment() {
         }
     }
 
-    /**
-     * Os fragmentos são transparentes por isso preciso remover o background do splashscreen e definir uma cor sólida
-     * na activity
-     */
-    private fun applyDefaultBackgroundColor() {
-        val typedValue = TypedValue()
-        requireContext().theme.resolveAttribute(R.attr.colorBackground, typedValue, true)
-        requireActivity().window.decorView.setBackgroundColor(typedValue.data)
-
-    }
 
     /**
      * Observa um flow no viewmodel do HomeFragmentos que indica quando os dados foram carregados e então chama no viewmodel uma função

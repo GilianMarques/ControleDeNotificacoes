@@ -109,5 +109,6 @@
     <string name="O_login_falhou_c_digo_0_mensagem_1">O login falhou: Código %1$s, Mensagem %2$s</string>
     <string name="Voce_cancelou_o_login">Você cancelou o login.</string>
     <string name="Bem_vindo_a">Bem Vindo(a)</string>
+    <string name="Splash_fragment">Splash fragment</string>
 
 </resources>

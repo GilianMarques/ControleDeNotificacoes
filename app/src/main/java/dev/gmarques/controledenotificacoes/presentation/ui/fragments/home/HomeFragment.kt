@@ -114,6 +114,7 @@ class HomeFragment : MyFragment() {
                 val extras = FragmentNavigatorExtras(
                     tvUserName to tvUserName.transitionName,
                     ivProfilePicture to ivProfilePicture.transitionName,
+                    divider to divider.transitionName,
                 )
                 findNavController().navigate(HomeFragmentDirections.toProfileFragment(), extras)
             })

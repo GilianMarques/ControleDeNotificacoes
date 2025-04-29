@@ -68,6 +68,7 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:transitionName="divider"
         android:layout_marginTop="16dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintTop_toBottomOf="@id/iv_profile_picture" />
