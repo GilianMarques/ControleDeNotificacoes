@@ -12,7 +12,6 @@ local.properties
 captures/
 .externalNativeBuild/
 .cxx/
-*.apk
 output.json
 
 # arquivos gerados pelo relatorio da cobertura de codigo

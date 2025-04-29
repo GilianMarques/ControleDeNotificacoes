@@ -5,6 +5,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -23,13 +24,14 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
 
@@ -66,6 +68,7 @@ dependencies {
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
     implementation("com.firebaseui:firebase-ui-auth:9.0.0")
+    implementation("com.google.firebase:firebase-crashlytics:19.4.3")
 
 
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")

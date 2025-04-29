@@ -1,6 +1,11 @@
 package dev.gmarques.controledenotificacoes
 
 import android.app.Application
+import android.hardware.camera2.CaptureRequest
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.setCustomKeys
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -16,7 +21,17 @@ class App : Application() {
 
     override fun onCreate() {
         context = this
-
+        setupCrashLytics()
         super.onCreate()
+    }
+
+    private fun setupCrashLytics() {
+        FirebaseCrashlytics.getInstance().apply {
+
+            setCustomKeys {
+                key("environment", if (BuildConfig.DEBUG) "Debug" else "Release")
+            }
+            setUserId(FirebaseAuth.getInstance().currentUser?.email ?: "not_logged_in")
+        }
     }
 }
