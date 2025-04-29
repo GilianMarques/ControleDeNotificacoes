@@ -48,9 +48,9 @@
 
     <fragment
         android:id="@+id/addRuleFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_edit_rule.AddRuleFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_edit_rule.AddOrUpdateRuleFragment"
         android:label="fragment_add_rule"
-        tools:layout="@layout/fragment_add_rule">
+        tools:layout="@layout/fragment_add_or_edit_rule">
 
         <argument
             android:name="editingRule"

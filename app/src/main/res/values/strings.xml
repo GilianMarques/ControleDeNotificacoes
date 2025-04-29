@@ -110,5 +110,9 @@
     <string name="Voce_cancelou_o_login">Você cancelou o login.</string>
     <string name="Bem_vindo_a">Bem Vindo(a)</string>
     <string name="Splash_fragment">Splash fragment</string>
+    <string name="Dica">Dica</string>
+    <string name="Entendi">Entendi</string>
+    <string name="Lembre_me_da_proxima_vez">Lembre-me da próxima vez</string>
+    <string name="Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos">Editar uma regra faz com que as alterações feitas se apliquem a todos os aplicativos gerenciados por ela. Se você quiser alterar as restrições de um único aplicativo, crie uma regra específica apenas para ele.</string>
 
 </resources>

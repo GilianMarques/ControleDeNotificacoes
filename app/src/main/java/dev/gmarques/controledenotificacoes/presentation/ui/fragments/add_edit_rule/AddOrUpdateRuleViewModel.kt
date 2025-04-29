@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddRuleViewModel @Inject constructor(
+class AddOrUpdateRuleViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addRuleUseCase: AddRuleUseCase,
     private val updateRuleUseCase: UpdateRuleUseCase,

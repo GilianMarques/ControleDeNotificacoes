@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_edit_rule
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,11 +11,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.databinding.FragmentAddRuleBinding
+import dev.gmarques.controledenotificacoes.databinding.FragmentAddOrEditRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
@@ -30,24 +32,20 @@ import kotlinx.coroutines.launch
 import kotlin.math.min
 
 @AndroidEntryPoint
-class AddRuleFragment : MyFragment() {
+class AddOrUpdateRuleFragment : MyFragment() {
 
     private var doNotNotifyViewModelTypeRule: Boolean = true
 
-    private val viewModel: AddRuleViewModel by viewModels()
-    private val args: AddRuleFragmentArgs by navArgs()
+    private val viewModel: AddOrUpdateRuleViewModel by viewModels()
+    private val args: AddOrUpdateRuleFragmentArgs by navArgs()
 
-    private lateinit var binding: FragmentAddRuleBinding
+    private lateinit var binding: FragmentAddOrEditRuleBinding
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View {
-        binding = FragmentAddRuleBinding.inflate(inflater, container, false)
-
-        return binding.root
-    }
+    ) = FragmentAddOrEditRuleBinding.inflate(inflater, container, false).also { binding = it }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,7 +81,31 @@ class AddRuleFragment : MyFragment() {
     private fun setupEditingModeIfNeeded() {
         args.editingRule?.let {
             viewModel.setEditingRule(it)
+            showEditHint()
         }
+    }
+
+    private fun showEditHint() {
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.Dica))
+            .setMessage(getString(R.string.Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos))
+            .setPositiveButton(
+                getString(R.string.Entendi),
+                object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        // TODO: implemente preferencias aqui
+                    }
+                })
+            .setNegativeButton(
+                getString(R.string.Lembre_me_da_proxima_vez),
+                object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                    }
+                })
+            .setCancelable(false)
+            .setIcon(R.drawable.vec_edit_rule)
+            .show()
     }
 
     private fun setupFabAddRule() = with(binding) {

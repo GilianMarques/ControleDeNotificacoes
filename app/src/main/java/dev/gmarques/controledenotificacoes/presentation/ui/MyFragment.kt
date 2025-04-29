@@ -22,7 +22,7 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_edit_rule.AddRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_edit_rule.AddOrUpdateRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment
@@ -122,7 +122,7 @@ open class MyFragment : Fragment() {
                 binding.ivMenu.isGone = true
             }
 
-            is AddRuleFragment -> {
+            is AddOrUpdateRuleFragment -> {
                 setupGoBackButton(binding.ivGoBack)
                 binding.tvTitle.text = getString(R.string.Adicionar_regra)
                 binding.ivMenu.isGone = true
