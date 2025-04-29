@@ -45,7 +45,6 @@ class LoginViewModel @Inject constructor(@ApplicationContext private val context
 
         if (currentUser == null) _eventFlow.tryEmit(LoginEvent.StartFlow)
         else {
-            _eventFlow.emit(LoginEvent.UserLoggedIn(currentUser))
             _navigationFlow.emit(_navigationFlow.value.copy(userLoggedIn = true))
         }
     }
@@ -102,7 +101,6 @@ class LoginViewModel @Inject constructor(@ApplicationContext private val context
 
 sealed class LoginEvent {
     object StartFlow : LoginEvent()
-    data class UserLoggedIn(val user: FirebaseUser) : LoginEvent()
     data class Error(val message: String) : LoginEvent()
     data class Success(val user: FirebaseUser?) : LoginEvent()
 }

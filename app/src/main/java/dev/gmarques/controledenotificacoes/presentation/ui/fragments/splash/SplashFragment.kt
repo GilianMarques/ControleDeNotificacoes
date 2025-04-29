@@ -80,7 +80,6 @@ class SplashFragment : MyFragment() {
             when (event) {
 
                 is LoginEvent.StartFlow -> startLoginFlow()
-                is LoginEvent.UserLoggedIn -> setupUiWithUserData(event.user)
                 is LoginEvent.Success -> onLoginSuccess(event.user ?: error("user nao pode ser nulo se o login foi bem sucedido"))
                 is LoginEvent.Error -> onLoginError(event.message)
             }
