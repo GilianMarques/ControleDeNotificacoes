@@ -1,8 +1,22 @@
 <resources>
+
+    <!--se remover esse tema o popmenu vai aparecer com tema claro mesmo se o dispositivo estiver no tema escuro-->
+    <style name="Widget.MPM.Menu" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <item name="android:colorBackground">@color/mpm_material_grey_50</item>
+        <item name="android:theme">@style/Theme.AppCompat.Light</item>
+        <item name="mpm_primaryTextColor">@color/mpm_black_87_opacity</item>
+        <item name="mpm_secondaryTextColor">@color/mpm_black_54_opacity</item>
+        <item name="mpm_activeIconColor">@color/mpm_black_54_opacity</item>
+        <item name="mpm_separatorColor">@color/mpm_black_12_opacity</item>
+        <item name="mpm_paddingBottom">@dimen/mpm_popup_menu_vertical_padding</item>
+        <item name="mpm_paddingStart">0dp</item>
+        <item name="mpm_paddingEnd">8dp</item>
+        <item name="mpm_paddingTop">@dimen/mpm_popup_menu_vertical_padding</item>
+    </style>
+
     <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
 
         <item name="android:windowBackground">@drawable/splash_background</item>
-
 
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>

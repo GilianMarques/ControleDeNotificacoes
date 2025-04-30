@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentViewManagedAppBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
@@ -73,7 +76,68 @@ class FragmentViewManagedApp() : MyFragment() {
     }
 
     private fun showMenu() {
+        val popupMenu = popupMenu {
 
+            section {
+                item {
+                    label = getString(R.string.Limpar_historico)
+                    icon = R.drawable.vec_try_again
+                    callback = {
+                        clearHistory()
+                    }
+                }
+            }
+
+            section {
+                item {
+                    label = getString(R.string.Remover_app)
+                    icon = R.drawable.vec_remove
+                    callback = {
+                        confirmRemoveApp()
+                    }
+                }
+            }
+
+            section {
+                title = getString(R.string.Regras)
+
+                item {
+                    label = getString(R.string.Editar_regra)
+                    icon = R.drawable.vec_edit_rule
+                    callback = {
+                        navigateToEditRule()
+                    }
+                }
+
+                item {
+                    label = getString(R.string.Remover_regra)
+                    icon = R.drawable.vec_remove
+                    callback = {
+                        confirmRemoveRule()
+                    }
+                }
+
+
+            }
+
+        }
+        popupMenu.show(this@FragmentViewManagedApp.requireContext(), binding.ivMenu)
+    }
+
+    private fun clearHistory() {
+        Toast.makeText(requireContext(), "implementar...", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun confirmRemoveApp() {
+        Toast.makeText(requireContext(), "implementar...", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun navigateToEditRule() {
+        Toast.makeText(requireContext(), "implementar...", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun confirmRemoveRule() {
+        Toast.makeText(requireContext(), "implementar...", Toast.LENGTH_SHORT).show()
     }
 
     /**
@@ -87,5 +151,6 @@ class FragmentViewManagedApp() : MyFragment() {
             }
         }
     }
+
 
 }

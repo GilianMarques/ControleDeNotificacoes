@@ -150,6 +150,7 @@ class SelectRuleFragment : MyFragment() {
 
 
         val popupMenu = popupMenu {
+
             section {
 
                 item {
