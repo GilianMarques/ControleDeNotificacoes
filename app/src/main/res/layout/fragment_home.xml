@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:background="?attr/AppColorBackground">
 
 
     <ImageView
@@ -68,9 +69,9 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:transitionName="divider"
         android:layout_marginTop="16dp"
         android:background="?android:attr/listDivider"
+        android:transitionName="divider"
         app:layout_constraintTop_toBottomOf="@id/iv_profile_picture" />
 
 

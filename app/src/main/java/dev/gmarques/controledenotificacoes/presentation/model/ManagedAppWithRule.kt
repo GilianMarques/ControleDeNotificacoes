@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.presentation.model
 
 import android.graphics.drawable.Drawable
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import java.io.Serializable
 
 /**
  * Criado por Gilian Marques
@@ -12,4 +13,4 @@ data class ManagedAppWithRule(
     val packageId: String,
     val icon: Drawable,
     val rule: Rule,
-)
+) : Serializable

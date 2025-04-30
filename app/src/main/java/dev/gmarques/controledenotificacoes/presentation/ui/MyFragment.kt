@@ -14,7 +14,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.transition.ChangeBounds
 import androidx.transition.Fade
-import androidx.transition.TransitionInflater
 import androidx.transition.TransitionSet
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,8 +22,8 @@ import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_edit_rule.AddOrUpdateRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.SelectAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment
@@ -47,9 +46,6 @@ open class MyFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        TransitionInflater.from(requireContext())
-
 
         val fadeTransition = Fade().apply {
             interpolator = AccelerateDecelerateInterpolator()

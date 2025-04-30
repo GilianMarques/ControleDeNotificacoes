@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
+    tools:background="?attr/AppColorBackground"
     tools:context=".presentation.ui.rule_fragment.AddRuleFragment">
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -15,12 +16,12 @@
         android:clickable="true"
         android:contentDescription="@string/Bot_o_de_adicionar_regra"
         android:focusable="true"
-        app:icon="@drawable/vec_check"
         android:text="@string/Concluir"
         android:transitionName="fab"
+        app:icon="@drawable/vec_check"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <include
         android:id="@+id/toolbar"
@@ -112,8 +113,8 @@
                     android:padding="16dp"
                     android:textAlignment="gravity"
                     android:visibility="gone"
-                    tools:drawableStartCompat="@drawable/vec_rule_restrictive"
                     app:drawableTint="?colorPrimary"
+                    tools:drawableStartCompat="@drawable/vec_rule_restrictive"
                     tools:text="Regra X"
                     tools:visibility="visible" />
 

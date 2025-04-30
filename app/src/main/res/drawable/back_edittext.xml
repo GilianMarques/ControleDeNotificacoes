@@ -5,7 +5,7 @@
         android:width="0dp"
         android:color="@android:color/darker_gray" />
 
-    <solid android:color="?attr/colorBackground" />
+    <solid android:color="?attr/AppColorBackground" />
 
     <corners android:radius="8dp" />
 </shape>

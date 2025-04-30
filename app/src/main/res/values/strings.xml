@@ -82,7 +82,7 @@
     <string name="Hhouve_um_erro_ao_remover_a_regra_tente_novamente">Houve um erro ao remover a regra, tente novamente</string>
     <string name="Selecione_uma_regra">Selecione uma regra</string>
     <string name="Caixa_de_sele_o_para_o_aplicativo">Caixa de seleção para o aplicativo</string>
-    <string name="Bot_o_para_abrir_a_tela_de_edi_o">Botão para abrir a tela de edição</string>
+    <string name="Bot_o_para_abrir_a_tela_de_visualizacao">Botão para abrir a tela de visualização</string>
     <string name="App_nao_encontrado">App não encontrado</string>
     <string name="Botao_de_adicionar_novo_app_gerenciado">Botão de adicionar novo app gerenciado</string>
     <string name="Foto_de_perfil_do_usuario">Foto de perfil do usuário\n</string>
@@ -114,5 +114,6 @@
     <string name="Entendi">Entendi</string>
     <string name="Lembre_me_da_proxima_vez">Lembre-me da próxima vez</string>
     <string name="Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos">Editar uma regra faz com que as alterações feitas se apliquem a todos os aplicativos gerenciados por ela. Se você quiser alterar as restrições de um único aplicativo, crie uma regra específica apenas para ele.</string>
+    <string name="Botao_de_voltar">Botão de voltar</string>
 
 </resources>

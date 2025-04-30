@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         if (backgroundChanged) return
 
         val typedValue = TypedValue()
-        theme.resolveAttribute(R.attr.colorBackground, typedValue, true)
+        theme.resolveAttribute(R.attr.AppColorBackground, typedValue, true)
         window.decorView.setBackgroundColor(typedValue.data)
 
         backgroundChanged = true

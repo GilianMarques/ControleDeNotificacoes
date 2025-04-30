@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="colorBackground" format="color" />
-    <attr name="containerBackground" format="color" />
+    <attr name="AppColorBackground" format="color" />
+    <attr name="AppContainerBackground" format="color" />
 </resources>

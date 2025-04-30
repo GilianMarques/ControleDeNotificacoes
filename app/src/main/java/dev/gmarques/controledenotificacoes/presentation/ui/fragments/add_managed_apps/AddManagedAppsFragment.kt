@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps
 
 import android.os.Build
 import android.os.Bundle
@@ -44,7 +44,7 @@ class AddManagedAppsFragment() : MyFragment() {
     @Inject
     lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
 
-    private val viewModel: AddManagedAppsFragmentViewModel by viewModels()
+    private val viewModel: AddManagedAppsViewModel by viewModels()
     private lateinit var binding: FragmentAddManagedAppsBinding
 
     private val manageAppsViewsMutex = Mutex()

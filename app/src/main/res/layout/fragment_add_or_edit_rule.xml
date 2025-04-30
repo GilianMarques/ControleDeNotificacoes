@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
+    tools:background="?attr/AppColorBackground"
     tools:context=".presentation.ui.rule_fragment.AddRuleFragment">
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton

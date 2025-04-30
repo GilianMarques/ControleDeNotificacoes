@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.managedapp
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps
 
 import android.content.Context
 import androidx.lifecycle.LiveData
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class AddManagedAppsFragmentViewModel @Inject constructor(
+class AddManagedAppsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addManagedAppUseCase: AddManagedAppUseCase,
 ) : ViewModel() {

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    tools:background="?attr/AppColorBackground">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_go_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/Botao_de_voltar"
+        android:elevation="5dp"
+        android:padding="16dp"
+        android:src="@drawable/vec_go_back"
+        app:layout_constraintBottom_toBottomOf="@id/iv_app_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/iv_app_icon" />
+
+    <ImageView
+        android:id="@+id/iv_app_icon"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/back_profile_picture"
+        android:contentDescription="@string/Icone_do_aplicativo"
+        android:elevation="5dp"
+        android:padding="2dp"
+        android:transitionName="view_app_icon"
+        app:layout_constraintStart_toEndOf="@id/iv_go_back"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/vec_rule_restrictive_small" />
+
+    <TextView
+        android:id="@+id/tv_app_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="6dp"
+        android:elevation="19dp"
+        android:fontFamily="@font/urbanist_extrabold"
+        android:maxLines="1"
+        android:paddingEnd="16dp"
+        android:textSize="20sp"
+        android:transitionName="view_app_name"
+        app:layout_constraintBottom_toBottomOf="@id/iv_app_icon"
+        app:layout_constraintEnd_toStartOf="@id/iv_menu"
+        app:layout_constraintStart_toEndOf="@id/iv_app_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_app_icon"
+        tools:ignore="RtlSymmetry"
+        tools:text="Lembrete de remédios" />
+
+
+    <TextView
+        android:id="@+id/tv_rule_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:drawablePadding="8dp"
+        android:gravity="center_vertical"
+        android:maxLines="2"
+        android:paddingTop="4dp"
+        android:paddingEnd="4dp"
+        android:textAlignment="gravity"
+        android:textSize="12sp"
+        android:transitionName="view_rule_name"
+        app:drawableStartCompat="@drawable/vec_rule_permissive"
+        app:drawableTint="?colorPrimary"
+        app:layout_constraintEnd_toStartOf="@id/iv_menu"
+        app:layout_constraintStart_toStartOf="@id/tv_app_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_app_name"
+        tools:ignore="RtlSymmetry"
+        tools:text="Bloq. Seg-Sex. 08:00 as 18:00" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_menu"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/Bot_o_de_menu"
+        android:elevation="5dp"
+        android:padding="12dp"
+        android:src="@drawable/vec_menu"
+        app:layout_constraintBottom_toBottomOf="@id/iv_go_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/iv_go_back"
+        app:tint="?colorOnBackground" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/listDivider"
+        android:transitionName="divider"
+        app:layout_constraintTop_toBottomOf="@id/tv_rule_name" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_conclude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/Bot_o_de_adicionar_regra"
+        android:focusable="true"
+        android:text="@string/Concluir"
+        android:transitionName="fab"
+        app:icon="@drawable/vec_check"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +20,7 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.google.firebase.auth.FirebaseUser
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.databinding.FragmentLoginBinding
+import dev.gmarques.controledenotificacoes.databinding.FragmentSplashBinding
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeViewModel
 import kotlinx.coroutines.launch
@@ -36,7 +35,7 @@ class SplashFragment : MyFragment() {
     Assim, quando o usuário terminar o processo de login os dados já estejam carregados */
     private val homeFragmentViewModel: HomeViewModel by activityViewModels()
 
-    private lateinit var binding: FragmentLoginBinding
+    private lateinit var binding: FragmentSplashBinding
     private val viewModel: LoginViewModel by viewModels()
 
     private val signInLauncher = setupSignInLauncher()
@@ -46,7 +45,7 @@ class SplashFragment : MyFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentLoginBinding.inflate(inflater, container, false)
+        binding = FragmentSplashBinding.inflate(inflater, container, false)
         return binding.root
     }
 

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isGone
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
@@ -23,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
+import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
@@ -46,6 +48,7 @@ class HomeFragment : MyFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        postponeEnterTransition()
 
         // Transição de entrada
         sharedElementEnterTransition = TransitionSet().apply {
@@ -135,11 +138,31 @@ class HomeFragment : MyFragment() {
         adapter = ManagedAppsAdapter(
             getDrawable(R.drawable.vec_rule_permissive_small),
             getDrawable(R.drawable.vec_rule_restrictive_small),
-            generateRuleNameUseCase::invoke
+            generateRuleNameUseCase::invoke,
+            ::navigateToViewManagedAppFragment
         )
 
         rvApps.layoutManager = LinearLayoutManager(requireContext())
         rvApps.adapter = adapter
+        rvApps.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
+    }
+
+    private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule, tvAppName: View, tvRuleName: View, ivIcon: View) {
+        tvAppName.transitionName = "view_app_name"
+        tvRuleName.transitionName = "view_rule_name"
+        ivIcon.transitionName = "view_app_icon"
+
+        val extras = FragmentNavigatorExtras(
+            tvAppName to tvAppName.transitionName,
+            tvRuleName to tvRuleName.transitionName,
+            ivIcon to ivIcon.transitionName,
+        )
+        findNavController().navigate(
+            HomeFragmentDirections.toViewManagedAppFragment(app),
+            extras
+        )
     }
 
     /**

@@ -1,11 +1,9 @@
 package dev.gmarques.controledenotificacoes.presentation.utils
 
-import android.util.Log
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
+import android.widget.TextView
 
 
 /**
@@ -32,6 +30,15 @@ object ViewExtFuns {
         child.postDelayed({
             child.visibility = View.VISIBLE
         }, 300)
+    }
+
+    fun TextView.setRuleDrawable(adequatedDrawable: Drawable) {
+        this.setCompoundDrawablesWithIntrinsicBounds(
+            adequatedDrawable,
+            null,
+            null,
+            null
+        )
     }
 
 }

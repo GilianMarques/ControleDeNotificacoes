@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:transitionGroup="true"
     android:padding="4dp">
 
 
@@ -12,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/back_container"
-        android:foreground="?selectableItemBackground"
+        android:foreground="?attr/selectableItemBackground"
         android:paddingStart="8dp"
         android:paddingTop="12dp"
         android:paddingEnd="8dp"
@@ -27,6 +28,7 @@
 
             android:id="@+id/iv_app_icon"
             android:layout_width="48dp"
+            android:transitionName="app_icon"
             android:layout_height="0dp"
             android:contentDescription="@string/Icone_do_aplicativo"
             app:layout_constraintBottom_toBottomOf="@id/tv_rule_name"
@@ -40,6 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/urbanist_semibold"
+            android:transitionName="app_name"
             android:maxLines="1"
             android:padding="4dp"
             android:textAlignment="viewStart"
@@ -56,6 +59,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="8dp"
             android:gravity="center_vertical"
+            android:transitionName="rule_name"
             android:maxLines="2"
             android:textAlignment="gravity"
             android:textSize="12sp"
@@ -72,7 +76,7 @@
             android:id="@+id/iv_open"
             android:layout_width="48dp"
             android:layout_height="0dp"
-            android:contentDescription="@string/Bot_o_para_abrir_a_tela_de_edi_o"
+            android:contentDescription="@string/Bot_o_para_abrir_a_tela_de_visualizacao"
             android:padding="16dp"
             android:rotation="180"
             android:src="@drawable/vec_go_back"
