@@ -127,7 +127,7 @@ class SplashFragment : MyFragment() {
         val signInIntent = AuthUI.getInstance()
             .createSignInIntentBuilder()
             .setAvailableProviders(providers)
-            .setLogo(R.drawable.vec_splash_back)
+            .setLogo(R.drawable.ic_launcher_foreground)
             .setTheme(R.style.AppTheme)
             .build()
 
