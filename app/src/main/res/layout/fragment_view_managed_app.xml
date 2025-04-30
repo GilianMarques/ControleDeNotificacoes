@@ -32,7 +32,6 @@
         android:background="@drawable/back_profile_picture"
         android:contentDescription="@string/Icone_do_aplicativo"
         android:elevation="5dp"
-        android:padding="2dp"
         android:transitionName="view_app_icon"
         app:layout_constraintStart_toEndOf="@id/iv_go_back"
         app:layout_constraintTop_toTopOf="parent"

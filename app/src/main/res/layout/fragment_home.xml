@@ -104,35 +104,24 @@
                 app:contentScrim="@android:color/transparent"
                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/til_search"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    app:boxCornerRadiusBottomEnd="8dp"
-                    app:boxCornerRadiusBottomStart="8dp"
-                    app:boxCornerRadiusTopEnd="8dp"
-                    app:boxCornerRadiusTopStart="8dp"
-                    app:endIconMode="clear_text"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:startIconDrawable="@drawable/vec_search"
-                    tools:visibility="visible">
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/tiet_search"
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edt_search"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:autofillHints="name"
                         android:hint="@string/Buscar_aplicativo"
                         android:imeOptions="actionSearch"
+                        android:drawableStart="@drawable/vec_search"
+                        android:drawablePadding="16dp"
+                        android:background="@drawable/back_edittext_search"
+                        style="@style/Margins_edittext"
                         android:inputType="text"
                         android:maxLines="1"
+                        android:drawableTint="?colorOnBackground"
                         android:padding="12dp"
                         android:singleLine="true"
                         tools:text="Whatsapp" />
-                </com.google.android.material.textfield.TextInputLayout>
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 

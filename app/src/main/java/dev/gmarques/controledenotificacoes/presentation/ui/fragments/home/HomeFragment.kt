@@ -126,6 +126,8 @@ class HomeFragment : MyFragment() {
 
     private fun setupFabAddManagedApp() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
+
+            binding.edtSearch.setText("")
             val extras = FragmentNavigatorExtras(
                 binding.fabAdd to binding.fabAdd.transitionName
             )
@@ -163,6 +165,7 @@ class HomeFragment : MyFragment() {
             HomeFragmentDirections.toViewManagedAppFragment(app),
             extras
         )
+        binding.edtSearch.setText("")
     }
 
     /**
@@ -184,7 +187,7 @@ class HomeFragment : MyFragment() {
     }
 
     private fun setupSearch() {
-        binding.tietSearch.doOnTextChanged { text, _, _, _ ->
+        binding.edtSearch.doOnTextChanged { text, _, _, _ ->
             viewModel.managedAppsWithRules.value.let {
                 it?.let { adapter.submitList(it, text.toString()) }
             }
