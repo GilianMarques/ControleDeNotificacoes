@@ -2,7 +2,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -23,7 +22,7 @@ class ManagedAppsAdapter(
     private val iconPermissive: Drawable,
     private val iconRestrictive: Drawable,
     private val getName: (Rule) -> String,
-    private val onItemClick: (ManagedAppWithRule, View, View, View) -> Unit,
+    private val onItemClick: (ManagedAppWithRule) -> Unit,
 ) :
     ListAdapter<ManagedAppWithRule, ManagedAppsAdapter.ViewHolder>(DiffCallback()) {
 
@@ -49,7 +48,7 @@ class ManagedAppsAdapter(
             iconRestrictive: Drawable,
             getName: (Rule) -> String,
             app: ManagedAppWithRule,
-            onItemClick: (ManagedAppWithRule, View, View, View) -> Unit,
+            onItemClick: (ManagedAppWithRule) -> Unit,
         ) {
             binding.tvAppName.text = app.name
             binding.tvRuleName.text = getName(app.rule)
@@ -57,7 +56,7 @@ class ManagedAppsAdapter(
             binding.ivAppIcon.setImageDrawable(app.icon)
 
             binding.root.setOnClickListener(AnimatedClickListener {
-                onItemClick(app, binding.tvAppName, binding.tvRuleName, binding.ivAppIcon)
+                onItemClick(app)
             })
         }
     }

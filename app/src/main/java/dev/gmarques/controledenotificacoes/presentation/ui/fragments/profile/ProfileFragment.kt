@@ -39,7 +39,7 @@ class ProfileFragment : MyFragment() {
             addTransition(ChangeBounds())
             addTransition(SlideTransition())
             interpolator = AccelerateDecelerateInterpolator()
-            duration = 350
+            duration = 450
         }
 
         // Transição de retorno

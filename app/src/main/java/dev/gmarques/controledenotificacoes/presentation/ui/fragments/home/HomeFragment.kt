@@ -151,19 +151,10 @@ class HomeFragment : MyFragment() {
         }
     }
 
-    private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule, tvAppName: View, tvRuleName: View, ivIcon: View) {
-        tvAppName.transitionName = "view_app_name"
-        tvRuleName.transitionName = "view_rule_name"
-        ivIcon.transitionName = "view_app_icon"
+    private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
 
-        val extras = FragmentNavigatorExtras(
-            tvAppName to tvAppName.transitionName,
-            tvRuleName to tvRuleName.transitionName,
-            ivIcon to ivIcon.transitionName,
-        )
         findNavController().navigate(
             HomeFragmentDirections.toViewManagedAppFragment(app),
-            extras
         )
         binding.edtSearch.setText("")
     }
