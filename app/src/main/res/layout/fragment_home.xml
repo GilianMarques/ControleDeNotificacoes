@@ -7,7 +7,7 @@
     tools:background="?attr/AppColorBackground">
 
 
-    <ImageView
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_profile_picture"
         android:layout_width="56dp"
         android:layout_height="56dp"
@@ -149,14 +149,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/Lista_de_aplicativos_instalados_no_dispositivo"
-                android:overScrollMode="always"
                 android:paddingStart="4dp"
                 android:paddingEnd="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:listitem="@layout/item_app_selectable" />
+                tools:listitem="@layout/item_managed_app" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

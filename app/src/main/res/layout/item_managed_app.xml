@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
 
             android:id="@+id/iv_app_icon"
             android:layout_width="48dp"
@@ -72,7 +72,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_app_name"
             tools:text="Bloq. Seg-Sex. 08:00 as 18:00" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_open"
             android:layout_width="48dp"
             android:layout_height="0dp"

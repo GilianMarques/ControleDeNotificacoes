@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
 
             android:id="@+id/iv_clock"
             android:layout_width="32dp"
@@ -86,7 +86,7 @@
             app:layout_constraintStart_toEndOf="@id/tv_start_as"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
 
             android:id="@+id/iv_remove"
             android:layout_width="32dp"

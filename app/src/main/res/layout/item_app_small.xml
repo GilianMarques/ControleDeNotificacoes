@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
 
             android:id="@+id/iv_app_icon"
             android:layout_width="40dp"
@@ -47,7 +47,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Lista de compras" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
 
             android:id="@+id/iv_remove"
             android:layout_width="32dp"
