@@ -2,8 +2,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update
 
 import TimeRangeValidator
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +21,10 @@ import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,26 +37,22 @@ class AddOrUpdateRuleViewModel @Inject constructor(
 
     private var editingRule: Rule? = null
 
-    // propriedades do objeto [Rule] que será adicionado
-    private var ruleType: RuleType = RuleType.RESTRICTIVE
-    private var timeRanges: HashMap<String, TimeRange> = HashMap()
-    private var selectedDays: List<WeekDay> = emptyList()
-    private var ruleName: String = ""
 
-    private val _ruleTypeLd = MutableLiveData<RuleType>(RuleType.RESTRICTIVE)
-    val ruleTypeLd: LiveData<RuleType> = _ruleTypeLd
+    private val _ruleType = MutableStateFlow(RuleType.RESTRICTIVE)
+    val ruleType: StateFlow<RuleType> = _ruleType
 
-    private val _timeRangesLd = MutableLiveData<Map<String, TimeRange>>(emptyMap())
-    val timeRangesLd: LiveData<Map<String, TimeRange>> = _timeRangesLd
+    private val _ruleName = MutableStateFlow("")
+    val ruleName: StateFlow<String> = _ruleName
 
-    private val _selectedDaysLd = MutableLiveData<List<WeekDay>>(emptyList())
-    val selectedDaysLd: LiveData<List<WeekDay>> = _selectedDaysLd
+    private val _selectedDays = MutableStateFlow<List<WeekDay>>(emptyList())
+    val selectedDays: StateFlow<List<WeekDay>> = _selectedDays
 
-    private val _ruleNameLd = MutableLiveData("")
-    val ruleNameLd: LiveData<String> = _ruleNameLd
+    private val _timeRanges = MutableStateFlow(LinkedHashMap<String, TimeRange>())
+    val timeRanges: StateFlow<LinkedHashMap<String, TimeRange>> = _timeRanges
 
-    private val _uiEvents = MutableLiveData(UiEvents())
-    val uiEvents: LiveData<UiEvents> get() = _uiEvents
+    private val _eventsFlow = MutableSharedFlow<Event>(replay = 1)
+    val eventsFlow: SharedFlow<Event> get() = _eventsFlow
+
 
     /**
      * Atualiza o tipo de regra atual e notifica os observadores do LiveData.
@@ -62,8 +60,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @param type O novo [RuleType] a ser definido.
      */
     fun updateRuleType(type: RuleType) {
-        ruleType = type
-        _ruleTypeLd.postValue(ruleType)
+        _ruleType.tryEmit(type)
     }
 
     /**
@@ -72,9 +69,9 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @param range O intervalo de tempo (TimeRange) a ser adicionado.
      */
     private fun addTimeRange(range: TimeRange) {
-
-        timeRanges[range.id] = range
-        _timeRangesLd.postValue(timeRanges.toMap())
+        val ranges = LinkedHashMap(timeRanges.value)
+        ranges[range.id] = range
+        _timeRanges.tryEmit(ranges)
     }
 
     /**
@@ -85,9 +82,9 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @param range O intervalo de tempo a ser removido.
      */
     fun removeTimeRange(range: TimeRange) {
-
-        timeRanges.remove(range.id)
-        _timeRangesLd.postValue(timeRanges.toMap())
+        val ranges = LinkedHashMap(timeRanges.value)
+        ranges.remove(range.id)
+        _timeRanges.tryEmit(ranges)
     }
 
     /**
@@ -97,8 +94,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @throws IllegalArgumentException Se a lista `days` for nula.
      */
     fun updateSelectedDays(days: List<WeekDay>) {
-        selectedDays = days
-        _selectedDaysLd.postValue(selectedDays)
+        _selectedDays.tryEmit(days)
     }
 
     /**
@@ -112,8 +108,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @see _ruleNameLd
      */
     private fun updateRuleName(name: String) {
-        ruleName = name
-        _ruleNameLd.postValue(ruleName)
+        _ruleName.tryEmit(name)
     }
 
     /**
@@ -125,7 +120,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @return `true` se o usuário pode adicionar mais intervalos, `false` caso contrário.
      */
     fun canAddMoreRanges(): Boolean {
-        return timeRanges.size < RuleValidator.MAX_RANGES
+        return _timeRanges.value.size < RuleValidator.MAX_RANGES
     }
 
     /**
@@ -138,7 +133,6 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         val validationResult = TimeRangeValidator.validate(range)
 
         if (validationResult.isFailure) {
-            val event = _uiEvents.value!!
 
             val errorMessage = when (validationResult.exceptionOrNull()) {
                 is OutOfRangeException -> context.getString(R.string.O_intervalo_selecionado_era_inv_lido)
@@ -146,11 +140,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
                 else -> throw IllegalStateException("Exceção não prevista. Isso é um bug!")
             }
 
-            _uiEvents.postValue(
-                event.copy(
-                    simpleErrorMessageEvent = EventWrapper(errorMessage)
-                )
-            )
+            _eventsFlow.tryEmit(Event.SimpleErrorMessage(errorMessage))
         }
 
         return validationResult
@@ -165,7 +155,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      */
     fun validateRangesWithSequenceAndAdd(range: TimeRange): Result<List<TimeRange>> {
 
-        val ranges = timeRanges.values + range
+        val ranges = _timeRanges.value.values + range
         val result = RuleValidator.validateTimeRanges(ranges)
 
         if (result.isSuccess) {
@@ -198,8 +188,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             else -> throw IllegalStateException("Exceção não prevista. Isso é um bug! ${exception.message}")
         }
 
-        val event = _uiEvents.value!!
-        _uiEvents.postValue(event.copy(simpleErrorMessageEvent = EventWrapper(message)))
+        _eventsFlow.tryEmit(Event.SimpleErrorMessage(message))
 
     }
 
@@ -236,6 +225,11 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      */
     fun validateAndSaveRule() {
 
+        val ruleName = _ruleName.value
+        val selectedDays = _selectedDays.value
+        val timeRanges = _timeRanges.value
+        val ruleType = _ruleType.value
+
         if (validateName(ruleName).isFailure) return
         if (validateDays(selectedDays).isFailure) return
         if (validateRanges(timeRanges.map { it.value }).isFailure) return
@@ -256,15 +250,16 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * Se `editingRule` for nulo, adiciona uma nova regra. Caso contrário, atualiza a regra existente.
      * Após a operação, navega para a tela inicial.
      *
-     * @param rule A regra [Rule] a ser salva.
+     * @param validatedRule A regra [Rule] a ser salva.
      */
-    private fun saveRule(rule: Rule) = viewModelScope.launch(IO) {
+    private fun saveRule(validatedRule: Rule) = viewModelScope.launch(IO) {
+
+        val rule = if (editingRule != null) validatedRule.copy(id = editingRule!!.id) else validatedRule
 
         if (editingRule == null) addRuleUseCase(rule)
-        else updateRuleUseCase(rule.copy(id = editingRule!!.id))
+        else updateRuleUseCase(rule)
 
-        val event = _uiEvents.value!!
-        _uiEvents.postValue(event.copy(navigateHomeEvent = EventWrapper(true)))
+        _eventsFlow.tryEmit(Event.SetResultAndClose(rule))
     }
 
     /**
@@ -306,14 +301,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             when (result.getOrNull()) {
 
                 else -> {
-                    val event = _uiEvents.value!!
-                    _uiEvents.postValue(
-                        event.copy(
-                            simpleErrorMessageEvent = EventWrapper(
-                                context.getString(R.string.Selecione_pelo_menos_um_dia_da_semana)
-                            )
-                        )
-                    )
+                    _eventsFlow.tryEmit(Event.SimpleErrorMessage(context.getString(R.string.Selecione_pelo_menos_um_dia_da_semana)))
                 }
             }
         }
@@ -345,27 +333,25 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             updateRuleName(result.getOrThrow())
         } else {
 
-            val event = _uiEvents.value!!
-
             when (val exception = result.exceptionOrNull()) {
 
-                is BlankNameException -> _uiEvents.postValue(
-                    event.copy(
-                        nameErrorMessageEvent = EventWrapper(
+                is BlankNameException -> {
+                    _eventsFlow.tryEmit(
+                        Event.NameErrorMessage(
                             context.getString(R.string.O_nome_n_o_pode_ficar_em_branco)
                         )
                     )
-                )
+                }
 
-                is OutOfRangeException -> _uiEvents.postValue(
-                    event.copy(
-                        nameErrorMessageEvent = EventWrapper(
+                is OutOfRangeException -> {
+                    _eventsFlow.tryEmit(
+                        Event.NameErrorMessage(
                             context.getString(
                                 R.string.O_nome_deve_ter_entre_e_caracteres, exception.minLength, exception.maxLength
                             )
                         )
                     )
-                )
+                }
 
                 else -> throw IllegalStateException("Exceção não tratada $exception")
             }
@@ -374,4 +360,13 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         return result
     }
 
+}
+
+/**
+ * Representa os eventos (consumo unico) que podem ser disparados para a UI
+ */
+sealed class Event {
+    data class SetResultAndClose(val data: Rule) : Event()
+    data class SimpleErrorMessage(val data: String) : Event()
+    data class NameErrorMessage(val data: String) : Event()
 }

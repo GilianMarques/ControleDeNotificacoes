@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -18,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddOrEditRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
+import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
@@ -41,6 +43,10 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
     private lateinit var binding: FragmentAddOrEditRuleBinding
 
+    companion object {
+        const val RESULT_KEY = "add_update_rule_result"
+        const val RULE_KEY = "rule"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,25 +93,18 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
     private fun showEditHint() {
 
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.Dica))
+        MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Dica))
             .setMessage(getString(R.string.Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos))
             .setPositiveButton(
-                getString(R.string.Entendi),
-                object : DialogInterface.OnClickListener {
+                getString(R.string.Entendi), object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
                         // TODO: implemente preferencias aqui
                     }
-                })
-            .setNegativeButton(
-                getString(R.string.Lembre_me_da_proxima_vez),
-                object : DialogInterface.OnClickListener {
+                }).setNegativeButton(
+                getString(R.string.Lembre_me_da_proxima_vez), object : DialogInterface.OnClickListener {
                     override fun onClick(dialog: DialogInterface?, which: Int) {
                     }
-                })
-            .setCancelable(false)
-            .setIcon(R.drawable.vec_edit_rule)
-            .show()
+                }).setCancelable(false).setIcon(R.drawable.vec_edit_rule).show()
     }
 
     private fun setupFabAddRule() = with(binding) {
@@ -368,10 +367,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
         /* remova o `toList()` e veja sua vida se transformar em um inferno! Brincadeiras a parte, deve-se criar
                  uma lista de views a remover primeiro e só depois remova-las pra evitar inconsistencias na ui */
-        parent.children
-            .filter { it.tag !in timeRanges.keys }
-            .toList()
-            .forEach { parent.removeView(it) }
+        parent.children.filter { it.tag !in timeRanges.keys }.toList().forEach { parent.removeView(it) }
 
         sortedRanges.forEachIndexed { index, range ->
             if (!parent.children.none { it.tag == range.id }) return@forEachIndexed
@@ -390,26 +386,26 @@ class AddOrUpdateRuleFragment : MyFragment() {
     }
 
     private fun observeRuleType() {
-        viewModel.ruleTypeLd.observe(viewLifecycleOwner) { type ->
+        collectFlow(viewModel.ruleType) { type ->
             doNotNotifyViewModelTypeRule = true
             updateButtonTypeRule(type)
         }
     }
 
     private fun observeTimeRanges() {
-        viewModel.timeRangesLd.observe(viewLifecycleOwner) { ranges ->
+        collectFlow(viewModel.timeRanges) { ranges ->
             manageTimeRangesViews(ranges)
         }
     }
 
     private fun observeSelectedDays() {
-        viewModel.selectedDaysLd.observe(viewLifecycleOwner) { days ->
+        collectFlow(viewModel.selectedDays) { days ->
             updateSelectedDaysChips(days)
         }
     }
 
     private fun observeRuleName() {
-        viewModel.ruleNameLd.observe(viewLifecycleOwner) { name ->
+        collectFlow(viewModel.ruleName) { name ->
             binding.edtName.setText(name)
         }
     }
@@ -432,27 +428,36 @@ class AddOrUpdateRuleFragment : MyFragment() {
      * @see goBack
      */
     private fun observeEvents() {
-        viewModel.uiEvents.observe(viewLifecycleOwner) { event ->
+        collectFlow(viewModel.eventsFlow) { event ->
+            when (event) {
 
-            with(event.simpleErrorMessageEvent.consume()) {
-                if (this != null) showErrorSnackBar(this, binding.fabAdd)
-            }
-
-            with(event.nameErrorMessageEvent.consume()) {
-                if (this != null) {
-                    binding.edtName.error = this
-                    showErrorSnackBar(this, binding.fabAdd)
+                is Event.NameErrorMessage -> {
+                    if (this != null) {
+                        binding.edtName.error = event.data
+                        showErrorSnackBar(event.data, binding.fabAdd)
+                    }
                 }
-            }
 
-            with(event.navigateHomeEvent.consume()) {
-                if (this != null) {
-                    vibrator.success()
-                    goBack()
+                is Event.SetResultAndClose -> {
+                    if (this != null) {
+                        setResultAndClose(event.data)
+                    }
+                }
+
+                is Event.SimpleErrorMessage -> {
+                    if (this != null) showErrorSnackBar(event.data, binding.fabAdd)
                 }
             }
 
         }
 
+    }
+
+    // TODO: testar a modificação desse fragmento
+    private fun setResultAndClose(rule: Rule) {
+        val bundle = Bundle().apply { putSerializable(RULE_KEY, rule) }
+        setFragmentResult(RESULT_KEY, bundle)
+        vibrator.success()
+        goBack()
     }
 }
