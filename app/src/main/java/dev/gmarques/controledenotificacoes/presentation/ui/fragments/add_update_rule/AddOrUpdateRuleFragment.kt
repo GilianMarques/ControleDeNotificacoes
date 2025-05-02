@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_edit_rule
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule
 
 import android.content.DialogInterface
 import android.os.Bundle

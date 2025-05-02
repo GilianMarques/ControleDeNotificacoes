@@ -17,7 +17,8 @@ class ViewManagedAppViewModel @Inject constructor(
     private val addManagedAppUseCase: AddManagedAppUseCase,
 ) : ViewModel() {
 
-    private lateinit var managedAppWithRule: ManagedAppWithRule
+    lateinit var managedAppWithRule: ManagedAppWithRule
+        private set
 
     private val _eventsFlow = MutableSharedFlow<ViewManagedAppsEvent>(replay = 1)
     val eventsFlow: SharedFlow<ViewManagedAppsEvent> get() = _eventsFlow

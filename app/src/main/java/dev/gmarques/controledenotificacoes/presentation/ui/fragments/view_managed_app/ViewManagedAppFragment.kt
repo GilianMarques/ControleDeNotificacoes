@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.AndroidEntryPoint
@@ -133,7 +134,7 @@ class FragmentViewManagedApp() : MyFragment() {
     }
 
     private fun navigateToEditRule() {
-        Toast.makeText(requireContext(), "implementar...", Toast.LENGTH_SHORT).show()
+        findNavController().navigate(FragmentViewManagedAppDirections.toAddRuleFragment(viewModel.managedAppWithRule.rule))
     }
 
     private fun confirmRemoveRule() {
