@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -21,8 +22,8 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
 import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.SelectAppsFragment
@@ -32,6 +33,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListe
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.io.Serializable
 import javax.inject.Inject
 
 /**
@@ -194,12 +196,37 @@ open class MyFragment : Fragment() {
      * Observa um Flow de maneira segura no Fragment, garantindo que a coleta só aconteça enquanto
      * o Fragment estiver ativo (STARTED).
      */
-    fun <T> collectFlow(flow: Flow<T>, onCollect: (T) -> Unit) {
+    protected fun <T> collectFlow(flow: Flow<T>, onCollect: (T) -> Unit) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 flow.collect { value ->
                     onCollect(value)
                 }
+            }
+        }
+    }
+
+    /**
+     * Obtém um objeto serializável de um Bundle com segurança de tipo,
+     * considerando as diferentes APIs do Android para desserialização.
+     *
+     * @param bundle O Bundle de onde o objeto serializável será recuperado.
+     * @param key A chave associada ao objeto serializável no Bundle.
+     * @param clazz A classe esperada do objeto serializável.
+     * @return O objeto serializável do tipo [T], ou null se a chave não existir no Bundle
+     *         e o tipo for anulável.
+     * @throws IllegalStateException Se o objeto serializado sob a chave não for uma instância de [clazz].
+     */
+    protected fun <T : Serializable> requireSerializableOf(bundle: Bundle, key: String, clazz: Class<T>): T? {
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            bundle.getSerializable(key, clazz)
+        } else {
+            @Suppress("DEPRECATION")
+            bundle.getSerializable(key).let {
+                if (clazz.isInstance(it)) clazz.cast(it)
+                else throw IllegalStateException("Objeto serializado sob a chave '$key' não é do tipo esperado: ${clazz.name}. Valor real: ${it?.javaClass?.name}")
+
             }
         }
     }

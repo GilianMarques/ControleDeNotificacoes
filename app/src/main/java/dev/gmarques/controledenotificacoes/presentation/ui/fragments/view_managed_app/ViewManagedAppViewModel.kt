@@ -1,39 +1,45 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
+import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
 class ViewManagedAppViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val addManagedAppUseCase: AddManagedAppUseCase,
+    private val observeRuleUseCase: ObserveRuleUseCase,
 ) : ViewModel() {
-
-    lateinit var managedAppWithRule: ManagedAppWithRule
-        private set
-
-    private val _eventsFlow = MutableSharedFlow<ViewManagedAppsEvent>(replay = 1)
-    val eventsFlow: SharedFlow<ViewManagedAppsEvent> get() = _eventsFlow
+    private var initialized = false
+    private lateinit var _managedAppFlow: MutableStateFlow<ManagedAppWithRule>
+    val managedAppFlow: StateFlow<ManagedAppWithRule> get() = _managedAppFlow
 
 
-    fun setApp(app: ManagedAppWithRule) {
-        this.managedAppWithRule = app
-        _eventsFlow.tryEmit(ViewManagedAppsEvent.UpdateToolBar(app))
+    fun setup(app: ManagedAppWithRule) {
+
+        if (initialized) error("Não chame essa função mais que 1 vez")
+
+        _managedAppFlow = MutableStateFlow(app)
+
+        observeRuleChanges(app.rule)
+    }
+
+    /**
+     * Quando o usuário usa o menu para editar uma regra o fragmento que adiciona e edita regras salva a modificação
+     * no DB e este listener é disparado para atualizar a interface deste fragmento com a nova regra
+     */
+    private fun observeRuleChanges(rule: Rule) = viewModelScope.launch {
+        observeRuleUseCase(rule.id)
+            .collect {
+                _managedAppFlow.tryEmit(_managedAppFlow.value.copy(rule = it))
+            }
     }
 
 }
 
-/**
- * Representa os eventos (consumo unico) que podem ser disparados para a UI
- */
-sealed class ViewManagedAppsEvent {
-    data class UpdateToolBar(val app: ManagedAppWithRule) : ViewManagedAppsEvent()
-}

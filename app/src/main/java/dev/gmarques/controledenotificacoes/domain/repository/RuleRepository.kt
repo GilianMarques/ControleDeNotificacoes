@@ -14,4 +14,5 @@ interface RuleRepository {
     suspend fun getRuleById(id: String): Rule?
     suspend fun getAllRules(): List<Rule>
     fun observeAllRules(): Flow<List<Rule>>
+    fun observeRule(id: String): Flow<Rule>
 }

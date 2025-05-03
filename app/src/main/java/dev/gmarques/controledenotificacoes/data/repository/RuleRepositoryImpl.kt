@@ -42,4 +42,10 @@ class RuleRepositoryImpl @Inject constructor(private val ruleDao: RuleDao) : Rul
             entities.map { RuleMapper.mapToModel(it) }
         }
     }
+
+    override fun observeRule(id: String): Flow<Rule> {
+        return ruleDao.observeRule(id).map {
+            RuleMapper.mapToModel(it)
+        }
+    }
 }

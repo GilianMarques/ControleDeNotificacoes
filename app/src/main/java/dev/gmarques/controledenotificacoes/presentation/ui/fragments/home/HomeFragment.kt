@@ -152,9 +152,14 @@ class HomeFragment : MyFragment() {
     }
 
     private fun navigateToViewManagedAppFragment(app: ManagedAppWithRule) {
+        val extras = FragmentNavigatorExtras(
+            binding.ivProfilePicture to "view_app_icon",
+            binding.tvUserName to "view_app_name",
+        )
 
         findNavController().navigate(
             HomeFragmentDirections.toViewManagedAppFragment(app),
+            extras
         )
         binding.edtSearch.setText("")
     }

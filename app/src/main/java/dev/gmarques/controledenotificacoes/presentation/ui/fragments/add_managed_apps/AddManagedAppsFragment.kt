@@ -155,14 +155,8 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private fun setupSelectRuleListener() {
 
-        setFragmentResultListener(SelectRuleFragment.RESULT_KEY) { _, bundle ->
-            val rule = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                bundle.getSerializable(
-                    SelectRuleFragment.BUNDLED_RULE_KEY, Rule::class.java
-                )
-            } else {
-                @Suppress("DEPRECATION") bundle.getSerializable(SelectRuleFragment.BUNDLED_RULE_KEY) as Rule
-            }
+        setFragmentResultListener(SelectRuleFragment.RESULT_KEY) { key, bundle ->
+            val rule = requireSerializableOf(bundle, key, Rule::class.java)
             viewModel.setRule(rule!!)
         }
     }

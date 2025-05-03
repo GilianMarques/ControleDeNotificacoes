@@ -15,4 +15,9 @@ object DomainRelatedExtFuns {
         RuleType.RESTRICTIVE -> R.drawable.vec_rule_restrictive
         RuleType.PERMISSIVE -> R.drawable.vec_rule_permissive
     }
+
+    fun Rule.getAdequateIconReferenceSmall() = when (this.ruleType) {
+        RuleType.RESTRICTIVE -> R.drawable.vec_rule_restrictive_small
+        RuleType.PERMISSIVE -> R.drawable.vec_rule_permissive_small
+    }
 }

@@ -17,7 +17,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleName
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
-import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
+import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReferenceSmall
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setRuleDrawable
 import javax.inject.Inject
 
@@ -37,7 +37,6 @@ class FragmentViewManagedApp() : MyFragment() {
     private lateinit var binding: FragmentViewManagedAppBinding
     private val args: FragmentViewManagedAppArgs by navArgs()
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -46,18 +45,15 @@ class FragmentViewManagedApp() : MyFragment() {
         return binding.root
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.setApp(args.app)
-        observeEvents()
-
+        viewModel.setup(args.app)
+        observeRuleChanges()
     }
-
 
     private fun setupActionBar(app: ManagedAppWithRule) = with(binding) {
 
-        val drawable = ContextCompat.getDrawable(requireActivity(), app.rule.getAdequateIconReference())
+        val drawable = ContextCompat.getDrawable(requireActivity(), app.rule.getAdequateIconReferenceSmall())
             ?: error("O icone deve existir pois é um recurso interno do app")
 
         tvAppName.text = app.name
@@ -134,22 +130,16 @@ class FragmentViewManagedApp() : MyFragment() {
     }
 
     private fun navigateToEditRule() {
-        findNavController().navigate(FragmentViewManagedAppDirections.toAddRuleFragment(viewModel.managedAppWithRule.rule))
+        findNavController().navigate(FragmentViewManagedAppDirections.toAddRuleFragment(viewModel.managedAppFlow.value.rule))
     }
 
     private fun confirmRemoveRule() {
         Toast.makeText(requireContext(), "implementar...", Toast.LENGTH_SHORT).show()
     }
 
-    /**
-     * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.
-     * Utiliza a função collectFlow para coletar os estados do flow de forma segura e sem repetições de código.
-     */
-    private fun observeEvents() {
-        collectFlow(viewModel.eventsFlow) { event ->
-            when (event) {
-                is ViewManagedAppsEvent.UpdateToolBar -> setupActionBar(event.app)
-            }
+    private fun observeRuleChanges() {
+        collectFlow(viewModel.managedAppFlow) { app ->
+            setupActionBar(app)
         }
     }
 
