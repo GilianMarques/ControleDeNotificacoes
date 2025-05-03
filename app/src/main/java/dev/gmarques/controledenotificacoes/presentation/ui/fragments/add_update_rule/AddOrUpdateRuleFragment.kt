@@ -304,7 +304,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
         activity?.supportFragmentManager?.let { picker.show(it, "TimePicker") }
     }
 
-
     /**
      * Atualiza, com base nos updates do viewmodel a interface com base no tipo de regra (Permissiva ou Restritiva) .
      *
@@ -411,18 +410,17 @@ class AddOrUpdateRuleFragment : MyFragment() {
     }
 
     /**
-     * Observa os eventos `uiEvents` do ViewModel e os trata.
+     * Observa os eventos emitidos pelo ViewModel através de `eventsFlow` e os trata.
      *
-     * Esta função escuta os eventos da LiveData `uiEvents`. Ao receber um novo evento, verifica seu tipo dentro de `UiEvents` e executa a ação correspondente.
+     * Esta função coleta eventos assincronamente do `eventsFlow` do ViewModel e executa ações na UI
+     * com base no tipo de evento recebido.
      *
-     * Eventos tratados:
-     * - `simpleErrorMessageEvent`: Exibe uma SnackBar com a mensagem de erro.
-     * - `nameErrorMessageEvent`: Define a mensagem de erro no campo `edtName` e exibe uma SnackBar.
-     * - `navigateHomeEvent`: Aciona uma vibração de sucesso e navega de volta usando `goBack()`.
+     * **Eventos Tratados:**
+     * - `Event.NameErrorMessage`: Define a mensagem de erro no campo de texto do nome da regra (`edtName`)
+     *   e exibe uma SnackBar com a mesma mensagem.
+     * - `Event.SetResultAndClose`: Define o resultado do Fragmento com a regra fornecida e navega de volta.
+     * - `Event.SimpleErrorMessage`: Exibe uma SnackBar com uma mensagem de erro simples.
      *
-     * Cada evento é consumido (usando `consume()`) após o processamento, evitando reexecução. A observação usa `viewLifecycleOwner` para garantir que esteja ativa apenas quando a view está visível.
-     *
-     * @see UiEvents
      * @see showErrorSnackBar
      * @see vibrator
      * @see goBack
@@ -432,20 +430,16 @@ class AddOrUpdateRuleFragment : MyFragment() {
             when (event) {
 
                 is Event.NameErrorMessage -> {
-                    if (this != null) {
-                        binding.edtName.error = event.data
-                        showErrorSnackBar(event.data, binding.fabAdd)
-                    }
+                    binding.edtName.error = event.data
+                    showErrorSnackBar(event.data, binding.fabAdd)
                 }
 
                 is Event.SetResultAndClose -> {
-                    if (this != null) {
-                        setResultAndClose(event.data)
-                    }
+                    setResultAndClose(event.data)
                 }
 
                 is Event.SimpleErrorMessage -> {
-                    if (this != null) showErrorSnackBar(event.data, binding.fabAdd)
+                    showErrorSnackBar(event.data, binding.fabAdd)
                 }
             }
 
@@ -453,7 +447,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
     }
 
-    // TODO: testar a modificação desse fragmento
     private fun setResultAndClose(rule: Rule) {
         val bundle = Bundle().apply { putSerializable(RULE_KEY, rule) }
         setFragmentResult(RESULT_KEY, bundle)

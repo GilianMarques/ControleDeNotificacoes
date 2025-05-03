@@ -32,4 +32,7 @@ interface RuleDao {
 
     @Query("SELECT * FROM rules")
     fun observeAllRules(): Flow<List<RuleEntity>>
+
+    @Query("SELECT * FROM rules WHERE id = :id")
+    fun observeRule(id: String): Flow<RuleEntity>
 }
