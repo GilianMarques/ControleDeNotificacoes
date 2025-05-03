@@ -1,12 +1,10 @@
-package dev.gmarques.controledenotificacoes.domain.utils
-
-import dev.gmarques.controledenotificacoes.domain.model.TimeRange
+package dev.gmarques.controledenotificacoes.domain.model
 
 /**
  * Criado por Gilian Marques
  * Em segunda-feira, 31 de março de 2025 as 23:20.
  *
- * Classe utilitária para adcionar funcionalidades ao [TimeRange]
+ * Classe utilitária para adicionar funcionalidades ao [TimeRange]
  *
  */
 object TimeRangeExtensionFun {

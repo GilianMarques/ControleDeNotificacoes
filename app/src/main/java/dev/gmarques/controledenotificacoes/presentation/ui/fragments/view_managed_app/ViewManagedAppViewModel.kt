@@ -1,12 +1,17 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.usecase.DeleteRuleWithAppsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.DeleteManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,10 +20,17 @@ import javax.inject.Inject
 @HiltViewModel
 class ViewManagedAppViewModel @Inject constructor(
     private val observeRuleUseCase: ObserveRuleUseCase,
+    private val deleteManagedAppUseCase: DeleteManagedAppUseCase,
+    private val deleteRuleWithAppsUseCase: DeleteRuleWithAppsUseCase,
 ) : ViewModel() {
+
     private var initialized = false
+
     private lateinit var _managedAppFlow: MutableStateFlow<ManagedAppWithRule>
     val managedAppFlow: StateFlow<ManagedAppWithRule> get() = _managedAppFlow
+
+    private val _eventsFlow = MutableSharedFlow<Event>(replay = 1)
+    val eventsFlow: SharedFlow<Event> get() = _eventsFlow
 
 
     fun setup(app: ManagedAppWithRule) {
@@ -35,11 +47,34 @@ class ViewManagedAppViewModel @Inject constructor(
      * no DB e este listener é disparado para atualizar a interface deste fragmento com a nova regra
      */
     private fun observeRuleChanges(rule: Rule) = viewModelScope.launch {
-        observeRuleUseCase(rule.id)
-            .collect {
-                _managedAppFlow.tryEmit(_managedAppFlow.value.copy(rule = it))
+        observeRuleUseCase(rule.id).collect {
+
+            if (it == null) return@collect.also {
+                Log.w(
+                    "USUK",
+                    "ViewManagedAppViewModel.".plus("observeRuleChanges() regra recebida é nula. Se a última operação feita foi uma remoção isso está certo senão pode ser resultado de um bug ")
+                )
             }
+
+            _managedAppFlow.tryEmit(_managedAppFlow.value.copy(rule = it))
+        }
+    }
+
+    fun deleteApp() = viewModelScope.launch {
+        deleteManagedAppUseCase(_managedAppFlow.value.packageId)
+        _eventsFlow.tryEmit(Event.FinishWithSuccess)
+    }
+
+    fun deleteRule() = viewModelScope.launch {
+        deleteRuleWithAppsUseCase(_managedAppFlow.value.rule)
+        _eventsFlow.tryEmit(Event.FinishWithSuccess)
     }
 
 }
 
+/**
+ * Representa os eventos (consumo unico) que podem ser disparados para a UI
+ */
+sealed class Event {
+    object FinishWithSuccess : Event()
+}

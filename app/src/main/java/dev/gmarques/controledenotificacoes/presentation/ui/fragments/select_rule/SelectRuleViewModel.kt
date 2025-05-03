@@ -37,7 +37,7 @@ class SelectRuleViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
-    fun removeRule(rule: Rule) = viewModelScope.launch(IO) {
+    fun deleteRule(rule: Rule) = viewModelScope.launch(IO) {
         try {
             removeRuleUseCase(rule)
             _ruleRemovalResult.postValue(EventWrapper(Result.success(Unit)))

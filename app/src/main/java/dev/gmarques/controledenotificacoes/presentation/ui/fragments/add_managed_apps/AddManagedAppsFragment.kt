@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps
 
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +21,7 @@ import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.SelectAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment.Companion.BUNDLED_RULE_KEY
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
@@ -111,14 +111,13 @@ class AddManagedAppsFragment() : MyFragment() {
      */
     private fun setupSelectAppsListener() {
 
-        @Suppress("UNCHECKED_CAST") setFragmentResultListener(SelectAppsFragment.RESULT_KEY) { _, bundle ->
-            val selectedApps = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                bundle.getSerializable(
-                    SelectAppsFragment.BUNDLED_PACKAGES_KEY, ArrayList::class.java
-                ) as ArrayList<InstalledApp>
-            } else {
-                @Suppress("DEPRECATION") bundle.getSerializable(SelectAppsFragment.BUNDLED_PACKAGES_KEY) as ArrayList<InstalledApp>
-            }
+        setFragmentResultListener(SelectAppsFragment.RESULT_KEY) { _, bundle ->
+
+            @Suppress("UNCHECKED_CAST") val selectedApps = requireSerializableOf(
+                bundle,
+                SelectAppsFragment.BUNDLED_PACKAGES_KEY,
+                ArrayList::class.java
+            ) as ArrayList<InstalledApp>
 
             lifecycleScope.launch {
 
@@ -140,7 +139,6 @@ class AddManagedAppsFragment() : MyFragment() {
 
         ivAddRule.setOnClickListener(AnimatedClickListener {
 
-
             findNavController().navigate(
                 AddManagedAppsFragmentDirections.toSelectRuleFragment(),
                 FragmentNavigatorExtras(
@@ -155,8 +153,8 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private fun setupSelectRuleListener() {
 
-        setFragmentResultListener(SelectRuleFragment.RESULT_KEY) { key, bundle ->
-            val rule = requireSerializableOf(bundle, key, Rule::class.java)
+        setFragmentResultListener(SelectRuleFragment.RESULT_LISTENER_KEY) { _, bundle ->
+            val rule = requireSerializableOf(bundle, BUNDLED_RULE_KEY, Rule::class.java)
             viewModel.setRule(rule!!)
         }
     }
@@ -234,8 +232,7 @@ class AddManagedAppsFragment() : MyFragment() {
                     ivAppIcon.setImageDrawable(app.icon)
                     root.tag = app.packageId
                     ivRemove.setOnClickListener(AnimatedClickListener {
-                        viewModel.removeApp(app)
-
+                        viewModel.deleteApp(app)
                     })
                     parent.addView(root, min(index, parent.childCount))
                 }

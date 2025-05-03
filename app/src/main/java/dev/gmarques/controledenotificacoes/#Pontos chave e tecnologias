@@ -4,7 +4,7 @@ Clean Code
 Unit tests
 Instrumented tests
 Transitions Framework
-Room
+Room + transaçoes atomicas
 Coroutines with Mutex
 Acessibilidade
 combinar multiplos datasources com flows (home fragment)

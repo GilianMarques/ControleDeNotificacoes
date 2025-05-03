@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.data.local.room.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -22,12 +21,15 @@ interface ManagedAppDao {
     @Update
     suspend fun updateManagedApp(managedAppEntity: ManagedAppEntity)
 
-    @Delete
-    suspend fun deleteManagedApp(managedAppEntity: ManagedAppEntity)
+    @Query("DELETE FROM managed_apps WHERE packageId = :id")
+    suspend fun deleteById(id: String) // TODO: deletar o historico de notificações depois que for implementado
 
     @Query("SELECT * FROM managed_apps WHERE packageId = :id")
     suspend fun getManagedAppByPackageId(id: String): ManagedAppEntity?
 
     @Query("SELECT * FROM managed_apps")
     fun observeAllManagedApps(): Flow<List<ManagedAppEntity>>
+
+    @Query("DELETE FROM managed_apps WHERE ruleId = :ruleId")
+    fun deleteManagedAppsByRuleId(ruleId: String): Int
 }

@@ -207,17 +207,21 @@ open class MyFragment : Fragment() {
     }
 
     /**
-     * Obtém um objeto serializável de um Bundle com segurança de tipo,
-     * considerando as diferentes APIs do Android para desserialização.
+     * Obtém um objeto serializável de um Bundle com segurança de tipo, considerando as diferentes APIs do Android para desserialização.
      *
-     * @param bundle O Bundle de onde o objeto serializável será recuperado.
-     * @param key A chave associada ao objeto serializável no Bundle.
-     * @param clazz A classe esperada do objeto serializável.
+     * Este méto-do gerencia a recuperação de objetos serializáveis de um Bundle, tratando as diferenças entre as versões
+     * mais recentes do Android (Tiramisu e superior) que oferecem uma API tipada para serialização/desserialização,
+     * e versões anteriores onde é necessário realizar a conversão de tipo manualmente e verificar a instância.
+     *
+     * Ele lança uma exceção se a chave não existir no Bundle para evitar null pointers inesperados.
+     * No caso de tipos não anuláveis, a ausência da chave ou um tipo incorreto resultarão em uma exceção.
      * @return O objeto serializável do tipo [T], ou null se a chave não existir no Bundle
      *         e o tipo for anulável.
      * @throws IllegalStateException Se o objeto serializado sob a chave não for uma instância de [clazz].
      */
     protected fun <T : Serializable> requireSerializableOf(bundle: Bundle, key: String, clazz: Class<T>): T? {
+
+        if (!bundle.containsKey(key)) error("O pacote não tem nenhum conteudo sob a chave '$key'. Verifique se voce passou a chave certa. Se o objeto é nulavel, certifique-se de passar nulo para o bundle.")
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             bundle.getSerializable(key, clazz)

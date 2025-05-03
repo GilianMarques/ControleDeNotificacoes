@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.data.repository
 
+import android.util.Log
 import dev.gmarques.controledenotificacoes.data.local.room.dao.RuleDao
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.RuleMapper
 import dev.gmarques.controledenotificacoes.domain.model.Rule
@@ -25,27 +26,39 @@ class RuleRepositoryImpl @Inject constructor(private val ruleDao: RuleDao) : Rul
         ruleDao.updateRule(RuleMapper.mapToEntity(rule))
     }
 
-    override suspend fun removeRule(rule: Rule) {
+    override suspend fun deleteRule(rule: Rule) {
         ruleDao.deleteRule(RuleMapper.mapToEntity(rule))
     }
 
     override suspend fun getRuleById(id: String): Rule? {
-        return ruleDao.getRuleById(id)?.let { RuleMapper.mapToModel(it) }
-    }
-
-    override suspend fun getAllRules(): List<Rule> {
-        return ruleDao.getAllRules().map { RuleMapper.mapToModel(it) }
-    }
-
-    override fun observeAllRules(): Flow<List<Rule>> {
-        return ruleDao.observeAllRules().map { entities ->
-            entities.map { RuleMapper.mapToModel(it) }
+        return ruleDao.getRuleById(id)?.let {
+            Log.d("USUK", "RuleRepositoryImpl.getRuleById: ")
+            RuleMapper.mapToModel(it)
         }
     }
 
-    override fun observeRule(id: String): Flow<Rule> {
-        return ruleDao.observeRule(id).map {
+    override suspend fun getAllRules(): List<Rule> {
+
+        return ruleDao.getAllRules().map {
+            Log.d("USUK", "RuleRepositoryImpl.getAllRules: ")
             RuleMapper.mapToModel(it)
+        }
+    }
+
+    override fun observeAllRules(): Flow<List<Rule>> {
+
+        return ruleDao.observeAllRules().map { entities ->
+            entities.map {
+                Log.d("USUK", "RuleRepositoryImpl.observeAllRules: ")
+                RuleMapper.mapToModel(it)
+            }
+        }
+    }
+
+    override fun observeRule(id: String): Flow<Rule?> {
+        return ruleDao.observeRule(id).map {
+            if (it == null) null
+            else RuleMapper.mapToModel(it)
         }
     }
 }

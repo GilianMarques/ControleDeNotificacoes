@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.github.zawadz88.materialpopupmenu.popupMenu
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentViewManagedAppBinding
@@ -49,6 +51,7 @@ class FragmentViewManagedApp() : MyFragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.setup(args.app)
         observeRuleChanges()
+        observeEvents()
     }
 
     private fun setupActionBar(app: ManagedAppWithRule) = with(binding) {
@@ -126,7 +129,28 @@ class FragmentViewManagedApp() : MyFragment() {
     }
 
     private fun confirmRemoveApp() {
-        Toast.makeText(requireContext(), "implementar...", Toast.LENGTH_SHORT).show()
+        viewModel.managedAppFlow.value
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.Por_favor_confirme))
+            .setMessage(
+                getString(R.string.Deseja_mesmo_remover_este_aplicativo_da_lista_de_gerenciamento)
+            )
+            .setPositiveButton(
+                getString(R.string.Remover),
+                object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        viewModel.deleteApp()
+                    }
+                })
+            .setNegativeButton(
+                getString(R.string.Cancelar),
+                object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                    }
+                })
+            .setCancelable(false)
+            .setIcon(R.drawable.vec_alert)
+            .show()
     }
 
     private fun navigateToEditRule() {
@@ -134,12 +158,45 @@ class FragmentViewManagedApp() : MyFragment() {
     }
 
     private fun confirmRemoveRule() {
-        Toast.makeText(requireContext(), "implementar...", Toast.LENGTH_SHORT).show()
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.Por_favor_confirme))
+            .setMessage(getString(R.string.Ao_remover_um_regra_todos_os_aplicativos_gerenciados))
+            .setPositiveButton(
+                getString(R.string.Remover_regra),
+                object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        viewModel.deleteRule()
+                    }
+                })
+            .setNegativeButton(
+                getString(R.string.Cancelar),
+                object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                    }
+                })
+            .setCancelable(false)
+            .setIcon(R.drawable.vec_alert)
+            .show()
     }
 
     private fun observeRuleChanges() {
         collectFlow(viewModel.managedAppFlow) { app ->
             setupActionBar(app)
+        }
+    }
+
+    /**
+     * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.
+     * Utiliza a função collectFlow para coletar os estados do flow de forma segura e sem repetições de código.
+     */
+    private fun observeEvents() {
+        collectFlow(viewModel.eventsFlow) { event ->
+            when (event) {
+                is Event.FinishWithSuccess -> {
+                    vibrator.success()
+                    goBack()
+                }
+            }
         }
     }
 

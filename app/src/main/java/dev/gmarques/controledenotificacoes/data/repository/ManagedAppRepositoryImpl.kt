@@ -32,12 +32,16 @@ class ManagedAppRepositoryImpl @Inject constructor(private val managedAppDao: Ma
         managedAppDao.updateManagedApp(ManagedAppMapper.mapToEntity(managedApp))
     }
 
-    override suspend fun removeManagedApp(managedApp: ManagedApp) {
-        managedAppDao.deleteManagedApp(ManagedAppMapper.mapToEntity(managedApp))
+    override suspend fun deleteManagedAppById(packageId: String) {
+        managedAppDao.deleteById(packageId)
     }
 
     override suspend fun getManagedAppById(id: String): ManagedApp? {
         return managedAppDao.getManagedAppByPackageId(id)?.let { ManagedAppMapper.mapToModel(it) }
+    }
+
+    override suspend fun deleteManagedAppsByRuleId(ruleId: String): Int {
+        return managedAppDao.deleteManagedAppsByRuleId(ruleId)
     }
 
     override fun observeAllManagedApps(): Flow<List<ManagedApp>> {

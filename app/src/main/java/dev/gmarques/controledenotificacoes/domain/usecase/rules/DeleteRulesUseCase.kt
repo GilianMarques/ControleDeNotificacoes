@@ -11,6 +11,6 @@ import javax.inject.Inject
  */
 class RemoveRuleUseCase @Inject constructor(private val repository: RuleRepository) {
     suspend operator fun invoke(ruleEntity: Rule) {
-        repository.removeRule(ruleEntity)
+        repository.deleteRule(ruleEntity)
     }
 }

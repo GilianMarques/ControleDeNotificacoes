@@ -18,7 +18,7 @@ class ObserveRuleUseCase @Inject constructor(
     /**
      * Observa a regra com o ID especificado e emite atualizações sempre que houver alterações no banco.
      */
-    operator fun invoke(id: String): Flow<Rule> {
+    operator fun invoke(id: String): Flow<Rule?> {
         return repository.observeRule(id)
     }
 }

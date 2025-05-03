@@ -64,7 +64,7 @@ class AddManagedAppsViewModel @Inject constructor(
      *
      * @param app O [InstalledApp] a ser removido da lista de aplicativos selecionados.
      */
-    fun removeApp(app: InstalledApp) {
+    fun deleteApp(app: InstalledApp) {
         _selectedApps.value = _selectedApps.value!!.toMutableMap().apply { remove(app.packageId) }
     }
 

@@ -19,7 +19,6 @@ import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
-import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,7 +80,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      *
      * @param range O intervalo de tempo a ser removido.
      */
-    fun removeTimeRange(range: TimeRange) {
+    fun deleteTimeRange(range: TimeRange) {
         val ranges = LinkedHashMap(timeRanges.value)
         ranges.remove(range.id)
         _timeRanges.tryEmit(ranges)

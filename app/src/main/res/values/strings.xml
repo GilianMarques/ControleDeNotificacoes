@@ -118,5 +118,9 @@
     <string name="Remover_app">Remover app</string>
     <string name="Limpar_historico">Limpar histórico</string>
     <string name="Regras">Regras</string>
+    <string name="Deseja_mesmo_remover_este_aplicativo_da_lista_de_gerenciamento">Deseja mesmo remover este aplicativo da lista de gerenciamento?\n\nNota: Isso não removerá a regra.</string>
+    <string name="Cancelar">Cancelar</string>
+    <string name="Ao_remover_um_regra_todos_os_aplicativos_gerenciados">Ao remover um regra, todos os aplicativos gerenciados por ela assim como os seus históricos de notificação também são removidos.\n\nDeseja mesmo remover esta regra?</string>
+    <string name="Regra_nao_encntrada">Regra não encntrada</string>
 
 </resources>

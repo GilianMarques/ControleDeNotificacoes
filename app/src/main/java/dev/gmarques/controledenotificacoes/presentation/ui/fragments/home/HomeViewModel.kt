@@ -9,6 +9,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
+import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.GetAllInstalledAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveAllManagedApps
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
@@ -36,11 +38,37 @@ class HomeViewModel @Inject constructor(
     @ApplicationContext context: Context,
 ) : ViewModel() {
 
-    private val defaultAppIfInstalledOneWasUninstalled by lazy {
+    /**
+     * Um aplicativo gerenciado pode ser desinstalado pelo usuário do dispositivo.
+     * Caso isso aconteça, essa instância padrão é usada no lugar até que o usuário remova o aplicativo da lista de gerenciados
+     * ou reinstale o app no dispositivo
+     */
+    private val defaultAppIfNotFound by lazy {
         InstalledApp(
             name = context.getString(R.string.App_nao_encontrado),
             packageId = "not.found.app",
             icon = ContextCompat.getDrawable(context, R.drawable.vec_remove)!!
+        )
+    }
+
+    /**
+     * A função que combina os  dados ([combineFlows]) é atualizada sempre que qualquer um dos 3 [Flow]s é atualizado.
+     * Não existe uma ordem específica em que isso pode acontecer, por esse motivo, é possível que ao combinar os dados um
+     * aplicativo gerenciado a sua regra nao esteja presente na lista de regras, isso lançaria uma exceção.
+     * Para evitar isso, esta instância de regra é definida até que a lista de regras seja atualizada e os dados sejam combinados
+     * novamente, o que dentro do funcionamento normal do aplicativo deve acontecer instantaneamente, uma vez que ao adicionar um
+     * aplicativo gerenciado e uma regra as informações entram no banco de dados uma seguida da outra, por consequência as atualizações
+     * são disparadas em sequência também.
+     *
+     * De maneira geral o usuário não verá esta regra na tela porque a atualização será instantânea. Se isso acontecer
+     * pode ser indício de um bug e deve ser investigado.
+     *
+     */
+    val defaultRuleIfNotFound: Rule by lazy {
+        Rule(
+            name = context.getString(R.string.Regra_nao_encntrada),
+            days = listOf(WeekDay.SUNDAY),
+            timeRanges = listOf(TimeRange(1, 2, 3, 4))
         )
     }
 
@@ -55,15 +83,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
     private suspend fun loadInstalledAppsInCache() = withContext(IO) {
         installedApps.value = HashMap(getAllInstalledAppsUseCase().associateBy { it.packageId })
     }
 
-
     /**
      * Essa função existe para que seja feita a delegação da parte de combinar valores do flow, uma vez que o código de inicialização
      * do [managedAppsWithRules] estava muito Comprida
+     *
+     * Essa função é reativa sempre que houver atualizações em qualquer uma das listas esta será chamada para gerar uma nova lista combinada.
      *
      * Inicializa o [managedAppsWithRules] flow
      *
@@ -80,26 +108,31 @@ class HomeViewModel @Inject constructor(
         installedAppsCache: HashMap<String, InstalledApp>?,
     ): List<ManagedAppWithRule>? {
 
+        /*Se qualquer uma dessas listas for nula  é indicação de que não foram inicializadas
+         com valores do banco de dados ainda, portanto, nenhuma operação deve ser feita */
         if (rules == null || managedApps == null || installedAppsCache == null) return null
+
+        /*As regras são a base deste aplicativo se a lista de regras está vazia, nenhuma operação deve ser feita.
+         A lista pode ficar vazia se a última regra foi removida ou não existem regras, o que afirma que não existem
+         aplicativos gerenciados a menos que seja por um bug */
+        if (rules.isEmpty()) return emptyList()
 
         val rulesMap = rules.associateBy { it.id }
 
         return managedApps.map { managedApp ->
 
-            val installedApp = installedAppsCache[managedApp.packageId] ?: defaultAppIfInstalledOneWasUninstalled
+            val installedApp = installedAppsCache[managedApp.packageId] ?: defaultAppIfNotFound
 
             ManagedAppWithRule(
                 name = installedApp.name,
                 packageId = installedApp.packageId,
                 icon = installedApp.icon,
-                rule = rulesMap[managedApp.ruleId]
-                    ?: error("Todo aplicativo gerenciado deve ter uma regra relacionada. Verifique se não existe um bug na hora de buscar a regra ou se a regra foi removida e por algum motivo o aplicativo gerenciado não foi removido junto.")
+                rule = rulesMap[managedApp.ruleId] ?: defaultRuleIfNotFound
             )
 
         }.sortedBy { it.name }
 
     }
-
 
     /**
      * Essa função evita boilerplate code e garante a conformidade com o DRY neste viewmodel

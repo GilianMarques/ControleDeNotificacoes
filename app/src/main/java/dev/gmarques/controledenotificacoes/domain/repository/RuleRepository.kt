@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.Flow
 interface RuleRepository {
     suspend fun addRuleOrThrow(rule: Rule)
     suspend fun updateRuleOrThrow(rule: Rule)
-    suspend fun removeRule(rule: Rule)
+    suspend fun deleteRule(rule: Rule)
     suspend fun getRuleById(id: String): Rule?
     suspend fun getAllRules(): List<Rule>
     fun observeAllRules(): Flow<List<Rule>>
-    fun observeRule(id: String): Flow<Rule>
+    fun observeRule(id: String): Flow<Rule?>
 }

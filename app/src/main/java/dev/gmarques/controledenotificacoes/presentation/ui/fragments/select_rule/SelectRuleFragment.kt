@@ -37,8 +37,8 @@ import javax.inject.Inject
 class SelectRuleFragment : MyFragment() {
 
     companion object {
-        const val RESULT_KEY = "selectRuleResult"
-        const val BUNDLED_RULE_KEY = "selectRuleKey"
+        const val RESULT_LISTENER_KEY = "select_rule_listener_key"
+        const val BUNDLED_RULE_KEY = "bundled_rule"
     }
 
     private lateinit var binding: FragmentSelectRuleBinding
@@ -142,7 +142,7 @@ class SelectRuleFragment : MyFragment() {
             )
         }
 
-        setFragmentResult(RESULT_KEY, result)
+        setFragmentResult(RESULT_LISTENER_KEY, result)
         goBack()
     }
 
@@ -183,7 +183,7 @@ class SelectRuleFragment : MyFragment() {
                     rule.name.ifBlank { generateRuleNameUseCase(rule) })
             ).setPositiveButton(getString(R.string.Remover), object : DialogInterface.OnClickListener {
                 override fun onClick(dialog: DialogInterface?, which: Int) {
-                    viewModel.removeRule(rule)
+                    viewModel.deleteRule(rule)
                 }
 
             }).show()
