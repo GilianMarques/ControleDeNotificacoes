@@ -1,23 +1,26 @@
 package dev.gmarques.controledenotificacoes
 
 import android.app.Application
-import android.hardware.camera2.CaptureRequest
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.setCustomKeys
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.components.SingletonComponent
+import dev.gmarques.controledenotificacoes.domain.usecase.GetUserUseCase
 
-@HiltAndroidApp
 /**
  * Criado por Gilian Marques
  * Em sábado, 29 de março de 2025 às 14:39.
  */
+@HiltAndroidApp
 class App : Application() {
 
     companion object {
         lateinit var context: App
     }
+
 
     override fun onCreate() {
         context = this
@@ -26,12 +29,23 @@ class App : Application() {
     }
 
     private fun setupCrashLytics() {
-        FirebaseCrashlytics.getInstance().apply {
 
+        val entryPoint = EntryPointAccessors.fromApplication(this@App, AppEntryPoint::class.java)
+        val getAppUserUseCase = entryPoint.getAppUserUseCase()
+
+        FirebaseCrashlytics.getInstance().apply {
             setCustomKeys {
                 key("environment", if (BuildConfig.DEBUG) "Debug" else "Release")
             }
-            setUserId(FirebaseAuth.getInstance().currentUser?.email ?: "not_logged_in")
+            setUserId(getAppUserUseCase()?.email ?: "not_logged_in")
         }
     }
+
+
+}
+
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface AppEntryPoint {
+    fun getAppUserUseCase(): GetUserUseCase
 }

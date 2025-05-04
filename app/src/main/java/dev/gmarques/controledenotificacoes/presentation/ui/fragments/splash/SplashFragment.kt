@@ -18,9 +18,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.google.firebase.auth.FirebaseUser
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSplashBinding
+import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeViewModel
 import kotlinx.coroutines.launch
@@ -34,9 +34,9 @@ class SplashFragment : MyFragment() {
     /*Eu acesso esse ViewModel a partir daqui para que ele ao inicializar carregue os dados do HomeFragment.
     Assim, quando o usuário terminar o processo de login os dados já estejam carregados */
     private val homeFragmentViewModel: HomeViewModel by activityViewModels()
+    private val viewModel: LoginViewModel by viewModels()
 
     private lateinit var binding: FragmentSplashBinding
-    private val viewModel: LoginViewModel by viewModels()
 
     private val signInLauncher = setupSignInLauncher()
 
@@ -79,7 +79,7 @@ class SplashFragment : MyFragment() {
             when (event) {
 
                 is LoginEvent.StartFlow -> startLoginFlow()
-                is LoginEvent.Success -> onLoginSuccess(event.user ?: error("user nao pode ser nulo se o login foi bem sucedido"))
+                is LoginEvent.Success -> onLoginSuccess(event.user)
                 is LoginEvent.Error -> onLoginError(event.message)
             }
         }
@@ -136,9 +136,9 @@ class SplashFragment : MyFragment() {
 
     /**
      * Manipula o sucesso do login, configurando a UI com os dados do usuário.
-     * @param user O objeto FirebaseUser do usuário logado.
+     * @param user O objeto User do usuário logado.
      */
-    private fun onLoginSuccess(user: FirebaseUser) {
+    private fun onLoginSuccess(user: User) {
         setupUiWithUserData(user)
     }
 
@@ -154,26 +154,27 @@ class SplashFragment : MyFragment() {
         binding.tvInfo.text = message
     }
 
-    private fun setupUiWithUserData(user: FirebaseUser) = lifecycleScope.launch {
+    private fun setupUiWithUserData(user: User) = lifecycleScope.launch {
         /**
          * Configura a interface do usuário com os dados do usuário logado.
-         * @param user O objeto FirebaseUser do usuário logado.
+         * @param user O objeto User do usuário logado.
          */
         with(binding) {
 
             progressBar.isVisible = false
 
 
-            val nome = user.displayName?.split(" ")?.firstOrNull().orEmpty().ifBlank { "?" }
+            val nome = user.name.split(" ").firstOrNull().orEmpty().ifBlank { "?" }
 
             vibrator.success()
 
-            tvUserName.text = user.displayName
+            tvUserName.text = user.name
             tvGreetings.text = getString(R.string.BemvindoX, nome)
 
-            user.photoUrl?.let { photoUrl ->
+            user.photoUrl.let { photoUrl ->
                 Glide.with(root.context)
                     .load(photoUrl)
+                    .placeholder(R.drawable.ic_launcher_foreground)
                     .circleCrop()
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .into(ivProfilePicture)
@@ -181,7 +182,6 @@ class SplashFragment : MyFragment() {
             }
         }
     }
-
 
     /**
      * Observa um flow no viewmodel do HomeFragmentos que indica quando os dados foram carregados e então chama no viewmodel uma função

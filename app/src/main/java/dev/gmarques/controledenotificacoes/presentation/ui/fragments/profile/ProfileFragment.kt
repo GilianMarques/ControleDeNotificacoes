@@ -9,18 +9,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
 import com.bumptech.glide.Glide
-import com.firebase.ui.auth.AuthUI
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
 import dev.gmarques.controledenotificacoes.databinding.FragmentProfileBinding
+import dev.gmarques.controledenotificacoes.domain.usecase.GetUserUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.LogOffUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -29,6 +29,13 @@ class ProfileFragment : MyFragment() {
     // TODO: otimizar isso pq foi feito as pressas
     @Inject
     lateinit var roomDatabase: RoomDatabase
+
+    @Inject
+    lateinit var logOffUserUseCase: LogOffUserUseCase
+
+    @Inject
+    lateinit var getUserUseCase: GetUserUseCase
+
     private lateinit var binding: FragmentProfileBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,21 +91,24 @@ class ProfileFragment : MyFragment() {
 
     private suspend fun makeLogOff() = withContext(IO) {
 
-        AuthUI.getInstance().signOut(requireActivity()).await()
-        FirebaseAuth.getInstance().signOut()
-        // TODO:    roomDatabase.clearAllTables()
+        logOffUserUseCase()
+        if (!BuildConfig.DEBUG) roomDatabase.clearAllTables()
         vibrator.success()
         requireActivity().finish()
 
     }
 
     private fun loadUserData() {
-        val user = FirebaseAuth.getInstance().currentUser ?: error("usuario nao pode ser nulo aqui")
+        val user = getUserUseCase() ?: error("usuario nao pode ser nulo aqui")
 
-        binding.tvUserName.text = user.displayName
+        binding.tvUserName.text = user.name
 
-        user.photoUrl?.let { photoUrl ->
-            Glide.with(binding.root.context).load(photoUrl).circleCrop().into(binding.ivProfilePicture)
+        user.photoUrl.let { photoUrl ->
+            Glide.with(binding.root.context)
+                .load(photoUrl)
+                .placeholder(R.drawable.ic_launcher_foreground)
+                .circleCrop()
+                .into(binding.ivProfilePicture)
         }
     }
 }

@@ -19,10 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
 import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
+import dev.gmarques.controledenotificacoes.domain.usecase.GetUserUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -45,6 +45,9 @@ class HomeFragment : MyFragment() {
 
     @Inject
     lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
+
+    @Inject
+    lateinit var getUserUseCase: GetUserUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,10 +92,9 @@ class HomeFragment : MyFragment() {
 
     private fun setupUiWithUserData() = binding.apply {
 
-        val user = FirebaseAuth.getInstance().currentUser
-            ?: error("É necessário estar logado para chegar nesse ponto.")
+        val user = getUserUseCase() ?: error("É necessário estar logado para chegar nesse ponto.")
 
-        binding.tvUserName.text = user.displayName
+        binding.tvUserName.text = user.name
 
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         tvGreetings.text = when (currentHour) {
@@ -101,13 +103,12 @@ class HomeFragment : MyFragment() {
             else -> getString(R.string.Boa_noite)
         }
 
-        user.photoUrl?.let { photoUrl ->
-            Glide.with(root.context).load(photoUrl).circleCrop().into(ivProfilePicture)
-        } ?: run {
-            // Esconde a imagem se não houver foto
-            ivProfilePicture.visibility = View.GONE
-            tvUserName.visibility = View.GONE
-            tvGreetings.visibility = View.GONE
+        user.photoUrl.let { photoUrl ->
+            Glide.with(root.context)
+                .load(photoUrl)
+                .placeholder(R.drawable.ic_launcher_foreground)
+                .circleCrop()
+                .into(ivProfilePicture)
         }
 
         val views = listOf(ivProfilePicture, tvUserName, tvGreetings, ivMenu)

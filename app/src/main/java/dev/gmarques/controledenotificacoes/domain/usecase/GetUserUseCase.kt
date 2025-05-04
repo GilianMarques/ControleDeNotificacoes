@@ -1,0 +1,16 @@
+package dev.gmarques.controledenotificacoes.domain.usecase
+
+import dev.gmarques.controledenotificacoes.domain.model.User
+import dev.gmarques.controledenotificacoes.domain.repository.UserRepository
+import javax.inject.Inject
+
+/**
+ * Criado por Gilian Marques
+ * Em domingo, 04 de maio de 2025 as 11:51.
+ */
+class GetUserUseCase @Inject constructor(private val repository: UserRepository) {
+
+    operator fun invoke(): User? {
+        return repository.getUser()
+    }
+}

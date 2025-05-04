@@ -4,11 +4,12 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.firebase.ui.auth.IdpResponse
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.domain.model.User
+import dev.gmarques.controledenotificacoes.domain.usecase.GetUserUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,7 +27,10 @@ import javax.inject.Inject
  * Em domingo, 27 de abril de 2025 às 19:32.
  */
 @HiltViewModel
-class LoginViewModel @Inject constructor(@ApplicationContext private val context: Context) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val getUserUseCase: GetUserUseCase,
+) : ViewModel() {
 
     private val _navigationFlow = MutableStateFlow<NavigationRequirements>(NavigationRequirements())
     val navigationFlow: StateFlow<NavigationRequirements> get() = _navigationFlow
@@ -41,12 +45,19 @@ class LoginViewModel @Inject constructor(@ApplicationContext private val context
      */
     fun checkUserLoggedIn() = viewModelScope.launch {
 
-        val currentUser = FirebaseAuth.getInstance().currentUser
+        //Permite testar o aplicativo sem ter que autenticar o usuário
+        if (BuildConfig.DEBUG) {
+            _navigationFlow.emit(_navigationFlow.value.copy(userLoggedIn = true))
+            return@launch
+        }
+
+        val currentUser = getUserUseCase()
 
         if (currentUser == null) _eventFlow.tryEmit(LoginEvent.StartFlow)
         else {
             _navigationFlow.emit(_navigationFlow.value.copy(userLoggedIn = true))
         }
+
     }
 
     /**
@@ -56,7 +67,7 @@ class LoginViewModel @Inject constructor(@ApplicationContext private val context
     fun handleLoginResult(resultCode: Int, response: IdpResponse?) = viewModelScope.launch {
 
         if (resultCode == android.app.Activity.RESULT_OK) {
-            val user = FirebaseAuth.getInstance().currentUser
+            val user = getUserUseCase() ?: error("user nao pode ser nulo se o login foi bem sucedido")
             _eventFlow.emit(LoginEvent.Success(user))
             delay(2500) // Permite carregar os dados na conta do usuário na tela
             _navigationFlow.emit(_navigationFlow.value.copy(userLoggedIn = true))
@@ -102,9 +113,14 @@ class LoginViewModel @Inject constructor(@ApplicationContext private val context
 sealed class LoginEvent {
     object StartFlow : LoginEvent()
     data class Error(val message: String) : LoginEvent()
-    data class Success(val user: FirebaseUser?) : LoginEvent()
+    data class Success(val user: User) : LoginEvent()
 }
 
+/**
+ * Representa uma lista de requerimentos necessários para que o fragmento possa navegar para o próximo inicialmente esses
+ * requisitos eram usuários tarlogado e os dados a serem exibidos no fragmento principal terem sido carregados do banco de dados
+ * mas isso pode ter mudado
+ */
 data class NavigationRequirements(
     private val dataLoaded: Boolean = false,
     private val userLoggedIn: Boolean = false,
