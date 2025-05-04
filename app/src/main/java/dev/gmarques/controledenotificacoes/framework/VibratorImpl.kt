@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.plataform
+package dev.gmarques.controledenotificacoes.framework
 
 import android.content.Context
 import android.os.Build
@@ -7,7 +7,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
+import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
 import javax.inject.Inject
 
 /**

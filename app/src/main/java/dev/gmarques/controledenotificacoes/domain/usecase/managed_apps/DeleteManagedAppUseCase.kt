@@ -12,6 +12,6 @@ class DeleteManagedAppUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(packageId: String) {
-        repository.deleteManagedAppById(packageId)
+        repository.deleteManagedAppByPackageId(packageId)
     }
 }

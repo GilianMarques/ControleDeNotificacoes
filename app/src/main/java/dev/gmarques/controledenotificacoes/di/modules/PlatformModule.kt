@@ -1,13 +1,17 @@
+@file:Suppress("unused")
+
 package dev.gmarques.controledenotificacoes.di.modules
 
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
+import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
+import dev.gmarques.controledenotificacoes.domain.framework.service.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.usecase.contracts.RuleStringsProvider
-import dev.gmarques.controledenotificacoes.plataform.RuleStringsProviderImpl
-import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
+import dev.gmarques.controledenotificacoes.framework.RuleStringsProviderImpl
+import dev.gmarques.controledenotificacoes.framework.VibratorImpl
+import dev.gmarques.controledenotificacoes.framework.service.RuleEnforcerImpl
 
 /**
  * Criado por Gilian Marques
@@ -24,5 +28,8 @@ abstract class PlatformModule {
 
     @Binds
     abstract fun bindRuleStringsProvider(strProvider: RuleStringsProviderImpl): RuleStringsProvider
+
+    @Binds
+    abstract fun bindRuleEnforcer(strProvider: RuleEnforcerImpl): RuleEnforcer
 
 }

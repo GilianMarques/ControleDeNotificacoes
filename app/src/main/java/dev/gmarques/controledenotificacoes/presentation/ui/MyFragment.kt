@@ -20,8 +20,8 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
-import dev.gmarques.controledenotificacoes.domain.plataform.VibratorInterface
-import dev.gmarques.controledenotificacoes.plataform.VibratorImpl
+import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
+import dev.gmarques.controledenotificacoes.framework.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment

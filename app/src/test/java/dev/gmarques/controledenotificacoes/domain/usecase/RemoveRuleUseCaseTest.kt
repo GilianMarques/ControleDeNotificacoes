@@ -22,7 +22,7 @@ class RemoveRuleUseCaseTest {
     }
 
     @Test
-    fun `dada uma regra, quando execute for chamado, então repositorio removeRule deve ser invocado`() = runTest {
+    fun `dada uma regra quando execute for chamado entao repositorio removeRule deve ser invocado`() = runTest {
         val rule = Rule(
             name = "Regra Teste",
             days = listOf(WeekDay.FRIDAY),
@@ -30,6 +30,6 @@ class RemoveRuleUseCaseTest {
         )
         useCase(rule)
 
-        verify(repository).removeRule(rule)
+        verify(repository).deleteRule(rule)
     }
 }

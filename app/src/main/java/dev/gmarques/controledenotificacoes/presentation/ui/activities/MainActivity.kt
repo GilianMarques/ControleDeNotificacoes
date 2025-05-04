@@ -1,18 +1,20 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.activities
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import android.os.Bundle
 import android.util.TypedValue
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
+import dev.gmarques.controledenotificacoes.framework.service.NotificationServiceManager
 
 
 /**
@@ -20,12 +22,14 @@ import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
  * Em sábado, 29 de março de 2025 às 14:39.
  */
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity() : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var splashLabel: String
     private var backgroundChanged = false
+    private lateinit var splashLabel: String
+    private var currentFragmentLabel = ""
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,11 +46,16 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        observeNavigationChanges()
 
         if (resources.getBoolean(R.bool.portrait_only)) {
             requestedOrientation = SCREEN_ORIENTATION_PORTRAIT
         }
+
+        observeNavigationChanges()
+
+        ContextCompat.startForegroundService(this, Intent(this, NotificationServiceManager::class.java))
+
+
     }
 
     private fun observeNavigationChanges() {
@@ -56,15 +65,17 @@ class MainActivity : AppCompatActivity() {
 
         val navController = navHostFragment.navController
 
-        navController.addOnDestinationChangedListener(::applyDefaultBackgroundColor)
+        navController.addOnDestinationChangedListener { navController, destination, bundle ->
+            applyDefaultBackgroundColor()
+            currentFragmentLabel = destination.label.toString()
+        }
     }
 
     /**
      * Os fragmentos são transparentes por isso preciso remover o background do splashscreen e definir uma cor sólida
      * na activity
      */
-    @Suppress("unused")
-    private fun applyDefaultBackgroundColor(navController: NavController, destination: NavDestination, bundle: Bundle?) {
+    private fun applyDefaultBackgroundColor() {
 
         if (backgroundChanged) return
 
@@ -74,4 +85,22 @@ class MainActivity : AppCompatActivity() {
 
         backgroundChanged = true
     }
+
+    /*
+        private fun isAppInsetFromBatterySaving(): Boolean {
+            val pm = getSystemService(POWER_SERVICE) as PowerManager
+            return pm.isIgnoringBatteryOptimizations(packageName)
+        }
+
+        fun requestIgnoreBatteryOptimizations() {
+
+            val pm = getSystemService(POWER_SERVICE) as PowerManager
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                    data = Uri.parse("package:$packageName")
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                }
+                startActivity(intent)
+            }
+        }*/
 }

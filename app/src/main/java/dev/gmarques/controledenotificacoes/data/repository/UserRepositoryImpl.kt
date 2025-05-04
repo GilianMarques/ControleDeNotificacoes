@@ -4,7 +4,6 @@ import android.content.Context
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.domain.repository.UserRepository
 import kotlinx.coroutines.tasks.await
@@ -16,6 +15,7 @@ import javax.inject.Inject
  */
 class UserRepositoryImpl @Inject constructor(@ApplicationContext private val context: Context) : UserRepository {
 
+    @Suppress("unused")
     private val defaultForTestsOnlyUser by lazy {
         User(
             "Test user",
@@ -26,14 +26,13 @@ class UserRepositoryImpl @Inject constructor(@ApplicationContext private val con
 
     /**
      * Retorna o usuário logado ou nulo.
-     *
-     * Quando em depuração retorna um usuário padrão para testes
+     * Quando em depuração pode retornar um usuário padrão para testes
      */
     override fun getUser(): User? {
 
-        if (BuildConfig.DEBUG) return defaultForTestsOnlyUser
+        //   if (BuildConfig.DEBUG) return defaultForTestsOnlyUser
 
-        val fUser = FirebaseAuth/*todo remover comentario*/.getInstance()/*todo remover comentario*/.currentUser
+        val fUser = FirebaseAuth.getInstance().currentUser
         if (fUser == null) return null
 
         /*Não vejo como pode ser possível uma pessoa logar com sua conta do Google sem ter um nome e email definidos,

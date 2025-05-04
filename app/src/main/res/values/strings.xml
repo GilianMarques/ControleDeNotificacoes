@@ -122,5 +122,13 @@
     <string name="Cancelar">Cancelar</string>
     <string name="Ao_remover_um_regra_todos_os_aplicativos_gerenciados">Ao remover um regra, todos os aplicativos gerenciados por ela assim como os seus históricos de notificação também são removidos.\n\nDeseja mesmo remover esta regra?</string>
     <string name="Regra_nao_encntrada">Regra não encntrada</string>
+    <string name="Gerenciando_notificacoes">Gerenciando notificações</string>
+    <string name="Permissao_necessaria">Permissão necessária</string>
+    <string name="Para_que_esse_aplicativo_possa_desempenhar_sua_fun_o_necess_rio_que_voc_forne_a_permiss_o_para_acesso_">Para que esse aplicativo possa desempenhar sua função é necessário que você forneça permissão para acesso às notificações do seu dispositivo.\n\nNota: Sua privacidade está protegida! Seus dados nunca saem do seu dispositivo e são usados única e exclusivamente para controlar e exibir um histórico das suas notificações.</string>
+    <string name="Permitir">Permitir</string>
+    <string name="Permita_que_x_acesse_as_notificacoes">Permita que %1$s acesse as notificações</string>
+    <string name="Monitoramento_de_notificacoes">Monitoramento de notificações</string>
+    <string name="Toque_aqui_para_desativar_esta_notifica_o">Toque aqui para desativar esta notificação</string>
+    <string name="Desativar">Desativar</string>
 
 </resources>

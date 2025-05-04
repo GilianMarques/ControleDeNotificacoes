@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.Flow
 interface ManagedAppRepository {
     suspend fun addOrUpdateManagedAppOrThrow(app: ManagedApp)
     suspend fun updateManagedAppOrThrow(app: ManagedApp)
-    suspend fun deleteManagedAppById(packageId: String)
-    suspend fun getManagedAppById(id: String): ManagedApp?
+    suspend fun deleteManagedAppByPackageId(packageId: String)
     suspend fun deleteManagedAppsByRuleId(ruleId: String): Int
+    suspend fun getManagedAppByPackageId(id: String): ManagedApp?
     fun observeAllManagedApps(): Flow<List<ManagedApp>>
 }

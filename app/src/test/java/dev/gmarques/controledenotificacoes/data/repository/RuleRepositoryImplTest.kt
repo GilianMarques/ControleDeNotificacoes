@@ -85,7 +85,7 @@ class RuleRepositoryImplTest {
     fun `removeRule deve chamar deleteRule no dao`() = runBlocking {
         val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)))
 
-        repository.removeRule(rule)
+        repository.deleteRule(rule)
 
         verify(ruleDao).deleteRule(RuleMapper.mapToEntity(rule))
     }

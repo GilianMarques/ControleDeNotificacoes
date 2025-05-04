@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.data.repository
 
-import android.util.Log
 import dev.gmarques.controledenotificacoes.data.local.room.dao.RuleDao
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.RuleMapper
 import dev.gmarques.controledenotificacoes.domain.model.Rule
@@ -32,7 +31,6 @@ class RuleRepositoryImpl @Inject constructor(private val ruleDao: RuleDao) : Rul
 
     override suspend fun getRuleById(id: String): Rule? {
         return ruleDao.getRuleById(id)?.let {
-            Log.d("USUK", "RuleRepositoryImpl.getRuleById: ")
             RuleMapper.mapToModel(it)
         }
     }
@@ -40,7 +38,6 @@ class RuleRepositoryImpl @Inject constructor(private val ruleDao: RuleDao) : Rul
     override suspend fun getAllRules(): List<Rule> {
 
         return ruleDao.getAllRules().map {
-            Log.d("USUK", "RuleRepositoryImpl.getAllRules: ")
             RuleMapper.mapToModel(it)
         }
     }
@@ -49,7 +46,6 @@ class RuleRepositoryImpl @Inject constructor(private val ruleDao: RuleDao) : Rul
 
         return ruleDao.observeAllRules().map { entities ->
             entities.map {
-                Log.d("USUK", "RuleRepositoryImpl.observeAllRules: ")
                 RuleMapper.mapToModel(it)
             }
         }
