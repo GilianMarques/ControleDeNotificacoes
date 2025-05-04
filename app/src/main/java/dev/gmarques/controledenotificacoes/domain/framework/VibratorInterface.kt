@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.plataform
+package dev.gmarques.controledenotificacoes.domain.framework
 
 interface VibratorInterface {
     fun error()

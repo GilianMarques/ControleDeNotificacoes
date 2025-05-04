@@ -3,12 +3,9 @@ package dev.gmarques.controledenotificacoes
 import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.setCustomKeys
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.HiltAndroidApp
-import dagger.hilt.components.SingletonComponent
-import dev.gmarques.controledenotificacoes.domain.usecase.GetUserUseCase
+import dev.gmarques.controledenotificacoes.di.entry_points.AppEntryPoint
 
 /**
  * Criado por Gilian Marques
@@ -44,8 +41,3 @@ class App : Application() {
 
 }
 
-@EntryPoint
-@InstallIn(SingletonComponent::class)
-interface AppEntryPoint {
-    fun getAppUserUseCase(): GetUserUseCase
-}

@@ -1,0 +1,15 @@
+package dev.gmarques.controledenotificacoes.domain.framework.service
+
+import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+
+/**
+ * Criado por Gilian Marques
+ * Em domingo, 04 de maio de 2025 as 14:10.
+ *
+ * Abstração na camada de domínio que serve como contrato para a implementação de uma classe que vai verificar a existência de
+ * regras para um determinado app, e avaliar, se a notificação emitida por esse app
+ * deve ou não ser bloqueada assim como manter histórico das notificações, Através dos usecases.
+ */
+interface RuleEnforcer {
+    suspend fun enforceOnNotification(notification: AppNotification, callback: (AppNotification) -> Any)
+}

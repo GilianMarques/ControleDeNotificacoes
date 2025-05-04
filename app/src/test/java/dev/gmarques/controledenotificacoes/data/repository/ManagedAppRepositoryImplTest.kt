@@ -82,15 +82,15 @@ class ManagedAppRepositoryImplTest {
         val appEntity = ManagedAppMapper.mapToEntity(app)
 
         `when`(dao.insertOrUpdateManagedApp(appEntity)).thenAnswer { }
-        `when`(dao.deleteManagedApp(appEntity)).thenAnswer { }
+        `when`(dao.deleteManagedAppsByRuleId(appEntity.ruleId)).thenAnswer { 1 }
 
         repository.addOrUpdateManagedAppOrThrow(app)
-        repository.removeManagedApp(app)
+        repository.deleteManagedAppsByRuleId(app.ruleId)
 
-        verify(dao).deleteManagedApp(appEntity)
+        verify(dao).deleteManagedAppsByRuleId(appEntity.ruleId)
 
         `when`(dao.getManagedAppByPackageId("com.app3")).thenReturn(null)
-        val resultado = repository.getManagedAppById("com.app3")
+        val resultado = repository.getManagedAppByPackageId("com.app3")
         assertNull(resultado)
     }
 
@@ -101,7 +101,7 @@ class ManagedAppRepositoryImplTest {
 
         `when`(dao.getManagedAppByPackageId("com.app4")).thenReturn(appEntity)
 
-        val resultado = repository.getManagedAppById("com.app4")
+        val resultado = repository.getManagedAppByPackageId("com.app4")
         assertEquals(app, resultado)
     }
 
@@ -109,7 +109,7 @@ class ManagedAppRepositoryImplTest {
     fun `ao buscar app por id inexistente deve retornar nulo`() = runTest {
         `when`(dao.getManagedAppByPackageId("inexistente")).thenReturn(null)
 
-        val resultado = repository.getManagedAppById("inexistente")
+        val resultado = repository.getManagedAppByPackageId("inexistente")
         assertNull(resultado)
     }
 

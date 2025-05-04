@@ -1,12 +1,16 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 
+import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isGone
@@ -19,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
@@ -28,6 +33,7 @@ import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
@@ -74,13 +80,10 @@ class HomeFragment : MyFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View = FragmentHomeBinding
-        .inflate(inflater, container, false)
-        .also {
-            binding = it
-            setupUiWithUserData()
-        }
-        .root
+    ): View = FragmentHomeBinding.inflate(inflater, container, false).also {
+        binding = it
+        setupUiWithUserData()
+    }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -159,8 +162,7 @@ class HomeFragment : MyFragment() {
         )
 
         findNavController().navigate(
-            HomeFragmentDirections.toViewManagedAppFragment(app),
-            extras
+            HomeFragmentDirections.toViewManagedAppFragment(app), extras
         )
         binding.edtSearch.setText("")
     }
@@ -190,5 +192,48 @@ class HomeFragment : MyFragment() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (!isNotificationListenerEnabled())
+            lifecycleScope.launch { delay(1500); showNotificationListenerPermissionDialog() }
+    }
+
+    private fun isNotificationListenerEnabled(): Boolean {
+
+        val enabledListeners = Settings.Secure.getString(
+            requireActivity().contentResolver, "enabled_notification_listeners"
+        ) ?: return false
+
+        return enabledListeners.split(":").any { it.contains(requireActivity().packageName) }
+    }
+
+    private fun showNotificationListenerPermissionDialog() {
+
+
+        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Permissao_necessaria))
+            .setMessage(getString(R.string.Para_que_esse_aplicativo_possa_desempenhar_sua_fun_o_necess_rio_que_voc_forne_a_permiss_o_para_acesso_))
+            .setPositiveButton(
+                getString(R.string.Permitir), object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+                        startActivity(intent)
+                        Toast.makeText(
+                            requireActivity(),
+                            getString(R.string.Permita_que_x_acesse_as_notificacoes, getString(R.string.app_name)),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }).setNegativeButton(
+                getString(R.string.Sair), object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        requireActivity().finish()
+                    }
+                }).setCancelable(false).setIcon(R.drawable.vec_permission).show()
+
+
+    }
+
 
 }

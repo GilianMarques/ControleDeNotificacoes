@@ -1,0 +1,8 @@
+NotificationListenerService: É o listener responsável por receber as notificações disparadas no dispositivo.
+Ele recebe as notificações avalia através do [RuleEnforcer] e por fim cancela a notificação se necessário.
+
+NotificationServiceManager: É responsável por manter o processo do aplicativo aberto.
+Ele verifica periodicamente se o [NotificationListenerService] está sendo executado e força sua inicialização caso não esteja.
+
+RuleEnforcer: Seu papel é buscar no banco de dados as configurações para o app que disparou a notificação e verificar
+se ela deve ser cancelada ou não além de manter o histórico das notificações que foram canceladas

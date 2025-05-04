@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.plataform.usecase
+package dev.gmarques.controledenotificacoes.framework.usecase
 
 import android.content.Context
 import android.util.Log
@@ -9,7 +9,7 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
-import dev.gmarques.controledenotificacoes.plataform.RuleStringsProviderImpl
+import dev.gmarques.controledenotificacoes.framework.RuleStringsProviderImpl
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith

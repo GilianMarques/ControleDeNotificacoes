@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.firebase.ui.auth.IdpResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.domain.usecase.GetUserUseCase
@@ -44,12 +43,6 @@ class LoginViewModel @Inject constructor(
      * Emite um evento e atualiza o estado de navegação caso já esteja autenticado.
      */
     fun checkUserLoggedIn() = viewModelScope.launch {
-
-        //Permite testar o aplicativo sem ter que autenticar o usuário
-        if (BuildConfig.DEBUG) {
-            _navigationFlow.emit(_navigationFlow.value.copy(userLoggedIn = true))
-            return@launch
-        }
 
         val currentUser = getUserUseCase()
 

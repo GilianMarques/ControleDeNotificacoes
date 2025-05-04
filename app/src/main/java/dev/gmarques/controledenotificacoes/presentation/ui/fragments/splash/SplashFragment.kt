@@ -2,7 +2,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -191,7 +190,6 @@ class SplashFragment : MyFragment() {
      */
     private fun observeSharedViewModel() {
         collectFlow(homeFragmentViewModel.managedAppsWithRules) { apps ->
-            Log.d("USUK", "SplashFragment.".plus("observeSharedViewModel() apps = $apps"))
             apps?.let {
                 viewModel.localDataLoaded()
             }
