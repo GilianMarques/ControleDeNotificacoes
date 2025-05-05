@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.framework.service
 
+import android.util.Log
 import dev.gmarques.controledenotificacoes.domain.framework.service.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
@@ -43,10 +44,14 @@ class RuleEnforcerImpl @Inject constructor(
             now.get(Calendar.DAY_OF_WEEK).let { if (it == Calendar.SUNDAY) 7 else it - 1 } // TODO: essa linha deve ser testada
         val currentMinutes = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
 
+        Log.d("USUK", "RuleEnforcerImpl.enforceOnNotification: \napp: $managedApp\n$rule")
+
         if (shouldBlockNotification(rule, currentDay, currentMinutes)) {
             removeNotificationCallback(notification)
-            launch { saveNotificationOnHistory(notification, managedApp) }
         }
+
+        launch { saveNotificationOnHistory(notification, managedApp) }
+
     }
 
     private fun shouldBlockNotification(rule: Rule, currentDay: Int, currentMinutes: Int): Boolean {

@@ -26,7 +26,7 @@ import javax.inject.Inject
  * Em domingo, 27 de abril de 2025 às 19:32.
  */
 @HiltViewModel
-class LoginViewModel @Inject constructor(
+class SplashViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val getUserUseCase: GetUserUseCase,
 ) : ViewModel() {

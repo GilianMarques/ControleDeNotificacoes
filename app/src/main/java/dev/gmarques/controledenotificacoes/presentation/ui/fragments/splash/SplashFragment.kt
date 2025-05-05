@@ -33,7 +33,7 @@ class SplashFragment : MyFragment() {
     /*Eu acesso esse ViewModel a partir daqui para que ele ao inicializar carregue os dados do HomeFragment.
     Assim, quando o usuário terminar o processo de login os dados já estejam carregados */
     private val homeFragmentViewModel: HomeViewModel by activityViewModels()
-    private val viewModel: LoginViewModel by viewModels()
+    private val viewModel: SplashViewModel by viewModels()
 
     private lateinit var binding: FragmentSplashBinding
 

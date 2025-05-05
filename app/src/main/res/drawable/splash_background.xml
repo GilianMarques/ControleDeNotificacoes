@@ -9,8 +9,8 @@
         android:gravity="center" />
 
     <item
-        android:width="116dp"
-        android:height="116dp"
+        android:width="156dp"
+        android:height="156dp"
         android:drawable="@drawable/ic_launcher_foreground"
         android:gravity="center" />
 
