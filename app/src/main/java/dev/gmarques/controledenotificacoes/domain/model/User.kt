@@ -1,5 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
+import java.io.Serializable
+
 /**
  * Criado por Gilian Marques
  * Em domingo, 04 de maio de 2025 as 10:53.
@@ -14,6 +16,5 @@ data class User(
     val name: String,
     val email: String,
     val photoUrl: String,
-) {
-    companion object
+) : Serializable {
 }

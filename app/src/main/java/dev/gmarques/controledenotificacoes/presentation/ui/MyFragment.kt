@@ -188,6 +188,7 @@ open class MyFragment : Fragment() {
      * Este méto-do é chamado para simular o pressionamento do botão voltar.
      */
     protected fun goBack() {
+        vibrator.interaction()
         findNavController().popBackStack()
     }
 

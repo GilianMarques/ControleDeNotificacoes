@@ -130,5 +130,9 @@
     <string name="Monitoramento_de_notificacoes">Monitoramento de notificações</string>
     <string name="Toque_aqui_para_desativar_esta_notifica_o">Toque aqui para desativar esta notificação</string>
     <string name="Desativar">Desativar</string>
+    <string name="Fazer_login">Fazer login</string>
+    <string name="Bem_vindo_entre_com_sua_conta_google_para_continuar">Bem-Vindo!\n\nEntre com sua conta Google para continuar.</string>
+    <string name="Seus_dados_s_o_usados_apenas_para_personalizar_a_interface_e_nunca_saem_do_seu_dispositivo">Seus dados são usados apenas para personalizar a interface e nunca saem do seu dispositivo.</string>
+
 
 </resources>

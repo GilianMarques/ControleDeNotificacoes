@@ -58,6 +58,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
         lifecycleScope.launch {
             delay(500)
+            setupActionBar(binding.toolbar)
             setupNameInput()
             setupButtonTypeRule()
             setupChipDays()
@@ -87,7 +88,8 @@ class AddOrUpdateRuleFragment : MyFragment() {
     private fun setupEditingModeIfNeeded() {
         args.editingRule?.let {
             viewModel.setEditingRule(it)
-            showEditHint()
+            binding.toolbar.tvTitle.text = getString(R.string.Editar_regra)
+            lifecycleScope.launch { delay(500); showEditHint() }
         }
     }
 

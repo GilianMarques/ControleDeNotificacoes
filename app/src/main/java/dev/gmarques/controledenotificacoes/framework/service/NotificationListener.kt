@@ -33,10 +33,10 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         val x = System.currentTimeMillis()
         launch {
             ruleEnforcer.enforceOnNotification(not) {
-                Log.d(
+            /*    Log.d(
                     "USUK",
                     "NotificationListener.onNotificationPosted: ${it.title} cancelada processTime: ${System.currentTimeMillis() - x}mls"
-                )
+                )*/
                 cancelNotification(sbn.key)
             }
         }

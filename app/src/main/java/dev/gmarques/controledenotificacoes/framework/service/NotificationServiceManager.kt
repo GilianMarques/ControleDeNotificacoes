@@ -95,7 +95,7 @@ class NotificationServiceManager : Service() {
     }
 
     fun forceReconnectNotificationListener() {
-        Log.d("USUK", "NotificationServiceManager.forceReconnectNotificationService: tentado ligar listener")
+   //     Log.d("USUK", "NotificationServiceManager.forceReconnectNotificationService: tentado ligar listener")
 
         val pm = packageManager
         val componentName = ComponentName(this, NotificationListener::class.java)

@@ -1,21 +1,17 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.firebase.ui.auth.IdpResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.domain.usecase.GetUserUseCase
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.text.MessageFormat
 import javax.inject.Inject
 
 /**
@@ -34,90 +30,56 @@ class SplashViewModel @Inject constructor(
     private val _navigationFlow = MutableStateFlow<NavigationRequirements>(NavigationRequirements())
     val navigationFlow: StateFlow<NavigationRequirements> get() = _navigationFlow
 
-    private val _eventFlow = MutableSharedFlow<LoginEvent>(replay = 1)
-    val eventFlow: SharedFlow<LoginEvent> get() = _eventFlow
+    private val _eventFlow = MutableSharedFlow<SplashEvent>(replay = 1)
+    val eventFlow: SharedFlow<SplashEvent> get() = _eventFlow
 
     /**
      * Verifica se o usuário já está autenticado no Firebase.
      * Emite um evento para iniciar o fluxo de login caso não esteja.
      * Emite um evento e atualiza o estado de navegação caso já esteja autenticado.
      */
-    fun checkUserLoggedIn() = viewModelScope.launch {
+    fun checkLoginState() = viewModelScope.launch {
 
         val currentUser = getUserUseCase()
-
-        if (currentUser == null) _eventFlow.tryEmit(LoginEvent.StartFlow)
-        else {
-            _navigationFlow.emit(_navigationFlow.value.copy(userLoggedIn = true))
-        }
+        if (currentUser == null) _eventFlow.tryEmit(SplashEvent.NavigateToLoginFragment)
+        else addNavigationRequirement(NavigationRequirements.Requirement.USER_LOGGED_IN)
 
     }
 
     /**
-     * Lida com o resultado do fluxo de autenticação FirebaseUI.
-     * Emite eventos de sucesso ou erro com base no resultado.
+     * Indica que um requisito de navegação foi satisfeito.
+     * Quando todos os requisitos em [NavigationRequirements] forem satisfeitos o [SplashFragment] navegara para o [HomeFragment]
+     * @param NavigationRequirements Qualquer valor dentro de [NavigationRequirements.Requirement]
      */
-    fun handleLoginResult(resultCode: Int, response: IdpResponse?) = viewModelScope.launch {
-
-        if (resultCode == android.app.Activity.RESULT_OK) {
-            val user = getUserUseCase() ?: error("user nao pode ser nulo se o login foi bem sucedido")
-            _eventFlow.emit(LoginEvent.Success(user))
-            delay(2500) // Permite carregar os dados na conta do usuário na tela
-            _navigationFlow.emit(_navigationFlow.value.copy(userLoggedIn = true))
-        } else {
-            _eventFlow.emit(LoginEvent.Error(response.toErrorMessage()))
-        }
+    fun addNavigationRequirement(requirement: NavigationRequirements.Requirement) {
+        _navigationFlow.value = _navigationFlow.value.copy(requirement)
     }
 
-    /**
-     * Converte um objeto IdpResponse em uma mensagem de erro legível.
-     */
-    private fun IdpResponse?.toErrorMessage(): String {
-        if (this == null) return context.getString(R.string.Voce_cancelou_o_login)
-
-        return when (error?.errorCode) {
-
-            com.firebase.ui.auth.ErrorCodes.NO_NETWORK -> context.getString(R.string.voce_n_o_est_conectado_internet)
-            com.firebase.ui.auth.ErrorCodes.DEVELOPER_ERROR -> context.getString(
-                R.string.Erro_de_desenvolvimento_c_digo, error?.errorCode, error?.message
-            )
-
-            com.firebase.ui.auth.ErrorCodes.PROVIDER_ERROR -> context.getString(
-                R.string.Erro_no_provedor_c_digo, error?.errorCode, error?.message
-            )
-
-            else -> MessageFormat.format(
-                context.getString(R.string.O_login_falhou_c_digo_0_mensagem_1), error?.errorCode, error?.message
-            )
-        }
-    }
-
-    /**
-     * Essa função é chamada quando o listener do viewmodel do homefragment indica que os dados do usuário foram carregados
-     * Essa função atualiza o flow que resulta na interface navegando para o próximo fragmento apenas quando os dados forem carregados
-     * Existem outras condições para que este fragmento navegue para o próximo mas esta função é responsável apenas  por informar que o requisito de
-     * carregamento de dados foi concluído
-     */
-    fun localDataLoaded() {
-        _navigationFlow.value = _navigationFlow.value.copy(dataLoaded = true)
-    }
 }
 
-sealed class LoginEvent {
-    object StartFlow : LoginEvent()
-    data class Error(val message: String) : LoginEvent()
-    data class Success(val user: User) : LoginEvent()
+/**Representa os eventos da UI*/
+sealed class SplashEvent {
+    object NavigateToLoginFragment : SplashEvent()
 }
 
 /**
- * Representa uma lista de requerimentos necessários para que o fragmento possa navegar para o próximo inicialmente esses
- * requisitos eram usuários tarlogado e os dados a serem exibidos no fragmento principal terem sido carregados do banco de dados
- * mas isso pode ter mudado
+ * Representa uma lista de requerimentos necessários para que o [SplashFragment] possa navegar para o [HomeFragment]
  */
 data class NavigationRequirements(
-    private val dataLoaded: Boolean = false,
-    private val userLoggedIn: Boolean = false,
+    private val requirement: Requirement = Requirement.NONE,
+    private val satisfiedRequirements: HashSet<Requirement> = hashSetOf<Requirement>(),
 ) {
 
-    fun canNavigateHome() = dataLoaded && userLoggedIn
+    init {
+        satisfiedRequirements.add(requirement)
+    }
+
+    fun canNavigateHome() = satisfiedRequirements.containsAll(Requirement.values().toSet())
+
+    enum class Requirement {
+        NONE,
+        DATA_LOADED,
+        USER_LOGGED_IN;
+    }
 }
+

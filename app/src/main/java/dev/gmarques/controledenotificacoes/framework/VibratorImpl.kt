@@ -40,7 +40,6 @@ class VibratorImpl @Inject constructor(@ApplicationContext private val context: 
      * Realiza uma vibração curta.
      */
     override fun interaction() {
-        throw RuntimeException("Não é permitido o uso de vibração para interações. Apenas sucesso e erro estão liberadas")
         vibrate(25) // Duração curta
     }
 

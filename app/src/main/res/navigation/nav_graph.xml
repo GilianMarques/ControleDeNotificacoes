@@ -45,11 +45,24 @@
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash.SplashFragment"
         android:label="@string/Splash_fragment"
         tools:layout="@layout/fragment_splash">
+
         <action
             android:id="@+id/to_homeFragment"
             app:destination="@id/homeFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+
+        <action
+            android:id="@+id/to_loginFragment"
+            app:destination="@id/loginFragment"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
+
+        <argument
+            android:name="user"
+            android:defaultValue="@null"
+            app:argType="dev.gmarques.controledenotificacoes.domain.model.User"
+            app:nullable="true" />
 
     </fragment>
 
@@ -104,5 +117,18 @@
         android:label="ProfileFragment"
 
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.login.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/to_splashFragment"
+            app:destination="@id/splashFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+
+    </fragment>
 
 </navigation>

@@ -87,10 +87,12 @@ class HomeFragment : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupRecyclerView()
-        observeViewModel()
-        setupFabAddManagedApp()
-        setupSearch()
+        lifecycleScope.launch {
+            setupRecyclerView()
+            observeViewModel()
+            setupFabAddManagedApp()
+            setupSearch()
+        }
     }
 
     private fun setupUiWithUserData() = binding.apply {
