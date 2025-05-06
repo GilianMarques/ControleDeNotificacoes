@@ -10,14 +10,34 @@
 
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginBottom="48dp"
-        android:background="@drawable/back_round_splash"
-        android:src="@drawable/ic_launcher_foreground"
-        app:layout_constraintBottom_toTopOf="@id/tv_message"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/art_login"
+        app:layout_constraintBottom_toTopOf="@id/tv_introduction"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tv_introduction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"
+        android:fontFamily="@font/urbanist_extrabold"
+        android:paddingStart="16dp"
+        android:layout_marginTop="64dp"
+        android:paddingEnd="16dp"
+        android:text="@string/Defina_os_dias_e_horarios_em_que_cada_aplicativo_pode_exibir_notificacoes"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:maxWidth="500dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
@@ -25,16 +45,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="2dp"
-        android:fontFamily="@font/urbanist_extrabold"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:text="Seja bem-vindo(a)!\nEntre com sua conta Google para continuar."
+        android:text="@string/Entre_com_sua_conta_google"
         android:textAlignment="center"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_data_detail"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tv_data_detail"
@@ -45,9 +63,11 @@
         android:fontFamily="@font/urbanist_semibold"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:text="Seus dados são usados apenas para personalizar a interface e nunca saem do seu dispositivo."
+        android:text="@string/Seus_dados_s_o_usados_apenas_para_personalizar_a_interface_e_nunca_saem_do_seu_dispositivo"
         android:textAlignment="center"
         android:textSize="14sp"
+        android:maxWidth="500dp"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -91,7 +111,7 @@
         android:textSize="16sp"
         android:visibility="invisible"
         app:icon="@drawable/vec_try_again"
-        app:layout_constraintBottom_toTopOf="@id/tv_data_detail"
+        app:layout_constraintBottom_toTopOf="@id/tv_message"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -107,7 +127,7 @@
         android:text="@string/Fazer_login"
         android:textSize="16sp"
         app:icon="@drawable/vec_login"
-        app:layout_constraintBottom_toTopOf="@id/tv_data_detail"
+        app:layout_constraintBottom_toTopOf="@id/tv_message"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

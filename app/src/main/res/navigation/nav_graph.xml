@@ -49,8 +49,8 @@
         <action
             android:id="@+id/to_homeFragment"
             app:destination="@id/homeFragment"
-            app:popUpTo="@id/homeFragment"
-            app:popUpToInclusive="false" />
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
 
         <action
             android:id="@+id/to_loginFragment"
