@@ -272,7 +272,7 @@ open class MyFragment : Fragment() {
                     override fun onClick(dialog: DialogInterface?, which: Int) {}
                 })
             .setCancelable(false)
-            .setIcon(R.drawable.vec_edit_rule)
+            .setIcon(R.drawable.vec_hint)
             .show()
     }
 }

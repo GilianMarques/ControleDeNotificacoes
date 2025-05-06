@@ -20,6 +20,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBinding
 import dev.gmarques.controledenotificacoes.databinding.FragmentLoginBinding
 import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -40,10 +41,12 @@ class LoginFragment : MyFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View {
-        binding = FragmentLoginBinding.inflate(inflater, container, false)
-        return binding.root
+    ):View {
+        return FragmentLoginBinding.inflate(inflater, container, false).also {
+            binding = it
+        }.root
     }
+
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

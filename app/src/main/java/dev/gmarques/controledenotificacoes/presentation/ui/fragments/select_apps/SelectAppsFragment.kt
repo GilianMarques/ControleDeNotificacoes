@@ -73,7 +73,7 @@ class SelectAppsFragment : MyFragment() {
         binding.ivMenu.isVisible = true
         binding.ivMenu.setOnClickListener(AnimatedClickListener {
 
-            onSingleSectionWithIconsClicked(binding.ivMenu)
+            showPopUpMenu(binding.ivMenu)
         })
 
     }
@@ -207,9 +207,10 @@ class SelectAppsFragment : MyFragment() {
         goBack()
     }
 
-    private fun onSingleSectionWithIconsClicked(view: View) {
+    private fun showPopUpMenu(view: View) {
         val popupMenu = popupMenu {
-            section {
+
+                   section {
 
                 item {
                     label = getString(R.string.Selecionar_todos)
@@ -220,6 +221,13 @@ class SelectAppsFragment : MyFragment() {
                 }
 
                 item {
+                    label = getString(R.string.Desselecionar_todos)
+                    icon = R.drawable.vec_select_none
+                    callback = {
+                        viewModel.selectAppsAllOrNone(false)
+                    }
+                }
+                item {
                     label = getString(R.string.Inverter_sele_o)
                     icon = R.drawable.vec_invert_selection
                     callback = {
@@ -227,16 +235,21 @@ class SelectAppsFragment : MyFragment() {
                     }
                 }
 
+            }
+
+            section {
+
                 item {
-                    label = getString(R.string.Desselecionar_todos)
-                    icon = R.drawable.vec_select_none
+                    label = if (viewModel.includeSystemApps) getString(R.string.Exlcuir_apps_do_sistema) else getString(R.string.Incluir_apps_do_sistema)
+                    icon = R.drawable.vec_app
                     callback = {
-                        viewModel.selectAppsAllOrNone(false)
+                        viewModel.toggleIncludeSystemApps()
                     }
                 }
 
-
             }
+
+
         }
         popupMenu.show(this@SelectAppsFragment.requireContext(), view)
     }

@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +11,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.databinding.FragmentAddOrEditRuleBinding
+import dev.gmarques.controledenotificacoes.databinding.FragmentAddOrUpdateRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
 import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.model.Rule
@@ -42,17 +40,17 @@ class AddOrUpdateRuleFragment : MyFragment() {
     private val viewModel: AddOrUpdateRuleViewModel by viewModels()
     private val args: AddOrUpdateRuleFragmentArgs by navArgs()
 
-    private lateinit var binding: FragmentAddOrEditRuleBinding
+    private lateinit var binding: FragmentAddOrUpdateRuleBinding
 
     companion object {
-        const val RESULT_KEY = "add_update_rule_result"
+        const val RESULT_LISTENER_KEY = "add_update_rule_result"
         const val RULE_KEY = "rule"
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ) = FragmentAddOrEditRuleBinding.inflate(inflater, container, false).also {
+    ) = FragmentAddOrUpdateRuleBinding.inflate(inflater, container, false).also {
         binding = it
         setupActionBar(binding.toolbar)
     }.root
@@ -445,7 +443,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
     private fun setResultAndClose(rule: Rule) {
         val bundle = Bundle().apply { putSerializable(RULE_KEY, rule) }
-        setFragmentResult(RESULT_KEY, bundle)
+        setFragmentResult(RESULT_LISTENER_KEY, bundle)
         vibrator.success()
         goBack()
     }

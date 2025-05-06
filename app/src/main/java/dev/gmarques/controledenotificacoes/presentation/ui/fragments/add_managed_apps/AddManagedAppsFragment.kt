@@ -14,12 +14,14 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBinding
+import dev.gmarques.controledenotificacoes.databinding.FragmentSelectRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetAllRulesUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.SelectAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment.Companion.BUNDLED_RULE_KEY
@@ -58,8 +60,10 @@ class AddManagedAppsFragment() : MyFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentAddManagedAppsBinding.inflate(layoutInflater)
-        return binding.root
+        return FragmentAddManagedAppsBinding.inflate(inflater, container, false).also {
+            binding = it
+            setupActionBar(binding.toolbar)
+        }.root
     }
 
 
@@ -151,9 +155,9 @@ class AddManagedAppsFragment() : MyFragment() {
                             tvRuleTittle to tvRuleTittle.transitionName,
                             tvTargetApp to tvTargetApp.transitionName,
                             appsContainer to appsContainer.transitionName,
-                            fabConclude to fabConclude.transitionName,
                             llRule to llRule.transitionName,
                             tvTargetApp to tvTargetApp.transitionName,
+                            fabConclude to fabConclude.transitionName,
                         )
                     )
                 } else {
@@ -177,6 +181,11 @@ class AddManagedAppsFragment() : MyFragment() {
 
         setFragmentResultListener(SelectRuleFragment.RESULT_LISTENER_KEY) { _, bundle ->
             val rule = requireSerializableOf(bundle, BUNDLED_RULE_KEY, Rule::class.java)
+            viewModel.setRule(rule!!)
+        }
+
+        setFragmentResultListener(AddOrUpdateRuleFragment.RESULT_LISTENER_KEY) { _, bundle ->
+            val rule = requireSerializableOf(bundle, AddOrUpdateRuleFragment.RULE_KEY, Rule::class.java)
             viewModel.setRule(rule!!)
         }
     }

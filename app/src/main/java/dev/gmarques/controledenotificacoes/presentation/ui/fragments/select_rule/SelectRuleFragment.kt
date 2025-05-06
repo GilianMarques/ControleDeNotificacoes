@@ -2,7 +2,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rul
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,13 +17,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.zawadz88.materialpopupmenu.popupMenu
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectRuleBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRemovalDialog
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -57,14 +56,16 @@ class SelectRuleFragment : MyFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        binding = FragmentSelectRuleBinding.inflate(inflater, container, false)
-        return binding.root
+        return FragmentSelectRuleBinding.inflate(inflater, container, false).also {
+            binding = it
+            setupActionBar(binding.toolbar)
+        }.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupActionBar(binding.toolbar)
         setupRecyclerView()
         setupFabAddRule()
         observeViewModel()
@@ -177,17 +178,9 @@ class SelectRuleFragment : MyFragment() {
     }
 
     private fun confirmRuleRemoval(rule: Rule) {
-        MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Por_favor_confirme)).setMessage(
-                getString(
-                    R.string.Deseja_mesmo_remover_a_regra_essa_a_o_n_o_poder_ser_desfeita,
-                    rule.name.ifBlank { generateRuleNameUseCase(rule) })
-            ).setPositiveButton(getString(R.string.Remover), object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface?, which: Int) {
-                    viewModel.deleteRule(rule)
-                }
-
-            }).show()
-
+        ConfirmRuleRemovalDialog(this@SelectRuleFragment, rule) {
+            viewModel.deleteRule(it)
+        }
     }
 
     private fun navigateToAddEditRuleFragment(rule: Rule? = null) {

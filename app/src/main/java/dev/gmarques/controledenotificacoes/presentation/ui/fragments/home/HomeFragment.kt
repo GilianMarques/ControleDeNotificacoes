@@ -24,20 +24,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
 import com.bumptech.glide.Glide
+import com.github.zawadz88.materialpopupmenu.MaterialPopupMenuBuilder
+import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
+import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app.FragmentViewManagedApp
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
+import kotlin.text.Typography.section
 
 /**
  * Fragment responsável por exibir a lista de aplicativos controlados.
@@ -89,11 +94,34 @@ class HomeFragment : MyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
+            setupPopUpMenu()
             setupRecyclerView()
             observeViewModel()
             setupFabAddManagedApp()
             setupSearch()
         }
+    }
+
+    fun setupPopUpMenu() {
+        val popupMenu = popupMenu {
+
+
+            section {
+
+                item {
+                    label = getString(R.string.Atribuicoes)
+                    icon = R.drawable.vec_add
+                    callback = {
+                        Toast.makeText(requireContext(), "implementar...", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+        }
+
+        binding.ivMenu.setOnClickListener(AnimatedClickListener {
+            popupMenu.show(this@HomeFragment.requireContext(), binding.ivMenu)
+        })
     }
 
     private fun setupUiWithUserData() = binding.apply {

@@ -18,8 +18,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_profile_picture"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
@@ -27,11 +27,11 @@
         android:background="@drawable/back_profile_picture"
         android:contentDescription="@string/Foto_de_perfil_do_usuario"
         android:elevation="20dp"
-        android:padding="2dp"
+        android:padding="3dp"
         android:transitionName="profile_picture"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/vec_rule_restrictive_small" />
+        tools:src="@drawable/back_circle" />
 
     <TextView
         android:id="@+id/tv_greetings"

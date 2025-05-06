@@ -18,6 +18,8 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentViewManagedAppBin
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRemovalDialog
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReferenceSmall
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setRuleDrawable
@@ -158,25 +160,9 @@ class FragmentViewManagedApp() : MyFragment() {
     }
 
     private fun confirmRemoveRule() {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.Por_favor_confirme))
-            .setMessage(getString(R.string.Ao_remover_um_regra_todos_os_aplicativos_gerenciados))
-            .setPositiveButton(
-                getString(R.string.Remover_regra),
-                object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        viewModel.deleteRule()
-                    }
-                })
-            .setNegativeButton(
-                getString(R.string.Cancelar),
-                object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                    }
-                })
-            .setCancelable(false)
-            .setIcon(R.drawable.vec_alert)
-            .show()
+        ConfirmRuleRemovalDialog(this@FragmentViewManagedApp, viewModel.managedAppFlow.value.rule) {
+            viewModel.deleteRule()
+        }
     }
 
     private fun observeRuleChanges() {

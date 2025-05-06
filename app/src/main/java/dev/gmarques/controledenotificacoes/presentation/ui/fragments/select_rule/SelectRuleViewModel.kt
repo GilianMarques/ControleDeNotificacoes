@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.usecase.DeleteRuleWithAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.RemoveRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SelectRuleViewModel @Inject constructor(
     observeAllRulesUseCase: ObserveAllRulesUseCase,
-    private val removeRuleUseCase: RemoveRuleUseCase,
+    private val deleteRuleWithAppsUseCase: DeleteRuleWithAppsUseCase,
 ) : ViewModel() {
 
     private val _ruleRemovalResult: MutableLiveData<EventWrapper<Result<Unit>>> = MutableLiveData()
@@ -39,7 +39,7 @@ class SelectRuleViewModel @Inject constructor(
 
     fun deleteRule(rule: Rule) = viewModelScope.launch(IO) {
         try {
-            removeRuleUseCase(rule)
+            deleteRuleWithAppsUseCase(rule)
             _ruleRemovalResult.postValue(EventWrapper(Result.success(Unit)))
         } catch (e: Exception) {
             _ruleRemovalResult.postValue(EventWrapper(Result.failure(e)))

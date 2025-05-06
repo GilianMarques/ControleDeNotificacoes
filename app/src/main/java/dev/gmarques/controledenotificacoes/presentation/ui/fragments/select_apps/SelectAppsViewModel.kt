@@ -44,6 +44,10 @@ class SelectAppsViewModel @Inject constructor(
     var preSelectedAppsToHide: HashSet<String> = hashSetOf()
 
     private var initialized = false
+
+    var includeSystemApps = false
+        private set
+
     val onAppCheckedMutex = Mutex()
 
     fun searchApps() = viewModelScope.launch(IO) {
@@ -146,6 +150,11 @@ class SelectAppsViewModel @Inject constructor(
         }
 
         if (notifyAboutLimit) notifyCantSelectMoreApps()
+    }
+
+    fun toggleIncludeSystemApps() {
+        includeSystemApps = !includeSystemApps
+        searchApps()
     }
 
 }

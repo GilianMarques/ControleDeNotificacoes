@@ -136,6 +136,9 @@
     <string name="Entre_com_sua_conta_google">Entre com sua conta Google.</string>
     <string name="Defina_os_dias_e_horarios_em_que_cada_aplicativo_pode_exibir_notificacoes">Defina os dias e horários em que cada aplicativo pode exibir notificações e tenha mais foco no trabalho e tranquilidade no dia a dia!</string>
     <string name="Clique_no_bot_o_para_configurar_o_primeiro_app">Clique no botão + para configurar o primeiro app</string>
+    <string name="Atribuicoes">Atribuições</string>
+    <string name="Incluir_apps_do_sistema">Incluir apps do sistema</string>
+    <string name="Exlcuir_apps_do_sistema">Exlcuir apps do sistema</string>
 
 
 </resources>
