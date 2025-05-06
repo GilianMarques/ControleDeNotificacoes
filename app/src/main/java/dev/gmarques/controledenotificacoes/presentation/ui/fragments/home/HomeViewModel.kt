@@ -11,7 +11,7 @@ import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
-import dev.gmarques.controledenotificacoes.domain.usecase.GetAllInstalledAppsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveAllManagedApps
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp

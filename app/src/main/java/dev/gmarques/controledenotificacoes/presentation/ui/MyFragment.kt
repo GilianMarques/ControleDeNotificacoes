@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui
 
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -16,11 +17,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.transition.ChangeBounds
 import androidx.transition.Fade
 import androidx.transition.TransitionSet
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
+import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.framework.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
@@ -45,6 +49,12 @@ open class MyFragment : Fragment() {
 
     @Inject
     lateinit var vibrator: VibratorInterface
+
+    @Inject
+    lateinit var savePreferenceUseCase: SavePreferenceUseCase
+
+    @Inject
+    lateinit var readPreferenceUseCase: ReadPreferenceUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -236,4 +246,26 @@ open class MyFragment : Fragment() {
         }
     }
 
+    protected open fun showHintDialog(
+        key: String,
+        msg: String,
+    ) = lifecycleScope.launch {
+
+        if (readPreferenceUseCase(key, false)) return@launch
+
+        vibrator.interaction()
+
+        MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Dica))
+            .setMessage(msg)
+            .setPositiveButton(
+                getString(R.string.Entendi), object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                        lifecycleScope.launch { savePreferenceUseCase(key, true) }
+                    }
+                }).setNegativeButton(
+                getString(R.string.Lembre_me_da_proxima_vez), object : DialogInterface.OnClickListener {
+                    override fun onClick(dialog: DialogInterface?, which: Int) {
+                    }
+                }).setCancelable(false).setIcon(R.drawable.vec_edit_rule).show()
+    }
 }

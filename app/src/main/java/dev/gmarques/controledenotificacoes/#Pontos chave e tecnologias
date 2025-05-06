@@ -5,6 +5,7 @@ Unit tests
 Instrumented tests
 Transitions Framework
 Room + transaçoes atomicas
+DataStore para preferencias
 Coroutines with Mutex
 Acessibilidade
 combinar multiplos datasources com flows (home fragment)

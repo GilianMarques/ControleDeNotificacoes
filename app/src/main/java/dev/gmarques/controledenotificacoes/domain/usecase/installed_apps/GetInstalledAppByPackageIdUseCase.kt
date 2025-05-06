@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.usecase
+package dev.gmarques.controledenotificacoes.domain.usecase.installed_apps
 
 import dev.gmarques.controledenotificacoes.domain.repository.AppRepository
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp

@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase
 
 import dev.gmarques.controledenotificacoes.domain.repository.AppRepository
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

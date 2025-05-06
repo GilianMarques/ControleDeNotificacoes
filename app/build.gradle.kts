@@ -130,6 +130,8 @@ dependencies {
     //noinspection KaptUsageInsteadOfKsp
     kapt("com.github.bumptech.glide:compiler:4.16.0")
 
+    implementation("androidx.datastore:datastore-preferences:1.1.3")
+
 
 }
 

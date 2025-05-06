@@ -8,12 +8,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.User
-import dev.gmarques.controledenotificacoes.domain.usecase.GetUserUseCase
-import kotlinx.coroutines.delay
+import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.MessageFormat
 import javax.inject.Inject

@@ -129,8 +129,6 @@ class SplashFragment : MyFragment() {
             tvUserName.text = user.name
             tvUserName.isVisible = true
 
-            tvGreetings.text = getString(R.string.BemvindoX, nome)
-            tvGreetings.isVisible = true
 
             user.photoUrl.let { photoUrl ->
                 Glide.with(root.context)

@@ -106,7 +106,6 @@ class LoginFragment : MyFragment() {
     private fun startLoginFlow() {
 
         binding.tvInfo.isInvisible = true
-        binding.tvMessage.isInvisible = true
         binding.tvDataDetail.isInvisible = true
         binding.fabLogin.isInvisible = true
         binding.progressBar.isVisible = true

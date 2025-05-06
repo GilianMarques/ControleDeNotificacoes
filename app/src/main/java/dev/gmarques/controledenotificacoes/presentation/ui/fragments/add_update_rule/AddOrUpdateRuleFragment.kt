@@ -19,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddOrEditRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
+import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endIntervalFormatted
@@ -89,25 +90,16 @@ class AddOrUpdateRuleFragment : MyFragment() {
         args.editingRule?.let {
             viewModel.setEditingRule(it)
             binding.toolbar.tvTitle.text = getString(R.string.Editar_regra)
-            lifecycleScope.launch { delay(500); showEditHint() }
+            lifecycleScope.launch {
+                delay(500)
+                showHintDialog(
+                    Preferences.HINT_EDIT_RULE_1,
+                    getString(R.string.Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos)
+                )
+            }
         }
     }
 
-    private fun showEditHint() {
-
-        MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Dica))
-            .setMessage(getString(R.string.Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos))
-            .setPositiveButton(
-                getString(R.string.Entendi), object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        // TODO: implemente preferencias aqui
-                    }
-                }).setNegativeButton(
-                getString(R.string.Lembre_me_da_proxima_vez), object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                    }
-                }).setCancelable(false).setIcon(R.drawable.vec_edit_rule).show()
-    }
 
     private fun setupFabAddRule() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {

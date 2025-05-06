@@ -1,12 +1,11 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.usecase.GetUserUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
