@@ -77,6 +77,9 @@
         <action
             android:id="@+id/to_SelectAppsFragment"
             app:destination="@id/SelectAppsFragment" />
+        <action
+            android:id="@+id/to_addRuleFragment"
+            app:destination="@id/addRuleFragment" />
     </fragment>
 
     <fragment

@@ -72,7 +72,7 @@
                         android:fontFamily="@font/urbanist_extrabold"
                         android:text="@string/Regra"
                         android:textSize="20sp"
-                        android:transitionName="rule_parent_tv"
+                        android:transitionName="tv_rule_tittle"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/iv_add_rule"
                         app:layout_constraintStart_toStartOf="parent"
@@ -124,8 +124,10 @@
                 style="@style/containers_margins"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/apps_container"
                 android:animateLayoutChanges="true"
                 android:background="@drawable/back_container"
+                android:transitionName="apps_container"
                 android:orientation="vertical">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -141,6 +143,8 @@
                         android:fontFamily="@font/urbanist_extrabold"
                         android:text="@string/Aplicativos_alvo"
                         android:textSize="20sp"
+                        android:id="@+id/tv_target_app"
+                        android:transitionName="tv_target_app"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/iv_add_app"
                         app:layout_constraintStart_toStartOf="parent"

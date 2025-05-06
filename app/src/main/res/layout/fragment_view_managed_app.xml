@@ -85,6 +85,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/Bot_o_de_menu"
         android:elevation="5dp"
+        android:transitionName="view_menu"
         android:padding="12dp"
         android:src="@drawable/vec_menu"
         app:layout_constraintBottom_toBottomOf="@id/iv_go_back"

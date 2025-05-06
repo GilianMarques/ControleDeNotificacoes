@@ -135,6 +135,7 @@
     <string name="Seus_dados_s_o_usados_apenas_para_personalizar_a_interface_e_nunca_saem_do_seu_dispositivo">Seus dados são usados apenas para personalizar a interface e nunca saem do seu dispositivo.</string>
     <string name="Entre_com_sua_conta_google">Entre com sua conta Google.</string>
     <string name="Defina_os_dias_e_horarios_em_que_cada_aplicativo_pode_exibir_notificacoes">Defina os dias e horários em que cada aplicativo pode exibir notificações e tenha mais foco no trabalho e tranquilidade no dia a dia!</string>
+    <string name="Clique_no_bot_o_para_configurar_o_primeiro_app">Clique no botão + para configurar o primeiro app</string>
 
 
 </resources>

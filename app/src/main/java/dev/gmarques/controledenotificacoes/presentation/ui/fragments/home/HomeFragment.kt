@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -64,7 +65,7 @@ class HomeFragment : MyFragment() {
             addTransition(ChangeBounds())
             addTransition(SlideTransition())
             interpolator = AccelerateDecelerateInterpolator()
-            duration = 350
+            duration = 420
         }
 
         // Transição de retorno
@@ -109,14 +110,11 @@ class HomeFragment : MyFragment() {
         }
 
         user.photoUrl.let { photoUrl ->
-            Glide.with(root.context)
-                .load(photoUrl)
-                .placeholder(R.drawable.ic_launcher_foreground)
-                .circleCrop()
+            Glide.with(root.context).load(photoUrl).placeholder(R.drawable.ic_launcher_foreground).circleCrop()
                 .into(ivProfilePicture)
         }
 
-        val views = listOf(ivProfilePicture, tvUserName, tvGreetings, ivMenu)
+        val views = listOf(ivProfilePicture, tvUserName, tvGreetings)
 
         views.forEach {
             it.setOnClickListener(AnimatedClickListener {
@@ -161,6 +159,8 @@ class HomeFragment : MyFragment() {
         val extras = FragmentNavigatorExtras(
             binding.ivProfilePicture to "view_app_icon",
             binding.tvUserName to "view_app_name",
+            binding.ivMenu to "view_menu",
+            binding.divider to "divider",
         )
 
         findNavController().navigate(
@@ -184,6 +184,8 @@ class HomeFragment : MyFragment() {
         collectFlow(viewModel.managedAppsWithRules) { apps ->
             adapter.submitList(apps)
             binding.progressBar.isGone = apps != null
+
+            binding.emptyView.parent.isGone = apps?.size != 0
         }
     }
 
@@ -198,8 +200,7 @@ class HomeFragment : MyFragment() {
     override fun onResume() {
         super.onResume()
 
-        if (!isNotificationListenerEnabled())
-            lifecycleScope.launch { delay(1500); showNotificationListenerPermissionDialog() }
+        if (!isNotificationListenerEnabled()) lifecycleScope.launch { delay(1500); showNotificationListenerPermissionDialog() }
     }
 
     private fun isNotificationListenerEnabled(): Boolean {
@@ -236,6 +237,5 @@ class HomeFragment : MyFragment() {
 
 
     }
-
 
 }

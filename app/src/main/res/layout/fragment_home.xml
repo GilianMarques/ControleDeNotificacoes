@@ -6,13 +6,22 @@
     android:layout_height="match_parent"
     tools:background="?attr/AppColorBackground">
 
+    <include
+        android:id="@+id/empty_view"
+        layout="@layout/view_empty"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_profile_picture"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:background="@drawable/back_profile_picture"
@@ -38,7 +47,7 @@
 
     <TextView
         android:id="@+id/tv_user_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginBottom="6dp"
@@ -47,6 +56,7 @@
         android:textSize="24sp"
         android:transitionName="username"
         app:layout_constraintBottom_toBottomOf="@id/iv_profile_picture"
+        app:layout_constraintEnd_toStartOf="@id/iv_menu"
         app:layout_constraintStart_toEndOf="@id/iv_profile_picture"
         tools:text="Gilian Marques" />
 
@@ -57,13 +67,15 @@
         android:layout_gravity="center"
         android:layout_marginEnd="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/Bot_o_de_menu"
         android:elevation="5dp"
-        android:padding="16dp"
-        android:rotation="180"
-        android:src="@drawable/vec_go_back"
-        app:layout_constraintBottom_toBottomOf="@id/tv_user_name"
+        android:padding="12dp"
+        android:src="@drawable/vec_menu"
+        android:transitionName="view_menu"
+        app:layout_constraintBottom_toBottomOf="@id/iv_profile_picture"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_greetings" />
+        app:layout_constraintTop_toTopOf="@id/iv_profile_picture"
+        app:tint="?colorOnBackground" />
 
     <View
         android:id="@+id/divider"
@@ -73,7 +85,6 @@
         android:background="?android:attr/listDivider"
         android:transitionName="divider"
         app:layout_constraintTop_toBottomOf="@id/iv_profile_picture" />
-
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add"
@@ -105,23 +116,23 @@
                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
 
-                    <androidx.appcompat.widget.AppCompatEditText
-                        android:id="@+id/edt_search"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints="name"
-                        android:hint="@string/Buscar_aplicativo"
-                        android:imeOptions="actionSearch"
-                        android:drawableStart="@drawable/vec_search"
-                        android:drawablePadding="16dp"
-                        android:background="@drawable/back_edittext_search"
-                        style="@style/Margins_edittext"
-                        android:inputType="text"
-                        android:maxLines="1"
-                        android:drawableTint="?colorOnBackground"
-                        android:padding="12dp"
-                        android:singleLine="true"
-                        tools:text="Whatsapp" />
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edt_search"
+                    style="@style/Margins_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="name"
+                    android:background="@drawable/back_edittext_search"
+                    android:drawableStart="@drawable/vec_search"
+                    android:drawablePadding="16dp"
+                    android:drawableTint="?colorOnBackground"
+                    android:hint="@string/Buscar_aplicativo"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="12dp"
+                    android:singleLine="true"
+                    tools:text="Whatsapp" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -131,7 +142,6 @@
             android:id="@+id/parent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?attr/colorSurface"
             android:orientation="vertical"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
@@ -157,8 +167,10 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:listitem="@layout/item_managed_app" />
 
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

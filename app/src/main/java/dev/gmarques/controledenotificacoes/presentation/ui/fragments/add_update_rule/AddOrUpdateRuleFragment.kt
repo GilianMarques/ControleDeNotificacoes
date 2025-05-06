@@ -52,14 +52,16 @@ class AddOrUpdateRuleFragment : MyFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ) = FragmentAddOrEditRuleBinding.inflate(inflater, container, false).also { binding = it }.root
+    ) = FragmentAddOrEditRuleBinding.inflate(inflater, container, false).also {
+        binding = it
+        setupActionBar(binding.toolbar)
+    }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
             delay(500)
-            setupActionBar(binding.toolbar)
             setupNameInput()
             setupButtonTypeRule()
             setupChipDays()
@@ -90,13 +92,13 @@ class AddOrUpdateRuleFragment : MyFragment() {
         args.editingRule?.let {
             viewModel.setEditingRule(it)
             binding.toolbar.tvTitle.text = getString(R.string.Editar_regra)
-            lifecycleScope.launch {
-                delay(500)
-                showHintDialog(
-                    Preferences.HINT_EDIT_RULE_1,
-                    getString(R.string.Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos)
-                )
-            }
+
+            showHintDialog(
+                Preferences.HINT_EDIT_RULE_1,
+                getString(R.string.Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos),
+                500
+            )
+
         }
     }
 

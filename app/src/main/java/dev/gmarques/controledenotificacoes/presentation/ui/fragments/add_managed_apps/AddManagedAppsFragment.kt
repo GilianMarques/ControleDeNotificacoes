@@ -17,6 +17,7 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBin
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetAllRulesUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.SelectAppsFragment
@@ -25,6 +26,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -43,6 +45,9 @@ class AddManagedAppsFragment() : MyFragment() {
 
     @Inject
     lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
+
+    @Inject
+    lateinit var getAllRulesUseCase: GetAllRulesUseCase
 
     private val viewModel: AddManagedAppsViewModel by viewModels()
     private lateinit var binding: FragmentAddManagedAppsBinding
@@ -138,17 +143,34 @@ class AddManagedAppsFragment() : MyFragment() {
     private fun setupSelectRuleButton() = with(binding) {
 
         ivAddRule.setOnClickListener(AnimatedClickListener {
+            lifecycleScope.launch {
+                if (getAllRulesUseCase().isEmpty()) {
+                    findNavController().navigate(
+                        AddManagedAppsFragmentDirections.toAddRuleFragment(),
+                        FragmentNavigatorExtras(
+                            tvRuleTittle to tvRuleTittle.transitionName,
+                            tvTargetApp to tvTargetApp.transitionName,
+                            appsContainer to appsContainer.transitionName,
+                            fabConclude to fabConclude.transitionName,
+                            llRule to llRule.transitionName,
+                            tvTargetApp to tvTargetApp.transitionName,
+                        )
+                    )
+                } else {
+                    findNavController().navigate(
+                        AddManagedAppsFragmentDirections.toSelectRuleFragment(),
+                        FragmentNavigatorExtras(
+                            fabConclude to fabConclude.transitionName,
+                            llRule to llRule.transitionName,
+                            tvRuleTittle to tvRuleTittle.transitionName,
+                        )
+                    )
+                }
 
-            findNavController().navigate(
-                AddManagedAppsFragmentDirections.toSelectRuleFragment(),
-                FragmentNavigatorExtras(
-                    fabConclude to fabConclude.transitionName,
-                    llRule to llRule.transitionName,
-                    tvRuleTittle to tvRuleTittle.transitionName,
-                )
-            )
+
+            }
+
         })
-
     }
 
     private fun setupSelectRuleListener() {

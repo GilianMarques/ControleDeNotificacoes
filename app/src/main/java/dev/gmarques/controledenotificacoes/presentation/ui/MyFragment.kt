@@ -35,6 +35,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash.SplashFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.Serializable
@@ -246,12 +247,16 @@ open class MyFragment : Fragment() {
         }
     }
 
-    protected open fun showHintDialog(
+    protected fun showHintDialog(
         key: String,
         msg: String,
+        delay: Long = 0,
     ) = lifecycleScope.launch {
 
+
         if (readPreferenceUseCase(key, false)) return@launch
+
+        if (delay > 0) delay(delay)
 
         vibrator.interaction()
 
@@ -264,8 +269,10 @@ open class MyFragment : Fragment() {
                     }
                 }).setNegativeButton(
                 getString(R.string.Lembre_me_da_proxima_vez), object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                    }
-                }).setCancelable(false).setIcon(R.drawable.vec_edit_rule).show()
+                    override fun onClick(dialog: DialogInterface?, which: Int) {}
+                })
+            .setCancelable(false)
+            .setIcon(R.drawable.vec_edit_rule)
+            .show()
     }
 }
