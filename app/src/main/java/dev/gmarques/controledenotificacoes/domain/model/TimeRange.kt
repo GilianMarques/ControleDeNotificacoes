@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
+import java.io.Serializable
 import java.util.UUID
 
 /**
@@ -13,4 +14,4 @@ data class TimeRange(
     val endHour: Int,
     val endMinute: Int,
     val id: String = UUID.randomUUID().toString(),
-)
+) : Serializable
