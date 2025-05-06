@@ -84,7 +84,7 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun loadInstalledAppsInCache() = withContext(IO) {
-        installedApps.value = HashMap(getAllInstalledAppsUseCase().associateBy { it.packageId })
+        installedApps.value = HashMap(getAllInstalledAppsUseCase(includeSystemApps = false).associateBy { it.packageId }) // TODO: pode ocultar apps de sistema gerenciados, verificar
     }
 
     /**

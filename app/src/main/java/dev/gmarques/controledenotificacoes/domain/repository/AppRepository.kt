@@ -23,7 +23,11 @@ interface AppRepository {
      *   ordenada alfabeticamente pelo nome do aplicativo. Retorna uma lista vazia se nenhum aplicativo
      *   corresponder.
      */
-    suspend fun getInstalledApps(targetName: String, excludePackages: HashSet<String>): List<InstalledApp>
+    suspend fun getInstalledApps(
+        targetName: String,
+        includeSystemApps: Boolean,
+        excludePackages: HashSet<String>,
+    ): List<InstalledApp>
 
     suspend fun getInstalledAppByPackage(packageId: String): InstalledApp?
 }

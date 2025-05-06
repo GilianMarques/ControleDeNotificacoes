@@ -43,8 +43,6 @@ class SelectAppsViewModel @Inject constructor(
     private val selectedApps = HashSet<InstalledApp>()
     var preSelectedAppsToHide: HashSet<String> = hashSetOf()
 
-    private var initialized = false
-
     var includeSystemApps = false
         private set
 
@@ -52,16 +50,27 @@ class SelectAppsViewModel @Inject constructor(
 
     fun searchApps() = viewModelScope.launch(IO) {
 
-        if (initialized) return@launch
+        val updateUi = {
+            _installedApps.postValue(installedApps.toList())
+            _blockUiSelection.postValue(!canSelectMoreApps())
+        }
 
-        initialized = true
+        if (installedApps.isNotEmpty()) {
+            installedApps.clear()
+            selectedApps.clear()
+            updateUi()
+        }
 
-        installedApps.addAll(getAllInstalledAppsUseCase("", preSelectedAppsToHide).map {
-            SelectableApp(it)
-        })
+        installedApps.addAll(
+            getAllInstalledAppsUseCase(
+                "",
+                includeSystemApps,
+                preSelectedAppsToHide
+            ).map {
+                SelectableApp(it)
+            })
 
-        _installedApps.postValue(installedApps.toList())
-        _blockUiSelection.postValue(!canSelectMoreApps())
+        updateUi()
 
     }
 

@@ -38,7 +38,11 @@ class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context
      * @return Uma lista de [InstalledApp]s, contendo informações sobre os aplicativos que correspondem
      *   aos critérios de filtro e exclusão. A lista é ordenada alfabeticamente pelo nome do aplicativo.
      */
-    override suspend fun getInstalledApps(targetName: String, excludePackages: HashSet<String>): List<InstalledApp> =
+    override suspend fun getInstalledApps(
+        targetName: String,
+        includeSystemApps: Boolean,
+        excludePackages: HashSet<String>,
+    ): List<InstalledApp> =
         withContext(IO) {
 
             val lowerTarget = targetName.lowercase()
@@ -53,6 +57,7 @@ class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context
                     if (excludePackages.contains(appInfo.packageName) ||
                         !isAppValid(
                             appName,
+                            includeSystemApps,
                             appInfo,
                             lowerTarget
                         )
@@ -86,9 +91,13 @@ class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context
      * @param target O termo de busca para filtrar os aplicativos pelo nome.
      * @return `true` se o aplicativo for válido, `false` caso contrário.
      */
-    private fun isAppValid(appName: String, appInfo: ApplicationInfo, target: String): Boolean {
-        val isSystemApp = appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
-        if (isSystemApp) return false
+    private fun isAppValid(appName: String, includeSystemApps: Boolean, appInfo: ApplicationInfo, target: String): Boolean {
+
+        if (!includeSystemApps) {
+            val isSystemApp = appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
+            if (isSystemApp) return false
+        }
+
         return target.isEmpty() || appName.lowercase().contains(target)
     }
 
