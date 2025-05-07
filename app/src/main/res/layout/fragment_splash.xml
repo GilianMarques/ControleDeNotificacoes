@@ -5,7 +5,8 @@
     android:id="@+id/window_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true"
+    android:background="?AppColorBackground">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_profile_picture"
@@ -15,8 +16,23 @@
         android:contentDescription="@string/Foto_de_perfil_do_usuario"
         android:elevation="2dp"
         android:padding="2dp"
-        android:src="@drawable/splash_background_login"
         android:transitionName="profile_picture"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_app_logo"
+        android:layout_width="108dp"
+        android:layout_height="108dp"
+        android:contentDescription="@string/Foto_de_perfil_do_usuario"
+        android:elevation="4dp"
+        android:padding="2dp"
+        android:src="@drawable/splash_background_login"
+        android:transitionName="@string/Remover"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +47,7 @@
         android:fontFamily="@font/urbanist_extrabold"
         android:textSize="24sp"
         android:transitionName="username"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_profile_picture"

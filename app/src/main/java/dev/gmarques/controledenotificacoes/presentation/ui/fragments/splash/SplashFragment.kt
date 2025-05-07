@@ -69,7 +69,7 @@ class SplashFragment : MyFragment() {
     private fun animateAndNavigateHomeIfUserJustLoggedIn(user: User) {
         lifecycleScope.launch {
             setupUiWithUserData(user)
-            delay(2600)
+            delay(2000)
             viewModel.addNavigationRequirement(NavigationRequirements.Requirement.USER_LOGGED_IN)
 
         }
@@ -127,7 +127,11 @@ class SplashFragment : MyFragment() {
             vibrator.success()
 
             tvUserName.text = user.name
+
             tvUserName.isVisible = true
+
+            ivProfilePicture.isVisible = true
+            ivAppLogo.isVisible = false
 
 
             user.photoUrl.let { photoUrl ->

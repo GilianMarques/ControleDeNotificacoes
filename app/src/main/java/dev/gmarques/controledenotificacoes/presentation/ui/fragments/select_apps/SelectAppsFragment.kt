@@ -98,7 +98,7 @@ class SelectAppsFragment : MyFragment() {
     private fun setupSearch() {
         binding.tietSearch.doOnTextChanged { text, _, _, _ ->
             viewModel.installedAppsLd.value?.let {
-                adapter.submitList(it, text.toString())
+                adapter.submitList(it, text.toString().trim())
             }
         }
     }
@@ -168,7 +168,7 @@ class SelectAppsFragment : MyFragment() {
         viewModel.installedAppsLd.observe(viewLifecycleOwner) {
             lifecycleScope.launch {
                 binding.progressBar.isVisible = false
-                adapter.submitList(it, binding.tietSearch.text.toString())
+                adapter.submitList(it, binding.tietSearch.text.toString().trim())
             }
         }
 

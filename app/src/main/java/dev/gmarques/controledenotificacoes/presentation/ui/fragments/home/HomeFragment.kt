@@ -211,16 +211,22 @@ class HomeFragment : MyFragment() {
     private fun observeViewModel() = lifecycleScope.launch {
         collectFlow(viewModel.managedAppsWithRules) { apps ->
             adapter.submitList(apps)
-            binding.progressBar.isGone = apps != null
 
-            binding.emptyView.parent.isGone = apps?.size != 0
+            binding.progressBar.isGone = apps != null
+            binding.edtSearch.isVisible = (apps?.size ?: 0) > 9
+
+            lifecycleScope.launch {
+                delay(300)
+                binding.emptyView.parent.isGone = apps?.size != 0
+
+            }
         }
     }
 
     private fun setupSearch() {
         binding.edtSearch.doOnTextChanged { text, _, _, _ ->
             viewModel.managedAppsWithRules.value.let {
-                it?.let { adapter.submitList(it, text.toString()) }
+                it?.let { adapter.submitList(it, text.toString().trim()) }
             }
         }
     }
@@ -265,5 +271,7 @@ class HomeFragment : MyFragment() {
 
 
     }
+
+
 
 }
