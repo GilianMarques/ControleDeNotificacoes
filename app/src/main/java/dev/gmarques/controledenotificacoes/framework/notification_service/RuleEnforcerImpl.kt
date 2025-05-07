@@ -1,7 +1,7 @@
-package dev.gmarques.controledenotificacoes.framework.service
+package dev.gmarques.controledenotificacoes.framework.notification_service
 
 import android.util.Log
-import dev.gmarques.controledenotificacoes.domain.framework.service.RuleEnforcer
+import dev.gmarques.controledenotificacoes.domain.framework.notification_service.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule

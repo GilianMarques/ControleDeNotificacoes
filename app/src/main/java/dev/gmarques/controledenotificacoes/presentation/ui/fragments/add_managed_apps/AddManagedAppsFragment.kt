@@ -17,6 +17,7 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBin
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetAllRulesUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -50,6 +51,9 @@ class AddManagedAppsFragment() : MyFragment() {
 
     @Inject
     lateinit var getAllRulesUseCase: GetAllRulesUseCase
+
+    @Inject
+    lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
 
     private val viewModel: AddManagedAppsViewModel by viewModels()
     private lateinit var binding: FragmentAddManagedAppsBinding
@@ -260,7 +264,7 @@ class AddManagedAppsFragment() : MyFragment() {
                 if (!parent.children.none { it.tag == app.packageId }) return@forEachIndexed
                 with(ItemAppSmallBinding.inflate(layoutInflater)) {
                     name.text = app.name
-                    ivAppIcon.setImageDrawable(app.icon)
+                    ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
                     root.tag = app.packageId
                     ivRemove.setOnClickListener(AnimatedClickListener {
                         viewModel.deleteApp(app)

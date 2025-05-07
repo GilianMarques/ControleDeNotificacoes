@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.framework.service
+package dev.gmarques.controledenotificacoes.domain.framework.notification_service
 
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 

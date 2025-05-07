@@ -8,4 +8,5 @@ Room + transaçoes atomicas
 DataStore para preferencias
 Coroutines with Mutex
 Acessibilidade
+Cache de drawables com LRU
 combinar multiplos datasources com flows (home fragment)

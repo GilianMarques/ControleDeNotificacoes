@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.github.zawadz88.materialpopupmenu.popupMenu
@@ -15,6 +16,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentViewManagedAppBinding
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -23,6 +25,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReferenceSmall
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setRuleDrawable
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -36,6 +39,9 @@ class FragmentViewManagedApp() : MyFragment() {
 
     @Inject
     lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
+
+    @Inject
+    lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
 
     private val viewModel: ViewManagedAppViewModel by viewModels()
     private lateinit var binding: FragmentViewManagedAppBinding
@@ -65,7 +71,7 @@ class FragmentViewManagedApp() : MyFragment() {
         tvRuleName.text = app.rule.name.ifBlank { generateRuleNameUseCase(app.rule) }
         tvRuleName.setRuleDrawable(drawable)
 
-        ivAppIcon.setImageDrawable(app.icon)
+        lifecycleScope.launch { ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId)) }
 
         ivGoBack.setOnClickListener(AnimatedClickListener {
             goBack()

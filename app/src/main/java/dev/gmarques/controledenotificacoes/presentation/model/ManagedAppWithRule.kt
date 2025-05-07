@@ -11,6 +11,5 @@ import java.io.Serializable
 data class ManagedAppWithRule(
     val name: String,
     val packageId: String,
-    val icon: Drawable,
     val rule: Rule,
 ) : Serializable

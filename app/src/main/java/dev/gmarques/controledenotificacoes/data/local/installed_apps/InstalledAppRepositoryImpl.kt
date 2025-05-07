@@ -4,6 +4,8 @@ package dev.gmarques.controledenotificacoes.data.local.installed_apps
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
+import android.util.LruCache
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.repository.AppRepository
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -21,6 +23,7 @@ import javax.inject.Inject
 class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context: Context) : AppRepository {
 
     private val packageManager: PackageManager = context.packageManager
+    private val iconCache = object : LruCache<String, Drawable>(100) {}
 
     /**
      * Busca e retorna uma lista de aplicativos instalados no dispositivo, filtrando-os opcionalmente
@@ -45,6 +48,7 @@ class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context
     ): List<InstalledApp> =
         withContext(IO) {
 
+            //    cacheData()
             val lowerTarget = targetName.lowercase()
 
             val apps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
@@ -63,12 +67,9 @@ class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context
                         )
                     ) return@async null
 
-                    val icon = packageManager.getApplicationIcon(appInfo.packageName)
-
                     InstalledApp(
                         packageId = appInfo.packageName,
                         name = appName,
-                        icon = icon,
                     )
                 }
             }
@@ -117,18 +118,25 @@ class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context
         packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
             .map { appInfo ->
                 if (packageId != appInfo.packageName) return@map
-                val icon = packageManager.getApplicationIcon(appInfo.packageName)
                 val appName = packageManager.getApplicationLabel(appInfo).toString()
 
                 return@withContext InstalledApp(
                     packageId = appInfo.packageName,
                     name = appName,
-                    icon = icon,
                 )
 
             }
 
         return@withContext null
     }
+
+    override suspend fun getDrawable(pkg: String): Drawable? = withContext(IO) {
+        iconCache.get(pkg) ?: runCatching {
+            val drawable = packageManager.getApplicationIcon(pkg)
+            iconCache.put(pkg, drawable)
+            drawable
+        }.getOrNull()
+    }
+
 
 }

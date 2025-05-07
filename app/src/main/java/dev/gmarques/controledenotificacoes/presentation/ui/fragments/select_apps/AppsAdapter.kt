@@ -5,14 +5,21 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSelectableBinding
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.SelectableApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
 
 /**
  * Criado por Gilian Marques
  * Em terça-feira, 15 de abril de 2025 as 09:19.
  */
 class AppsAdapter(
+    private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
     private val onItemCheck: (SelectableApp, Boolean) -> Unit,
 ) : ListAdapter<SelectableApp, AppsAdapter.AppViewHolder>(DiffCallback()) {
 
@@ -46,7 +53,15 @@ class AppsAdapter(
             cbSelect.setOnCheckedChangeListener(null)
 
             tvStartDe.text = selectedApp.installedApp.name
-            ivAppIcon.setImageDrawable(selectedApp.installedApp.icon)
+
+            CoroutineScope(Main).launch {
+                Glide.with(binding.ivAppIcon.context)
+                    .load(getInstalledAppIconUseCase(selectedApp.installedApp.packageId))
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(binding.ivAppIcon)
+
+            }
+
             cbSelect.isChecked = selectedApp.isSelected
 
             parent.setOnClickListener {

@@ -19,10 +19,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectAppsBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
@@ -38,6 +40,9 @@ class SelectAppsFragment : MyFragment() {
 
     private var animatingFab = false
     private var isFabVisible = true
+
+    @Inject
+    lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
 
     private lateinit var binding: FragmentSelectAppsBinding
     private val viewModel: SelectAppsViewModel by viewModels()
@@ -105,7 +110,7 @@ class SelectAppsFragment : MyFragment() {
 
     private fun setupRecyclerView() {
 
-        adapter = AppsAdapter { app, checked ->
+        adapter = AppsAdapter(getInstalledAppIconUseCase) { app, checked ->
 
             viewModel.onAppChecked(app, checked)
 
@@ -210,7 +215,7 @@ class SelectAppsFragment : MyFragment() {
     private fun showPopUpMenu(view: View) {
         val popupMenu = popupMenu {
 
-                   section {
+            section {
 
                 item {
                     label = getString(R.string.Selecionar_todos)
@@ -240,7 +245,8 @@ class SelectAppsFragment : MyFragment() {
             section {
 
                 item {
-                    label = if (viewModel.includeSystemApps) getString(R.string.Exlcuir_apps_do_sistema) else getString(R.string.Incluir_apps_do_sistema)
+                    label =
+                        if (viewModel.includeSystemApps) getString(R.string.Exlcuir_apps_do_sistema) else getString(R.string.Incluir_apps_do_sistema)
                     icon = R.drawable.vec_app
                     callback = {
                         viewModel.toggleIncludeSystemApps()

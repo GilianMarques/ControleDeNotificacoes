@@ -31,6 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
@@ -57,6 +58,9 @@ class HomeFragment : MyFragment() {
 
     @Inject
     lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
+
+    @Inject
+    lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
 
     @Inject
     lateinit var getUserUseCase: GetUserUseCase
@@ -172,6 +176,7 @@ class HomeFragment : MyFragment() {
         adapter = ManagedAppsAdapter(
             getDrawable(R.drawable.vec_rule_permissive_small),
             getDrawable(R.drawable.vec_rule_restrictive_small),
+            getInstalledAppIconUseCase,
             generateRuleNameUseCase::invoke,
             ::navigateToViewManagedAppFragment
         )
@@ -271,7 +276,6 @@ class HomeFragment : MyFragment() {
 
 
     }
-
 
 
 }

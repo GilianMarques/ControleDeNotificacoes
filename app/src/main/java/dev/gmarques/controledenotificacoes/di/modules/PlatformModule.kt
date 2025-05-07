@@ -7,11 +7,11 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
-import dev.gmarques.controledenotificacoes.domain.framework.service.RuleEnforcer
+import dev.gmarques.controledenotificacoes.domain.framework.notification_service.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.usecase.contracts.RuleStringsProvider
 import dev.gmarques.controledenotificacoes.framework.RuleStringsProviderImpl
 import dev.gmarques.controledenotificacoes.framework.VibratorImpl
-import dev.gmarques.controledenotificacoes.framework.service.RuleEnforcerImpl
+import dev.gmarques.controledenotificacoes.framework.notification_service.RuleEnforcerImpl
 
 /**
  * Criado por Gilian Marques

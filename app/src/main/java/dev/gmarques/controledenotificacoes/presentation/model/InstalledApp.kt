@@ -13,5 +13,4 @@ import java.io.Serializable
 data class InstalledApp(
     val name: String,
     val packageId: String,
-    val icon: Drawable,
 ) : Serializable

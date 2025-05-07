@@ -1,6 +1,9 @@
 package dev.gmarques.controledenotificacoes.domain.repository
 
+import android.graphics.drawable.Drawable
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -30,4 +33,7 @@ interface AppRepository {
     ): List<InstalledApp>
 
     suspend fun getInstalledAppByPackage(packageId: String): InstalledApp?
+
+    suspend fun getDrawable(pkg: String): Drawable?
+
 }

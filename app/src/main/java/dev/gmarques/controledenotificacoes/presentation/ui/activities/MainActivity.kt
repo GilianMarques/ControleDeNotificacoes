@@ -14,7 +14,7 @@ import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
-import dev.gmarques.controledenotificacoes.framework.service.NotificationServiceManager
+import dev.gmarques.controledenotificacoes.framework.notification_service.NotificationServiceManager
 
 
 /**

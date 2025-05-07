@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.framework.service
+package dev.gmarques.controledenotificacoes.framework.notification_service
 
 import android.app.Notification
 import android.service.notification.NotificationListenerService

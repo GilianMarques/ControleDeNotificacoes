@@ -12,6 +12,7 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveAllManagedApps
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -47,7 +48,6 @@ class HomeViewModel @Inject constructor(
         InstalledApp(
             name = context.getString(R.string.App_nao_encontrado),
             packageId = "not.found.app",
-            icon = ContextCompat.getDrawable(context, R.drawable.vec_remove)!!
         )
     }
 
@@ -84,7 +84,8 @@ class HomeViewModel @Inject constructor(
     }
 
     private suspend fun loadInstalledAppsInCache() = withContext(IO) {
-        installedApps.value = HashMap(getAllInstalledAppsUseCase(includeSystemApps = false).associateBy { it.packageId }) // TODO: pode ocultar apps de sistema gerenciados, verificar
+        installedApps.value =
+            HashMap(getAllInstalledAppsUseCase(includeSystemApps = false).associateBy { it.packageId }) // TODO: pode ocultar apps de sistema gerenciados, verificar
     }
 
     /**
@@ -126,7 +127,6 @@ class HomeViewModel @Inject constructor(
             ManagedAppWithRule(
                 name = installedApp.name,
                 packageId = installedApp.packageId,
-                icon = installedApp.icon,
                 rule = rulesMap[managedApp.ruleId] ?: defaultRuleIfNotFound
             )
 

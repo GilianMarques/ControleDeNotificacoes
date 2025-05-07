@@ -38,7 +38,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <service
-            android:name=".framework.service.NotificationListener"
+            android:name=".framework.notification_service.NotificationListener"
             android:exported="true"
             android:label="@string/Gerenciando_notificacoes"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
@@ -49,7 +49,7 @@
 
 
         <service
-            android:name=".framework.service.NotificationServiceManager"
+            android:name=".framework.notification_service.NotificationServiceManager"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
