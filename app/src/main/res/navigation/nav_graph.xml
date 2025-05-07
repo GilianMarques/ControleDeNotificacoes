@@ -118,8 +118,8 @@
         android:id="@+id/profileFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment"
         android:label="ProfileFragment"
-
         tools:layout="@layout/fragment_profile" />
+
     <fragment
         android:id="@+id/loginFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.login.LoginFragment"
@@ -129,7 +129,7 @@
         <action
             android:id="@+id/to_splashFragment"
             app:destination="@id/splashFragment"
-            app:popUpTo="@id/splashFragment"
+            app:popUpTo="@id/loginFragment"
             app:popUpToInclusive="true" />
 
     </fragment>
