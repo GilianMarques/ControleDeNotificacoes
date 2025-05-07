@@ -1,7 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 import android.content.Context
-import androidx.core.content.ContextCompat
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +12,6 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveAllManagedApps
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -66,7 +65,7 @@ class HomeViewModel @Inject constructor(
      */
     val defaultRuleIfNotFound: Rule by lazy {
         Rule(
-            name = context.getString(R.string.Regra_nao_encntrada),
+            name = context.getString(R.string.Regra_nao_encontrada),
             days = listOf(WeekDay.SUNDAY),
             timeRanges = listOf(TimeRange(1, 2, 3, 4))
         )
@@ -83,9 +82,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    // TODO: essa função precisa de otimizaçao sao quase 400 apps, testar chamadas diretas ou cache controlado
     private suspend fun loadInstalledAppsInCache() = withContext(IO) {
         installedApps.value =
-            HashMap(getAllInstalledAppsUseCase(includeSystemApps = false).associateBy { it.packageId }) // TODO: pode ocultar apps de sistema gerenciados, verificar
+            HashMap(getAllInstalledAppsUseCase(includeSystemApps = true).associateBy { it.packageId }).also{
+            }
     }
 
     /**

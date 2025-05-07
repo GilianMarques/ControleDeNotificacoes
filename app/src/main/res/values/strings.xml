@@ -121,7 +121,7 @@
     <string name="Deseja_mesmo_remover_este_aplicativo_da_lista_de_gerenciamento">Deseja mesmo remover este aplicativo da lista de gerenciamento?\n\nNota: Isso não removerá a regra.</string>
     <string name="Cancelar">Cancelar</string>
     <string name="Ao_remover_um_regra_todos_os_aplicativos_gerenciados">Ao remover um regra, todos os aplicativos gerenciados por ela assim como os seus históricos de notificação também são removidos.\n\nDeseja mesmo remover esta regra?</string>
-    <string name="Regra_nao_encntrada">Regra não encntrada</string>
+    <string name="Regra_nao_encontrada">Regra não encontrada</string>
     <string name="Gerenciando_notificacoes">Gerenciando notificações</string>
     <string name="Permissao_necessaria">Permissão necessária</string>
     <string name="Para_que_esse_aplicativo_possa_desempenhar_sua_fun_o_necess_rio_que_voc_forne_a_permiss_o_para_acesso_">Para que esse aplicativo possa desempenhar sua função é necessário que você forneça permissão para acesso às notificações do seu dispositivo.\n\nNota: Sua privacidade está protegida! Seus dados nunca saem do seu dispositivo e são usados única e exclusivamente para controlar e exibir um histórico das suas notificações.</string>
@@ -138,7 +138,9 @@
     <string name="Clique_no_bot_o_para_configurar_o_primeiro_app">Clique no botão + para configurar o primeiro app</string>
     <string name="Atribuicoes">Atribuições</string>
     <string name="Incluir_apps_do_sistema">Incluir apps do sistema</string>
-    <string name="Exlcuir_apps_do_sistema">Exlcuir apps do sistema</string>
+    <string name="Excluir_apps_do_sistema">Excluir apps do sistema</string>
+    <string name="Excluir_apps_gerenciados">Excluir apps gerenciados</string>
+    <string name="Incluir_apps_gerenciados">Incluir apps gerenciados</string>
 
 
 </resources>

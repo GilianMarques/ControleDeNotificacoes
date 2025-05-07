@@ -46,6 +46,9 @@ class SelectAppsViewModel @Inject constructor(
     var includeSystemApps = false
         private set
 
+    var includeManagedApps = false
+        private set
+
     val onAppCheckedMutex = Mutex()
 
     fun searchApps() = viewModelScope.launch(IO) {
@@ -163,6 +166,11 @@ class SelectAppsViewModel @Inject constructor(
 
     fun toggleIncludeSystemApps() {
         includeSystemApps = !includeSystemApps
+        searchApps()
+    }
+
+    fun toggleIncludeManagedApps() {
+        includeManagedApps = !includeManagedApps
         searchApps()
     }
 

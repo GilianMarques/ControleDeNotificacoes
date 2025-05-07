@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.setFragmentResult
@@ -245,18 +246,29 @@ class SelectAppsFragment : MyFragment() {
             section {
 
                 item {
-                    label =
-                        if (viewModel.includeSystemApps) getString(R.string.Exlcuir_apps_do_sistema) else getString(R.string.Incluir_apps_do_sistema)
+                    label = if (viewModel.includeSystemApps) getString(R.string.Excluir_apps_do_sistema)
+                    else getString(R.string.Incluir_apps_do_sistema)
                     icon = R.drawable.vec_app
                     callback = {
                         viewModel.toggleIncludeSystemApps()
                     }
                 }
 
+                item {
+                    label = if (viewModel.includeManagedApps)
+                        getString(R.string.Excluir_apps_gerenciados)
+                    else getString(R.string.Incluir_apps_gerenciados)
+                    icon = R.drawable.vec_app
+                    callback = {
+                        viewModel.toggleIncludeManagedApps()
+                        Toast.makeText(requireContext(), "Em desenvolvimento", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
             }
 
-
         }
+
         popupMenu.show(this@SelectAppsFragment.requireContext(), view)
     }
 

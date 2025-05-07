@@ -15,7 +15,7 @@
         android:background="@drawable/back_profile_picture"
         android:contentDescription="@string/Foto_de_perfil_do_usuario"
         android:elevation="2dp"
-        android:padding="2dp"
+        android:padding="3dp"
         android:transitionName="profile_picture"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -26,8 +26,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_app_logo"
-        android:layout_width="108dp"
-        android:layout_height="108dp"
+        android:layout_width="116dp"
+        android:layout_height="116dp"
         android:contentDescription="@string/Foto_de_perfil_do_usuario"
         android:elevation="4dp"
         android:padding="2dp"

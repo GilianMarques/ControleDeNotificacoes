@@ -11,6 +11,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -71,7 +73,12 @@ class FragmentViewManagedApp() : MyFragment() {
         tvRuleName.text = app.rule.name.ifBlank { generateRuleNameUseCase(app.rule) }
         tvRuleName.setRuleDrawable(drawable)
 
-        lifecycleScope.launch { ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId)) }
+        lifecycleScope.launch {
+            Glide.with(binding.ivAppIcon.context)
+                .load(getInstalledAppIconUseCase(app.packageId))
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(binding.ivAppIcon)
+        }
 
         ivGoBack.setOnClickListener(AnimatedClickListener {
             goBack()

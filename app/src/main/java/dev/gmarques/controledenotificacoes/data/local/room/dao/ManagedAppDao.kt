@@ -22,7 +22,7 @@ interface ManagedAppDao {
     suspend fun updateManagedApp(managedAppEntity: ManagedAppEntity)
 
     @Query("DELETE FROM managed_apps WHERE packageId = :id")
-    suspend fun deleteById(id: String) // TODO: deletar o historico de notificações depois que for implementado
+    suspend fun deleteById(id: String) // TODO: deletar o historico de notificações depois que for implementado - crie um usecase que apaga apps e historico
 
     @Query("SELECT * FROM managed_apps WHERE packageId = :id")
     suspend fun getManagedAppByPackageId(id: String): ManagedAppEntity?

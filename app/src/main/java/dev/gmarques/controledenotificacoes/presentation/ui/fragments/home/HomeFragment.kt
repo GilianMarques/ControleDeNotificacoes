@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.DrawableTransformation
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.zawadz88.materialpopupmenu.MaterialPopupMenuBuilder
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -142,7 +144,11 @@ class HomeFragment : MyFragment() {
         }
 
         user.photoUrl.let { photoUrl ->
-            Glide.with(root.context).load(photoUrl).placeholder(R.drawable.ic_launcher_foreground).circleCrop()
+            Glide.with(root.context)
+                .load(photoUrl)
+                .placeholder(R.drawable.ic_launcher_foreground)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .circleCrop()
                 .into(ivProfilePicture)
         }
 
