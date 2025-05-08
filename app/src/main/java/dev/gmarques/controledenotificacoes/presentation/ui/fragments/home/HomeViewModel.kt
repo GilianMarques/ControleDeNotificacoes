@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,19 +11,17 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveAllManagedApps
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 /**
@@ -35,6 +32,7 @@ class HomeViewModel @Inject constructor(
     observeAllRulesUseCase: ObserveAllRulesUseCase,
     observeAllManagedApps: ObserveAllManagedApps,
     private val getAllInstalledAppsUseCase: GetAllInstalledAppsUseCase,
+    private val getInstalledAppByPackageUseCase: GetInstalledAppByPackageUseCase,
     @ApplicationContext context: Context,
 ) : ViewModel() {
 
@@ -71,23 +69,10 @@ class HomeViewModel @Inject constructor(
         )
     }
 
-    private val installedApps = MutableStateFlow<HashMap<String, InstalledApp>?>(null)
     private val rules = observeAllRulesUseCase().init(null)
     private val managedApps = observeAllManagedApps().init(null)
-    val managedAppsWithRules = combine(rules, managedApps, installedApps, ::combineFlows).init(null)
+    val managedAppsWithRules = combine(rules, managedApps, ::combineFlows).init(null)
 
-    init {
-        viewModelScope.launch {
-            loadInstalledAppsInCache()
-        }
-    }
-
-    // TODO: essa função precisa de otimizaçao sao quase 400 apps, testar chamadas diretas ou cache controlado
-    private suspend fun loadInstalledAppsInCache() = withContext(IO) {
-        installedApps.value =
-            HashMap(getAllInstalledAppsUseCase(includeSystemApps = true).associateBy { it.packageId }).also{
-            }
-    }
 
     /**
      * Essa função existe para que seja feita a delegação da parte de combinar valores do flow, uma vez que o código de inicialização
@@ -107,12 +92,11 @@ class HomeViewModel @Inject constructor(
     private fun combineFlows(
         rules: List<Rule>?,
         managedApps: List<ManagedApp>?,
-        installedAppsCache: HashMap<String, InstalledApp>?,
     ): List<ManagedAppWithRule>? {
 
         /*Se qualquer uma dessas listas for nula  é indicação de que não foram inicializadas
          com valores do banco de dados ainda, portanto, nenhuma operação deve ser feita */
-        if (rules == null || managedApps == null || installedAppsCache == null) return null
+        if (rules == null || managedApps == null) return null
 
         /*As regras são a base deste aplicativo se a lista de regras está vazia, nenhuma operação deve ser feita.
          A lista pode ficar vazia se a última regra foi removida ou não existem regras, o que afirma que não existem
@@ -123,7 +107,7 @@ class HomeViewModel @Inject constructor(
 
         return managedApps.map { managedApp ->
 
-            val installedApp = installedAppsCache[managedApp.packageId] ?: defaultAppIfNotFound
+            val installedApp = runBlocking { getInstalledAppByPackageUseCase(managedApp.packageId) ?: defaultAppIfNotFound }
 
             ManagedAppWithRule(
                 name = installedApp.name,

@@ -24,6 +24,7 @@ class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context
 
     private val packageManager: PackageManager = context.packageManager
     private val iconCache = object : LruCache<String, Drawable>(100) {}
+    private val appCache = object : LruCache<String, InstalledApp>(100) {}
 
     /**
      * Busca e retorna uma lista de aplicativos instalados no dispositivo, filtrando-os opcionalmente
@@ -102,39 +103,37 @@ class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context
         return target.isEmpty() || appName.lowercase().contains(target)
     }
 
-    /**
-     * Recupera um aplicativo instalado específico pelo seu ID de pacote.
-     *
-     * Esta função procura na lista de aplicativos instalados por um que corresponda ao ID
-     * de pacote fornecido. Se encontrado, retorna um objeto [InstalledApp] que contém informações
-     * sobre o aplicativo.
-     *
-     * @param packageId O ID do pacote do aplicativo a ser buscado.
-     * @return O [InstalledApp] correspondente ao ID de pacote fornecido, ou `null` se nenhum
-     * aplicativo com o ID especificado for encontrado.
-     */
-    override suspend fun getInstalledAppByPackage(packageId: String): InstalledApp? = withContext(IO) {
-
-        packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
-            .map { appInfo ->
-                if (packageId != appInfo.packageName) return@map
-                val appName = packageManager.getApplicationLabel(appInfo).toString()
-
-                return@withContext InstalledApp(
-                    packageId = appInfo.packageName,
-                    name = appName,
-                )
-
-            }
-
-        return@withContext null
-    }
 
     override suspend fun getDrawable(pkg: String): Drawable? = withContext(IO) {
         iconCache.get(pkg) ?: runCatching {
             val drawable = packageManager.getApplicationIcon(pkg)
             iconCache.put(pkg, drawable)
             drawable
+        }.getOrNull()
+    }
+
+    /**
+     * Recupera um aplicativo instalado específico pelo seu ID de pacote.
+     *
+     * @param pkg O ID do pacote do aplicativo a ser buscado.
+     * @return O [InstalledApp] correspondente ao ID de pacote fornecido, ou `null` se nenhum
+     * aplicativo com o ID especificado for encontrado.
+     */
+    override suspend fun getInstalledApp(pkg: String): InstalledApp? = withContext(IO) {
+        appCache.get(pkg) ?: runCatching {
+
+            val appInfo = packageManager.getApplicationInfo(pkg, PackageManager.GET_META_DATA)
+            val appName = packageManager.getApplicationLabel(appInfo).toString()
+
+            val installedApp = InstalledApp(
+                packageId = pkg,
+                name = appName,
+            )
+
+            appCache.put(pkg, installedApp)
+
+            installedApp
+
         }.getOrNull()
     }
 

@@ -11,6 +11,6 @@ import javax.inject.Inject
 class GetInstalledAppByPackageUseCase @Inject constructor(private val repository: AppRepository) {
 
     suspend operator fun invoke(targetPackage: String): InstalledApp? {
-        return repository.getInstalledAppByPackage(targetPackage)
+        return repository.getInstalledApp(targetPackage)
     }
 }
