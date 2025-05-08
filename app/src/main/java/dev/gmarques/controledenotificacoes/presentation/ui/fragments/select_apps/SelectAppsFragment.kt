@@ -3,7 +3,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_app
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -217,7 +216,7 @@ class SelectAppsFragment : MyFragment() {
 
                 Event.SelectedAlreadyManagedApp -> {
                     showHintDialog(
-                        Preferences.SELECTED_APPS_ALREADY_MANAGED,
+                        Preferences.SHOW_HINT_SELECTED_APPS_ALREADY_MANAGED,
                         getString(R.string.Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados),
                         100
                     )

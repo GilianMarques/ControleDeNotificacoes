@@ -145,6 +145,8 @@
     <string name="Atencao">Atenção</string>
     <string name="Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados">Um ou mais dos apps selecionados já estão sendo gerenciados. Aplicar uma nova regra sobre eles substituirá a regra existente.</string>
     <string name="Mais_x_apps">+%1$d apps</string>
+    <string name="Preferencias">Preferências</string>
+    <string name="Resetar_exibi_o_de_dicas">Resetar exibição de dicas</string>
 
 
 </resources>

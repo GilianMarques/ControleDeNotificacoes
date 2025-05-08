@@ -184,8 +184,7 @@ open class MyFragment : Fragment() {
      * @see VibratorImpl
      */
     protected open fun showErrorSnackBar(errorMsg: String, targetView: View = requireView()) {
-        Snackbar.make(requireView(), errorMsg, Snackbar.LENGTH_LONG)
-            .setAnchorView(targetView).show()
+        Snackbar.make(requireView(), errorMsg, Snackbar.LENGTH_LONG).setAnchorView(targetView).show()
         vibrator.error()
     }
 
@@ -238,8 +237,7 @@ open class MyFragment : Fragment() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             bundle.getSerializable(key, clazz)
         } else {
-            @Suppress("DEPRECATION")
-            bundle.getSerializable(key).let {
+            @Suppress("DEPRECATION") bundle.getSerializable(key).let {
                 if (clazz.isInstance(it)) clazz.cast(it)
                 else throw IllegalStateException("Objeto serializado sob a chave '$key' não é do tipo esperado: ${clazz.name}. Valor real: ${it?.javaClass?.name}")
 
@@ -272,19 +270,10 @@ open class MyFragment : Fragment() {
 
         vibrator.interaction()
 
-        MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Dica))
-            .setMessage(msg)
-            .setPositiveButton(
-                getString(R.string.Entendi), object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        lifecycleScope.launch { savePreferenceUseCase(key, true) }
-                    }
-                }).setNegativeButton(
-                getString(R.string.Lembre_me_da_proxima_vez), object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {}
-                })
-            .setCancelable(false)
-            .setIcon(R.drawable.vec_hint)
-            .show()
+        MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Dica)).setMessage(msg)
+            .setPositiveButton(getString(R.string.Entendi)) { dialog, _ ->
+                lifecycleScope.launch { savePreferenceUseCase(key, false) }
+            }.setNegativeButton(getString(R.string.Lembre_me_da_proxima_vez)) { dialog, _ ->
+            }.setCancelable(false).setIcon(R.drawable.vec_hint).show()
     }
 }

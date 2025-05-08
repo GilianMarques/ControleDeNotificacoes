@@ -1,13 +1,15 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.SelectableApp
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.Event.BlockSelection
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
@@ -34,7 +37,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SelectAppsViewModel @Inject constructor(
     private val getAllInstalledAppsUseCase: GetAllInstalledAppsUseCase,
-    @ApplicationContext private val context: android.content.Context,
+    private val readPreferenceUseCase: ReadPreferenceUseCase,
+    private val savePreferenceUseCase: SavePreferenceUseCase,
+    @ApplicationContext
+    private val context: android.content.Context,
 ) : ViewModel() {
 
     private val _installedApps = MutableStateFlow<List<SelectableApp>>(listOf<SelectableApp>())
@@ -57,6 +63,10 @@ class SelectAppsViewModel @Inject constructor(
 
     val onAppCheckedMutex = Mutex()
 
+    init {
+        loadPreferences()
+    }
+
     fun searchApps() = viewModelScope.launch(IO) {
 
         _statesFlow.tryEmit(Loading)
@@ -77,6 +87,11 @@ class SelectAppsViewModel @Inject constructor(
         _statesFlow.tryEmit(Idle)
         _installedApps.tryEmit(installedApps)
 
+    }
+
+    private fun loadPreferences() = runBlocking {
+        includeSystemApps = readPreferenceUseCase(Preferences.PREF_INCLUDE_SYSTEM_APPS, false)
+        includeManagedApps = readPreferenceUseCase(Preferences.PREF_INCLUDE_MANAGED_APPS, false)
     }
 
     /**
@@ -101,7 +116,6 @@ class SelectAppsViewModel @Inject constructor(
             if (checked && app.installedApp.beingManaged) {
                 _eventsFlow.tryEmit(SelectedAlreadyManagedApp)
             }
-
 
             val apps = installedApps.value.toMutableList()
 
@@ -157,13 +171,15 @@ class SelectAppsViewModel @Inject constructor(
 
     }
 
-    fun toggleIncludeSystemApps() {
+    fun toggleIncludeSystemApps() = viewModelScope.launch {
         includeSystemApps = !includeSystemApps
+        savePreferenceUseCase(Preferences.PREF_INCLUDE_SYSTEM_APPS, includeSystemApps)
         searchApps()
     }
 
-    fun toggleIncludeManagedApps() {
+    fun toggleIncludeManagedApps() = viewModelScope.launch {
         includeManagedApps = !includeManagedApps
+        savePreferenceUseCase(Preferences.PREF_INCLUDE_MANAGED_APPS, includeManagedApps)
         searchApps()
     }
 

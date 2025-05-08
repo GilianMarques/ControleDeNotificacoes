@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,18 +16,22 @@ import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
 import dev.gmarques.controledenotificacoes.databinding.FragmentProfileBinding
+import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.LogOffUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.jvm.java
 
 @AndroidEntryPoint
 class ProfileFragment : MyFragment() {
-    // TODO: otimizar isso pq foi feito as pressas
+
     @Inject
     lateinit var roomDatabase: RoomDatabase
 
@@ -41,20 +46,23 @@ class ProfileFragment : MyFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val transitionInterpolator = AccelerateDecelerateInterpolator()
+        val enterExitDuration = 400L
+
         // Transição de entrada
         sharedElementEnterTransition = TransitionSet().apply {
             addTransition(ChangeBounds())
             addTransition(SlideTransition())
-            interpolator = AccelerateDecelerateInterpolator()
-            duration = 450
+            interpolator = transitionInterpolator
+            duration = enterExitDuration
         }
 
         // Transição de retorno
         sharedElementReturnTransition = TransitionSet().apply {
             addTransition(ChangeBounds())
             addTransition(SlideTransition())
-            interpolator = AccelerateDecelerateInterpolator()
-            duration = 350
+            interpolator = transitionInterpolator
+            duration = enterExitDuration
         }
 
     }
@@ -74,28 +82,47 @@ class ProfileFragment : MyFragment() {
 
         setupActionBar(binding.toolbar)
         loadUserData()
-        setupLogOff()
+        setupLogOffButton()
+        setupResetHintsButton()
     }
 
-    private fun setupLogOff() {
+    private fun setupResetHintsButton() = with(binding) {
+        tvResetHints.setOnClickListener(AnimatedClickListener {
+            lifecycleScope.launch { resetHints() }
+            // TODO: avisar do sucesso
+        })
+    }
+
+    // TODO: voltar para o homefragment esta bem pesado
+    private suspend fun resetHints() {
+        Preferences::class.java.fields
+            .forEach {
+                if (!it.name.lowercase().startsWith("show_hint")) return@forEach
+                savePreferenceUseCase(it.name, true)
+            }
+    }
+
+
+    private fun setupLogOffButton() {
         binding.tvLogOff.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Por_favor_confirme))
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.Por_favor_confirme))
                 .setMessage(getString(R.string.Voce_sera_desconectado_a_e_todos_os_dados_locais_ser_o_removidos_deseja_mesmo_continuar))
-                .setCancelable(true).setPositiveButton(getString(R.string.Sair)) { dialog, _ ->
+                .setCancelable(true)
+                .setPositiveButton(getString(R.string.Sair)) { dialog, _ ->
                     lifecycleScope.launch {
-                        makeLogOff()
+                        performLogOff()
                     }
                 }.show()
         }
     }
 
-    private suspend fun makeLogOff() = withContext(IO) {
+    private suspend fun performLogOff() = withContext(IO) {
 
         logOffUserUseCase()
         if (!BuildConfig.DEBUG) roomDatabase.clearAllTables()
         vibrator.success()
-        requireActivity().finish()
-
+        withContext(Main) { requireActivity().finish() }
     }
 
     private fun loadUserData() {

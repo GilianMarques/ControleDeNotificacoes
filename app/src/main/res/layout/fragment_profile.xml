@@ -91,38 +91,85 @@
             android:orientation="vertical"
             android:paddingTop="16dp">
 
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:fontFamily="@font/urbanist_semibold"
-                android:padding="4dp"
-                android:text="@string/Sua_conta"
-                android:textAlignment="viewStart"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/tv_log_off"
-                style="@style/Margins_edittext"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/back_textview_menu"
-                android:drawablePadding="16dp"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center_vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="@string/Sair"
-                android:textColor="?attr/colorPrimaryVariant"
-                app:drawableStartCompat="@drawable/vec_logoff"
-                app:drawableTint="?attr/colorPrimaryVariant"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:orientation="vertical"
+                android:paddingTop="16dp">
 
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/urbanist_semibold"
+                    android:padding="4dp"
+                    android:text="@string/Sua_conta"
+                    android:textAlignment="viewStart"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_log_off"
+                    style="@style/Margins_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/back_textview_menu"
+                    android:drawablePadding="16dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/Sair"
+                    android:textColor="?attr/colorPrimaryVariant"
+                    app:drawableStartCompat="@drawable/vec_logoff"
+                    app:drawableTint="?attr/colorPrimaryVariant"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="16dp">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:fontFamily="@font/urbanist_semibold"
+                    android:padding="4dp"
+                    android:text="@string/Preferencias"
+                    android:textAlignment="viewStart"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_reset_hints"
+                    style="@style/Margins_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/back_textview_menu"
+                    android:drawablePadding="16dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/Resetar_exibi_o_de_dicas"
+                    android:textColor="?attr/colorPrimaryVariant"
+                    app:drawableStartCompat="@drawable/vec_reset"
+                    app:drawableTint="?attr/colorPrimaryVariant"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+            </LinearLayout>
         </LinearLayout>
+
 
     </androidx.core.widget.NestedScrollView>
 
