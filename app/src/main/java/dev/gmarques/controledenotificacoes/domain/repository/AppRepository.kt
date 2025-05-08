@@ -27,6 +27,7 @@ interface AppRepository {
     suspend fun getInstalledApps(
         targetName: String,
         includeSystemApps: Boolean,
+        includeManagedApps: Boolean,
         excludePackages: HashSet<String>,
     ): List<InstalledApp>
 

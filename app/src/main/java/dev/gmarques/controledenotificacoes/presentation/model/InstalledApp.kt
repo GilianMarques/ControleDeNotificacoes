@@ -13,4 +13,5 @@ import java.io.Serializable
 data class InstalledApp(
     val name: String,
     val packageId: String,
+    val beingManaged: Boolean,
 ) : Serializable

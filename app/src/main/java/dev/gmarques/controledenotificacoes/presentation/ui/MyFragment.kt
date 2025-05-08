@@ -247,10 +247,22 @@ open class MyFragment : Fragment() {
         }
     }
 
+    /**
+     * Exibe um diálogo de dica para o usuário. O diálogo será mostrado apenas uma vez para cada chave de dica.
+     *
+     * @param key Uma chave única para identificar esta dica. Usada para rastrear se a dica já foi exibida.
+     * @param msg A mensagem de texto da dica a ser exibida no diálogo.
+     * @param delay Um atraso opcional em milissegundos antes de exibir o diálogo. O padrão é 500.
+     *
+     * O diálogo tem duas opções:
+     * - "Entendi": Salva a preferência para não mostrar esta dica novamente e fecha o diálogo.
+     * - "Lembre-me da próxima vez": Fecha o diálogo sem salvar a preferência, permitindo que a dica seja mostrada novamente.
+     *
+     */
     protected fun showHintDialog(
         key: String,
         msg: String,
-        delay: Long = 0,
+        delay: Long = 500L,
     ) = lifecycleScope.launch {
 
 

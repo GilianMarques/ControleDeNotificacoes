@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_app
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSelectableBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.SelectableApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
@@ -51,15 +53,21 @@ class AppsAdapter(
         fun bind(selectedApp: SelectableApp) = with(binding) {
 
             cbSelect.setOnCheckedChangeListener(null)
-
-            tvStartDe.text = selectedApp.installedApp.name
+            parent.setOnClickListener(null)
+            tvAppManaged.isVisible = false
 
             CoroutineScope(Main).launch {
+
+                tvAppName.text = selectedApp.installedApp.name
+
                 Glide.with(binding.ivAppIcon.context)
                     .load(getInstalledAppIconUseCase(selectedApp.installedApp.packageId))
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(binding.ivAppIcon)
+            }
 
+            if (selectedApp.installedApp.beingManaged) {
+                tvAppManaged.isVisible = true
             }
 
             cbSelect.isChecked = selectedApp.isSelected
@@ -74,6 +82,8 @@ class AppsAdapter(
 
                 onItemCheck(selectedApp, isChecked)
             }
+
+
         }
     }
 

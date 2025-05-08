@@ -141,6 +141,10 @@
     <string name="Excluir_apps_do_sistema">Excluir apps do sistema</string>
     <string name="Excluir_apps_gerenciados">Excluir apps gerenciados</string>
     <string name="Incluir_apps_gerenciados">Incluir apps gerenciados</string>
+    <string name="Gerenciado">Gerenciado</string>
+    <string name="Atencao">Atenção</string>
+    <string name="Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados">Um ou mais dos apps selecionados já estão sendo gerenciados. Aplicar uma nova regra sobre eles substituirá a regra existente.</string>
+    <string name="Mais_x_apps">+%1$d apps</string>
 
 
 </resources>

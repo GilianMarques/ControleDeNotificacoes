@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_app
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectAppsBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
+import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
@@ -45,6 +48,9 @@ class SelectAppsFragment : MyFragment() {
     @Inject
     lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
 
+    @Inject
+    lateinit var getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase
+
     private lateinit var binding: FragmentSelectAppsBinding
     private val viewModel: SelectAppsViewModel by viewModels()
     private val args: SelectAppsFragmentArgs by navArgs()
@@ -55,19 +61,18 @@ class SelectAppsFragment : MyFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View {
-        binding = FragmentSelectAppsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    ) = FragmentSelectAppsBinding.inflate(inflater, container, false).also {
+        binding = it
+        setupActionBar(binding.toolbar)
+    }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupActionBar(binding.toolbar)
         getPreSelectedPackagesAndLoad()
         setupRecyclerView()
         setupSearch()
-        observeViewModel()
+        observeStates()
         observeEvents()
         setupFabConclude()
 
@@ -103,9 +108,7 @@ class SelectAppsFragment : MyFragment() {
 
     private fun setupSearch() {
         binding.tietSearch.doOnTextChanged { text, _, _, _ ->
-            viewModel.installedAppsLd.value?.let {
-                adapter.submitList(it, text.toString().trim())
-            }
+            adapter.submitList(viewModel.installedApps.value, text.toString().trim())
         }
     }
 
@@ -169,36 +172,62 @@ class SelectAppsFragment : MyFragment() {
             }).start()
     }
 
-    private fun observeViewModel() {
+    /**
+     * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.
+     * Utiliza a função collectFlow para coletar os estados do flow de forma segura e sem repetições de código.
+     */
+    private fun observeStates() {
 
-        viewModel.installedAppsLd.observe(viewLifecycleOwner) {
+        collectFlow(viewModel.statesFlow) { state ->
+            when (state) {
+                State.Idle -> {
+                    binding.progressBar.isVisible = false
+
+                }
+
+                State.Loading -> {
+                    binding.progressBar.isVisible = true
+                }
+            }
+        }
+
+
+        collectFlow(viewModel.installedApps) {
             lifecycleScope.launch {
-                binding.progressBar.isVisible = false
                 adapter.submitList(it, binding.tietSearch.text.toString().trim())
             }
         }
 
-        viewModel.blockUiSelection.observe(viewLifecycleOwner) {
-            adapter.setBlockSelection(it)
-        }
-
     }
 
+    /**
+     * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.
+     * Utiliza a função collectFlow para coletar os estados do flow de forma segura e sem repetições de código.
+     */
     private fun observeEvents() {
-        viewModel.uiEvents.observe(viewLifecycleOwner) { event ->
+        collectFlow(viewModel.eventsFlow) { event ->
+            when (event) {
+                is Event.BlockSelection -> {
+                    adapter.setBlockSelection(event.block)
+                }
 
-            with(event.cantSelectMoreApps.consume()) {
-                if (this != null) {
-                    showErrorSnackBar(this, binding.fabConclude)
+                is Event.NavigateHome -> {
+                    setResultAndClose(event.apps)
+                }
+
+                Event.SelectedAlreadyManagedApp -> {
+                    showHintDialog(
+                        Preferences.SELECTED_APPS_ALREADY_MANAGED,
+                        getString(R.string.Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados),
+                        100
+                    )
+                }
+
+                is Event.SimpleErrorMessage -> {
+                    showErrorSnackBar(event.error, binding.fabConclude)
+
                 }
             }
-
-            with(event.navigateHomeEvent.consume()) {
-                if (this != null) {
-                    setResultAndClose(this)
-                }
-            }
-
         }
     }
 

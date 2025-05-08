@@ -15,8 +15,8 @@
         android:foreground="?selectableItemBackground"
         android:paddingStart="8dp"
         android:paddingTop="4dp"
-        android:paddingBottom="4dp"
         android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,18 +36,37 @@
             tools:src="@drawable/vec_edit_rule" />
 
         <TextView
-            android:id="@+id/tv_start_de"
+            android:id="@+id/tv_app_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:maxLines="2"
             android:padding="4dp"
             android:textAlignment="viewStart"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/cb_select"
+            app:layout_constraintEnd_toStartOf="@id/tv_app_managed"
             app:layout_constraintStart_toEndOf="@id/iv_app_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/De" />
+
+        <TextView
+            android:id="@+id/tv_app_managed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/back_round"
+            android:backgroundTint="?colorPrimary"
+            android:fontFamily="@font/urbanist_extrabold"
+            android:padding="4dp"
+            android:text="@string/Gerenciado"
+            android:textAlignment="viewStart"
+            android:textColor="?colorOnPrimary"
+            android:textSize="10sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/cb_select"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
 
         <CheckBox

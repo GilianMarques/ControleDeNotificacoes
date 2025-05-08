@@ -18,6 +18,6 @@ data class Rule(
     val ruleType: RuleType = RuleType.RESTRICTIVE,
 ) : Serializable {
     companion object {
-        const val MAX_APPS_PER_RULE = 99 // TODO: validar isso no validator depois de implmentado
+        const val MAX_APPS_PER_RULE = 999 // TODO: validar isso no validator depois de implmentado
     }
 }

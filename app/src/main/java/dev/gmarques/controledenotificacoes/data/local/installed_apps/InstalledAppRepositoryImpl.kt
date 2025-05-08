@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.util.LruCache
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.repository.AppRepository
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
@@ -20,7 +21,10 @@ import javax.inject.Inject
  * Em terça-feira, 15 de abril de 2025 as 14:57.
  * Implementação da camada de dados para obtenção de apps instalados.
  */
-class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context: Context) : AppRepository {
+class InstalledAppRepositoryImpl @Inject constructor(
+    @ApplicationContext context: Context,
+    private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
+) : AppRepository {
 
     private val packageManager: PackageManager = context.packageManager
     private val iconCache = object : LruCache<String, Drawable>(100) {}
@@ -30,47 +34,52 @@ class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context
      * Busca e retorna uma lista de aplicativos instalados no dispositivo, filtrando-os opcionalmente
      * por um nome alvo e excluindo aplicativos com base em uma lista de pacotes.
      *
-     * A função opera em background (usando `withContext(IO)`) para evitar bloqueios na thread principal
-     * durante a busca e o processamento dos dados.
+     * A função opera em background para evitar bloqueios na thread principal durante a busca e o
+     * processamento dos dados.
      *
-     * @param targetName O nome (ou parte do nome) a ser usado como filtro para os aplicativos. A busca
-     *   ignora maiúsculas e minúsculas. Se uma string vazia for fornecida, todos os aplicativos
-     *   (exceto os do sistema) serão retornados.
+     * @param targetName O nome (ou parte do nome) a ser usado como filtro para os aplicativos.
+     *                   A busca ignora maiúsculas e minúsculas. Se uma string vazia for fornecida,
+     *                   todos os aplicativos (respeitando os outros filtros) serão retornados.
+     * @param includeSystemApps Booleano indicando se aplicativos de sistema devem ser incluídos
+     *                          nos resultados. Se `false`, aplicativos de sistema são excluídos.
+     * @param includeManagedApps Booleano indicando se aplicativos gerenciados (aqueles que
+     *                           já existem no banco de dados de aplicativos gerenciados) devem
+     *                           ser incluídos nos resultados. Se `false`, aplicativos gerenciados
+     *                           são excluídos.
      * @param excludePackages Um conjunto de IDs de pacotes. Aplicativos cujos IDs estejam neste conjunto
      *   serão excluídos da lista de resultados. Além disso, aplicativos considerados inválidos pela
      *   função `isAppValid` também serão excluídos.
-     * @return Uma lista de [InstalledApp]s, contendo informações sobre os aplicativos que correspondem
-     *   aos critérios de filtro e exclusão. A lista é ordenada alfabeticamente pelo nome do aplicativo.
+     * @return Uma lista de [InstalledApp]s, contendo informações sobre os aplicativos que
+     *   correspondem aos critérios de filtro e exclusão. A lista é ordenada alfabeticamente pelo
+     *   nome do aplicativo. Retorna uma lista vazia se nenhum aplicativo corresponder aos critérios.
      */
     override suspend fun getInstalledApps(
         targetName: String,
         includeSystemApps: Boolean,
+        includeManagedApps: Boolean,
         excludePackages: HashSet<String>,
     ): List<InstalledApp> =
         withContext(IO) {
 
-            //    cacheData()
-            val lowerTarget = targetName.lowercase()
+            val lowerTargetName = targetName.lowercase()
 
-            val apps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
+            val installedApps = packageManager.getInstalledApplications(PackageManager.GET_META_DATA)
 
-            return@withContext apps.map { appInfo ->
+            return@withContext installedApps.map { appInfo ->
                 async {
 
                     val appName = packageManager.getApplicationLabel(appInfo).toString()
+                    var managedApp = false
 
-                    if (excludePackages.contains(appInfo.packageName) ||
-                        !isAppValid(
-                            appName,
-                            includeSystemApps,
-                            appInfo,
-                            lowerTarget
-                        )
-                    ) return@async null
+                    if (excludePackages.contains(appInfo.packageName)) return@async null
+                    if (!includeSystemApps && isSystemApp(appInfo)) return@async null
+                    if (isManagedApp(appInfo).also { managedApp = it } && !includeManagedApps) return@async null
+                    if (!isAppNameMatchingSearchQuery(lowerTargetName, appName)) return@async null
 
                     InstalledApp(
                         packageId = appInfo.packageName,
                         name = appName,
+                        beingManaged = managedApp
                     )
                 }
             }
@@ -80,29 +89,45 @@ class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context
 
         }
 
+
     /**
-     * Verifica se um aplicativo é válido para ser exibido na lista.
+     * Verifica se o aplicativo é um aplicativo de sistema.
      *
-     * Um aplicativo é considerado válido se não for um aplicativo de sistema
-     * e se o nome do aplicativo contiver o termo de busca (ignorando maiúsculas/minúsculas),
-     * a menos que o termo de busca seja vazio, indicando que todos os aplicativos
-     * não de sistema devem ser retornados.
-     *
-     * @param appName O nome do aplicativo.
-     * @param appInfo As informações do aplicativo, incluindo suas flags.
-     * @param target O termo de busca para filtrar os aplicativos pelo nome.
-     * @return `true` se o aplicativo for válido, `false` caso contrário.
+     * @param appInfo As informações do aplicativo a serem verificadas.
+     * @return `true` se o aplicativo for um aplicativo de sistema, `false` caso contrário.
      */
-    private fun isAppValid(appName: String, includeSystemApps: Boolean, appInfo: ApplicationInfo, target: String): Boolean {
-
-        if (!includeSystemApps) {
-            val isSystemApp = appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
-            if (isSystemApp) return false
-        }
-
-        return target.isEmpty() || appName.lowercase().contains(target)
+    private fun isSystemApp(appInfo: ApplicationInfo): Boolean {
+        return appInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
     }
 
+    /**
+     * Verifica se o aplicativo já está gerenciado (existe no banco de dados de aplicativos gerenciados).
+     *
+     * @param appInfo As informações do aplicativo a serem verificadas.
+     * @return `true` se o aplicativo for gerenciado, `false` caso contrário.
+     */
+    private suspend fun isManagedApp(appInfo: ApplicationInfo): Boolean {
+        return getManagedAppByPackageIdUseCase(appInfo.packageName) != null
+    }
+
+    /**
+     * Verifica se o nome do aplicativo corresponde à consulta de busca.
+     *
+     * A correspondência é feita de forma case-insensitive.
+     *
+     * @param lowerTargetName A consulta de busca.
+     * @param appName O nome do aplicativo a ser verificado.
+     * @return `true` se o nome do aplicativo corresponder à consulta de busca (ou se a consulta
+     *         estiver vazia), `false` caso contrário.
+     */
+    private fun isAppNameMatchingSearchQuery(lowerTargetName: String, appName: String): Boolean {
+        return lowerTargetName.isEmpty() || appName.lowercase().contains(lowerTargetName)
+    }
+
+    /**
+     * Busca o ícone do aplicativo pelo seu ID de pacote. Utiliza um cache LRU para armazenar ícones
+     * previamente carregados.
+     */
 
     override suspend fun getDrawable(pkg: String): Drawable? = withContext(IO) {
         iconCache.get(pkg) ?: runCatching {
@@ -128,6 +153,7 @@ class InstalledAppRepositoryImpl @Inject constructor(@ApplicationContext context
             val installedApp = InstalledApp(
                 packageId = pkg,
                 name = appName,
+                beingManaged = getManagedAppByPackageIdUseCase(pkg) != null
             )
 
             appCache.put(pkg, installedApp)

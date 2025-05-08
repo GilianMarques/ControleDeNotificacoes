@@ -121,14 +121,14 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/apps_container"
                 style="@style/containers_margins"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/apps_container"
                 android:animateLayoutChanges="true"
                 android:background="@drawable/back_container"
-                android:transitionName="apps_container"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:transitionName="apps_container">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -137,13 +137,13 @@
                     android:padding="8dp">
 
                     <TextView
+                        android:id="@+id/tv_target_app"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:fontFamily="@font/urbanist_extrabold"
                         android:text="@string/Aplicativos_alvo"
                         android:textSize="20sp"
-                        android:id="@+id/tv_target_app"
                         android:transitionName="tv_target_app"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/iv_add_app"
@@ -182,6 +182,17 @@
                     android:orientation="vertical">
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_extra_apps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/urbanist_extrabold"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:textAlignment="gravity"
+                    android:textSize="14sp"
+                    tools:text="+ 50 apps" />
             </LinearLayout>
 
         </LinearLayout>

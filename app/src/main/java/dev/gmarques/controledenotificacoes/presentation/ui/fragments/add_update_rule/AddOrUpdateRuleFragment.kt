@@ -93,8 +93,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
             showHintDialog(
                 Preferences.HINT_EDIT_RULE_1,
-                getString(R.string.Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos),
-                500
+                getString(R.string.Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos)
             )
 
         }

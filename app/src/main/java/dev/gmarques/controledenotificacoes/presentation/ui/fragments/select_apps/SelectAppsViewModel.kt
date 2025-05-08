@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,11 +8,20 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
-import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.SelectableApp
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.Event.BlockSelection
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.Event.NavigateHome
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.Event.SelectedAlreadyManagedApp
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.Event.SimpleErrorMessage
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.State.Idle
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.State.Loading
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -29,18 +37,16 @@ class SelectAppsViewModel @Inject constructor(
     @ApplicationContext private val context: android.content.Context,
 ) : ViewModel() {
 
+    private val _installedApps = MutableStateFlow<List<SelectableApp>>(listOf<SelectableApp>())
+    val installedApps: StateFlow<List<SelectableApp>> = _installedApps
 
-    private val _installedApps = MutableLiveData<List<SelectableApp>>()
-    val installedAppsLd: LiveData<List<SelectableApp>> = _installedApps
+    private val _eventsFlow = MutableSharedFlow<Event>(replay = 1)
+    val eventsFlow: SharedFlow<Event> get() = _eventsFlow
 
-    private val _blockUiSelection = MutableLiveData<Boolean>(false)
-    val blockUiSelection: LiveData<Boolean> = _blockUiSelection
+    private val _statesFlow = MutableStateFlow<State>(Loading)
+    val statesFlow: StateFlow<State> get() = _statesFlow
 
-    private val _uiEvents = MutableLiveData(UiEvents())
-    val uiEvents: LiveData<UiEvents> get() = _uiEvents
-
-    private val installedApps = mutableListOf<SelectableApp>()
-    private val selectedApps = HashSet<InstalledApp>()
+    private var selectedApps = HashSet<InstalledApp>()
     var preSelectedAppsToHide: HashSet<String> = hashSetOf()
 
     var includeSystemApps = false
@@ -53,115 +59,102 @@ class SelectAppsViewModel @Inject constructor(
 
     fun searchApps() = viewModelScope.launch(IO) {
 
-        val updateUi = {
-            _installedApps.postValue(installedApps.toList())
-            _blockUiSelection.postValue(!canSelectMoreApps())
+        _statesFlow.tryEmit(Loading)
+        _installedApps.tryEmit(emptyList())
+
+        val installedApps = getAllInstalledAppsUseCase(
+            includeSystemApps = includeSystemApps,
+            includeManagedApps = includeManagedApps,
+            excludePackages = preSelectedAppsToHide,
+        ).map { installedApp ->
+            SelectableApp(installedApp, selectedApps.any { it.packageId == installedApp.packageId })
         }
 
-        if (installedApps.isNotEmpty()) {
-            installedApps.clear()
-            selectedApps.clear()
-            updateUi()
-        }
+        selectedApps = selectedApps.filter { selectedApp ->
+            installedApps.any { selectedApp.packageId == it.installedApp.packageId }
+        }.toHashSet()
 
-        installedApps.addAll(
-            getAllInstalledAppsUseCase(
-                "",
-                includeSystemApps,
-                preSelectedAppsToHide
-            ).map {
-                SelectableApp(it)
-            })
-
-        updateUi()
+        _statesFlow.tryEmit(Idle)
+        _installedApps.tryEmit(installedApps)
 
     }
 
-
+    /**
+     * Atualiza o estado de seleção de um aplicativo e notifica a UI sobre a mudança
+     * e sobre o estado de bloqueio de seleção.
+     * Garante que apenas um aplicativo seja selecionado/desselecionado por vez.
+     */
     fun onAppChecked(app: SelectableApp, checked: Boolean) = viewModelScope.launch(Dispatchers.Default) {
         onAppCheckedMutex.withLock {
 
-            if (checked && !canSelectMoreApps()) {
-                notifyCantSelectMoreApps()
+            if (checked && shouldBlockSelection()) {
+                notifyErrorMessage(
+                    context.getString(
+                        R.string.Nao_possivel_selecionar_mais_que_x_aplicativos,
+                        Rule.MAX_APPS_PER_RULE
+                    )
+                )
+
                 return@launch
             }
 
-            val index = installedApps.indexOfFirst { it.installedApp.packageId == app.installedApp.packageId }
-            installedApps[index] = app.copy(isSelected = checked)
-            _installedApps.postValue(installedApps.toList())
+            if (checked && app.installedApp.beingManaged) {
+                _eventsFlow.tryEmit(SelectedAlreadyManagedApp)
+            }
+
+
+            val apps = installedApps.value.toMutableList()
+
+            val index = apps.indexOfFirst { it.installedApp.packageId == app.installedApp.packageId }
+            apps[index] = app.copy(isSelected = checked)
+            _installedApps.tryEmit(apps.toList())
 
             selectedApps.apply {
                 if (checked) add(app.installedApp)
                 else remove(app.installedApp)
             }
 
-            _blockUiSelection.postValue(!canSelectMoreApps())
+            _eventsFlow.tryEmit(BlockSelection(shouldBlockSelection()))
 
         }
     }
 
-    private fun notifyCantSelectMoreApps() {
-        _uiEvents.postValue(
-            _uiEvents.value!!.copy(
-                cantSelectMoreApps = EventWrapper(
-                    context.getString(
-                        R.string.Nao_possivel_selecionar_mais_que_x_aplicativos, Rule.MAX_APPS_PER_RULE
-                    )
-                )
-            )
-        )
+    /**
+     * Notifica a UI com uma mensagem de erro simples.
+     */
+    private fun notifyErrorMessage(msg: String) {
+        _eventsFlow.tryEmit(SimpleErrorMessage(msg))
     }
 
-    fun canSelectMoreApps(): Boolean {
-        return (selectedApps.size + preSelectedAppsToHide.size) < Rule.MAX_APPS_PER_RULE
+    fun shouldBlockSelection(): Boolean {
+        return (selectedApps.size + preSelectedAppsToHide.size) >= Rule.MAX_APPS_PER_RULE
     }
 
     fun validateSelection() = viewModelScope.launch(IO) {
+
         if (selectedApps.isEmpty()) {
-
-            _uiEvents.postValue(
-                _uiEvents.value!!.copy(
-                    cantSelectMoreApps = EventWrapper(
-                        context.getString(
-                            R.string.Selecione_pelo_menos_um_aplicativo
-                        )
-                    )
-                )
-            )
-
+            notifyErrorMessage(context.getString(R.string.Selecione_pelo_menos_um_aplicativo))
             return@launch
         }
 
-        _uiEvents.postValue(
-            _uiEvents.value!!.copy(
-                navigateHomeEvent = EventWrapper(selectedApps.toList())
-            )
-        )
+        _eventsFlow.tryEmit(NavigateHome(selectedApps.toList()))
     }
 
     fun selectAppsAllOrNone(all: Boolean) = viewModelScope.launch(IO) {
-        for (app in installedApps) {
+        for (app in installedApps.value) {
             onAppChecked(app, all)
-            if (all && !canSelectMoreApps()) break
+            if (all && shouldBlockSelection()) break
         }
     }
 
     fun invertSelection() = viewModelScope.launch(IO) {
-        var notifyAboutLimit = false
-        for (app in installedApps) {
 
-            val isAppGoingToBeChecked = !app.isSelected
+        val apps = installedApps.value.toList()
 
-            if (isAppGoingToBeChecked && !canSelectMoreApps()) {
-                notifyAboutLimit = true
-                continue
-            }
-
-            onAppChecked(app, isAppGoingToBeChecked)
-
+        for (app in apps) {
+            onAppChecked(app, !app.isSelected)
         }
 
-        if (notifyAboutLimit) notifyCantSelectMoreApps()
     }
 
     fun toggleIncludeSystemApps() {
@@ -174,4 +167,23 @@ class SelectAppsViewModel @Inject constructor(
         searchApps()
     }
 
+}
+
+/**
+ * Representa os eventos (consumo unico) que podem ser disparados para a UI
+ */
+sealed class Event {
+    data class BlockSelection(val block: Boolean) : Event()
+    data class SimpleErrorMessage(val error: String) : Event()
+    object SelectedAlreadyManagedApp : Event()
+    data class NavigateHome(val apps: List<InstalledApp>) : Event()
+}
+
+/**
+ * Representa os estados da interface
+ */
+
+sealed class State {
+    object Idle : State()
+    object Loading : State()
 }

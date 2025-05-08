@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBinding
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
@@ -39,6 +40,7 @@ import kotlin.math.min
 
 @AndroidEntryPoint
 class AddManagedAppsFragment() : MyFragment() {
+    private val maxAppsViews = 5
 
     companion object {
         fun newInstance(): AddManagedAppsFragment {
@@ -248,7 +250,7 @@ class AddManagedAppsFragment() : MyFragment() {
      */
     private fun manageAppsViews(apps: Map<String, InstalledApp>) = lifecycleScope.launch {
         manageAppsViewsMutex.withLock {
-
+            binding.tvExtraApps.text = ""
             val parent = binding.llConteinerApps
 
             /* remova o `toList()` e veja sua vida se transformar em um inferno! Brincadeiras a parte, deve-se criar
@@ -261,6 +263,10 @@ class AddManagedAppsFragment() : MyFragment() {
                 }
 
             apps.values.sortedBy { it.name }.forEachIndexed { index, app ->
+                if (index >= maxAppsViews) {
+                    binding.tvExtraApps.text = getString(R.string.Mais_x_apps, apps.size - maxAppsViews)
+                    return@forEachIndexed
+                }
                 if (!parent.children.none { it.tag == app.packageId }) return@forEachIndexed
                 with(ItemAppSmallBinding.inflate(layoutInflater)) {
                     name.text = app.name
