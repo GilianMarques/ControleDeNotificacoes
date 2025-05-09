@@ -23,7 +23,6 @@ import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleName
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRemovalDialog
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReferenceSmall
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setRuleDrawable

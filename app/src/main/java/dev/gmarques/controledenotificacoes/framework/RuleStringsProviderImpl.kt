@@ -48,7 +48,10 @@ class RuleStringsProviderImpl @Inject constructor(
 
     override fun permissive(): String = context.getString(R.string.regra_tipo_permissiva)
 
-
     override fun restrictive(): String = context.getString(R.string.regra_tipo_restritiva)
+
+    override fun wholeDay(): String = context.getString(R.string.Dia_inteiro)
+
+    override fun everyDay(): String = context.getString(R.string.Todos_os_dias)
 
 }

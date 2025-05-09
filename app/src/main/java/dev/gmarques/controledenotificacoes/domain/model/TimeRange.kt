@@ -6,6 +6,7 @@ import java.util.UUID
 /**
  * Criado por Gilian Marques
  * Em sábado, 29 de março de 2025 às 21:15.
+ * Acesse funções de extensão utilitárias para essa classe através de [TimeRangeExtensionFun]
  */
 
 data class TimeRange(

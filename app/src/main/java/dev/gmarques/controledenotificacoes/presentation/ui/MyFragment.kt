@@ -1,11 +1,11 @@
 package dev.gmarques.controledenotificacoes.presentation.ui
 
-import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.OvershootInterpolator
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
@@ -46,7 +46,9 @@ import javax.inject.Inject
  * Em quarta-feira, 16 de abril de 2025 as 17:43.
  */
 @AndroidEntryPoint
-open class MyFragment : Fragment() {
+open class MyFragment() : Fragment() {
+
+    private var dialogHint: AlertDialog? = null
 
     @Inject
     lateinit var vibrator: VibratorInterface
@@ -266,14 +268,17 @@ open class MyFragment : Fragment() {
 
         if (readPreferenceUseCase(key, false)) return@launch
 
+        dialogHint?.dismiss()
+
         if (delay > 0) delay(delay)
 
         vibrator.interaction()
 
-        MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Dica)).setMessage(msg)
+        dialogHint = MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Dica)).setMessage(msg)
             .setPositiveButton(getString(R.string.Entendi)) { dialog, _ ->
-                lifecycleScope.launch { savePreferenceUseCase(key, false) }
+                lifecycleScope.launch { savePreferenceUseCase(key, true) }
             }.setNegativeButton(getString(R.string.Lembre_me_da_proxima_vez)) { dialog, _ ->
-            }.setCancelable(false).setIcon(R.drawable.vec_hint).show()
+            }.setCancelable(false).setIcon(R.drawable.vec_hint)
+            .show()
     }
 }

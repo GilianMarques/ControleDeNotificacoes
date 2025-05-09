@@ -24,5 +24,7 @@ interface RuleStringsProvider {
 
     fun permissive(): String
     fun restrictive(): String
+    fun wholeDay(): String
+    fun everyDay(): String
 
 }

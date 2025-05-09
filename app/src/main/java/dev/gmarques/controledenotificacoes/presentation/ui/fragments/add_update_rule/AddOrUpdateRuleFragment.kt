@@ -99,7 +99,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
         }
     }
 
-
     private fun setupFabAddRule() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
             edtName.clearFocus()

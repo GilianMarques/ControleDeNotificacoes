@@ -15,7 +15,6 @@ import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBinding
-import dev.gmarques.controledenotificacoes.databinding.FragmentSelectRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
@@ -30,7 +29,6 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -86,7 +84,9 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private fun setupConcludeFab() = with(binding) {
         fabConclude.setOnClickListener(AnimatedClickListener {
+            fabConclude.isEnabled = false
             viewModel.validateSelection()
+
         })
     }
 
@@ -210,6 +210,7 @@ class AddManagedAppsFragment() : MyFragment() {
             it.consume()?.let {
                 showErrorSnackBar(it, binding.fabConclude)
             }
+            binding.fabConclude.isEnabled = true
         }
 
         viewModel.successCloseFragment.observe(viewLifecycleOwner) {
