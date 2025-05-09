@@ -184,7 +184,8 @@ class AddOrUpdateRuleViewModel @Inject constructor(
 
             is DuplicateTimeRangeException -> context.getString(R.string.Nao_e_possivel_adicionar_um_intervalo_de_tempo_duplicado)
             is IntersectedRangeException -> context.getString(R.string.Nao_sao_permitidos_intervalos_de_tempo_que_se_interseccionam)
-            else -> throw IllegalStateException("Exceção não prevista. Isso é um bug! ${exception.message}")
+            is InversedRangeException -> context.getString(R.string.O_final_do_intervalo_deve_ser_maior_que_o_inicio)
+            else -> throw exception
         }
 
         _eventsFlow.tryEmit(Event.SimpleErrorMessage(message))

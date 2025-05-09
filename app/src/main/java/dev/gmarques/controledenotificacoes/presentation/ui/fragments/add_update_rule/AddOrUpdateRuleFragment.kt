@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +12,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddOrUpdateRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
+import dev.gmarques.controledenotificacoes.databinding.ViewDialogTimeIntervalBinding
 import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
@@ -30,6 +33,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListe
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import nl.joery.timerangepicker.TimeRangePicker
 import kotlin.math.min
 
 @AndroidEntryPoint
@@ -201,7 +205,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
         ivAddRange.setOnClickListener(AnimatedClickListener {
 
             if (viewModel.canAddMoreRanges()) {
-                collectTimeRangeData()
+                showTimeRangeDialog()
             } else {
                 showErrorSnackBar(
                     getString(
@@ -213,88 +217,15 @@ class AddOrUpdateRuleFragment : MyFragment() {
         })
     }
 
-    /**
-     * Coleta dados de intervalo de tempo, envolvendo horários de início e fim.
-     *
-     * Esta função gerencia a coleta de horários para um intervalo, utilizando um seletor de tempo.
-     * Primeiro, solicita ao usuário que selecione o horário de início e, em seguida, o horário de término.
-     * Após a seleção de ambos, valida o intervalo resultante e, se válido, o adiciona à sequência de intervalos do ViewModel.
-     *
-     */
-    private fun collectTimeRangeData() {
-        val data = intArrayOf(8, 0, 18, 0)
-
-        val collectEndValues = {
-            showTimePicker(data[2], data[3], false) { hour, minute ->
-                data[2] = hour
-                data[3] = minute
-
-                val range = TimeRange(data[0], data[1], data[2], data[3])
-                val rangeResult = viewModel.validateRange(range)
-                if (rangeResult.isSuccess) {
-                    viewModel.validateRangesWithSequenceAndAdd(range)
-                }
-            }
-        }
-
-        val collectStartValues = {
-            showTimePicker(data[0], data[1], true) { hour, minute ->
-                data[0] = hour
-                data[1] = minute
-                collectEndValues()
-            }
-        }
-
-        collectStartValues()
+    private fun showTimeRangeDialog() {
+        TimeRangeDialogManager(
+            context = requireContext(),
+            inflater = layoutInflater
+        ) { timeRange ->
+            viewModel.validateRangesWithSequenceAndAdd(timeRange)
+        }.show()
     }
 
-    /**
-     * Exibe um diálogo Material Time Picker.
-     *
-     * Esta função exibe um diálogo de seletor de hora no formato de 24 horas, permitindo que o usuário
-     * selecione um horário. Ela também define um título que depende se o usuário está selecionando a hora de início ou de fim.
-     *
-     * @param hour A hora inicial a ser exibida no seletor de hora.
-     * @param minute O minuto inicial a ser exibido no seletor de hora.
-     * @param isStartTime Um booleano que indica se este seletor de hora é para selecionar a hora de início (true) ou a hora de fim (false).
-     * @param callback Uma função lambda que será chamada quando o usuário confirmar sua seleção.
-     *                 Ela recebe dois parâmetros:
-     *                 - A hora selecionada (Int).
-     *                 - O minuto selecionado (Int).
-     *
-     * @throws IllegalStateException se a activity for nula. Isso pode acontecer se o fragmento não estiver anexado a uma activity.
-     * @sample
-     * ```kotlin
-     *   showTimePicker(10, 30, true) { horaSelecionada, minutoSelecionado ->
-     *       // Lidar com o horário selecionado (horaSelecionada:minutoSelecionado)
-     *       Log.d("TimePicker", "Horário Selecionado: $horaSelecionada:$minutoSelecionado")
-     *   }
-     * ```
-     * @see MaterialTimePicker
-     * @see TimeFormat
-     */
-    private fun showTimePicker(
-        hour: Int,
-        minute: Int,
-        isStartTime: Boolean,
-        callback: (Int, Int) -> Unit,
-    ) {
-
-        val picker =
-            MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_24H).setHour(hour).setMinute(minute).setTitleText(
-                if (isStartTime) getString(R.string.Selecione_o_in_cio_do_intervalo_de_tempo) else getString(
-                    R.string.Selecione_o_fim_do_intervalo_de_tempo
-                )
-            ).build()
-
-        picker.isCancelable = false
-
-        picker.addOnPositiveButtonClickListener {
-            callback(picker.hour, picker.minute)
-        }
-
-        activity?.supportFragmentManager?.let { picker.show(it, "TimePicker") }
-    }
 
     /**
      * Atualiza, com base nos updates do viewmodel a interface com base no tipo de regra (Permissiva ou Restritiva) .
