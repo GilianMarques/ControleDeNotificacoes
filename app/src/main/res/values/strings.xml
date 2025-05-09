@@ -150,6 +150,10 @@
     <string name="Os_di_logos_de_ajuda_ser_o_re_exibidos">Os diálogos de ajuda serão re-exibidos</string>
     <string name="Dia_inteiro">24h/dia</string>
     <string name="Todos_os_dias">Todos os dias</string>
+    <string name="intervalo_0800_1200h">08:00-12:00</string>
+    <string name="intervalo_1300_1800h">13:00-18:00</string>
+    <string name="Selecione_o_intervalo_de_tempo">Selecione o intervalo de tempo</string>
+    <string name="De_x_as_y">De %1$s às %2$s</string>
 
 
 </resources>

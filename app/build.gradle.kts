@@ -55,7 +55,7 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.10.1")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.0") // TODO: remover
     implementation("androidx.fragment:fragment-ktx:1.8.6")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
@@ -80,7 +80,7 @@ dependencies {
     // optional - Test helpers
     testImplementation("androidx.room:room-testing:2.7.1")
 
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0")
     implementation("androidx.activity:activity-ktx:1.10.1")
 
     // https://mvnrepository.com/artifact/com.github.zawadz88.materialpopupmenu/material-popup-menu
@@ -105,14 +105,14 @@ dependencies {
 
     //navigation
     // Views/Fragments integration
-    implementation("androidx.navigation:navigation-fragment-ktx:2.8.9")
-    implementation("androidx.navigation:navigation-ui-ktx:2.8.9")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.9.0")
+    implementation("androidx.navigation:navigation-ui-ktx:2.9.0")
 
     // Feature module support for Fragments
-    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.8.9")
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.9.0")
 
     // Testing Navigation
-    androidTestImplementation("androidx.navigation:navigation-testing:2.8.9")
+    androidTestImplementation("androidx.navigation:navigation-testing:2.9.0")
 
     // necessario para testes instrumentados pois ainda usam junit4 como padrao
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
@@ -130,7 +130,9 @@ dependencies {
     //noinspection KaptUsageInsteadOfKsp
     kapt("com.github.bumptech.glide:compiler:4.16.0")
 
-    implementation("androidx.datastore:datastore-preferences:1.1.3")
+    implementation("androidx.datastore:datastore-preferences:1.1.6")
+
+    implementation("nl.joery.timerangepicker:timerangepicker:1.0.0")
 
 
 }
