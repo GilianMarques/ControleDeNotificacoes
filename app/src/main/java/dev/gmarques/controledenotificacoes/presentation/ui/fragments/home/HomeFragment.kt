@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
+import dev.gmarques.controledenotificacoes.databinding.ViewWarningMissingNotificationPermissionBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
@@ -37,6 +39,7 @@ import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -240,7 +243,7 @@ class HomeFragment : MyFragment() {
     override fun onResume() {
         super.onResume()
 
-        if (!isNotificationListenerEnabled()) lifecycleScope.launch { delay(1500); showNotificationListenerPermissionDialog() }
+        if (!isNotificationListenerEnabled()) lifecycleScope.launch { delay(1500); showNotificationListenerWarning() }
     }
 
     private fun isNotificationListenerEnabled(): Boolean {
@@ -252,30 +255,31 @@ class HomeFragment : MyFragment() {
         return enabledListeners.split(":").any { it.contains(requireActivity().packageName) }
     }
 
-    private fun showNotificationListenerPermissionDialog() {
+    private fun showNotificationListenerWarning() {
 
+        val warningBinding = ViewWarningMissingNotificationPermissionBinding.inflate(layoutInflater)
 
-        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Permissao_necessaria))
-            .setMessage(getString(R.string.Para_que_esse_aplicativo_possa_desempenhar_sua_fun_o_necess_rio_que_voc_forne_a_permiss_o_para_acesso_))
-            .setPositiveButton(
-                getString(R.string.Permitir), object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-                        startActivity(intent)
-                        Toast.makeText(
-                            requireActivity(),
-                            getString(R.string.Permita_que_x_acesse_as_notificacoes, getString(R.string.app_name)),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }).setNegativeButton(
-                getString(R.string.Sair), object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        requireActivity().finish()
-                    }
-                }).setCancelable(false).setIcon(R.drawable.vec_permission).show()
+        warningBinding.chipPrivacy.setOnClickListener(AnimatedClickListener {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.Sua_privacidade_importa))
+                .setMessage(getString(R.string.Sua_privacidade_esta_protegida))
+                .setPositiveButton(getString(R.string.Entendi)) { dialog, _ ->
+                }.setIcon(R.drawable.vec_info)
+                .show()
+        })
 
+        warningBinding.chipGivePermission.setOnClickListener(AnimatedClickListener {
+            val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+            startActivity(intent)
+            Toast.makeText(
+                requireActivity(),
+                getString(R.string.Permita_que_x_acesse_as_notificacoes, getString(R.string.app_name)),
+                Toast.LENGTH_LONG
+            ).show()
+            binding.containerWarnings.removeView(warningBinding.root)
+        })
 
+        binding.containerWarnings.addViewWithTwoStepsAnimation(warningBinding.root)
     }
 
 

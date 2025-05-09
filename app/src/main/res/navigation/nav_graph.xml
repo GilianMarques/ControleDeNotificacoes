@@ -9,7 +9,7 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment"
-        android:label="fragment_home"
+        android:label="@string/Fragment_home"
         tools:layout="@layout/fragment_home">
 
         <action
