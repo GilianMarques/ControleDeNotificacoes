@@ -35,7 +35,7 @@
         app:trp_sliderRangeGradientMiddle="@color/md_theme_primaryContainer_mediumContrast"
         app:trp_sliderRangeGradientStart="@color/app_icon_bg_color_start"
         app:trp_startTime="4:00"
-        app:trp_stepTimeMinutes="5" />
+        app:trp_stepTimeMinutes="1" />
 
     <androidx.appcompat.widget.AppCompatImageView
 

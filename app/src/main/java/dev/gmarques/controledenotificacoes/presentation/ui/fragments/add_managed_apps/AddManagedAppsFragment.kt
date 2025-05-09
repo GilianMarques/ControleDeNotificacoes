@@ -80,6 +80,14 @@ class AddManagedAppsFragment() : MyFragment() {
         setupSelectRuleButton()
         setupConcludeFab()
         observeViewModel()
+        loadRuleIfOnlyOneOnDb()
+    }
+
+    private fun loadRuleIfOnlyOneOnDb() = lifecycleScope.launch {
+
+        getAllRulesUseCase().firstOrNull()?.let {
+            viewModel.setRule(it)
+        }
     }
 
     private fun setupConcludeFab() = with(binding) {
