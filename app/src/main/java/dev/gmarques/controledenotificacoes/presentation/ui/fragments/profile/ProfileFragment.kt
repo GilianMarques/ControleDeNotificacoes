@@ -1,16 +1,17 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.ChangeBounds
 import androidx.transition.TransitionSet
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
@@ -42,6 +43,8 @@ class ProfileFragment : MyFragment() {
     lateinit var getUserUseCase: GetUserUseCase
 
     private lateinit var binding: FragmentProfileBinding
+
+    private val viewModel: ProfileViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,24 +87,29 @@ class ProfileFragment : MyFragment() {
         loadUserData()
         setupLogOffButton()
         setupResetHintsButton()
+        observeEvents()
     }
 
     private fun setupResetHintsButton() = with(binding) {
         tvResetHints.setOnClickListener(AnimatedClickListener {
-            lifecycleScope.launch { resetHints() }
-            // TODO: avisar do sucesso
+            viewModel.resetHints()
         })
     }
 
-    // TODO: voltar para o homefragment esta bem pesado
-    private suspend fun resetHints() {
-        Preferences::class.java.fields
-            .forEach {
-                if (!it.name.lowercase().startsWith("show_hint")) return@forEach
-                savePreferenceUseCase(it.name, true)
+    /**
+     * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.
+     * Utiliza a função collectFlow para coletar os estados do flow de forma segura e sem repetições de código.
+     */
+    private fun observeEvents() {
+        collectFlow(viewModel.eventsFlow) { event ->
+            when (event) {
+                is Event.PreferencesCleaned -> {
+                    vibrator.success()
+                    Snackbar.make(binding.nsv, getString(R.string.Os_di_logos_de_ajuda_ser_o_re_exibidos), Snackbar.LENGTH_LONG).show()
+                }
             }
+        }
     }
-
 
     private fun setupLogOffButton() {
         binding.tvLogOff.setOnClickListener {

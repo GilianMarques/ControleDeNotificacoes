@@ -133,7 +133,7 @@ class HomeViewModel @Inject constructor(
     private fun <T> Flow<T>.init(initialValue: T): StateFlow<T> {
         return this.stateIn(
             scope = this@HomeViewModel.viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
+            started = SharingStarted.Eagerly,
             initialValue = initialValue
         )
     }

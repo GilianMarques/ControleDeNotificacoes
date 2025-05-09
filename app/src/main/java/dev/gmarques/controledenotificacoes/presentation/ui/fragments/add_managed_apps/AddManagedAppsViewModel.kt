@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,6 +19,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.measureTime
 
 
 @HiltViewModel
@@ -95,10 +97,12 @@ class AddManagedAppsViewModel @Inject constructor(
             return@launch
         }
 
-        apps.map {
-            async { addManagedApp(ManagedApp(it.packageId, rule.id)) }
-        }.awaitAll()
-
+        val x = measureTime {
+            apps.map {
+                async { addManagedApp(ManagedApp(it.packageId, rule.id)) }
+            }.awaitAll()
+        }
+        Log.d("USUK", "AddManagedAppsViewModel.validateSelection: Time: $x millis")
         _successCloseFragment.postValue(EventWrapper(Unit))
 
     }

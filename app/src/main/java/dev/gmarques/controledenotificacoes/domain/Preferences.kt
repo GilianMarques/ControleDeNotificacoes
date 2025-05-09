@@ -1,6 +1,8 @@
 package dev.gmarques.controledenotificacoes.domain
 
-// TODO: nao ofuscar
+import androidx.annotation.Keep
+
+@Keep
 object Preferences {
 
     // campos começando com show_hint podem ser limpos por opção do usuario

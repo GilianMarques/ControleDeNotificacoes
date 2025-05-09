@@ -147,6 +147,9 @@
     <string name="Mais_x_apps">+%1$d apps</string>
     <string name="Preferencias">Preferências</string>
     <string name="Resetar_exibi_o_de_dicas">Resetar exibição de dicas</string>
+    <string name="Os_di_logos_de_ajuda_ser_o_re_exibidos">Os diálogos de ajuda serão re-exibidos</string>
+    <string name="Dia_inteiro">24h/dia</string>
+    <string name="Todos_os_dias">Todos os dias</string>
 
 
 </resources>
