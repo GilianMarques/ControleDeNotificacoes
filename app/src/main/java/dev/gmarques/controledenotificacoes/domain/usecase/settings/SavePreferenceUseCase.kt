@@ -1,6 +1,9 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.settings
 
 import dev.gmarques.controledenotificacoes.domain.repository.PreferencesRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -8,5 +11,5 @@ import javax.inject.Inject
  * Em terça-feira, 06 de maio de 2025 as 13:26.
  */
 class SavePreferenceUseCase @Inject constructor(private val repository: PreferencesRepository) {
-    suspend operator fun <T> invoke(key: String, value: T) = repository.save(key, value)
+    operator fun <T> invoke(key: String, value: T) = CoroutineScope(IO).launch { repository.save(key, value) }
 }

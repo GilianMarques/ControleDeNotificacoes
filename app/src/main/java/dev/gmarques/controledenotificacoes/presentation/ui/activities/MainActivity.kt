@@ -7,11 +7,15 @@ import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.util.TypedValue
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
@@ -89,9 +93,6 @@ class MainActivity() : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { navController, destination, bundle ->
             currentFragmentLabel = destination.label.toString()
-
-            if (destination.label.toString() == homeLabel) requestPostNotificationsPermission()
-
             applyDefaultBackgroundColor()
 
         }
@@ -113,19 +114,6 @@ class MainActivity() : AppCompatActivity() {
     }
 
 
-    private fun requestPostNotificationsPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this, Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), NOTIFICATION_PERMISSION_REQUEST_CODE
-                )
-            }
-        }
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -145,10 +133,46 @@ class MainActivity() : AppCompatActivity() {
             }
         }
     }
-}
 
-/*
-    private fun isAppInsetFromBatterySaving(): Boolean {
+    fun isPostNotificationsPermissionEnable(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+    }
+
+    fun requestPostNotificationsPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), NOTIFICATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    fun isNotificationListenerEnabled(): Boolean {
+
+        val enabledListeners = Settings.Secure.getString(
+            contentResolver, "enabled_notification_listeners"
+        ) ?: return false
+
+        return enabledListeners.split(":").any { it.contains(packageName) }
+    }
+
+    fun requestNotificationAccessPermission() {
+        val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+        startActivity(intent)
+        Toast.makeText(
+            this,
+            getString(R.string.Permita_que_x_acesse_as_notificacoes, getString(R.string.app_name)),
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    fun isAppInsetFromBatterySaving(): Boolean {
         val pm = getSystemService(POWER_SERVICE) as PowerManager
         return pm.isIgnoringBatteryOptimizations(packageName)
     }
@@ -157,10 +181,16 @@ class MainActivity() : AppCompatActivity() {
 
         val pm = getSystemService(POWER_SERVICE) as PowerManager
         if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+            @SuppressLint("BatteryLife")
             val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
-                data = Uri.parse("package:$packageName")
+                data = "package:$packageName".toUri()
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
             startActivity(intent)
         }
-    }*/
+    }
+
+}
+
+
+

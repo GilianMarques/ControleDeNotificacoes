@@ -1,12 +1,8 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 
-import android.content.DialogInterface
-import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,10 +27,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
-import dev.gmarques.controledenotificacoes.databinding.ViewWarningMissingNotificationPermissionBinding
+import dev.gmarques.controledenotificacoes.databinding.ViewWarningBatteryOptimizationsBinding
+import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotificationPermissionBinding
+import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
@@ -142,12 +140,8 @@ class HomeFragment : MyFragment() {
         }
 
         user.photoUrl.let { photoUrl ->
-            Glide.with(root.context)
-                .load(photoUrl)
-                .placeholder(R.drawable.ic_launcher_foreground)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .circleCrop()
-                .into(ivProfilePicture)
+            Glide.with(root.context).load(photoUrl).placeholder(R.drawable.ic_launcher_foreground)
+                .transition(DrawableTransitionOptions.withCrossFade()).circleCrop().into(ivProfilePicture)
         }
 
         val views = listOf(ivProfilePicture, tvUserName, tvGreetings)
@@ -242,45 +236,77 @@ class HomeFragment : MyFragment() {
 
     override fun onResume() {
         super.onResume()
+        lifecycleScope.launch {
 
-        if (!isNotificationListenerEnabled()) lifecycleScope.launch { delay(1500); showNotificationListenerWarning() }
+            binding.containerWarnings.removeAllViews()
+            delay(1500)
+
+            if (!requireMainActivity().isNotificationListenerEnabled()) {
+                showListenNotificationWarning()
+                return@launch
+            }
+
+            if (!requireMainActivity().isAppInsetFromBatterySaving()) {
+                showBatteryRestrictionsWarning()
+                return@launch
+            }
+
+            if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
+                showPostNotificationRestrictionsWarning()
+                return@launch
+            }
+        }
     }
 
-    private fun isNotificationListenerEnabled(): Boolean {
 
-        val enabledListeners = Settings.Secure.getString(
-            requireActivity().contentResolver, "enabled_notification_listeners"
-        ) ?: return false
+    private fun showListenNotificationWarning() {
 
-        return enabledListeners.split(":").any { it.contains(requireActivity().packageName) }
-    }
-
-    private fun showNotificationListenerWarning() {
-
-        val warningBinding = ViewWarningMissingNotificationPermissionBinding.inflate(layoutInflater)
+        val warningBinding = ViewWarningListenNotificationPermissionBinding.inflate(layoutInflater)
 
         warningBinding.chipPrivacy.setOnClickListener(AnimatedClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle(getString(R.string.Sua_privacidade_importa))
+            MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Sua_privacidade_importa))
                 .setMessage(getString(R.string.Sua_privacidade_esta_protegida))
                 .setPositiveButton(getString(R.string.Entendi)) { dialog, _ ->
-                }.setIcon(R.drawable.vec_info)
-                .show()
+                }.setIcon(R.drawable.vec_info).show()
         })
 
         warningBinding.chipGivePermission.setOnClickListener(AnimatedClickListener {
-            val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-            startActivity(intent)
-            Toast.makeText(
-                requireActivity(),
-                getString(R.string.Permita_que_x_acesse_as_notificacoes, getString(R.string.app_name)),
-                Toast.LENGTH_LONG
-            ).show()
-            binding.containerWarnings.removeView(warningBinding.root)
+            requireMainActivity().requestNotificationAccessPermission()
+            removerWarning(warningBinding.root)
         })
 
         binding.containerWarnings.addViewWithTwoStepsAnimation(warningBinding.root)
     }
 
+    private fun showBatteryRestrictionsWarning() {
+
+        val warningBinding = ViewWarningBatteryOptimizationsBinding.inflate(layoutInflater)
+
+        warningBinding.chipGivePermission.setOnClickListener(AnimatedClickListener {
+            requireMainActivity().requestIgnoreBatteryOptimizations()
+            removerWarning(warningBinding.root)
+        })
+
+        binding.containerWarnings.addViewWithTwoStepsAnimation(warningBinding.root)
+    }
+
+    private fun showPostNotificationRestrictionsWarning() {
+
+        val warningBinding = ViewWarningPostNotificationsPermissionBinding.inflate(layoutInflater)
+
+        warningBinding.chipGivePermission.setOnClickListener(AnimatedClickListener {
+            requireMainActivity().requestPostNotificationsPermission()
+            removerWarning(warningBinding.root)
+        })
+
+        binding.containerWarnings.addViewWithTwoStepsAnimation(warningBinding.root)
+    }
+
+    private fun removerWarning(view: View) {
+        lifecycleScope.launch {
+            delay(1000)
+            binding.containerWarnings.removeView(view)
+        }
+    }
 
 }
