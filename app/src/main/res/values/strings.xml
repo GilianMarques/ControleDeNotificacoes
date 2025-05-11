@@ -124,8 +124,8 @@
     <string name="Regra_nao_encontrada">Regra não encontrada</string>
     <string name="Gerenciando_notificacoes">Gerenciando notificações</string>
     <string name="Permissao_necessaria">Permissão necessária</string>
-    <string name="Para_que_esse_aplicativo_possa_desempenhar_sua_fun_o_necess_rio_que_voc_forne_a_permiss_o_para_acesso_">    Para que seja possível gerenciar as notificações, é necessário que você forneça permissão de acesso às notificações.</string>
-    <string name="Sua_privacidade_esta_protegida">Este app não coleta dados nem salva conteúdo do usuário fora do dispositivo. Os dados das notificações são usados apenas para controlar e exibir o histórico das suas notificações.</string>
+    <string name="Para_que_esse_aplicativo_possa_desempenhar_sua_fun_o_necess_rio_que_voc_forne_a_permiss_o_para_acesso_">Para que seja possível gerenciar as notificações, é necessário que você forneça a permissão: \"Acesso às notificações.\"</string>
+    <string name="Sua_privacidade_esta_protegida">Este app não coleta dados e nem salva qualquer informação do usuário fora do dispositivo. Os dados das notificações são usados apenas para controle e histórico de notificações bloqueadas.</string>
     <string name="Permitir">Permitir</string>
     <string name="Permita_que_x_acesse_as_notificacoes">Permita que %1$s acesse as notificações</string>
     <string name="Monitoramento_de_notificacoes">Monitoramento de notificações</string>
@@ -144,15 +144,15 @@
     <string name="Incluir_apps_gerenciados">Incluir apps gerenciados</string>
     <string name="Gerenciado">Gerenciado</string>
     <string name="Atencao">Atenção</string>
-    <string name="Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados">Um ou mais dos apps selecionados já estão sendo gerenciados. Aplicar uma nova regra sobre eles substituirá a regra existente.</string>
+    <string name="Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados">Um ou mais dos apps selecionados já estão sendo gerenciados. Aplicar uma nova regra a estes apps substituirá a regra existente.</string>
     <string name="Mais_x_apps">+%1$d apps</string>
     <string name="Preferencias">Preferências</string>
     <string name="Resetar_exibi_o_de_dicas">Resetar exibição de dicas</string>
     <string name="Os_di_logos_de_ajuda_ser_o_re_exibidos">Os diálogos de ajuda serão re-exibidos</string>
     <string name="Dia_inteiro">24h/dia</string>
     <string name="Todos_os_dias">Todos os dias</string>
-    <string name="intervalo_0800_1200h">08:00-12:00</string>
-    <string name="intervalo_1300_1800h">13:00-18:00</string>
+    <string name="intervalo_0800_1200h">08:00–12:00</string>
+    <string name="intervalo_1300_1800h">13:00–18:00</string>
     <string name="Selecione_o_intervalo_de_tempo">Selecione o intervalo de tempo</string>
     <string name="De_x_as_y">De %1$s às %2$s</string>
     <string name="Permitir_acesso">Permitir acesso</string>
@@ -161,6 +161,11 @@
     <string name="Voce_nao_ser_avisado_sobre_notifica_es_bloqueadas_ao_fim_do_per_odo_de_bloqueio_dos_apps_conceda_a_permiss_o_para_n_o_perder_alertas_importantes">Você não será avisado sobre notificações bloqueadas ao fim do período de bloqueio dos apps. Conceda a permissão para não perder alertas importantes.</string>
     <string name="Permissao_nao_concedida">Permissão não concedida</string>
     <string name="Fragment_home">Fragment_home</string>
+    <string name="Remover_restricoes">Remover restrições</string>
+    <string name="Esta_feito">Está feito!</string>
+    <string name="remova_as_restricoes_de_bateria_para_que_o_sistema">Remova as restrições de bateria para que o sistema não interrompa o funcionamento do app, impedindo o gerenciamento das notificações.</string>
+    <string name="Permitir_envio_de_notifica_es">Permitir envio de notificações</string>
+    <string name="Permita_o_envio_de_notifica_es_para_ser_avisado_a_sobre_as_notifica_es_recebidas_durante_o_per_odo_de_bloqueio_dos_apps">Permita o envio de notificações para ser avisado(a) sobre as notificações recebidas durante o período de bloqueio dos apps.</string>
 
 
 </resources>

@@ -26,6 +26,7 @@ import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.framework.VibratorImpl
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
@@ -202,6 +203,10 @@ open class MyFragment() : Fragment() {
     protected fun goBack() {
         vibrator.interaction()
         findNavController().popBackStack()
+    }
+
+    protected fun requireMainActivity(): MainActivity {
+        return requireActivity() as MainActivity
     }
 
     /**

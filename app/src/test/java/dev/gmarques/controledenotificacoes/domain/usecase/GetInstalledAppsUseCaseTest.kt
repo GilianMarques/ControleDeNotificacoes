@@ -35,12 +35,12 @@ class GetInstalledAppsUseCaseTest {
                 mockApp("Telegram", "org.telegram.messenger")
             )
 
-            whenever(repository.getInstalledApps(targetName, true, excludedPackages)).thenReturn(expectedApps)
+            whenever(repository.getInstalledApps(targetName, true, true, excludedPackages)).thenReturn(expectedApps)
 
-            val result = useCase(targetName, true, excludedPackages)
+            val result = useCase(targetName, true, true, excludedPackages)
 
             assertEquals(expectedApps, result)
-            verify(repository).getInstalledApps(targetName, true, excludedPackages)
+            verify(repository).getInstalledApps(targetName, true, true, excludedPackages)
     }
 
     @Test
@@ -54,15 +54,15 @@ class GetInstalledAppsUseCaseTest {
                 mockApp("Twitter", "com.twitter.android")
             )
 
-            whenever(repository.getInstalledApps(targetName, true, excludedPackages)).thenReturn(expectedApps)
+            whenever(repository.getInstalledApps(targetName, true, true, excludedPackages)).thenReturn(expectedApps)
 
-            val result = useCase(targetName, true, excludedPackages)
+            val result = useCase(targetName, true, true, excludedPackages)
 
             assertEquals(expectedApps, result)
-            verify(repository).getInstalledApps(targetName, true, excludedPackages)
+            verify(repository).getInstalledApps(targetName, true, true, excludedPackages)
     }
 
     private fun mockApp(name: String, packageId: String): InstalledApp {
-        return InstalledApp(name, packageId)
+        return InstalledApp(name, packageId, false)
     }
 }
