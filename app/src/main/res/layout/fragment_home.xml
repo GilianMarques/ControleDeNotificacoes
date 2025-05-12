@@ -119,7 +119,8 @@
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edt_search"
                     style="@style/Margins_edittext"
-                    android:layout_width="381dp"
+                    android:layout_width="match_parent"
+                    android:maxWidth="378dp"
                     android:layout_height="wrap_content"
                     android:autofillHints="name"
                     android:background="@drawable/back_edittext_search"

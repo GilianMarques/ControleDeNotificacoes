@@ -30,6 +30,7 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningBatteryOptimizationsBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotificationPermissionBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
+import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
@@ -252,12 +253,15 @@ class HomeFragment : MyFragment() {
             }
 
             if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
-                showPostNotificationRestrictionsWarning()
-                return@launch
+                lifecycleScope.launch {
+                    if (readPreferenceUseCase(Preferences.SHOW_WARNING_CARD_POST_NOTIFICATION, true)) {
+                        showPostNotificationRestrictionsWarning()
+                    }
+                    return@launch
+                }
             }
         }
     }
-
 
     private fun showListenNotificationWarning() {
 

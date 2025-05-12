@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.settings
 
 import dev.gmarques.controledenotificacoes.domain.repository.PreferencesRepository
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 /**
@@ -8,5 +9,5 @@ import javax.inject.Inject
  * Em terça-feira, 06 de maio de 2025 as 13:27.
  */
 class ReadPreferenceUseCase @Inject constructor(private val repository: PreferencesRepository) {
-    suspend operator fun <T> invoke(key: String, default: T): T = repository.read(key, default)
+    operator fun <T> invoke(key: String, default: T): T = runBlocking { repository.read(key, default) }
 }
