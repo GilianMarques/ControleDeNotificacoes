@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.framework.notification_service
 
 import android.app.Notification
+import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -9,8 +10,10 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.di.entry_points.RuleEnforcerEntryPoint
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 /**
@@ -23,35 +26,42 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         .fromApplication(App.context, RuleEnforcerEntryPoint::class.java)
         .getRuleEnforcer()
 
-    override fun onNotificationPosted(sbn: StatusBarNotification) {
-
-        val pkg = sbn.packageName
-        val title = sbn.notification.extras.getString(Notification.EXTRA_TITLE) ?: ""
-        val content = sbn.notification.extras.getString(Notification.EXTRA_TEXT) ?: ""
-
-        val not = AppNotification(pkg, title, content)
-        val x = System.currentTimeMillis()
-        launch {
-            ruleEnforcer.enforceOnNotification(not) {
-            /*    Log.d(
-                    "USUK",
-                    "NotificationListener.onNotificationPosted: ${it.title} cancelada processTime: ${System.currentTimeMillis() - x}mls"
-                )*/
-                cancelNotification(sbn.key)
-            }
-        }
-
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
     }
-
     override fun onListenerConnected() {
         super.onListenerConnected()
         // Conectado — serviço pronto
-        Log.d("USUK", "NotificationListener.".plus("onListenerConnected() "))
+        //   Log.d("USUK", "NotificationListener.".plus("onListenerConnected() "))
+
+        readActiveNotifications()
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        Log.d("USUK", "NotificationListener.".plus("onCreate() "))
+    override fun onNotificationPosted(sbn: StatusBarNotification) {
+        manageNotification(sbn)
+    }
+
+    private fun readActiveNotifications() {
+        val active = activeNotifications ?: return
+        active.forEach { sbn ->
+            manageNotification(sbn)
+        }
+    }
+
+    private fun manageNotification(notification: StatusBarNotification) {
+
+        val pkg = notification.packageName
+        val title = notification.notification.extras.getString(Notification.EXTRA_TITLE).orEmpty()
+        val content = notification.notification.extras.getString(Notification.EXTRA_TEXT).orEmpty()
+
+        val not = AppNotification(pkg, title, content)
+
+        launch {
+            ruleEnforcer.enforceOnNotification(not) {
+                Log.d("USUK", "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.pkg}")
+                cancelNotification(notification.key)
+            }
+        }
     }
 
     override fun onListenerDisconnected() {

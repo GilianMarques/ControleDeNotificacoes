@@ -42,9 +42,7 @@ class NotificationServiceManager : Service() {
         timer = Timer().apply {
             schedule(object : TimerTask() {
                 override fun run() {
-                    //  if (!isNotificationListenerActive()) {
                     forceReconnectNotificationListener()
-                    // }
                 }
             }, 0, checkIntervalMs)
         }
@@ -95,7 +93,7 @@ class NotificationServiceManager : Service() {
     }
 
     fun forceReconnectNotificationListener() {
-   //     Log.d("USUK", "NotificationServiceManager.forceReconnectNotificationService: tentado ligar listener")
+        //     Log.d("USUK", "NotificationServiceManager.forceReconnectNotificationService: tentado ligar listener")
 
         val pm = packageManager
         val componentName = ComponentName(this, NotificationListener::class.java)

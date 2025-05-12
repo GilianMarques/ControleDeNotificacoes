@@ -1,10 +1,12 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.databinding.ViewDialogTimeIntervalBinding
+import dev.gmarques.controledenotificacoes.databinding.DialogTimeIntervalBinding
+import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import nl.joery.timerangepicker.TimeRangePicker
@@ -17,32 +19,76 @@ class TimeRangeDialogManager(
     private val context: Context,
     private val inflater: LayoutInflater,
     private val onRangeSelected: (TimeRange) -> Unit,
+
 ) {
 
     private var startPeriod = TimeRangePicker.Time(8, 0)
     private var endPeriod = TimeRangePicker.Time(18, 0)
+    private lateinit var binding: DialogTimeIntervalBinding
+    private var doNothingOnTextChanged = false
 
     fun show() {
-        val binding = ViewDialogTimeIntervalBinding.inflate(inflater)
-        setupPicker(binding)
-        setupListeners(binding)
+        binding = DialogTimeIntervalBinding.inflate(inflater)
+        setupPicker()
+        setupListeners()
+        setupEditTexts()
 
         MaterialAlertDialogBuilder(context).setView(binding.root).show().also { dialog ->
-                binding.fabAdd.setOnClickListener(
-                    AnimatedClickListener {
-                        onRangeSelected(
-                            TimeRange(
-                                startPeriod.hour, startPeriod.minute, endPeriod.hour, endPeriod.minute
-                            )
+            binding.fabAdd.setOnClickListener(
+                AnimatedClickListener {
+                    onRangeSelected(
+                        TimeRange(
+                            startPeriod.hour, startPeriod.minute, endPeriod.hour, endPeriod.minute
                         )
-                        dialog.dismiss()
-                    })
-            }
+                    )
+                    dialog.dismiss()
+                })
+        }
 
-        updateLabel(binding)
+        updateLabel()
     }
 
-    private fun setupPicker(binding: ViewDialogTimeIntervalBinding) {
+    @SuppressLint("SetTextI18n")
+    private fun setupEditTexts() = with(binding) {
+// TODO: isso pode ser otimizado
+
+        edtStart.doOnTextChanged { text, _, _, _ ->
+
+            if (doNothingOnTextChanged) return@doOnTextChanged
+
+            if (text.toString().length == 2) {
+                edtStart.setText("${text}:")
+                edtStart.setSelection(3)
+            }
+
+            if (text.toString().length == 5) {
+                val (hour, min) = text.toString().split(":").map { it.toInt() }
+                binding.picker.startTime = TimeRangePicker.Time(hour, min)
+                startPeriod = TimeRangePicker.Time(hour, min)
+                edtEnd.requestFocus()
+            }
+        }
+
+        edtEnd.doOnTextChanged { text, _, _, _ ->
+            if (doNothingOnTextChanged) return@doOnTextChanged
+
+            if (text.toString().length == 2) {
+                edtEnd.setText("${text}:")
+                edtEnd.setSelection(3)
+            }
+
+            if (text.toString().length == 5) {
+                val (hour, min) = text.toString().split(":").map { it.toInt() }
+                binding.picker.endTime = TimeRangePicker.Time(hour, min)
+                endPeriod = TimeRangePicker.Time(hour, min)
+                edtEnd.clearFocus()
+            }
+
+        }
+
+    }
+
+    private fun setupPicker() {
         try {
             val hourFormatClass = Class.forName("nl.joery.timerangepicker.TimeRangePicker\$HourFormat")
             val format24Field = hourFormatClass.getField("FORMAT_24")
@@ -58,31 +104,31 @@ class TimeRangeDialogManager(
         }
     }
 
-    private fun setupListeners(binding: ViewDialogTimeIntervalBinding) {
+    private fun setupListeners() {
         binding.picker.setOnTimeChangeListener(object : TimeRangePicker.OnTimeChangeListener {
             override fun onStartTimeChange(startTime: TimeRangePicker.Time) {
                 startPeriod = startTime
-                updateLabel(binding)
+                updateLabel()
             }
 
             override fun onEndTimeChange(endTime: TimeRangePicker.Time) {
                 endPeriod = endTime
-                updateLabel(binding)
+                updateLabel()
             }
 
             override fun onDurationChange(duration: TimeRangePicker.TimeDuration) {
                 startPeriod = duration.start
                 endPeriod = duration.end
-                updateLabel(binding)
+                updateLabel()
             }
         })
     }
 
-    private fun updateLabel(binding: ViewDialogTimeIntervalBinding) {
-        binding.tvIntervalInfo.text = context.getString(
-            R.string.De_x_as_y,
-            "%02d:%02d".format(startPeriod.hour, startPeriod.minute),
-            "%02d:%02d".format(endPeriod.hour, endPeriod.minute)
-        )
+    @SuppressLint("SetTextI18n")
+    private fun updateLabel() = with(binding) {
+        doNothingOnTextChanged = true
+        edtStart.setText("%02d:%02d".format(startPeriod.hour, startPeriod.minute))
+        edtEnd.setText("%02d:%02d".format(endPeriod.hour, endPeriod.minute))
+        doNothingOnTextChanged = false
     }
 }

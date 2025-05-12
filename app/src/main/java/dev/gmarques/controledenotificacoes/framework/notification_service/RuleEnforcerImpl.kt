@@ -32,7 +32,6 @@ class RuleEnforcerImpl @Inject constructor(
 
         val managedApp = getManagedAppByPackageIdUseCase(notification.pkg)
         if (managedApp == null) {
-            removeNotificationCallback(notification)
             return@withContext
         }
 
@@ -40,11 +39,9 @@ class RuleEnforcerImpl @Inject constructor(
             ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
 
         val now = Calendar.getInstance()
-        val currentDay =
-            now.get(Calendar.DAY_OF_WEEK).let { if (it == Calendar.SUNDAY) 7 else it - 1 } // TODO: essa linha deve ser testada
+        val currentDay = now.get(Calendar.DAY_OF_WEEK)
+            .let { if (it == Calendar.SUNDAY) 7 else it - 1 } // TODO: essa linha deve ser testada
         val currentMinutes = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
-
-        Log.d("USUK", "RuleEnforcerImpl.enforceOnNotification: \napp: $managedApp\n$rule")
 
         if (shouldBlockNotification(rule, currentDay, currentMinutes)) {
             removeNotificationCallback(notification)

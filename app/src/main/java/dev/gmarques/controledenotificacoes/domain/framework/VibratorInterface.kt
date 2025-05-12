@@ -4,5 +4,4 @@ interface VibratorInterface {
     fun error()
     fun success()
     fun interaction()
-
 }

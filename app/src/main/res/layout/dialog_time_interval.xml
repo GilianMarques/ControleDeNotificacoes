@@ -35,7 +35,7 @@
         app:trp_sliderRangeGradientMiddle="@color/md_theme_primaryContainer_mediumContrast"
         app:trp_sliderRangeGradientStart="@color/app_icon_bg_color_start"
         app:trp_startTime="4:00"
-        app:trp_stepTimeMinutes="1" />
+        app:trp_stepTimeMinutes="10" />
 
     <androidx.appcompat.widget.AppCompatImageView
 
@@ -50,23 +50,90 @@
         app:srcCompat="@drawable/vec_clock"
         app:tint="?colorPrimary" />
 
-    <TextView
-        android:id="@+id/tv_interval_info"
+
+    <LinearLayout
+        android:id="@+id/ll_user_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/back_container"
         android:backgroundTint="?colorPrimary"
-        android:fontFamily="@font/urbanist_extrabold"
-        android:maxLines="1"
-        android:padding="16dp"
-        android:textAlignment="center"
-        android:textColor="?colorPrimary"
-        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/picker"
-        tools:text="de 08:00 às 18:00" />
+        app:layout_constraintTop_toBottomOf="@id/picker">
+
+        <TextView
+            android:id="@+id/tv_de"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/urbanist_extrabold"
+            android:maxLines="1"
+            android:paddingStart="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/De"
+            android:textAlignment="center"
+            android:textColor="?colorPrimary"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edt_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:cursorVisible="false"
+            android:fontFamily="@font/urbanist_extrabold"
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:maxLength="5"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="24dp"
+            android:selectAllOnFocus="true"
+            android:textAlignment="center"
+            android:textColor="?colorPrimary"
+            android:textSize="16sp"
+            tools:text="08:15" />
+
+
+
+        <TextView
+            android:id="@+id/tv_as"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/urbanist_extrabold"
+            android:maxLines="1"
+            android:text="@string/as"
+            android:textAlignment="center"
+            android:textColor="?colorPrimary"
+            android:textSize="16sp" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edt_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:cursorVisible="false"
+            android:fontFamily="@font/urbanist_extrabold"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:maxLength="5"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingTop="24dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="24dp"
+            android:selectAllOnFocus="true"
+            android:textAlignment="center"
+            android:textColor="?colorPrimary"
+            android:textSize="16sp"
+            tools:text="19:25" />
+
+
+    </LinearLayout>
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -82,6 +149,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_interval_info" />
+        app:layout_constraintTop_toBottomOf="@id/ll_user_input" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

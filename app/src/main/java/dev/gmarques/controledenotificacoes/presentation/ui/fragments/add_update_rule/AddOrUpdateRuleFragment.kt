@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,14 +11,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.TimeFormat
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddOrUpdateRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
-import dev.gmarques.controledenotificacoes.databinding.ViewDialogTimeIntervalBinding
 import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
@@ -33,7 +28,6 @@ import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListe
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import nl.joery.timerangepicker.TimeRangePicker
 import kotlin.math.min
 
 @AndroidEntryPoint
@@ -220,7 +214,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
     private fun showTimeRangeDialog() {
         TimeRangeDialogManager(
             context = requireContext(),
-            inflater = layoutInflater
+            inflater = layoutInflater,
         ) { timeRange ->
             viewModel.validateRangesWithSequenceAndAdd(timeRange)
         }.show()

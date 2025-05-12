@@ -73,7 +73,6 @@ class SelectRuleFragment : MyFragment() {
 
     private fun setupFabAddRule() = with(binding) {
         fabAdd.setOnClickListener(AnimatedClickListener {
-
             navigateToAddEditRuleFragment()
         })
 
@@ -215,7 +214,6 @@ class SelectRuleFragment : MyFragment() {
             }
 
         }
-
 
     }
 
