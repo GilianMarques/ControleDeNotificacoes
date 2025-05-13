@@ -1,15 +1,15 @@
 package dev.gmarques.controledenotificacoes.framework.notification_service
 
-import android.util.Log
 import dev.gmarques.controledenotificacoes.domain.framework.notification_service.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
-import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
+import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,14 +23,15 @@ import javax.inject.Inject
 class RuleEnforcerImpl @Inject constructor(
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
-) : RuleEnforcer {
+    private val insertAppNotificationUseCase: InsertAppNotificationUseCase,
+) : RuleEnforcer, CoroutineScope by CoroutineScope(IO) {
 
     override suspend fun enforceOnNotification(
         notification: AppNotification,
         removeNotificationCallback: (AppNotification) -> Any,
     ) = withContext(IO) {
 
-        val managedApp = getManagedAppByPackageIdUseCase(notification.pkg)
+        val managedApp = getManagedAppByPackageIdUseCase(notification.packageId)
         if (managedApp == null) {
             return@withContext
         }
@@ -47,7 +48,7 @@ class RuleEnforcerImpl @Inject constructor(
             removeNotificationCallback(notification)
         }
 
-        launch { saveNotificationOnHistory(notification, managedApp) }
+        saveNotificationOnHistory(notification)
 
     }
 
@@ -68,7 +69,17 @@ class RuleEnforcerImpl @Inject constructor(
         }
     }
 
-    private fun saveNotificationOnHistory(notification: AppNotification, managedApp: ManagedApp) {
-        // TODO: implementar
+    private fun saveNotificationOnHistory(notification: AppNotification) {
+
+        launch {
+            insertAppNotificationUseCase(
+                AppNotification(
+                    notification.packageId,
+                    notification.title,
+                    notification.content,
+                    System.currentTimeMillis()
+                )
+            )
+        }
     }
 }

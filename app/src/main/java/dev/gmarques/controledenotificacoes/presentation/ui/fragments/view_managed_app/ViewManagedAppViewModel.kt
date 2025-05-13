@@ -4,11 +4,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.DeleteRuleWithAppsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.ObserveAppNotificationsByPkgIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.DeleteManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -22,25 +25,35 @@ class ViewManagedAppViewModel @Inject constructor(
     private val observeRuleUseCase: ObserveRuleUseCase,
     private val deleteManagedAppUseCase: DeleteManagedAppUseCase,
     private val deleteRuleWithAppsUseCase: DeleteRuleWithAppsUseCase,
+    private val observeAppNotificationsByPkgIdUseCase: ObserveAppNotificationsByPkgIdUseCase,
 ) : ViewModel() {
 
     private var initialized = false
 
-    private lateinit var _managedAppFlow: MutableStateFlow<ManagedAppWithRule>
-    val managedAppFlow: StateFlow<ManagedAppWithRule> get() = _managedAppFlow
+    private val _managedAppFlow = MutableStateFlow<ManagedAppWithRule?>(null)
+    val managedAppFlow: StateFlow<ManagedAppWithRule?> get() = _managedAppFlow
+
+    private val _appNotificationHistoryFlow = MutableStateFlow<List<AppNotification>>(emptyList<AppNotification>())
+    val appNotificationHistoryFlow: StateFlow<List<AppNotification>> get() = _appNotificationHistoryFlow
 
     private val _eventsFlow = MutableSharedFlow<Event>(replay = 1)
     val eventsFlow: SharedFlow<Event> get() = _eventsFlow
 
 
-    fun setup(app: ManagedAppWithRule) {
+    fun setup(app: ManagedAppWithRule) = viewModelScope.launch(IO) {
 
         if (initialized) error("Não chame essa função mais que 1 vez")
 
-        _managedAppFlow = MutableStateFlow(app)
+        _managedAppFlow.tryEmit(app)
+
+        observeAppNotificationsByPkgIdUseCase(app.packageId)
+            .collect {
+                _appNotificationHistoryFlow.tryEmit(it)
+            }
 
         observeRuleChanges(app.rule)
     }
+
 
     /**
      * Quando o usuário usa o menu para editar uma regra o fragmento que adiciona e edita regras salva a modificação
@@ -56,17 +69,17 @@ class ViewManagedAppViewModel @Inject constructor(
                 )
             }
 
-            _managedAppFlow.tryEmit(_managedAppFlow.value.copy(rule = it))
+            _managedAppFlow.tryEmit(_managedAppFlow.value!!.copy(rule = it))
         }
     }
 
     fun deleteApp() = viewModelScope.launch {
-        deleteManagedAppUseCase(_managedAppFlow.value.packageId)
+        deleteManagedAppUseCase(_managedAppFlow.value!!.packageId)
         _eventsFlow.tryEmit(Event.FinishWithSuccess)
     }
 
     fun deleteRule() = viewModelScope.launch {
-        deleteRuleWithAppsUseCase(_managedAppFlow.value.rule)
+        deleteRuleWithAppsUseCase(_managedAppFlow.value!!.rule)
         _eventsFlow.tryEmit(Event.FinishWithSuccess)
     }
 

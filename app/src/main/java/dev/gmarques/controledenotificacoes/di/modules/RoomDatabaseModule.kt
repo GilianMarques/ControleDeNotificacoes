@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
+import dev.gmarques.controledenotificacoes.data.local.room.dao.AppNotificationDao
 import dev.gmarques.controledenotificacoes.data.local.room.dao.ManagedAppDao
 import dev.gmarques.controledenotificacoes.data.local.room.dao.RuleDao
 import javax.inject.Singleton
@@ -37,6 +38,11 @@ object RoomDatabaseModule {
     @Provides
     fun provideManagedAppDao(roomDatabase: RoomDatabase): ManagedAppDao {
         return roomDatabase.managedAppDao()
+    }
+
+    @Provides
+    fun provideAppNotificationDao(roomDatabase: RoomDatabase): AppNotificationDao {
+        return roomDatabase.appNotificationDao()
     }
 }
 

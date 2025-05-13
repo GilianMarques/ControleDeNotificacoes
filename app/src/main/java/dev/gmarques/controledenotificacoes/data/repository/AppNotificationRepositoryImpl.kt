@@ -6,9 +6,10 @@ import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.repository.AppNotificationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class AppNotificationRepositoryImpl(
-    private val dao: AppNotificationDao
+class AppNotificationRepositoryImpl @Inject constructor(
+    private val dao: AppNotificationDao,
 ) : AppNotificationRepository {
 
     override suspend fun insert(notification: AppNotification) {

@@ -3,7 +3,7 @@ package dev.gmarques.controledenotificacoes.framework
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.domain.usecase.contracts.RuleStringsProvider
+import dev.gmarques.controledenotificacoes.domain.framework.RuleStringsProvider
 import javax.inject.Inject
 
 /**

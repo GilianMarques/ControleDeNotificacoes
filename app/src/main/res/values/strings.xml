@@ -166,6 +166,8 @@
     <string name="remova_as_restricoes_de_bateria_para_que_o_sistema">Remova as restrições de bateria para que o sistema não interrompa o funcionamento do app, impedindo o gerenciamento das notificações.</string>
     <string name="Permitir_envio_de_notifica_es">Permitir envio de notificações</string>
     <string name="Permita_o_envio_de_notifica_es_para_ser_avisado_a_sobre_as_notifica_es_recebidas_durante_o_per_odo_de_bloqueio_dos_apps">Permita o envio de notificações para ser avisado(a) sobre as notificações recebidas durante o período de bloqueio dos apps.</string>
+    <string name="Sem_t_tulo">(Sem título)</string>
+    <string name="Sem_conte_do">(Sem conteúdo)</string>
 
 
 </resources>

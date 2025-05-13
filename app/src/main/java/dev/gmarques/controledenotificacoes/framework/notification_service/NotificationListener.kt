@@ -10,10 +10,8 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.di.entry_points.RuleEnforcerEntryPoint
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 /**
@@ -29,6 +27,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
     }
+
     override fun onListenerConnected() {
         super.onListenerConnected()
         // Conectado — serviço pronto
@@ -54,11 +53,11 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         val title = notification.notification.extras.getString(Notification.EXTRA_TITLE).orEmpty()
         val content = notification.notification.extras.getString(Notification.EXTRA_TEXT).orEmpty()
 
-        val not = AppNotification(pkg, title, content)
+        val not = AppNotification(pkg, title, content, System.currentTimeMillis())
 
         launch {
             ruleEnforcer.enforceOnNotification(not) {
-                Log.d("USUK", "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.pkg}")
+                Log.d("USUK", "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.packageId}")
                 cancelNotification(notification.key)
             }
         }

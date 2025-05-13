@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.zawadz88.materialpopupmenu.popupMenu
@@ -44,6 +45,8 @@ class FragmentViewManagedApp() : MyFragment() {
     @Inject
     lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
 
+    private lateinit var adapter: AppNotificationAdapter
+
     private val viewModel: ViewManagedAppViewModel by viewModels()
     private lateinit var binding: FragmentViewManagedAppBinding
     private val args: FragmentViewManagedAppArgs by navArgs()
@@ -60,8 +63,11 @@ class FragmentViewManagedApp() : MyFragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.setup(args.app)
         observeRuleChanges()
+        observeNotificationHistory()
         observeEvents()
+        setupRecyclerView()
     }
+
 
     private fun setupActionBar(app: ManagedAppWithRule) = with(binding) {
 
@@ -87,6 +93,13 @@ class FragmentViewManagedApp() : MyFragment() {
             showMenu()
         })
 
+    }
+
+    private fun setupRecyclerView() = with(binding) {
+        adapter = AppNotificationAdapter()
+        rvHistory.adapter = adapter
+        rvHistory.layoutManager = LinearLayoutManager(requireContext())
+        rvHistory.setHasFixedSize(true)
     }
 
     private fun showMenu() {
@@ -168,20 +181,28 @@ class FragmentViewManagedApp() : MyFragment() {
     }
 
     private fun navigateToEditRule() {
-        findNavController().navigate(FragmentViewManagedAppDirections.toAddRuleFragment(viewModel.managedAppFlow.value.rule))
+        findNavController().navigate(FragmentViewManagedAppDirections.toAddRuleFragment(viewModel.managedAppFlow.value!!.rule))
     }
 
     private fun confirmRemoveRule() {
-        ConfirmRuleRemovalDialog(this@FragmentViewManagedApp, viewModel.managedAppFlow.value.rule) {
+        ConfirmRuleRemovalDialog(this@FragmentViewManagedApp, viewModel.managedAppFlow.value!!.rule) {
             viewModel.deleteRule()
         }
     }
 
     private fun observeRuleChanges() {
         collectFlow(viewModel.managedAppFlow) { app ->
-            setupActionBar(app)
+            setupActionBar(app!!)
         }
     }
+
+
+    private fun observeNotificationHistory() {
+        collectFlow(viewModel.appNotificationHistoryFlow) { history ->
+            adapter.submitList(history)
+        }
+    }
+
 
     /**
      * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.
@@ -197,6 +218,5 @@ class FragmentViewManagedApp() : MyFragment() {
             }
         }
     }
-
 
 }

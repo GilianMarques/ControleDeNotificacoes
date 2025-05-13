@@ -10,10 +10,10 @@ object AppNotificationMapper {
 
         AppNotificationValidator.validate(model)
 
-        return AppNotificationEntity(model.packageId, model.title, model.content)
+        return AppNotificationEntity(model.packageId, model.title, model.content, model.timestamp)
     }
 
     fun toModel(entity: AppNotificationEntity): AppNotification {
-        return AppNotification(entity.packageId, entity.title, entity.content)
+        return AppNotification(entity.packageId, entity.title, entity.content, entity.timestamp)
     }
 }

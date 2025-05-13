@@ -1,12 +1,10 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.rules
 
+import dev.gmarques.controledenotificacoes.domain.framework.RuleStringsProvider
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
-import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.wholeDay
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
-import dev.gmarques.controledenotificacoes.domain.usecase.contracts.RuleStringsProvider
 import javax.inject.Inject
 
 /**

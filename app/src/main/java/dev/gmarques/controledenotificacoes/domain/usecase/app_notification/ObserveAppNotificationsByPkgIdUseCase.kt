@@ -5,6 +5,6 @@ import dev.gmarques.controledenotificacoes.domain.repository.AppNotificationRepo
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ObserveNotificationsByPkgIdUseCase @Inject constructor(private val repository: AppNotificationRepository) {
+class ObserveAppNotificationsByPkgIdUseCase @Inject constructor(private val repository: AppNotificationRepository) {
     operator fun invoke(pkg: String): Flow<List<AppNotification>> = repository.observeNotificationsByPkgId(pkg)
 }
