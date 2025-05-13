@@ -1,0 +1,8 @@
+package dev.gmarques.controledenotificacoes.domain.usecase.app_notification
+
+import dev.gmarques.controledenotificacoes.domain.repository.AppNotificationRepository
+import javax.inject.Inject
+
+class GetAppNotificationByPkgUseCase @Inject constructor(private val repository: AppNotificationRepository) {
+    suspend operator fun invoke(pkg: String) = repository.getByPkg(pkg)
+}

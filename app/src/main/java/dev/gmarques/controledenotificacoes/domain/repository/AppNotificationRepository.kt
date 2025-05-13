@@ -1,0 +1,12 @@
+package dev.gmarques.controledenotificacoes.domain.repository
+
+import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import kotlinx.coroutines.flow.Flow
+
+interface AppNotificationRepository {
+    suspend fun insert(notification: AppNotification)
+    suspend fun delete(notification: AppNotification)
+    suspend fun getByPkg(pkg: String): AppNotification?
+    suspend fun getAll(): List<AppNotification>
+    fun observeNotificationsByPkgId(pkg: String): Flow<List<AppNotification>>
+}
