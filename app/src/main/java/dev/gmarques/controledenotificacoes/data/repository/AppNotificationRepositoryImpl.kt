@@ -13,11 +13,11 @@ class AppNotificationRepositoryImpl @Inject constructor(
 ) : AppNotificationRepository {
 
     override suspend fun insert(notification: AppNotification) {
-        AppNotificationMapper.toEntity(notification)?.let { dao.insert(it) }
+        AppNotificationMapper.toEntity(notification).let { dao.insert(it) }
     }
 
-    override suspend fun delete(notification: AppNotification) {
-        AppNotificationMapper.toEntity(notification)?.let { dao.delete(it) }
+    override suspend fun deleteAll(packageId: String) {
+        dao.deleteAll(packageId)
     }
 
     override suspend fun getByPkg(pkg: String): AppNotification? {

@@ -6,8 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import dev.gmarques.controledenotificacoes.App
-import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ItemAppNotificationBinding
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 
@@ -21,8 +19,9 @@ class AppNotificationAdapter : ListAdapter<AppNotification, AppNotificationAdapt
 
         fun bind(notification: AppNotification) = with(binding) {
             // TODO: inicializar as strings apenas uma vez
-            tvTitle.text = notification.title ?: App.context.getString(R.string.Sem_t_tulo)
-            tvContent.text = notification.content ?: App.context.getString(R.string.Sem_conte_do)
+            tvTitle.text = notification.title
+            tvContent.text = notification.content
+
         }
     }
 

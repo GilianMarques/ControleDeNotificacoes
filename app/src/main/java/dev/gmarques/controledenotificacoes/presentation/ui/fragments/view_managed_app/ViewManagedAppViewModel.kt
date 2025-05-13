@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.DeleteRuleWithAppsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.DeleteAllAppNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.ObserveAppNotificationsByPkgIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.DeleteManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
@@ -26,6 +27,7 @@ class ViewManagedAppViewModel @Inject constructor(
     private val deleteManagedAppUseCase: DeleteManagedAppUseCase,
     private val deleteRuleWithAppsUseCase: DeleteRuleWithAppsUseCase,
     private val observeAppNotificationsByPkgIdUseCase: ObserveAppNotificationsByPkgIdUseCase,
+    private val deleteAllAppNotificationsUseCase: DeleteAllAppNotificationsUseCase,
 ) : ViewModel() {
 
     private var initialized = false
@@ -38,7 +40,6 @@ class ViewManagedAppViewModel @Inject constructor(
 
     private val _eventsFlow = MutableSharedFlow<Event>(replay = 1)
     val eventsFlow: SharedFlow<Event> get() = _eventsFlow
-
 
     fun setup(app: ManagedAppWithRule) = viewModelScope.launch(IO) {
 
@@ -81,6 +82,10 @@ class ViewManagedAppViewModel @Inject constructor(
     fun deleteRule() = viewModelScope.launch {
         deleteRuleWithAppsUseCase(_managedAppFlow.value!!.rule)
         _eventsFlow.tryEmit(Event.FinishWithSuccess)
+    }
+
+    fun clearHistory() = viewModelScope.launch {
+        deleteAllAppNotificationsUseCase(managedAppFlow.value!!.packageId)
     }
 
 }

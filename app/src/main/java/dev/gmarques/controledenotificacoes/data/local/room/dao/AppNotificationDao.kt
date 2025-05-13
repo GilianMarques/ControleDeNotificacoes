@@ -1,6 +1,9 @@
 package dev.gmarques.controledenotificacoes.data.local.room.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import dev.gmarques.controledenotificacoes.data.local.room.entities.AppNotificationEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -10,8 +13,8 @@ interface AppNotificationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(notification: AppNotificationEntity)
 
-    @Delete
-    suspend fun delete(notification: AppNotificationEntity)
+    @Query("DELETE FROM app_notifications WHERE packageId = :packageId")
+    suspend fun deleteAll(packageId: String)
 
     @Query("SELECT * FROM app_notifications WHERE packageId = :pkg")
     suspend fun getByPkg(pkg: String): AppNotificationEntity?

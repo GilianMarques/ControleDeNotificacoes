@@ -29,16 +29,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawablePadding="8dp"
-            android:fontFamily="@font/urbanist_semibold"
+            android:fontFamily="@font/urbanist_extrabold"
             android:maxLines="3"
             android:padding="4dp"
             android:textAlignment="viewStart"
             android:textSize="16sp"
             android:transitionName="not_title"
+            app:drawableStartCompat="@drawable/vec_notification_unread"
             app:drawableTint="?colorPrimary"
             app:layout_constraintStart_toStartOf="@id/parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:drawableStartCompat="@drawable/vec_notification_unread"
             tools:text="Whatsapp" />
 
 
@@ -51,7 +51,7 @@
             android:maxLines="20"
             android:padding="4dp"
             android:textAlignment="gravity"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:transitionName="not_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/tv_title"

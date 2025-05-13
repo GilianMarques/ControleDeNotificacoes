@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -110,7 +109,7 @@ class FragmentViewManagedApp() : MyFragment() {
                     label = getString(R.string.Limpar_historico)
                     icon = R.drawable.vec_try_again
                     callback = {
-                        clearHistory()
+                        confirmClearHistory()
                     }
                 }
             }
@@ -151,8 +150,16 @@ class FragmentViewManagedApp() : MyFragment() {
         popupMenu.show(this@FragmentViewManagedApp.requireContext(), binding.ivMenu)
     }
 
-    private fun clearHistory() {
-        Toast.makeText(requireContext(), "implementar...", Toast.LENGTH_SHORT).show()
+    private fun confirmClearHistory() {
+        MaterialAlertDialogBuilder(requireActivity())
+            .setTitle(getString(R.string.Por_favor_confirme))
+            .setMessage(getString(R.string.Deseja_mesmo_apagar_o_hist_rico_de_notifica_es_deste_app_essa_acao_nao))
+            .setPositiveButton(getString(R.string.Apagar)) { dialog, _ ->
+                viewModel.clearHistory()
+            }.setNegativeButton(getString(R.string.Cancelar)) { dialog, _ ->
+            }.setCancelable(false)
+            .setIcon(R.drawable.vec_alert)
+            .show()
     }
 
     private fun confirmRemoveApp() {

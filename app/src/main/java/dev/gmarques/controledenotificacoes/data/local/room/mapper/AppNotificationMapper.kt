@@ -6,7 +6,7 @@ import dev.gmarques.controledenotificacoes.domain.model.validators.AppNotificati
 
 object AppNotificationMapper {
 
-    fun toEntity(model: AppNotification): AppNotificationEntity? {
+    fun toEntity(model: AppNotification): AppNotificationEntity {
 
         AppNotificationValidator.validate(model)
 

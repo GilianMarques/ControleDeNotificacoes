@@ -8,7 +8,7 @@ import java.io.Serializable
  */
 data class AppNotification(
     val packageId: String,
-    val title: String?,
-    val content: String?,
+    val title: String,
+    val content: String,
     val timestamp: Long = System.currentTimeMillis(),
 ) : Serializable

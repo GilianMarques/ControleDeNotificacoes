@@ -168,6 +168,8 @@
     <string name="Permita_o_envio_de_notifica_es_para_ser_avisado_a_sobre_as_notifica_es_recebidas_durante_o_per_odo_de_bloqueio_dos_apps">Permita o envio de notificações para ser avisado(a) sobre as notificações recebidas durante o período de bloqueio dos apps.</string>
     <string name="Sem_t_tulo">(Sem título)</string>
     <string name="Sem_conte_do">(Sem conteúdo)</string>
+    <string name="Deseja_mesmo_apagar_o_hist_rico_de_notifica_es_deste_app_essa_acao_nao">Deseja mesmo apagar o histórico de notificações deste app? Essa ação não pode ser desfeita</string>
+    <string name="Apagar">Apagar</string>
 
 
 </resources>

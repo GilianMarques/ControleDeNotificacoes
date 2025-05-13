@@ -36,12 +36,12 @@ class RuleEnforcerImpl @Inject constructor(
             return@withContext
         }
 
-        val rule = getRuleByIdUseCase(managedApp.ruleId)
-            ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
+        val rule =
+            getRuleByIdUseCase(managedApp.ruleId) ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
 
         val now = Calendar.getInstance()
-        val currentDay = now.get(Calendar.DAY_OF_WEEK)
-            .let { if (it == Calendar.SUNDAY) 7 else it - 1 } // TODO: essa linha deve ser testada
+        val currentDay =
+            now.get(Calendar.DAY_OF_WEEK).let { if (it == Calendar.SUNDAY) 7 else it - 1 } // TODO: essa linha deve ser testada
         val currentMinutes = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
 
         if (shouldBlockNotification(rule, currentDay, currentMinutes)) {
@@ -71,13 +71,12 @@ class RuleEnforcerImpl @Inject constructor(
 
     private fun saveNotificationOnHistory(notification: AppNotification) {
 
+        if (notification.title.isEmpty() && notification.content.isEmpty()) return
+
         launch {
             insertAppNotificationUseCase(
                 AppNotification(
-                    notification.packageId,
-                    notification.title,
-                    notification.content,
-                    System.currentTimeMillis()
+                    notification.packageId, notification.title, notification.content, System.currentTimeMillis()
                 )
             )
         }
