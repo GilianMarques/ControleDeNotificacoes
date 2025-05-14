@@ -9,6 +9,9 @@ import dev.gmarques.controledenotificacoes.framework.notification_service.Notifi
 /**
  * Criado por Gilian Marques
  * Em quarta-feira, 14 de maio de 2025 as 12:34.
+ *
+ *  Liga o [NotificationServiceManager] para que o [dev.gmarques.controledenotificacoes.framework.notification_service.NotificationListener]
+ *  seja monitorado em caso de desconexão
  */
 class BootReceiver : BroadcastReceiver() {
 

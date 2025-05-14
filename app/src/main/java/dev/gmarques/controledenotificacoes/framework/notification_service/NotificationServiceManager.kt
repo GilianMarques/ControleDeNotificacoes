@@ -28,7 +28,6 @@ class NotificationServiceManager : Service() {
     private var timer: Timer? = null
     private val channelId = "notification_watcher_channel"
 
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, buildNotification())
         keepCheckingNotificationListenerIsAlive()
@@ -37,6 +36,18 @@ class NotificationServiceManager : Service() {
         }
     }
 
+    override fun onDestroy() {
+        timer?.cancel()
+        super.onDestroy()
+    }
+
+    override fun onBind(intent: Intent?): IBinder? = null
+
+    /**
+     * Mantém a checagem periódica para garantir que o [NotificationListener] esteja ativo.
+     * Um [Timer] é utilizado para agendar a execução da função [forceReconnectNotificationListener]
+     * a cada [checkIntervalMs] milissegundos.
+     */
     private fun keepCheckingNotificationListenerIsAlive() {
         timer?.cancel()
         timer = Timer().apply {
@@ -48,13 +59,11 @@ class NotificationServiceManager : Service() {
         }
     }
 
-    override fun onDestroy() {
-        timer?.cancel()
-        super.onDestroy()
-    }
-
-    override fun onBind(intent: Intent?): IBinder? = null
-
+    /**
+     * Constrói a notificação em primeiro plano (foreground) para este serviço.
+     * Esta notificação é necessária para que o serviço continue executando em segundo plano
+     * sem ser finalizado pelo sistema operacional.
+     */
     private fun buildNotification(): Notification {
         val channelName = getString(R.string.Monitoramento_de_notificacoes)
 
@@ -92,9 +101,13 @@ class NotificationServiceManager : Service() {
         }
     }
 
+    /**
+     * Força a reconexão do [NotificationListener].
+     * Isso é feito desabilitando e reabilitando o componente [NotificationListener]
+     * via [PackageManager]. Esta é uma abordagem conhecida para resolver problemas
+     * onde o listener de notificações para de funcionar.
+     */
     fun forceReconnectNotificationListener() {
-        //     Log.d("USUK", "NotificationServiceManager.forceReconnectNotificationService: tentado ligar listener")
-
         val pm = packageManager
         val componentName = ComponentName(this, NotificationListener::class.java)
 

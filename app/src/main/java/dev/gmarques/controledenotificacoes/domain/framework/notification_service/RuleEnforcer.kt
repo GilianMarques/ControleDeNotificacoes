@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.framework.notification_service
 
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import dev.gmarques.controledenotificacoes.domain.model.Rule
 
 /**
  * Criado por Gilian Marques
@@ -11,5 +12,5 @@ import dev.gmarques.controledenotificacoes.domain.model.AppNotification
  * deve ou não ser bloqueada assim como manter histórico das notificações de apps gerenciados, Através dos usecases.
  */
 interface RuleEnforcer {
-    suspend fun enforceOnNotification(notification: AppNotification, callback: (AppNotification) -> Any)
+    suspend fun enforceOnNotification(notification: AppNotification, callback: (AppNotification, Rule) -> Any)
 }

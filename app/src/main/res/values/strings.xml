@@ -172,6 +172,10 @@
     <string name="Apagar">Apagar</string>
     <string name="Abrir_app">Abrir app</string>
     <string name="Nao_foi_poss_vel_abrir_o_app">Não foi possível abrir o app</string>
+    <string name="X_recebeu_notifica_es_durante_o_bloqueio">%1$s recebeu notificações durante o bloqueio</string>
+    <string name="Relatorio_de_notificacoes">Relatório de notificações bloqueadas</string>
+    <string name="App_indispon_vel">App indisponível</string>
+    <string name="Ver_hist_rico">Ver histórico</string>
 
 
 </resources>
