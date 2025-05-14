@@ -65,7 +65,25 @@ class FragmentViewManagedApp() : MyFragment() {
         observeNotificationHistory()
         observeEvents()
         setupRecyclerView()
+        setupFabOpenApp()
     }
+
+    private fun setupFabOpenApp() = with(binding) {
+
+        hideViewOnRVScroll(rvHistory, fabOpenApp)
+        fabOpenApp.setOnClickListener(AnimatedClickListener {
+            val packageId = viewModel.managedAppFlow.value!!.packageId
+            val launchIntent = requireContext().packageManager.getLaunchIntentForPackage(packageId)
+
+            if (launchIntent != null) {
+                startActivity(launchIntent)
+            } else {
+                showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_app))
+            }
+        })
+    }
+
+
 
 
     private fun setupActionBar(app: ManagedAppWithRule) = with(binding) {
@@ -99,6 +117,8 @@ class FragmentViewManagedApp() : MyFragment() {
         rvHistory.adapter = adapter
         rvHistory.layoutManager = LinearLayoutManager(requireContext())
         rvHistory.setHasFixedSize(true)
+        hideViewOnRVScroll(binding.rvHistory, binding.fabOpenApp)
+
     }
 
     private fun showMenu() {
@@ -203,13 +223,11 @@ class FragmentViewManagedApp() : MyFragment() {
         }
     }
 
-
     private fun observeNotificationHistory() {
         collectFlow(viewModel.appNotificationHistoryFlow) { history ->
             adapter.submitList(history)
         }
     }
-
 
     /**
      * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.

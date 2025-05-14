@@ -103,16 +103,16 @@
         app:layout_constraintTop_toBottomOf="@id/iv_app_icon" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab_conclude"
+        android:id="@+id/fab_open_app"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
         android:contentDescription="@string/Bot_o_de_adicionar_regra"
         android:focusable="true"
-        android:text="@string/Concluir"
+        android:text="@string/Abrir_app"
         android:transitionName="fab"
-        app:icon="@drawable/vec_check"
+        app:icon="@drawable/vec_open_app"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

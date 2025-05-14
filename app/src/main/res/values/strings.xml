@@ -170,6 +170,8 @@
     <string name="Sem_conte_do">(Sem conteúdo)</string>
     <string name="Deseja_mesmo_apagar_o_hist_rico_de_notifica_es_deste_app_essa_acao_nao">Deseja mesmo apagar o histórico de notificações deste app? Essa ação não pode ser desfeita</string>
     <string name="Apagar">Apagar</string>
+    <string name="Abrir_app">Abrir app</string>
+    <string name="Nao_foi_poss_vel_abrir_o_app">Não foi possível abrir o app</string>
 
 
 </resources>

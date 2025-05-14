@@ -1,7 +1,5 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +13,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
@@ -45,9 +42,6 @@ class SelectRuleFragment : MyFragment() {
 
     @Inject
     lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
-
-    private var animatingFab = false
-    private var isFabVisible = true
 
     private lateinit var adapter: RulesAdapter
 
@@ -87,53 +81,11 @@ class SelectRuleFragment : MyFragment() {
         binding.rvApps.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@SelectRuleFragment.adapter
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (dy > 0 && isFabVisible) {
-                        isFabVisible = false
-                        toggleFabVisibility(false)
-                    } else if (dy < 0 && !isFabVisible) {
-                        isFabVisible = true
-                        toggleFabVisibility(true)
-                    }
-                }
-            })
-
+            hideViewOnRVScroll(binding.rvApps, binding.fabAdd)
         }
 
     }
 
-    /**
-     * Alterna a visibilidade do Floating Action Button (FAB) com uma animação de transição.
-     *
-     * Se o FAB já estiver em processo de animação (`animatingFab` é `true`), a função retorna
-     * imediatamente para evitar animações concorrentes.  Caso contrário, define a translação Y
-     * do FAB para mostrar ou esconder o botão e inicia a animação.
-     *
-     * @param show `true` para mostrar o FAB, `false` para escondê-lo.
-     */
-    private fun toggleFabVisibility(show: Boolean) = with(binding) {
-
-        if (animatingFab) return@with
-
-        val translationY = if (show) 0f else (fabAdd.height * 2f)
-
-        fabAdd.animate().translationY(translationY).setDuration(400L)
-            .setInterpolator(android.view.animation.AnticipateOvershootInterpolator())
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationStart(animation: Animator) {
-                    animatingFab = true
-                    super.onAnimationStart(animation)
-                }
-
-                override fun onAnimationEnd(animation: Animator) {
-                    animatingFab = false
-                    super.onAnimationEnd(animation)
-                }
-            }).start()
-    }
 
     private fun rvOnRuleSelected(rule: Rule) {
         val result = Bundle().apply {

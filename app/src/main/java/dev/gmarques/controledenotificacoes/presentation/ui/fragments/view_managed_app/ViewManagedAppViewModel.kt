@@ -49,7 +49,7 @@ class ViewManagedAppViewModel @Inject constructor(
 
         observeAppNotificationsByPkgIdUseCase(app.packageId)
             .collect {
-                _appNotificationHistoryFlow.tryEmit(it)
+                _appNotificationHistoryFlow.tryEmit(it.toMutableList().apply { reverse() })
             }
 
         observeRuleChanges(app.rule)

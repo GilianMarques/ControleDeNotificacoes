@@ -1,7 +1,5 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +12,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
@@ -118,58 +115,19 @@ class SelectAppsFragment : MyFragment() {
             viewModel.onAppChecked(app, checked)
 
             isFabVisible = true
-            toggleFabVisibility(true)
+            toggleFabVisibility(true, binding.fabConclude)
         }
 
         binding.rvApps.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@SelectAppsFragment.adapter
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (dy > 0 && isFabVisible) {
-                        isFabVisible = false
-                        toggleFabVisibility(false)
-                    } else if (dy < 0 && !isFabVisible) {
-                        isFabVisible = true
-                        toggleFabVisibility(true)
-                    }
-                }
-            })
+            hideViewOnRVScroll(binding.rvApps, binding.fabConclude)
+
         }
 
     }
 
-    /**
-     * Alterna a visibilidade do Floating Action Button (FAB) com uma animação de transição.
-     *
-     * Se o FAB já estiver em processo de animação (`animatingFab` é `true`), a função retorna
-     * imediatamente para evitar animações concorrentes.  Caso contrário, define a translação Y
-     * do FAB para mostrar ou esconder o botão e inicia a animação.
-     *
-     * @param show `true` para mostrar o FAB, `false` para escondê-lo.
-     */
-    private fun toggleFabVisibility(show: Boolean) = with(binding) {
-
-        if (animatingFab) return@with
-
-        val translationY = if (show) 0f else (fabConclude.height * 2f)
-
-        fabConclude.animate().translationY(translationY).setDuration(400L)
-            .setInterpolator(android.view.animation.AnticipateOvershootInterpolator())
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationStart(animation: Animator) {
-                    animatingFab = true
-                    super.onAnimationStart(animation)
-                }
-
-                override fun onAnimationEnd(animation: Animator) {
-                    animatingFab = false
-                    super.onAnimationEnd(animation)
-                }
-            }).start()
-    }
 
     /**
      * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.

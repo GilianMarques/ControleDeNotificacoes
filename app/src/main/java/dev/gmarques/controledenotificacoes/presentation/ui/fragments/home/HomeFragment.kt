@@ -193,6 +193,7 @@ class HomeFragment : MyFragment() {
             binding.tvUserName to "view_app_name",
             binding.ivMenu to "view_menu",
             binding.divider to "divider",
+            binding.fabAdd to "fab",
         )
 
         findNavController().navigate(
@@ -240,7 +241,6 @@ class HomeFragment : MyFragment() {
         lifecycleScope.launch {
 
             binding.containerWarnings.removeAllViews()
-            delay(1500)
 
             if (!requireMainActivity().isNotificationListenerEnabled()) {
                 showListenNotificationWarning()

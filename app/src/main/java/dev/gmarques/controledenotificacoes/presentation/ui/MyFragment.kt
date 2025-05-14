@@ -1,5 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.ui
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -14,10 +16,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.ChangeBounds
 import androidx.transition.Fade
 import androidx.transition.TransitionSet
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
@@ -59,6 +63,10 @@ open class MyFragment() : Fragment() {
 
     @Inject
     lateinit var readPreferenceUseCase: ReadPreferenceUseCase
+
+    private var isFabVisible = true
+    private var animatingFab = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -286,4 +294,56 @@ open class MyFragment() : Fragment() {
             }.setCancelable(false).setIcon(R.drawable.vec_hint)
             .show()
     }
+
+    protected fun hideViewOnRVScroll(
+        recyclerView: RecyclerView,
+        targetView: ExtendedFloatingActionButton,
+    ) {
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0 && isFabVisible) {
+                    isFabVisible = false
+                    toggleFabVisibility(false, targetView)
+                } else if (dy < 0 && !isFabVisible) {
+                    isFabVisible = true
+                    toggleFabVisibility(true, targetView)
+                }
+            }
+        })
+    }
+
+    /**
+     * Alterna a visibilidade de uma view, geralmente Floating Action Button (FAB) com uma animação de transição.
+     *
+     * Se a view já estiver em processo de animação (`animatingFab` é `true`), a função retorna
+     * imediatamente para evitar animações concorrentes.  Caso contrário, define a translação Y
+     * da view para mostrar ou esconder o botão e inicia a animação.
+     *
+     * @param show `true` para mostrar a view, `false` para escondê-lo.
+     * @param targetView a view que sera animada
+     */
+    protected fun toggleFabVisibility(show: Boolean, targetView: View) {
+
+        if (animatingFab) return
+
+        val translationY = if (show) 0f else (targetView.height * 2f)
+
+        targetView.animate().translationY(translationY).setDuration(400L)
+            .setInterpolator(android.view.animation.AnticipateOvershootInterpolator())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator) {
+                    animatingFab = true
+                    super.onAnimationStart(animation)
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+                    animatingFab = false
+                    super.onAnimationEnd(animation)
+                }
+            }).start()
+    }
+
+
 }

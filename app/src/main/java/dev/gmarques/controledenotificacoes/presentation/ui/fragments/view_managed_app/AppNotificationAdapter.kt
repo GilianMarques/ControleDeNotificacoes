@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dev.gmarques.controledenotificacoes.databinding.ItemAppNotificationBinding
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.timeFormatted
 
 /**
  * Criado por Gilian Marques
@@ -21,7 +22,7 @@ class AppNotificationAdapter : ListAdapter<AppNotification, AppNotificationAdapt
             // TODO: inicializar as strings apenas uma vez
             tvTitle.text = notification.title
             tvContent.text = notification.content
-
+            tvTime.text = notification.timeFormatted()
         }
     }
 
