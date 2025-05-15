@@ -1,0 +1,37 @@
+
+
+# O AlarmReceiver deve remover o registro do agendamento quando executado
+
+----------------------------
+
+Casos de reagendamento e cmoportamento esperado:
+
+# Reagendamento pós boot
+# Reagendamento pós edição de regra
+- busca (e cancela) todos os agendamentos feitos e emite relatorio na hora se o app estiver desbloqueado ou agenda
+
+# Reagendamento pós remoção de app
+# Reagendamento pós trocar a regra do app
+- busca  (e cancela)  todos os agendamentos feitos e emite relatorio na hora
+
+Nota: Relatorio é a notificação que avisa caso um app bloqueado tenha recebido notificações durante o bloqueio
+
+----------------------------
+
+Implementações
+
+# Criar scheduleManager para:
+- agendar (e escrever prefs)
+- cancelar agendamentos (e apagar prefs)
+- escrever agendamentos feitos
+- apagar agendamentos executados
+
+
+Criar um usecase para cada comportamento esperado:
+
+- CancelAndEmitOrRescheduleAlarm
+- CancelAndEmitAlarm
+
+Criar a NotificationDispatcher pra construir e emitir diversas notificações, criar uma builder pra usar junto
+afim de manter a separação das responsabilidades
+

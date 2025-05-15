@@ -17,7 +17,8 @@ import androidx.core.graphics.createBitmap
 import dev.gmarques.controledenotificacoes.R
 
 /**
- * É notificado para informar o usuário que o app recém-desbloqueado recebeu notificações durante o bloqueio.
+ * É executado mediante agendamento no sistema para informar ao usuário que um app recém-desbloqueado
+ * recebeu notificações durante o bloqueio.
  */
 class AlarmReceiver : BroadcastReceiver() {
 

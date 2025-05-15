@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
@@ -19,7 +20,7 @@ object RuleExtensionFun {
     /**
      * Calcula o próximo período de desbloqueio para um app gerenciado com base nesta regra e a partir do momento atual.
      *
-     * Não considera caso o momento atual seja de desbloqueio. Essa função sempre buscará o proximo periodo.
+     * Não considera caso o momento atual seja de desbloqueio (para saber se o app esta desbloqueado nesse momento, use [isAppInBlockPeriod]). Essa função sempre buscará o proximo periodo.
      *
      * Usa a lib JodaTime pra garantir cmpatibilidade com apis <26
      *
