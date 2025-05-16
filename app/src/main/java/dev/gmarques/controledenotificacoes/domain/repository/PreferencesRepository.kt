@@ -11,4 +11,6 @@ interface PreferencesRepository {
     suspend fun <T> read(key: String, default: T): T
 
     suspend fun clearAll()
+
+    suspend fun deletePreferenceByName(key: String)
 }

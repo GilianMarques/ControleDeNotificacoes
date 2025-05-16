@@ -29,7 +29,7 @@ object RuleExtensionFun {
      * - Para regras [RuleType.RESTRICTIVE], ela busca o próximo fim de período de restrição.
      *
      */
-    fun Rule.nextUnlockPeriodFromNow(): DateTime? {
+    fun Rule.nextUnlockPeriodFromNow(): DateTime {
         val now = DateTime.now()
 
         for (range in this.timeRanges) {
@@ -45,7 +45,7 @@ object RuleExtensionFun {
             }
         }
 
-        return null
+        return now + 1_000L
     }
 
     /**

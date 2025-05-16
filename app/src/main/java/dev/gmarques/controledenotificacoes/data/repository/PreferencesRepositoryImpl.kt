@@ -51,6 +51,18 @@ class PreferencesRepositoryImpl @Inject constructor(@ApplicationContext context:
         dataStore.edit { it.clear() }
     }
 
+    override suspend fun deletePreferenceByName(key: String) {
+        dataStore.edit { prefs ->
+            prefs.asMap().keys
+                .find {
+                    it.name == key
+                }
+                ?.let {
+                    prefs.remove(it)
+                }
+        }
+    }
+
     companion object {
         private val Context.dataStore by preferencesDataStore(name = "app_settings")
     }

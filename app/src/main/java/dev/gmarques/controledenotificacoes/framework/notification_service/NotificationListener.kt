@@ -1,8 +1,6 @@
 package dev.gmarques.controledenotificacoes.framework.notification_service
 
-import android.app.AlarmManager
 import android.app.Notification
-import android.app.PendingIntent
 import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
@@ -10,10 +8,9 @@ import android.util.Log
 import dagger.hilt.android.EntryPointAccessors
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.di.entry_points.RuleEnforcerEntryPoint
+import dev.gmarques.controledenotificacoes.di.entry_points.ScheduleManagerEntryPoint
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
-import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextUnlockPeriodFromNow
-import dev.gmarques.controledenotificacoes.framework.AlarmReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -28,6 +25,10 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     private val ruleEnforcer = EntryPointAccessors
         .fromApplication(App.context, RuleEnforcerEntryPoint::class.java)
         .getRuleEnforcer()
+
+    private val scheduleManager = EntryPointAccessors
+        .fromApplication<ScheduleManagerEntryPoint>(App.context)
+        .getScheduleManager()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
@@ -74,35 +75,9 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             ruleEnforcer.enforceOnNotification(not) { not, rule ->
                 Log.d("USUK", "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.packageId}")
                 cancelNotification(notification.key)
-                scheduleReportNotification(not, rule)
+                scheduleManager.scheduleAlarm(not.packageId, rule.nextUnlockPeriodFromNow().millis)
             }
         }
-    }
-
-    /**
-     * Agenda uma notificação de relatório para o próximo período de desbloqueio definido pela regra, para informar
-     * que o app recebeu notificações durante o bloqueio.
-     *
-     * @param notification A notificação para a qual o relatório será agendado.
-     * @param rule A regra que define o próximo período de desbloqueio.
-     */
-    fun scheduleReportNotification(notification: AppNotification, rule: Rule) {
-
-        val alarmIntent = Intent(this, AlarmReceiver::class.java).apply {
-            putExtra("packageId", notification.packageId)
-        }
-
-        val pIntent = PendingIntent.getBroadcast(
-            this, 0, alarmIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
-        val time = rule.nextUnlockPeriodFromNow() ?: return
-
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, time.millis, pIntent)
-
-        Log.d("USUK", "NotificationListener.scheduleReportNotification: schedule made for: ${notification.packageId} at:$time ")
     }
 
     override fun onListenerDisconnected() {
@@ -110,7 +85,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         super.onListenerDisconnected()
         Log.d("USUK", "NotificationListener.".plus("onListenerDisconnected() "))
     }
-
 
 }
 
