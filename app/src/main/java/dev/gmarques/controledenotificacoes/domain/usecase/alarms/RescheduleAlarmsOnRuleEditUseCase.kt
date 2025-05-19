@@ -3,8 +3,6 @@ package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
-import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextUnlockPeriodFromNow
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppsByRuleIdUseCase
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
@@ -19,6 +17,7 @@ import javax.inject.Inject
 class RescheduleAlarmsOnRuleEditUseCase @Inject constructor(
     private val scheduleManager: ScheduleManager,
     private val getManagedAppsByRuleIdUseCase: GetManagedAppsByRuleIdUseCase,
+    private val scheduleAlarmForAppUseCase: ScheduleAlarmForAppUseCase,
 ) {
 
     /**
@@ -47,7 +46,7 @@ class RescheduleAlarmsOnRuleEditUseCase @Inject constructor(
 
         if (isThereAnyActiveAlarm) {
             cancelAlarmForApp(app)
-            scheduleAlarmForApp(app, rule)
+            scheduleAlarmForAppUseCase(app, rule)
         }
     }
 
@@ -60,16 +59,4 @@ class RescheduleAlarmsOnRuleEditUseCase @Inject constructor(
         scheduleManager.cancelAlarm(app.packageId)
     }
 
-    /**
-     * Agenda um novo alarme para o aplicativo fornecido com base na regra.
-     * O alarme será agendado para o próximo período de desbloqueio ou em 5 segundos se o aplicativo não estiver em período de bloqueio.
-     */
-    private fun scheduleAlarmForApp(app: ManagedApp, rule: Rule) {
-        val scheduleTimeMillis =
-            if (rule.isAppInBlockPeriod()) rule.nextUnlockPeriodFromNow().millis
-            else System.currentTimeMillis() + 5_000L
-
-        scheduleManager.scheduleAlarm(app.packageId, scheduleTimeMillis)
-
-    }
 }

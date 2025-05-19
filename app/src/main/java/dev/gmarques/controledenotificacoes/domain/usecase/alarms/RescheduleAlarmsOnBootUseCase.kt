@@ -4,8 +4,6 @@ import android.util.Log
 import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
-import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextUnlockPeriodFromNow
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import kotlinx.coroutines.Dispatchers.IO
@@ -23,6 +21,7 @@ class RescheduleAlarmsOnBootUseCase @Inject constructor(
     private val scheduleManager: ScheduleManager,
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
+    private val scheduleAlarmForAppUseCase: ScheduleAlarmForAppUseCase,
 ) {
 
     private val ruleCache = HashMap<String, Rule>()
@@ -44,7 +43,7 @@ class RescheduleAlarmsOnBootUseCase @Inject constructor(
 
                 val rule = getRule(app.ruleId)
 
-                scheduleAlarmForApp(app, rule)
+                scheduleAlarmForAppUseCase(app, rule)
             }
         }.awaitAll()
     }
@@ -76,20 +75,4 @@ class RescheduleAlarmsOnBootUseCase @Inject constructor(
             }
     }
 
-    /**
-     * Agenda um alarme para um aplicativo específico com base em sua regra.
-     * Se o aplicativo estiver em período de bloqueio, o alarme é agendado para o próximo período de desbloqueio.
-     * Caso contrário, o alarme é agendado para 5 segundos a partir do momento atual.
-     * @param app O aplicativo para o qual o alarme será agendado.
-     * @param rule A regra associada ao aplicativo.
-     */
-    private fun scheduleAlarmForApp(app: ManagedApp, rule: Rule) {
-
-        val scheduleTimeMillis =
-            if (rule.isAppInBlockPeriod()) rule.nextUnlockPeriodFromNow().millis
-            else System.currentTimeMillis() + 5_000L
-
-        scheduleManager.scheduleAlarm(app.packageId, scheduleTimeMillis)
-
-    }
 }
