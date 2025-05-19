@@ -6,7 +6,10 @@ import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.util.Log
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.DeletePreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
@@ -25,7 +28,6 @@ class ScheduleManagerImpl @Inject constructor(
     private val deletePreferenceUseCase: DeletePreferenceUseCase,
     private val readPreferenceUseCase: ReadPreferenceUseCase,
 ) : ScheduleManager {
-
 
     /**
      * Agenda um alarme para um pacote específico em um determinado horário.
@@ -59,11 +61,21 @@ class ScheduleManagerImpl @Inject constructor(
         Log.d("USUK", "ScheduleManagerImpl.cancelAlarm: $packageId cancelled")
     }
 
-    override fun isAnyAlarmSetForPackage(packageId: String): Boolean {
-        val defValue = "no_active_schedule"
-        val pref = readPreferenceUseCase(packageId.scheduleKey(), defValue)
-        return pref != defValue
+    /**
+     * Verifica se existe algum alarme agendado para um pacote específico.
+     * Lê a preferência que armazena a lista de pacotes com alarmes agendados e verifica se o `packageId` está presente.
+     *
+     * @param packageId O ID do pacote a ser verificado.
+     * @return `true` se houver um alarme agendado para o pacote, `false` caso contrário.
+     */
+    override fun isThereAnyAlarmSetForPackage(packageId: String): Boolean {
+        val json = readPreferenceUseCase(Preferences.SCHEDULED_ALARMS, "")
+        return (MoshiListConverter.fromJson(json) ?: mutableListOf()).contains(packageId)
+    }
 
+    override fun getAllSchedules(): List<String> {
+        val json = readPreferenceUseCase(Preferences.SCHEDULED_ALARMS, "")
+        return MoshiListConverter.fromJson(json) ?: mutableListOf()
     }
 
     /**
@@ -100,8 +112,14 @@ class ScheduleManagerImpl @Inject constructor(
      * @param packageId O ID do pacote para o qual o dado de agendamento será salvo.
      */
     private fun saveScheduleData(packageId: String) {
-        val value = "scheduled"
-        savePreferenceUseCase(packageId.scheduleKey(), value)
+
+        val json = readPreferenceUseCase(Preferences.SCHEDULED_ALARMS, "")
+        val list = (MoshiListConverter.fromJson(json) ?: mutableListOf())
+            .apply { add(packageId) }
+
+        val updateJson = MoshiListConverter.toJson(list)
+
+        savePreferenceUseCase(Preferences.SCHEDULED_ALARMS, updateJson)
     }
 
     /**
@@ -110,16 +128,45 @@ class ScheduleManagerImpl @Inject constructor(
      * @param packageId O ID do pacote para o qual o dado de agendamento será removido.
      */
     private fun deleteScheduleData(packageId: String) {
-        deletePreferenceUseCase(packageId.scheduleKey())
+
+        val json = readPreferenceUseCase(Preferences.SCHEDULED_ALARMS, "")
+        val list = (MoshiListConverter.fromJson(json) ?: mutableListOf())
+            .apply { remove(packageId) }
+
+        val updateJson = MoshiListConverter.toJson(list)
+
+        savePreferenceUseCase(Preferences.SCHEDULED_ALARMS, updateJson)
     }
-// TODO: salvar uma lista de agendamentos...
+
     /**
-     * Cria uma chave que sera usada para identificar pacotes com agendamento de alarme
-     * Era pra ser uma variavel global mas é dinamica e depende do pacote e eu nao quero deixar que
-     * as varias funçoes quea cessa essa funcionalidadem fiquem responsaveis pela concatenação.
-     *
-     * Essa funçao é tão específica pra esse contexto que optei por deixa-la isolada aqui nessa classe.
+     * Objeto utilitário para converter listas de strings de e para JSON usando a biblioteca Moshi.
+     * Este objeto é usado para serializar e desserializar a lista de pacotes com alarmes agendados.
      */
-    private fun String.scheduleKey() = "scheduled_pkg_$this"
+    object MoshiListConverter {
+
+        private val moshi = Moshi.Builder().build()
+        private val type = Types.newParameterizedType(MutableList::class.java, String::class.java)
+        private val adapter = moshi.adapter<MutableList<String>>(type)
+
+        /**
+         * Converte uma lista de strings em uma string JSON.
+         *
+         * @param list A lista de strings a ser convertida.
+         * @return A representação JSON da lista.
+         */
+        fun toJson(list: MutableList<String>): String {
+            return adapter.toJson(list)
+        }
+
+        /**
+         * Converte uma string JSON em uma lista de strings.
+         *
+         * @param json A string JSON a ser convertida.
+         * @return A lista de strings desserializada, ou `null` se a conversão falhar.
+         */
+        fun fromJson(json: String): MutableList<String>? {
+            return adapter.fromJson(json)
+        }
+    }
 
 }

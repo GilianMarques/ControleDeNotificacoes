@@ -23,5 +23,10 @@ interface ScheduleManager {
     /**
      * Verifica se existe algum alarme agendado para o aplicativo especificado.
      */
-    fun isAnyAlarmSetForPackage(packageId: String): Boolean
+    fun isThereAnyAlarmSetForPackage(packageId: String): Boolean
+
+    /**
+     * Retorna todos os agendamentos ativos no momento
+     */
+    fun getAllSchedules(): List<String>
 }

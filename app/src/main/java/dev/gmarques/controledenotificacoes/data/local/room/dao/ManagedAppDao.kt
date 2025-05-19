@@ -32,4 +32,8 @@ interface ManagedAppDao {
 
     @Query("DELETE FROM managed_apps WHERE ruleId = :ruleId")
     fun deleteManagedAppsByRuleId(ruleId: String): Int
+
+    @Query("SELECT * FROM managed_apps WHERE ruleId = ruleId")
+    suspend fun getManagedAppByRuleId(ruleId: String): List<ManagedAppEntity>
+
 }
