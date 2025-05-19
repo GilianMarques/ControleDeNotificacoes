@@ -5,7 +5,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.setCustomKeys
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.HiltAndroidApp
-import dev.gmarques.controledenotificacoes.di.entry_points.AppEntryPoint
+import dev.gmarques.controledenotificacoes.di.entry_points.UseCasesEntryPoint
 
 /**
  * Criado por Gilian Marques
@@ -27,7 +27,7 @@ class App : Application() {
 
     private fun setupCrashLytics() {
 
-        val entryPoint = EntryPointAccessors.fromApplication(this@App, AppEntryPoint::class.java)
+        val entryPoint = EntryPointAccessors.fromApplication(this@App, UseCasesEntryPoint::class.java)
         val getAppUserUseCase = entryPoint.getAppUserUseCase()
 
         FirebaseCrashlytics.getInstance().apply {

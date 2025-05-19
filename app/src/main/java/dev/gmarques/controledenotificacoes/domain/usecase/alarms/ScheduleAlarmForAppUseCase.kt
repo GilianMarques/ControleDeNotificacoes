@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.alarms
 
+import android.util.Log
 import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
@@ -24,12 +25,14 @@ class ScheduleAlarmForAppUseCase @Inject constructor(
      * @param rule A regra associada ao aplicativo.
      */
     operator fun invoke(app: ManagedApp, rule: Rule) {
+        Log.d("USUK", "ScheduleAlarmForAppUseCase.invoke: rescheduled ${app.packageId}")
 
         val scheduleTimeMillis =
             if (rule.isAppInBlockPeriod()) rule.nextUnlockPeriodFromNow().millis
             else System.currentTimeMillis() + 5_000L
 
         scheduleManager.scheduleAlarm(app.packageId, scheduleTimeMillis)
+
 
     }
 }

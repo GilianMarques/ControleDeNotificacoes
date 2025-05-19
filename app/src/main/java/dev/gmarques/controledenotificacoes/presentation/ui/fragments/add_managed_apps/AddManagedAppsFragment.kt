@@ -86,7 +86,7 @@ class AddManagedAppsFragment() : MyFragment() {
     private fun loadRuleIfOnlyOneOnDb() = lifecycleScope.launch {
 
         val rules = getAllRulesUseCase()
-        if (rules.size == 1 && viewModel.selectedRule.value != null) viewModel.setRule(rules.first())
+        if (rules.size == 1 && viewModel.selectedRule.value == null) viewModel.setRule(rules.first())
     }
 
     private fun setupConcludeFab() = with(binding) {

@@ -80,6 +80,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         }
     }
 
+
     override fun onListenerDisconnected() {
         cancel() //cancela corrotinas em execução quando o serviço é desconectado
         super.onListenerDisconnected()

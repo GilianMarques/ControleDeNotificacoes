@@ -5,13 +5,12 @@
 
 Casos de reagendamento de alarmes e comportamento esperado:
 
-# Reagendamento pós boot
+# Reagendamento pós boot - OK
 - buscar todos os  agendamentos feitos e emitir relatorio na hora se o app estiver desbloqueado ou agendar
+
 # Reagendamento pós edição de regra
 - buscar os apps gerenciados pela regra, e verificar o agendamento de cada um -  (e cancela) todos os agendamentos feitos e emite relatorio na hora se o app estiver desbloqueado ou agenda
 
-# Reagendamento pós remoção de app
-- buscar um unico agendamento, cancelar e  emitr relatorio na hora
 # Reagendamento pós trocar a regra do app
 - busca  (e cancela)  todos os agendamentos feitos e emite relatorio na hora
 
@@ -31,11 +30,8 @@ Implementações
 - apagar agendamentos executados
 - informar se existem agendamentos feitos
 
-Criar um usecase para cada comportamento esperado:
+# Criar um usecase para cada comportamento esperado
 
-- CancelAndEmitOrRescheduleAlarmsUseCase
-- CancelAndEmitAlarmsUseCase
-
-Criar a NotificationDispatcher pra construir e emitir diversas notificações, criar uma builder pra usar junto
-afim de manter a separação das responsabilidades
+# Criar a NotificationDispatcher pra construir e emitir diversas notificações, criar uma builder pra usar junto
+afim de manter a separação das responsabilidades - Atualmente o AlarmReceiver é o responsavel por construir e emitir notificações
 

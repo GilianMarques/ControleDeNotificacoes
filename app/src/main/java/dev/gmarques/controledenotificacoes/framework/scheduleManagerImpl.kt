@@ -29,17 +29,22 @@ class ScheduleManagerImpl @Inject constructor(
     private val readPreferenceUseCase: ReadPreferenceUseCase,
 ) : ScheduleManager {
 
+    private val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
+
     /**
      * Agenda um alarme para um pacote específico em um determinado horário.
+     * Se um agendamento ja existir, será cancelado e um novo será criado,
+     * garantindo que apenas um alarme seja agendado para cada pacote.
      *
      * @param packageId O ID do pacote para o qual o alarme será agendado.
      * @param millis O horário em milissegundos em que o alarme deve disparar.
      */
     override fun scheduleAlarm(packageId: String, millis: Long) {
 
+        cancelAlarm(packageId) // avoid multiple schedules for the same package
+
         val pIntent = createPendingIntent(packageId)
 
-        val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, pIntent)
 
         saveScheduleData(packageId)
@@ -54,11 +59,10 @@ class ScheduleManagerImpl @Inject constructor(
     override fun cancelAlarm(packageId: String) {
         val pIntent = createPendingIntent(packageId)
 
-        val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
         alarmManager.cancel(pIntent)
 
         deleteScheduleData(packageId)
-        Log.d("USUK", "ScheduleManagerImpl.cancelAlarm: $packageId cancelled")
+        Log.d("USUK", "ScheduleManagerImpl.cancelAlarm: $packageId cancelled (this does not mean the alarm was set)")
     }
 
     /**
@@ -73,6 +77,13 @@ class ScheduleManagerImpl @Inject constructor(
         return (MoshiListConverter.fromJson(json) ?: mutableListOf()).contains(packageId)
     }
 
+    /**
+     * Recupera a lista de todos os pacotes que possuem alarmes agendados.
+     * Lê a preferência que armazena a lista de pacotes com alarmes agendados e a retorna.
+     *
+     * @return Uma lista de strings contendo os IDs dos pacotes com alarmes agendados. Retorna uma lista vazia se nenhum alarme
+     * estiver agendado ou se a preferência não existir.
+     */
     override fun getAllSchedules(): List<String> {
         val json = readPreferenceUseCase(Preferences.SCHEDULED_ALARMS, "")
         return MoshiListConverter.fromJson(json) ?: mutableListOf()
@@ -105,9 +116,9 @@ class ScheduleManagerImpl @Inject constructor(
     }
 
     /**
-     * Salva um dado indicando que um alarme foi agendado para o pacote especificado.
+     * Salva o pacote  indicando que um alarme foi agendado para o aplicativo especificado.
+     * Garante que os pacotes na lista não se repitam.
      * Utiliza o [SavePreferenceUseCase] para persistir essa informação.
-     * A chave usada para salvar é prefixada com "schedule_".
      *
      * @param packageId O ID do pacote para o qual o dado de agendamento será salvo.
      */
@@ -115,7 +126,7 @@ class ScheduleManagerImpl @Inject constructor(
 
         val json = readPreferenceUseCase(Preferences.SCHEDULED_ALARMS, "")
         val list = (MoshiListConverter.fromJson(json) ?: mutableListOf())
-            .apply { add(packageId) }
+            .apply { if (!this.contains(packageId)) add(packageId) }
 
         val updateJson = MoshiListConverter.toJson(list)
 
@@ -165,7 +176,11 @@ class ScheduleManagerImpl @Inject constructor(
          * @return A lista de strings desserializada, ou `null` se a conversão falhar.
          */
         fun fromJson(json: String): MutableList<String>? {
-            return adapter.fromJson(json)
+            return try {
+                adapter.fromJson(json)!!
+            } catch (_: Exception) {
+                mutableListOf<String>()
+            }
         }
     }
 

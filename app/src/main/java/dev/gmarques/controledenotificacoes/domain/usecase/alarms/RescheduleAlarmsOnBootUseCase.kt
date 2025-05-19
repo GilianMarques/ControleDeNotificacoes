@@ -30,19 +30,18 @@ class RescheduleAlarmsOnBootUseCase @Inject constructor(
      * Reagenda todos os alarmes que estavam ativos antes do dispositivo ser reiniciado.
      * É executado em uma corrotina no dispatcher IO.
      */
-    // TODO: chamar no boot
     suspend operator fun invoke() = withContext(IO) {
 
         val activeSchedules = scheduleManager.getAllSchedules()
 
         activeSchedules.map { pkg ->
+            Log.d("USUK", "RescheduleAlarmsOnBootUseCase.invoke: rescheduling $pkg")
             async {
 
                 val app = getApp(pkg)
                 if (app == null) return@async
 
                 val rule = getRule(app.ruleId)
-
                 scheduleAlarmForAppUseCase(app, rule)
             }
         }.awaitAll()
