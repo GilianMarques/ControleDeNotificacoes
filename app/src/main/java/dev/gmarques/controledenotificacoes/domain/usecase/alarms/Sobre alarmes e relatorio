@@ -1,0 +1,31 @@
+O conjunto de UseCases neste pacote é responsável por reagendar alarmes associados a aplicativos que possuem regras de bloqueio configuradas.
+Esses alarmes têm a função de despertar o app em momentos apropriados para exibir um relatório (notificação) ao usuário,
+avisando que um determinado aplicativo recebeu notificações durante um período de bloqueio (quando o fato for verdadeiro).
+
+Funcionamento dos Alarmes
+
+Quando ocorre o agendamento:
+
+Sempre que um aplicativo recebe uma notificação durante o bloqueio:
+
+1. A notificação é cancelada.
+2. A notificação é salva no histórico.
+3. Um alarme é agendado para o próximo período de desbloqueio, calculado com base nos dias, horários e tipo de regra configurada.
+
+Casos que exigem reagendamento
+
+1. Edição de regra existente
+2. Alteração da regra associada a um aplicativo
+3. Reinicialização do dispositivo
+
+Nos casos 1 e 2:
+É necessário cancelar os alarmes antigos antes de reagendar os novos.
+
+No caso 3 (reinício do dispositivo):
+Os alarmes anteriores são perdidos, portanto, é necessário apenas reagendá-los, sem cancelamentos prévios.
+
+Persistência de Alarmes
+
+Todos os pacotes com alarmes agendados são salvos nas Preferencias, o que garante a possibilidade de restaurar os agendamentos
+após um reinício do sistema. Sempre que um alarme é disparado, seu registro correspondente é removido das preferências, garantindo
+ que a base de dados local de alarmes reflita o estado real do sistema.

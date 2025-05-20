@@ -78,7 +78,7 @@ class InstalledAppRepositoryImpl @Inject constructor(
                     InstalledApp(
                         packageId = appInfo.packageName,
                         name = appName,
-                        beingManaged = managedApp
+                        isBeingManaged = managedApp
                     )
                 }
             }
@@ -152,7 +152,7 @@ class InstalledAppRepositoryImpl @Inject constructor(
             val installedApp = InstalledApp(
                 packageId = pkg,
                 name = appName,
-                beingManaged = getManagedAppByPackageIdUseCase(pkg) != null
+                isBeingManaged = getManagedAppByPackageIdUseCase(pkg) != null
             )
 
             appCache.put(pkg, installedApp)

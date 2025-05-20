@@ -45,7 +45,7 @@ class HomeViewModel @Inject constructor(
         InstalledApp(
             name = context.getString(R.string.App_nao_encontrado),
             packageId = "not.found.app",
-            beingManaged = false
+            isBeingManaged = false
         )
     }
 

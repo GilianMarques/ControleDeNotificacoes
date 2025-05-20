@@ -10,7 +10,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSelectableBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.SelectableApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
@@ -66,7 +65,7 @@ class AppsAdapter(
                     .into(binding.ivAppIcon)
             }
 
-            if (selectedApp.installedApp.beingManaged) {
+            if (selectedApp.installedApp.isBeingManaged) {
                 tvAppManaged.isVisible = true
             }
 

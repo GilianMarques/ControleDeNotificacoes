@@ -113,7 +113,7 @@ class SelectAppsViewModel @Inject constructor(
                 return@launch
             }
 
-            if (checked && app.installedApp.beingManaged) {
+            if (checked && app.installedApp.isBeingManaged) {
                 _eventsFlow.tryEmit(SelectedAlreadyManagedApp)
             }
 

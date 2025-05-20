@@ -21,6 +21,12 @@ interface ScheduleManager {
     fun cancelAlarm(packageId: String)
 
     /**
+     * Remove das preferências do pacote referente ao alarme.
+     * Use essa função para remover o registro do agendamento depois que o alarme for disparado ou cancelado.
+     */
+    fun deleteScheduleData(packageId: String)
+
+    /**
      * Verifica se existe algum alarme agendado para o aplicativo especificado.
      */
     fun isThereAnyAlarmSetForPackage(packageId: String): Boolean

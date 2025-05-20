@@ -138,7 +138,7 @@ class ScheduleManagerImpl @Inject constructor(
      *
      * @param packageId O ID do pacote para o qual o dado de agendamento será removido.
      */
-    private fun deleteScheduleData(packageId: String) {
+    override fun deleteScheduleData(packageId: String) {
 
         val json = readPreferenceUseCase(Preferences.SCHEDULED_ALARMS, "")
         val list = (MoshiListConverter.fromJson(json) ?: mutableListOf())
@@ -147,6 +147,14 @@ class ScheduleManagerImpl @Inject constructor(
         val updateJson = MoshiListConverter.toJson(list)
 
         savePreferenceUseCase(Preferences.SCHEDULED_ALARMS, updateJson)
+        Log.d(
+            "USUK",
+            "ScheduleManagerImpl.".plus(
+                "deleteScheduleData() packageId = $packageId deleted from preferences:\n${
+                    list.joinToString(",")
+                }"
+            )
+        )
     }
 
     /**
@@ -173,14 +181,10 @@ class ScheduleManagerImpl @Inject constructor(
          * Converte uma string JSON em uma lista de strings.
          *
          * @param json A string JSON a ser convertida.
-         * @return A lista de strings desserializada, ou `null` se a conversão falhar.
+         * @return A lista de strings desserializada, uma lista vazia se a string estivee vazia ou `null` se a conversão falhar.
          */
         fun fromJson(json: String): MutableList<String>? {
-            return try {
-                adapter.fromJson(json)!!
-            } catch (_: Exception) {
-                mutableListOf<String>()
-            }
+            return if (json.isEmpty()) mutableListOf<String>() else adapter.fromJson(json)!!
         }
     }
 

@@ -11,6 +11,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmOnAppsRuleChangeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -26,6 +27,7 @@ import kotlin.time.measureTime
 class AddManagedAppsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addManagedAppUseCase: AddManagedAppUseCase,
+    private val rescheduleAlarmOnAppsRuleChangeUseCase: RescheduleAlarmOnAppsRuleChangeUseCase,
 ) : ViewModel() {
 
     private val _selectedApps = MutableLiveData<Map<String, InstalledApp>>(emptyMap())
@@ -50,11 +52,9 @@ class AddManagedAppsViewModel @Inject constructor(
         _selectedRule.value = rule
     }
 
-
     fun getSelectedPackages(): Array<String> {
         return selectedApps.value!!.values.map { it.packageId }.toTypedArray()
     }
-
 
     /**
      * Remove um aplicativo da lista de aplicativos atualmente selecionados.
@@ -99,12 +99,38 @@ class AddManagedAppsViewModel @Inject constructor(
 
         val x = measureTime {
             apps.map {
-                async { addManagedApp(ManagedApp(it.packageId, rule.id)) }
+                async {
+                    val managedApp = ManagedApp(it.packageId, rule.id)
+                    addManagedApp(managedApp)
+                    rescheduleAlarm(it, managedApp, rule)
+                }
             }.awaitAll()
         }
         Log.d("USUK", "AddManagedAppsViewModel.validateSelection: Time: $x millis")
         _successCloseFragment.postValue(EventWrapper(Unit))
 
+    }
+
+    /**
+     * Reagenda o alarme para um aplicativo, se necessário.
+     *
+     * Esta função verifica se o aplicativo instalado já está sendo gerenciado.
+     * Se estiver, ela usa o [rescheduleAlarmOnAppsRuleChangeUseCase] para verificar se tem algum alarme agendado para mostrar a
+     * notificação de relatorio de notificações recebidas durante bloqueio e reagendar esse alarme (se houver) considerando
+     * a nova regra do aplicativo.
+     *
+     * @param installedApp O [InstalledApp] que está sendo verificado.
+     * @param managedApp O [ManagedApp] representando o aplicativo com a nova regra. (é um objeto contendo as mesmas informações do [InstalledApp] só por conveniência)
+     * @param rule A nova regra [Rule] que foi aplicada ao aplicativo.
+     *
+     */
+    private suspend fun rescheduleAlarm(
+        installedApp: InstalledApp,
+        managedApp: ManagedApp,
+        rule: Rule,
+    ) {
+        if (!installedApp.isBeingManaged) return
+        rescheduleAlarmOnAppsRuleChangeUseCase(managedApp, rule)
     }
 
     /**

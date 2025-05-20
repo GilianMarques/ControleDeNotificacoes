@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.presentation.model
 
-import android.graphics.drawable.Drawable
 import java.io.Serializable
 
 /**
@@ -13,5 +12,5 @@ import java.io.Serializable
 data class InstalledApp(
     val name: String,
     val packageId: String,
-    val beingManaged: Boolean,
+    val isBeingManaged: Boolean,
 ) : Serializable
