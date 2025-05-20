@@ -180,7 +180,7 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:tag="1"
+                        android:tag="2"
                         android:text="@string/Segunda"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -189,7 +189,7 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:tag="2"
+                        android:tag="3"
                         android:text="@string/Terca"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -198,7 +198,7 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:tag="3"
+                        android:tag="4"
                         android:text="@string/Quarta"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -207,7 +207,7 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:tag="4"
+                        android:tag="5"
                         android:text="@string/Quinta"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -216,7 +216,7 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:tag="5"
+                        android:tag="6"
                         android:text="@string/Sexta"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -225,7 +225,7 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:tag="6"
+                        android:tag="7"
                         android:text="@string/Sabado"
                         app:ensureMinTouchTargetSize="false" />
 
@@ -234,7 +234,7 @@
                         style="@style/filter_chip_margins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:tag="7"
+                        android:tag="1"
                         android:text="@string/Domingo"
                         app:ensureMinTouchTargetSize="false" />
 

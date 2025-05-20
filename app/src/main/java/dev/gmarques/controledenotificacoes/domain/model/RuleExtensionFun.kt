@@ -84,8 +84,7 @@ object RuleExtensionFun {
     fun Rule.isAppInBlockPeriod(): Boolean {
 
         val now = Calendar.getInstance()
-        val currentDay =
-            now.get(Calendar.DAY_OF_WEEK).let { if (it == Calendar.SUNDAY) 7 else it - 1 } // TODO: essa linha deve ser testada
+        val currentDay = now.get(Calendar.DAY_OF_WEEK)
         val currentMinutes = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
 
         val isDayMatched = days.any { it.dayNumber == currentDay }

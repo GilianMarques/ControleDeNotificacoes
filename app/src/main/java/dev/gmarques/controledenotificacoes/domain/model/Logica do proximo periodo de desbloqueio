@@ -1,0 +1,18 @@
+dias de dom-dom
+horarios de 00:00 23:59
+permissivo e restritivo
+
+## Regras restritivas
+
+obtenho o dia de hoje
+uso o dia pra reordenar a lista de dias da regra de forma que todos os dias da regra fiquem afrente do dia de hoje
+
+itero sobre hoje e mais 6 dias (ex: de qui-qua)
+
+- dia de hoje consta na lista de dias da regra:
+avalio os horarios e vejo se de agora até as 00:00 tem algum fim de intervalo de bloqueio
+retorno hoje depois do fim do intervalo, se houver. Se nao o loop segue pelos proximos dias
+
+- dia de hoje nao consta na lista de dias bloqueados
+retorno o dia de hoje as 00:00
+
