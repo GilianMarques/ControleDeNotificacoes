@@ -17,6 +17,7 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnRuleEditUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
 import kotlinx.coroutines.Dispatchers.IO
@@ -32,6 +33,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addRuleUseCase: AddRuleUseCase,
     private val updateRuleUseCase: UpdateRuleUseCase,
+    private val rescheduleAlarmsOnRuleEditUseCase: RescheduleAlarmsOnRuleEditUseCase,
 ) : ViewModel() {
 
     private var editingRule: Rule? = null
@@ -241,24 +243,43 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             timeRanges = timeRanges.values.toList()
         )
 
-        saveRule(rule)
+        if (editingRule == null) saveRule(rule)
+        else updateRule(rule)
     }
 
     /**
-     * Salva uma regra, adicionando-a ou atualizando-a.
+     * Salva uma nova regra no banco de dados e emite um evento para fechar a tela.
      *
-     * Se `editingRule` for nulo, adiciona uma nova regra. Caso contrário, atualiza a regra existente.
-     * Após a operação, navega para a tela inicial.
+     * Esta função é chamada quando uma nova regra é criada e validada com sucesso.
+     * Ela utiliza o `addRuleUseCase` para persistir a regra no banco de dados
+     * em uma corrotina no dispatcher IO. Após a conclusão da operação,
+     * emite um evento `Event.SetResultAndClose` contendo a regra salva,
+     * sinalizando para a UI que a operação foi bem-sucedida e a tela pode ser fechada.
      *
-     * @param validatedRule A regra [Rule] a ser salva.
+     * @param validatedRule A regra [Rule] que foi validada e está pronta para ser salva.
      */
     private fun saveRule(validatedRule: Rule) = viewModelScope.launch(IO) {
+        addRuleUseCase(validatedRule)
+        _eventsFlow.tryEmit(Event.SetResultAndClose(validatedRule))
+    }
 
-        val rule = if (editingRule != null) validatedRule.copy(id = editingRule!!.id) else validatedRule
-
-        if (editingRule == null) addRuleUseCase(rule)
-        else updateRuleUseCase(rule)
-
+    /**
+     * Atualiza uma regra existente no banco de dados e emite um evento para fechar a tela.
+     *
+     * Esta função é chamada quando uma regra existente está sendo editada e as alterações
+     * foram validadas com sucesso. Ela cria uma cópia da `validatedRule` com o ID
+     * da `editingRule` original (para garantir que a regra correta seja atualizada).
+     * Em seguida, utiliza o `updateRuleUseCase` para persistir as alterações no banco de dados
+     * em uma corrotina no dispatcher IO. Após a conclusão da operação,
+     * emite um evento `Event.SetResultAndClose` contendo a regra atualizada,
+     * sinalizando para a UI que a operação foi bem-sucedida e a tela pode ser fechada.
+     *
+     * @param validatedRule A regra [Rule] com as alterações validadas, pronta para ser atualizada.
+     */
+    private fun updateRule(validatedRule: Rule) = viewModelScope.launch(IO) {
+        val rule = validatedRule.copy(id = editingRule!!.id)
+        updateRuleUseCase(rule)
+        rescheduleAlarmsOnRuleEditUseCase(rule)
         _eventsFlow.tryEmit(Event.SetResultAndClose(rule))
     }
 

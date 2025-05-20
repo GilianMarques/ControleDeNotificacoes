@@ -23,7 +23,6 @@ class RescheduleAlarmsOnRuleEditUseCase @Inject constructor(
     /**
      * Reagenda os alarmes para todos os aplicativos gerenciados pela regra editada.
      */
-    // TODO: chamar após editar uma regra
     suspend operator fun invoke(rule: Rule) = withContext(IO) {
 
         getManagedAppsByRuleIdUseCase(rule.id)

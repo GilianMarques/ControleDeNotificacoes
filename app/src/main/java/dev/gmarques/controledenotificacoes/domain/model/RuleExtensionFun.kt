@@ -1,8 +1,11 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
+import android.util.Log
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import org.joda.time.DateTime
 import java.util.Calendar
@@ -29,22 +32,32 @@ object RuleExtensionFun {
      * - Para regras [RuleType.RESTRICTIVE], ela busca o próximo fim de período de restrição.
      *
      */
+    // TODO: função esta errada
     fun Rule.nextUnlockPeriodFromNow(): DateTime {
+        Log.d(
+            "USUK", "RuleExtensionFun.nextUnlockPeriodFromNow:$id\n ${
+                this.timeRanges.joinToString("\n") {
+                    "${it.startIntervalFormatted()}:${it.endIntervalFormatted()}"
+                }
+            }")
+
         val now = DateTime.now()
 
         for (range in this.timeRanges) {
 
             if (this.ruleType == RuleType.PERMISSIVE) {
                 val rangeStartPeriod = now.withTime(range.startHour, range.startMinute, 0, 0)
+                Log.d("USUK", "RuleExtensionFun.nextUnlockPeriodFromNow: permissive: $rangeStartPeriod : $now")
                 if (rangeStartPeriod.isAfter(now)) return rangeStartPeriod
             }
 
             if (this.ruleType == RuleType.RESTRICTIVE) {
                 val rangeEndPeriod = now.withTime(range.endHour, range.endMinute, 0, 0)
+                Log.d("USUK", "RuleExtensionFun.nextUnlockPeriodFromNow: restrictive: $rangeEndPeriod : $now")
                 if (rangeEndPeriod.isAfter(now)) return rangeEndPeriod
             }
         }
-
+        Log.d("USUK", "RuleExtensionFun.".plus("nextUnlockPeriodFromNow() nao foi encontado prox range"))
         return now + 1_000L
     }
 
@@ -67,6 +80,7 @@ object RuleExtensionFun {
      * Se for Segunda-feira às 11:00, `isAppInBlockPeriod()` retornará `true`.
      * Se for Quarta-feira às 11:00, `isAppInBlockPeriod()` retornará `false`.
      */
+    // TODO: talvez esteja errada tambem
     fun Rule.isAppInBlockPeriod(): Boolean {
 
         val now = Calendar.getInstance()

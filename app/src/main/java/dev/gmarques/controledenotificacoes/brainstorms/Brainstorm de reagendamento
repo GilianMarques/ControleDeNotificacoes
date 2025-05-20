@@ -8,10 +8,10 @@ Casos de reagendamento de alarmes e comportamento esperado:
 # Reagendamento pós boot - OK
 - buscar todos os  agendamentos feitos e emitir relatorio na hora se o app estiver desbloqueado ou agendar
 
-# Reagendamento pós edição de regra
+# Reagendamento pós edição de regra - OK
 - buscar os apps gerenciados pela regra, e verificar o agendamento de cada um -  (e cancela) todos os agendamentos feitos e emite relatorio na hora se o app estiver desbloqueado ou agenda
 
-# Reagendamento pós trocar a regra do app
+# Reagendamento pós trocar a regra do app - OK
 - busca  (e cancela)  todos os agendamentos feitos e emite relatorio na hora
 
 Nota: Relatorio é a notificação que avisa caso um app bloqueado tenha recebido notificações durante o bloqueio

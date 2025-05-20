@@ -40,6 +40,7 @@ class ScheduleManagerImpl @Inject constructor(
      * @param millis O horário em milissegundos em que o alarme deve disparar.
      */
     override fun scheduleAlarm(packageId: String, millis: Long) {
+        Log.d("USUK", "ScheduleManagerImpl.scheduleAlarm: $packageId scheduled")
 
         cancelAlarm(packageId) // avoid multiple schedules for the same package
 
@@ -48,7 +49,6 @@ class ScheduleManagerImpl @Inject constructor(
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, pIntent)
 
         saveScheduleData(packageId)
-        Log.d("USUK", "ScheduleManagerImpl.scheduleAlarm: $packageId scheduled")
     }
 
     /**
@@ -57,12 +57,12 @@ class ScheduleManagerImpl @Inject constructor(
      * @param packageId O ID do pacote para o qual o alarme será cancelado.
      */
     override fun cancelAlarm(packageId: String) {
+        Log.d("USUK", "ScheduleManagerImpl.cancelAlarm: $packageId cancelled (this does not mean the alarm was set)")
         val pIntent = createPendingIntent(packageId)
 
         alarmManager.cancel(pIntent)
 
         deleteScheduleData(packageId)
-        Log.d("USUK", "ScheduleManagerImpl.cancelAlarm: $packageId cancelled (this does not mean the alarm was set)")
     }
 
     /**
@@ -146,7 +146,6 @@ class ScheduleManagerImpl @Inject constructor(
 
         val updateJson = MoshiListConverter.toJson(list)
 
-        savePreferenceUseCase(Preferences.SCHEDULED_ALARMS, updateJson)
         Log.d(
             "USUK",
             "ScheduleManagerImpl.".plus(
@@ -155,6 +154,8 @@ class ScheduleManagerImpl @Inject constructor(
                 }"
             )
         )
+        savePreferenceUseCase(Preferences.SCHEDULED_ALARMS, updateJson)
+
     }
 
     /**

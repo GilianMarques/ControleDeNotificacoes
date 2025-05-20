@@ -31,11 +31,11 @@ class AlarmReceiver : BroadcastReceiver() {
 
         val pkg = intent.getStringExtra("packageId")
         if (pkg.isNullOrBlank()) return
+        Log.d("USUK", "AlarmReceiver.onReceive: alarm received for $pkg")
 
         showReportNotification(context, pkg)
         clearPreferenceForPackage(context, pkg)
 
-        Log.d("USUK", "AlarmReceiver.onReceive: alarm received for $pkg")
     }
 
     /**
