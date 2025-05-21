@@ -65,7 +65,7 @@ class IntervalCalculator {
              o próximo período de desbloqueio sem considerar o atual por esse motivo, ao invés de retornar aqui, busco o fim
              do próximo período de bloqueio para retornar.
              */
-            if (it == 0 && weekDayInt !in blockDays) {
+            if (weekDayInt !in blockDays) {
                 incrementDay()
                 return@repeat
             }
