@@ -4,15 +4,10 @@ permissivo e restritivo
 
 ## Regras restritivas
 
-obtenho o dia de hoje
-uso o dia pra reordenar a lista de dias da regra de forma que todos os dias da regra fiquem afrente do dia de hoje
+se o maior dia de bloqueio for antes do dia atual:
+itero sobre os dias até o proximo dia de bloqueio, só entao vejo os ranges
 
-itero sobre hoje e mais 6 dias (ex: de qui-qua)
-
-- dia de hoje consta na lista de dias da regra:
-avalio os horarios e vejo se de agora até as 00:00 tem algum fim de intervalo de bloqueio
-retorno hoje depois do fim do intervalo, se houver. Se nao o loop segue pelos proximos dias
-
-- dia de hoje nao consta na lista de dias bloqueados
-retorno o dia de hoje as 00:00
+Se o menor dia de bloqueio for >= o dia atual:
+itero sobre os ranges de todos os dias, se nao houver range dispionivel nos dias de bloqueio, retorno o 1 dia de desbloqueio
+seguinte as 00:00
 

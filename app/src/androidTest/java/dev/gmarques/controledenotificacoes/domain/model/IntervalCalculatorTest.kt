@@ -13,12 +13,12 @@ import org.junit.runner.RunWith
 class IntervalCalculatorTest {
 
 
-    var TuesdayAtTwelveAndTwenty: LocalDateTime = LocalDateTime.now()
+    var tuesday_12_20__20_05_25_day_3_ofWeek: LocalDateTime = LocalDateTime.now()
 
     @Before
     fun setup() {
         // terça-feira 20/05/2025 as 12:20
-        TuesdayAtTwelveAndTwenty = LocalDateTime.now()
+        tuesday_12_20__20_05_25_day_3_ofWeek = LocalDateTime.now()
             .withYear(2025)
             .withMonthOfYear(5)
             .withDayOfMonth(20)
@@ -51,9 +51,9 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(TuesdayAtTwelveAndTwenty, rule)
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(TuesdayAtTwelveAndTwenty)
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(12)
             .withMinuteOfHour(0)
             .withSecondOfMinute(0)
@@ -83,9 +83,9 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(TuesdayAtTwelveAndTwenty, rule)
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(TuesdayAtTwelveAndTwenty)
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .plusDays(1)
             .withHourOfDay(18)
             .withMinuteOfHour(0)
@@ -114,9 +114,9 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(TuesdayAtTwelveAndTwenty, rule)
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(TuesdayAtTwelveAndTwenty)
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(18)
             .withMinuteOfHour(0)
             .withSecondOfMinute(0)
@@ -144,9 +144,9 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(TuesdayAtTwelveAndTwenty, rule)
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(TuesdayAtTwelveAndTwenty)
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
             .withMinuteOfHour(0)
             .withSecondOfMinute(0)
@@ -171,13 +171,13 @@ class IntervalCalculatorTest {
                 WeekDay.WEDNESDAY,
             ),
             timeRanges = listOf(
-                TimeRange(0, 0, 23, 59),
+                TimeRange(true),
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(TuesdayAtTwelveAndTwenty, rule)
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = LocalDateTime(TuesdayAtTwelveAndTwenty)
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
             .withMinuteOfHour(0)
             .withSecondOfMinute(0)

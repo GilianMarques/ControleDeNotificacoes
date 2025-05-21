@@ -32,7 +32,7 @@ object TimeRangeValidator {
         val hourRange = 0..23
         val minuteRange = 0..59
 
-        if (timeRange.allDay) {
+        if (timeRange.allDay) { // TODO: uma mregra só pode ter um timerange quando um deles for allDay=true
 
             if (timeRange.startHour == 0
                 && timeRange.startMinute == 0
