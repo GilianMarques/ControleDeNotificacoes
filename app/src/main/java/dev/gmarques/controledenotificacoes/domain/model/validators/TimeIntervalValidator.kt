@@ -7,6 +7,7 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRange
  * Em sábado, 29 de março de 2025 as 21:49.
  */
 object TimeRangeValidator {
+// TODO: refatorar essa classeaplicando srp na função
 
     /**
      * Valida um TimeRange para garantir que ele representa um intervalo de tempo válido.
@@ -31,6 +32,17 @@ object TimeRangeValidator {
         val hourRange = 0..23
         val minuteRange = 0..59
 
+        if (timeRange.allDay) {
+
+            if (timeRange.startHour == 0
+                && timeRange.startMinute == 0
+                && timeRange.endHour == 0
+                && timeRange.endMinute == 0
+            ) return Result.success(timeRange)
+            else return Result.failure(
+                IllegalStateException("Um TimeRange definido como allDay deve ter valores zerados $timeRange")
+            )
+        }
 
         if (timeRange.startHour !in hourRange) return Result.failure(
             OutOfRangeException(

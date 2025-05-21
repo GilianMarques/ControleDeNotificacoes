@@ -38,8 +38,7 @@ class IntervalCalculator {
         return when (rule.ruleType) {
             RuleType.RESTRICTIVE -> nextUnlockTimeFromNowRestrictive(rule)
             RuleType.PERMISSIVE -> nextUnlockTimeFromNowPermissive(rule)
-        }?.withSecondOfMinute(0) /*Zero os segundos e milissegundos porque além de irrelevantes eles atrapalham os testes*/
-            ?.withMillisOfSecond(0)
+        }?.withSecondsAndMillisSetToZero() /*Zero os segundos e milissegundos porque além de irrelevantes eles atrapalham os testes*/
             ?.toDate()?.time
             ?: INFINITE
 
@@ -47,12 +46,15 @@ class IntervalCalculator {
 
     private fun nextUnlockTimeFromNowRestrictive(rule: Rule): LocalDateTime? {
 
-        var todayLocalDateTime = baseDate ?: LocalDateTime.now()
+        val originalDateTime = (baseDate ?: LocalDateTime.now()).withSecondsAndMillisSetToZero()
+
+        var todayLocalDateTime = LocalDateTime(originalDateTime)
         val blockDays = rule.days.map { it.dayNumber }
 
         val incrementDay = {
-            todayLocalDateTime = todayLocalDateTime.plusDays(1).withMillisOfDay(0)
+            todayLocalDateTime = todayLocalDateTime.plusDays(1).withMillisOfDay(0)// retorna o proximo dia às 00:00
         }
+
         repeat(WeekDay.entries.size) {
 
             val weekDayInt = Calendar.getInstance()
@@ -72,7 +74,7 @@ class IntervalCalculator {
             if (nextUnlockTime != null) return nextUnlockTime
 
             incrementDay()
-            Log.d("USUK", "IntervalCalculator.nextUnlockTimeFromNowRestricted: checking tomorow: $todayLocalDateTime")
+            Log.d("USUK", "IntervalCalculator.nextUnlockTimeFromNowRestricted: checking tomorrow: $todayLocalDateTime")
         }
         Log.w(
             "USUK",
@@ -101,8 +103,9 @@ class IntervalCalculator {
 
             if (rule.ruleType == RuleType.RESTRICTIVE) {
 
-                val timeRangeRelative =
-                    LocalDateTime(currentTime).withHourOfDay(timeRange.endHour).withMinuteOfHour(timeRange.endMinute)
+                val timeRangeRelative = LocalDateTime(currentTime)
+                    .withHourOfDay(timeRange.endHour)
+                    .withMinuteOfHour(timeRange.endMinute)
 
                 if (timeRangeRelative.isAfter(currentTime)) return timeRangeRelative.plusMinutes(1).also {
                     Log.d(
@@ -132,5 +135,8 @@ class IntervalCalculator {
         return null
     }
 
+    private fun LocalDateTime.withSecondsAndMillisSetToZero(): LocalDateTime {
+        return this.withSecondOfMinute(0).withMillisOfSecond(0)
+    }
 
 }

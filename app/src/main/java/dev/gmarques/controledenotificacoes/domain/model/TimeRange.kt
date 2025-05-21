@@ -15,4 +15,7 @@ data class TimeRange(
     val endHour: Int,
     val endMinute: Int,
     val id: String = UUID.randomUUID().toString(),
-) : Serializable
+    val allDay: Boolean = false,
+) : Serializable {
+    constructor(allDay: Boolean) : this(startHour = 0, startMinute = 0, endHour = 0, endMinute = 0, allDay = allDay)
+}

@@ -13,13 +13,6 @@ import org.junit.runner.RunWith
 class IntervalCalculatorTest {
 
 
-    /*
-    * regra que bloqueia antes do dia atual
-    * regra que bloqueia depois do dia atual
-    * regra qeu bloquia no dia atual com perio livre
-    * regra que bloqueia no dia atual o dia intero
-    * regra que bloqueia 24/7
-    * */
     var TuesdayAtTwelveAndTwenty: LocalDateTime = LocalDateTime.now()
 
     @Before
@@ -61,10 +54,11 @@ class IntervalCalculatorTest {
         val nextPeriodMillis = IntervalCalculator().nextUnlockTime(TuesdayAtTwelveAndTwenty, rule)
 
         val expectPeriod = LocalDateTime(TuesdayAtTwelveAndTwenty)
-            .withHourOfDay(18)
+            .withHourOfDay(12)
             .withMinuteOfHour(0)
             .withSecondOfMinute(0)
             .withMillisOfSecond(0)
+            .plusDays(6)
             .plusMinutes(1)// Adiciona-se um minuto ao fim dos períodos de bloqueio em regras restritivas apenas
 
         assertEquals(
@@ -108,10 +102,93 @@ class IntervalCalculatorTest {
 
     @Test
     fun ruleThatBlocksCurrentDayWithFreePeriod() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.RESTRICTIVE,
+
+            days = listOf(
+                WeekDay.TUESDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(8, 0, 18, 0),
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(TuesdayAtTwelveAndTwenty, rule)
+
+        val expectPeriod = LocalDateTime(TuesdayAtTwelveAndTwenty)
+            .withHourOfDay(18)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusMinutes(1)// Adiciona-se um minuto ao fim dos períodos de bloqueio em regras restritivas apenas
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
     }
 
     @Test
     fun ruleThatBlocksCurrentDayAllDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.RESTRICTIVE,
+
+            days = listOf(
+                WeekDay.TUESDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(0, 0, 23, 59),
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(TuesdayAtTwelveAndTwenty, rule)
+
+        val expectPeriod = LocalDateTime(TuesdayAtTwelveAndTwenty)
+            .withHourOfDay(0)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(1)
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+    }
+
+    @Test
+    fun ruleThatBlocksCurrentAndNextDayAllDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.RESTRICTIVE,
+
+            days = listOf(
+                WeekDay.TUESDAY,
+                WeekDay.WEDNESDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(0, 0, 23, 59),
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(TuesdayAtTwelveAndTwenty, rule)
+
+        val expectPeriod = LocalDateTime(TuesdayAtTwelveAndTwenty)
+            .withHourOfDay(0)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(2)
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
     }
 
     @Test
