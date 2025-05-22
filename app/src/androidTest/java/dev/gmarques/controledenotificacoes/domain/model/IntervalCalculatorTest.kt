@@ -165,7 +165,7 @@ class IntervalCalculatorTest {
                 WeekDay.MONDAY,
                 WeekDay.TUESDAY,
             ),
-// TODO: tratar de ranges encadeados
+
             timeRanges = listOf(
                 TimeRange(8, 0, 11, 45),
                 TimeRange(13, 0, 18, 0),
@@ -212,6 +212,38 @@ class IntervalCalculatorTest {
             .withSecondOfMinute(0)
             .withMillisOfSecond(0)
             .plusDays(1)
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+    }
+
+    @Test
+    fun ruleThatBlocksCurrentAndNextDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.RESTRICTIVE,
+
+            days = listOf(
+                WeekDay.TUESDAY,
+                WeekDay.WEDNESDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(8, 0, 11, 45),
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(11)
+            .withMinuteOfHour(45)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(1)
+            .plusMinutes(1)
 
         assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
@@ -274,6 +306,37 @@ class IntervalCalculatorTest {
             .withSecondOfMinute(0)
             .withMillisOfSecond(0)
             .plusMinutes(1)// Adiciona-se um minuto ao fim dos períodos de bloqueio em regras restritivas apenas
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+    }
+
+    @Test
+    fun ruleThatBlocksAfterCurrentDayAllDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.RESTRICTIVE,
+
+            days = listOf(
+                WeekDay.FRIDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(true),
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .plusDays(0)
+            .withHourOfDay(0)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(4)
 
         assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",

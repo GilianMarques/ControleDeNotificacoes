@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
 import android.icu.util.Calendar
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
@@ -30,56 +31,12 @@ class IntervalCalculator {
         baseDateTime = date.withSecondsAndMillisSetToZero()
 
         return when (rule.ruleType) {
-            RuleType.RESTRICTIVE -> evaluateBlockDaysRestrictive(rule)
+            RuleType.RESTRICTIVE -> nextUnlockTimeAfterNowRestrictive(rule)
             RuleType.PERMISSIVE -> nextUnlockTimeFromNowPermissive(rule)
         }
             ?.withSecondsAndMillisSetToZero() /*Zero os segundos e milissegundos porque além de irrelevantes eles atrapalham os testes*/
             ?.toDate()?.time ?: INFINITE
 
-    }
-
-    private fun evaluateBlockDaysRestrictive(rule: Rule): LocalDateTime? {
-
-        Calendar.getInstance().apply { timeInMillis = baseDateTime.toDate().time }.get(Calendar.DAY_OF_WEEK)
-
-        rule.days.map { it.dayNumber }.sortedBy { it }
-
-        // se o primeiro dia de bloqueio é >= terça
-        return /*if (blockDays.first() >= weekDayInt) */nextUnlockTimeAfterNowRestrictive(rule)
-        // else nextUnlockTimeBeforeNowRestrictive(rule)
-
-    }
-
-    //Executado quando o primeiro dia de bloqueio da regra é < terça
-    private fun nextUnlockTimeBeforeNowRestrictive(rule: Rule): LocalDateTime? {
-
-        var todayLocalDateTime = LocalDateTime(baseDateTime)
-        val blockDays = rule.days.map { it.dayNumber }
-
-        val nextDay = {
-            todayLocalDateTime = todayLocalDateTime.plusDays(1).withMillisOfDay(0)// retorna o proximo dia às 00:00
-        }
-
-        repeat(WeekDay.entries.size) {
-
-            val weekDayInt = todayLocalDateTime.weekDayInt()
-
-            /* Se o dia não está na lista de bloqueio da regra significa que o app está desbloqueado, porém, essa função busca
-             o próximo período de desbloqueio sem considerar o atual por esse motivo, ao invés de retornar aqui, busco o fim
-             do próximo período de bloqueio para retornar.
-             */
-            if (weekDayInt !in blockDays) {
-                nextDay()
-                return@repeat
-            }
-
-            val nextUnlockTime = getUnlockPeriodForDate(todayLocalDateTime, rule)
-            if (nextUnlockTime != null) return nextUnlockTime
-
-            nextDay()
-        }
-
-        return null
     }
 
     //Executado quando o primeiro dia de bloqueio da regra é >= o dia de hoje
@@ -94,7 +51,7 @@ class IntervalCalculator {
 
         repeat(WeekDay.entries.size) {
 
-            val weekDayInt = todayLocalDateTime.weekDayInt()
+            val weekDayInt = todayLocalDateTime.weekDayNumber()
 
             if (weekDayInt in blockDays) goneTroughABlockDay = true
             else {
@@ -102,7 +59,7 @@ class IntervalCalculator {
                 else nextDay(); return@repeat
             }
 
-            val nextUnlockTime = getUnlockPeriodForDate(todayLocalDateTime, rule)
+            val nextUnlockTime = getUnlockPeriodForDay(todayLocalDateTime, rule)
             if (nextUnlockTime != null) return nextUnlockTime
 
             nextDay()
@@ -114,8 +71,8 @@ class IntervalCalculator {
         return LocalDateTime.now()
     }
 
-    private fun getUnlockPeriodForDate(
-        currentTime: LocalDateTime,
+    private fun getUnlockPeriodForDay(
+        day: LocalDateTime,
         rule: Rule,
     ): LocalDateTime? {
 
@@ -123,26 +80,31 @@ class IntervalCalculator {
 
         val sortedTimeRanges = rule.timeRanges.sortedBy { it.startInMinutes() }
 
+        val chainedRanges = { timeRange: TimeRange, index: Int ->
+            timeRange.endInMinutes() + 1 == sortedTimeRanges.getOrNull(index + 1)?.startInMinutes()
+        }
+
         sortedTimeRanges.forEachIndexed { index, timeRange ->
+
+            if (chainedRanges(timeRange, index)) return@forEachIndexed
 
             if (rule.ruleType == RuleType.RESTRICTIVE) {
 
-                val timeRangeRelative = LocalDateTime(currentTime)
+                val timeRangeRelative = LocalDateTime(day)
                     .withHourOfDay(timeRange.endHour)
                     .withMinuteOfHour(timeRange.endMinute)
 
-                if (timeRangeRelative.isAfter(currentTime)) return timeRangeRelative.plusMinutes(1)
+                if (timeRangeRelative.isAfter(day)) return timeRangeRelative.plusMinutes(1)
             }
 
             if (rule.ruleType == RuleType.PERMISSIVE) {
 
-                val timeRangeRelative = LocalDateTime(currentTime)
+                val timeRangeRelative = LocalDateTime(day)
                     .withHourOfDay(timeRange.startHour)
                     .withMinuteOfHour(timeRange.startMinute)
 
-                if (timeRangeRelative.isAfter(currentTime)) return timeRangeRelative
+                if (timeRangeRelative.isAfter(day)) return timeRangeRelative
             }
-
 
         }
 
@@ -155,8 +117,8 @@ private fun LocalDateTime.withSecondsAndMillisSetToZero(): LocalDateTime {
     return this.withSecondOfMinute(0).withMillisOfSecond(0)
 }
 
-private fun LocalDateTime.weekDayInt(): Int {
+private fun LocalDateTime.weekDayNumber(): Int {
     return Calendar.getInstance()
-        .apply { timeInMillis = this@weekDayInt.toDate().time }
+        .apply { timeInMillis = this@weekDayNumber.toDate().time }
         .get(Calendar.DAY_OF_WEEK)
 }
