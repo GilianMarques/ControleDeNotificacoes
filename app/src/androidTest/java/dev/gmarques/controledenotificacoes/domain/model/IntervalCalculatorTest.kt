@@ -520,8 +520,8 @@ class IntervalCalculatorTest {
         val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
-            .withHourOfDay(13)
-            .withMinuteOfHour(0)
+            .withHourOfDay(18)
+            .withMinuteOfHour(1)
             .withSecondOfMinute(0)
             .withMillisOfSecond(0)
 

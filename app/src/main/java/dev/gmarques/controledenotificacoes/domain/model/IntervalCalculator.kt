@@ -66,12 +66,40 @@ class IntervalCalculator {
                 return@repeat
             }
 
-            val nextUnlockTime = getUnlockPeriodForDay(today, rule)
+            val nextUnlockTime = getUnlockPeriodForRestrictiveDay(today, rule)
             if (nextUnlockTime != null) return nextUnlockTime
 
         }
         return null
     }
+
+    private fun getUnlockPeriodForRestrictiveDay(
+        day: LocalDateTime,
+        rule: Rule,
+    ): LocalDateTime? {
+
+        val sortedTimeRanges = rule.timeRanges.sortedBy { it.startInMinutes() }
+
+        val chainedRanges = { timeRange: TimeRange, index: Int ->
+            timeRange.endInMinutes() + 1 == sortedTimeRanges.getOrNull(index + 1)?.startInMinutes()
+        }
+
+        sortedTimeRanges.forEachIndexed { index, timeRange ->
+
+            if (rule.timeRanges.first().allDay) return null
+            if (chainedRanges(timeRange, index)) return@forEachIndexed
+
+            val timeRangeRelative = LocalDateTime(day)
+                .withHourOfDay(timeRange.endHour)
+                .withMinuteOfHour(timeRange.endMinute)
+
+            if (timeRangeRelative.isAfter(day)) return timeRangeRelative.plusMinutes(1)
+
+        }
+
+        return null
+    }
+
 
     private fun nextUnlockTimePermissive(rule: Rule): LocalDateTime? {
 
@@ -92,14 +120,14 @@ class IntervalCalculator {
             }
 
 
-            val nextUnlockTime = getUnlockPeriodForDay(today, rule)
+            val nextUnlockTime = getUnlockPeriodForPermissiveDay(today, rule)
             if (nextUnlockTime != null) return nextUnlockTime
 
         }
         return null
     }
 
-    private fun getUnlockPeriodForDay(
+    private fun getUnlockPeriodForPermissiveDay(
         day: LocalDateTime,
         rule: Rule,
     ): LocalDateTime? {
@@ -112,30 +140,14 @@ class IntervalCalculator {
 
         sortedTimeRanges.forEachIndexed { index, timeRange ->
 
+            if (rule.timeRanges.first().allDay) return day.withMillisOfDay(0)
             if (chainedRanges(timeRange, index)) return@forEachIndexed
 
-            if (rule.ruleType == RuleType.RESTRICTIVE) {
+            val timeRangeRelative = LocalDateTime(day)
+                .withHourOfDay(timeRange.startHour)
+                .withMinuteOfHour(timeRange.startMinute)
 
-                if (rule.timeRanges.first().allDay) return null
-
-                val timeRangeRelative = LocalDateTime(day)
-                    .withHourOfDay(timeRange.endHour)
-                    .withMinuteOfHour(timeRange.endMinute)
-
-                if (timeRangeRelative.isAfter(day)) return timeRangeRelative.plusMinutes(1)
-            }
-
-            if (rule.ruleType == RuleType.PERMISSIVE) {
-
-                if (rule.timeRanges.first().allDay) return day.withMillisOfDay(0)
-
-                val timeRangeRelative = LocalDateTime(day)
-                    .withHourOfDay(timeRange.startHour)
-                    .withMinuteOfHour(timeRange.startMinute)
-
-                if (timeRangeRelative.isAfter(day)) return timeRangeRelative
-            }
-
+            if (timeRangeRelative.isAfter(day)) return timeRangeRelative
         }
 
         return null
