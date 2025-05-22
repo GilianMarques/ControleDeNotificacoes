@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
 import android.icu.util.Calendar
-import android.util.Log
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
@@ -23,7 +22,6 @@ class IntervalCalculator {
         const val INFINITE = -1L
     }
 
-
     private lateinit var baseDateTime: LocalDateTime
 
     /**@param date inicialize apenas para testes em cenario real deixe em branco*/
@@ -34,20 +32,21 @@ class IntervalCalculator {
         return when (rule.ruleType) {
             RuleType.RESTRICTIVE -> evaluateBlockDaysRestrictive(rule)
             RuleType.PERMISSIVE -> nextUnlockTimeFromNowPermissive(rule)
-        }?.withSecondsAndMillisSetToZero() /*Zero os segundos e milissegundos porque além de irrelevantes eles atrapalham os testes*/
+        }
+            ?.withSecondsAndMillisSetToZero() /*Zero os segundos e milissegundos porque além de irrelevantes eles atrapalham os testes*/
             ?.toDate()?.time ?: INFINITE
 
     }
 
     private fun evaluateBlockDaysRestrictive(rule: Rule): LocalDateTime? {
 
-        val weekDayInt = Calendar.getInstance().apply { timeInMillis = baseDateTime.toDate().time }.get(Calendar.DAY_OF_WEEK)
+        Calendar.getInstance().apply { timeInMillis = baseDateTime.toDate().time }.get(Calendar.DAY_OF_WEEK)
 
-        val blockDays = rule.days.map { it.dayNumber }.sortedBy { it }
+        rule.days.map { it.dayNumber }.sortedBy { it }
 
         // se o primeiro dia de bloqueio é >= terça
-        return if (blockDays.first() >= weekDayInt) nextUnlockTimeAfterNowRestrictive(rule)
-        else nextUnlockTimeBeforeNowRestrictive(rule)
+        return /*if (blockDays.first() >= weekDayInt) */nextUnlockTimeAfterNowRestrictive(rule)
+        // else nextUnlockTimeBeforeNowRestrictive(rule)
 
     }
 
@@ -85,7 +84,6 @@ class IntervalCalculator {
 
     //Executado quando o primeiro dia de bloqueio da regra é >= o dia de hoje
     private fun nextUnlockTimeAfterNowRestrictive(rule: Rule): LocalDateTime? {
-        Log.d("USUK", "IntervalCalculator.".plus("nextUnlockTimeAfterNowRestrictive() rule = $rule"))
 
         var todayLocalDateTime = LocalDateTime(baseDateTime)
         val blockDays = rule.days.map { it.dayNumber }
@@ -121,41 +119,28 @@ class IntervalCalculator {
         rule: Rule,
     ): LocalDateTime? {
 
-
-        if (rule.timeRanges.size == 1 && rule.timeRanges.first().allDay) return null.also {
-            Log.d(
-                "USUK", "IntervalCalculator.iterateOverTimeRanges: all day blocked for day: $currentTime and rule: $rule"
-            )
-        }
+        if (rule.timeRanges.size == 1 && rule.timeRanges.first().allDay) return null
 
         val sortedTimeRanges = rule.timeRanges.sortedBy { it.startInMinutes() }
 
-        sortedTimeRanges.forEach { timeRange ->
+        sortedTimeRanges.forEachIndexed { index, timeRange ->
 
             if (rule.ruleType == RuleType.RESTRICTIVE) {
 
-                val timeRangeRelative =
-                    LocalDateTime(currentTime).withHourOfDay(timeRange.endHour).withMinuteOfHour(timeRange.endMinute)
+                val timeRangeRelative = LocalDateTime(currentTime)
+                    .withHourOfDay(timeRange.endHour)
+                    .withMinuteOfHour(timeRange.endMinute)
 
-                if (timeRangeRelative.isAfter(currentTime)) return timeRangeRelative.plusMinutes(1).also {
-                    Log.d(
-                        "USUK",
-                        "IntervalCalculator.iterateOverTimeRanges: RESTRICTIVE next unlock period found: timeRangeRelative $timeRangeRelative currentTime $currentTime"
-                    )
-                }
+                if (timeRangeRelative.isAfter(currentTime)) return timeRangeRelative.plusMinutes(1)
             }
 
             if (rule.ruleType == RuleType.PERMISSIVE) {
 
-                val timeRangeRelative =
-                    LocalDateTime(currentTime).withHourOfDay(timeRange.startHour).withMinuteOfHour(timeRange.startMinute)
+                val timeRangeRelative = LocalDateTime(currentTime)
+                    .withHourOfDay(timeRange.startHour)
+                    .withMinuteOfHour(timeRange.startMinute)
 
-                if (timeRangeRelative.isAfter(currentTime)) return timeRangeRelative.also {
-                    Log.d(
-                        "USUK",
-                        "IntervalCalculator.iterateOverTimeRanges: PERMISSIVE next unlock period found: timeRangeRelative $timeRangeRelative currentTime $currentTime"
-                    )
-                }
+                if (timeRangeRelative.isAfter(currentTime)) return timeRangeRelative
             }
 
 
@@ -163,7 +148,6 @@ class IntervalCalculator {
 
         return null
     }
-
 
 }
 

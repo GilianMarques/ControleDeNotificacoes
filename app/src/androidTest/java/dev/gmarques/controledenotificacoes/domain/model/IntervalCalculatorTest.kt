@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
+import android.util.Log
 import androidx.test.runner.AndroidJUnit4
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
@@ -19,6 +20,7 @@ class IntervalCalculatorTest {
         .withHourOfDay(12)
         .withMinuteOfHour(20)
         .withSecondOfMinute(0)
+
 
     @Test
     fun ruleThatBlocksBeforeCurrentDay() {
@@ -55,7 +57,46 @@ class IntervalCalculatorTest {
     }
 
     @Test
-    fun ruleThatBlocksCurrentDayWithFreePeriod() {
+    fun ruleThatBlocksBeforeCurrentDayAllDay() {
+
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.RESTRICTIVE,
+
+            days = listOf(
+                WeekDay.SUNDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(allDay = true)
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(0)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(6)
+
+
+        Log.d(
+            "USUK",
+            "IntervalCalculatorTest.ruleThatBlocksBeforeCurrentDayAllDay: expect: $expectPeriod, \nreceived:${
+                LocalDateTime(nextPeriodMillis)
+            }"
+        )
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+
+    }
+
+    @Test
+    fun ruleThatBlocksCurrentDay() {
         val rule = Rule(
             name = "",
             ruleType = RuleType.RESTRICTIVE,
@@ -95,6 +136,71 @@ class IntervalCalculatorTest {
             ),
             timeRanges = listOf(
                 TimeRange(0, 0, 23, 59),
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(0)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(1)
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+    }
+
+    @Test
+    fun ruleThatBlocksBeforeAndCurrentDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.RESTRICTIVE,
+
+            days = listOf(
+                WeekDay.MONDAY,
+                WeekDay.TUESDAY,
+            ),
+// TODO: tratar de ranges encadeados
+            timeRanges = listOf(
+                TimeRange(8, 0, 11, 45),
+                TimeRange(13, 0, 18, 0),
+                TimeRange(18, 1, 23, 59),
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(0)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(1)
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+    }
+
+    @Test
+    fun ruleThatBlocksBeforeAndCurrentDayAllDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.RESTRICTIVE,
+
+            days = listOf(
+                WeekDay.MONDAY,
+                WeekDay.TUESDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(true),
             ),
         )
 
