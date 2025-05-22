@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
-import android.util.Log
 import androidx.test.runner.AndroidJUnit4
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
@@ -81,12 +80,7 @@ class IntervalCalculatorTest {
             .plusDays(6)
 
 
-        Log.d(
-            "USUK",
-            "IntervalCalculatorTest.ruleThatBlocksBeforeCurrentDayAllDay: expect: $expectPeriod, \nreceived:${
-                LocalDateTime(nextPeriodMillis)
-            }"
-        )
+
         assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
@@ -376,6 +370,166 @@ class IntervalCalculatorTest {
             nextPeriodMillis
         )
 
+    }
+
+    //---------------------------- teste de regras permissivas
+
+    @Test
+    fun ruleThatAllowsBeforeCurrentDay() {
+
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.PERMISSIVE,
+
+            days = listOf(
+                WeekDay.SUNDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(8, 0, 12, 0),
+                TimeRange(13, 0, 18, 0),
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(8)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(5)
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+
+    }
+
+    @Test
+    fun ruleThatAllowsBeforeCurrentDayAllDay() {
+
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.PERMISSIVE,
+
+            days = listOf(
+                WeekDay.SUNDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(allDay = true)
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(0)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(5)
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+
+    }
+
+    @Test
+    fun ruleThatAllowsCurrentDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.PERMISSIVE,
+
+            days = listOf(
+                WeekDay.TUESDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(8, 0, 18, 0),
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(8)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(7)
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+    }
+
+    @Test
+    fun ruleThatAllowsCurrentDayAllDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.PERMISSIVE,
+
+            days = listOf(
+                WeekDay.TUESDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(true),
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(0)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(7)
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+    }
+
+    @Test
+    fun ruleThatAllowsBeforeAndCurrentDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.PERMISSIVE,
+
+            days = listOf(
+                WeekDay.MONDAY,
+                WeekDay.TUESDAY,
+            ),
+
+            timeRanges = listOf(
+                TimeRange(8, 0, 11, 45),
+                TimeRange(13, 0, 18, 0),
+                TimeRange(18, 1, 23, 59),
+            ),
+        )
+
+        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(13)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+
+        assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
     }
 
 }

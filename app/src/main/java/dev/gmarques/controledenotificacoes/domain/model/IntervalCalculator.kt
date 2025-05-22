@@ -4,7 +4,6 @@ import android.icu.util.Calendar
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
-import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import org.joda.time.LocalDateTime
 
 /**
@@ -21,6 +20,16 @@ class IntervalCalculator {
          * implementa um bloqueio de 7 dias de 24 horas por dia 7 dias por semana
          */
         const val INFINITE = -1L
+
+        /**
+         * # Iteração de 8 dias
+         * Em alguns casos, pode ser necessário iterar sobre 8 dias para obter o valor correto do proximo periodo de desbloqueio do app.
+         * Ex: Tentar calcular o proximo periodo de desbloqueio passando uma regra Permissiva em Terça-feira, das 08:00-18:00 e uma data Terça-feira ás 12:20,
+         * fará com que o loop tenha que iterar de uma terça, até a outra, incluindo ambas, ou seja, 8 dias. Isso acontce pq a função busca o proximo periodo
+         * iterar até encontrar um periodo de bloqueio, nesse caso representado pelos dias ausentes na regra (qua-qui-sex-sab-dom-seg) para
+         * retornar o primeiro periodo de desbloqueio após eles, que será a próxima terça ás 08:00.
+         */
+        const val REPEAT_COUNT = 8
     }
 
     private lateinit var baseDateTime: LocalDateTime
@@ -31,8 +40,8 @@ class IntervalCalculator {
         baseDateTime = date.withSecondsAndMillisSetToZero()
 
         return when (rule.ruleType) {
-            RuleType.RESTRICTIVE -> nextUnlockTimeAfterNowRestrictive(rule)
-            RuleType.PERMISSIVE -> nextUnlockTimeFromNowPermissive(rule)
+            RuleType.RESTRICTIVE -> nextUnlockTimeRestrictive(rule)
+            RuleType.PERMISSIVE -> nextUnlockTimePermissive(rule)
         }
             ?.withSecondsAndMillisSetToZero() /*Zero os segundos e milissegundos porque além de irrelevantes eles atrapalham os testes*/
             ?.toDate()?.time ?: INFINITE
@@ -40,43 +49,60 @@ class IntervalCalculator {
     }
 
     //Executado quando o primeiro dia de bloqueio da regra é >= o dia de hoje
-    private fun nextUnlockTimeAfterNowRestrictive(rule: Rule): LocalDateTime? {
+    private fun nextUnlockTimeRestrictive(rule: Rule): LocalDateTime? {
 
-        var todayLocalDateTime = LocalDateTime(baseDateTime)
+        var today = LocalDateTime(baseDateTime)
         val blockDays = rule.days.map { it.dayNumber }
         var goneTroughABlockDay = false
-        val nextDay = {
-            todayLocalDateTime = todayLocalDateTime.plusDays(1).withMillisOfDay(0)// retorna o proximo dia às 00:00
-        }
 
-        repeat(WeekDay.entries.size) {
+        repeat(REPEAT_COUNT) {
+            if (it > 0) today = today.plusDays(1).withMillisOfDay(0)
 
-            val weekDayInt = todayLocalDateTime.weekDayNumber()
+            val weekDayInt = today.weekDayNumber()
 
             if (weekDayInt in blockDays) goneTroughABlockDay = true
             else {
-                if (goneTroughABlockDay) return todayLocalDateTime
-                else nextDay(); return@repeat
+                if (goneTroughABlockDay) return today
+                return@repeat
             }
 
-            val nextUnlockTime = getUnlockPeriodForDay(todayLocalDateTime, rule)
+            val nextUnlockTime = getUnlockPeriodForDay(today, rule)
             if (nextUnlockTime != null) return nextUnlockTime
 
-            nextDay()
         }
         return null
     }
 
-    private fun nextUnlockTimeFromNowPermissive(rule: Rule): LocalDateTime? {
-        return LocalDateTime.now()
+    private fun nextUnlockTimePermissive(rule: Rule): LocalDateTime? {
+
+        var today = LocalDateTime(baseDateTime)
+        val allowedDays = rule.days.map { it.dayNumber }
+        var goneTroughABlockDay = false
+
+        repeat(REPEAT_COUNT) {
+            if (it > 0) today = today.plusDays(1).withMillisOfDay(0)
+
+            val weekDayInt = today.weekDayNumber()
+
+            if (weekDayInt in allowedDays) {
+                if (!goneTroughABlockDay) return@repeat
+            } else {
+                goneTroughABlockDay = true
+                return@repeat
+            }
+
+
+            val nextUnlockTime = getUnlockPeriodForDay(today, rule)
+            if (nextUnlockTime != null) return nextUnlockTime
+
+        }
+        return null
     }
 
     private fun getUnlockPeriodForDay(
         day: LocalDateTime,
         rule: Rule,
     ): LocalDateTime? {
-
-        if (rule.timeRanges.size == 1 && rule.timeRanges.first().allDay) return null
 
         val sortedTimeRanges = rule.timeRanges.sortedBy { it.startInMinutes() }
 
@@ -90,6 +116,8 @@ class IntervalCalculator {
 
             if (rule.ruleType == RuleType.RESTRICTIVE) {
 
+                if (rule.timeRanges.first().allDay) return null
+
                 val timeRangeRelative = LocalDateTime(day)
                     .withHourOfDay(timeRange.endHour)
                     .withMinuteOfHour(timeRange.endMinute)
@@ -98,6 +126,8 @@ class IntervalCalculator {
             }
 
             if (rule.ruleType == RuleType.PERMISSIVE) {
+
+                if (rule.timeRanges.first().allDay) return day.withMillisOfDay(0)
 
                 val timeRangeRelative = LocalDateTime(day)
                     .withHourOfDay(timeRange.startHour)
