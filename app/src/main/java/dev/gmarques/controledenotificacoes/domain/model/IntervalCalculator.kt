@@ -2,9 +2,7 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import android.icu.util.Calendar
 import android.util.Log
-import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
-import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import org.joda.time.LocalDateTime
@@ -37,97 +35,80 @@ class IntervalCalculator {
             RuleType.RESTRICTIVE -> evaluateBlockDaysRestrictive(rule)
             RuleType.PERMISSIVE -> nextUnlockTimeFromNowPermissive(rule)
         }?.withSecondsAndMillisSetToZero() /*Zero os segundos e milissegundos porque além de irrelevantes eles atrapalham os testes*/
-            ?.toDate()?.time
-            ?: INFINITE
+            ?.toDate()?.time ?: INFINITE
 
     }
 
     private fun evaluateBlockDaysRestrictive(rule: Rule): LocalDateTime? {
 
-        val weekDayInt = Calendar.getInstance()
-            .apply { timeInMillis = baseDateTime.toDate().time }
-            .get(Calendar.DAY_OF_WEEK)
+        val weekDayInt = Calendar.getInstance().apply { timeInMillis = baseDateTime.toDate().time }.get(Calendar.DAY_OF_WEEK)
 
         val blockDays = rule.days.map { it.dayNumber }.sortedBy { it }
 
-        Log.d("USUK", "IntervalCalculator.evaluateBlockDaysRestrictive: weekDay: ${weekDayInt} blocks ${blockDays}")
-
+        // se o primeiro dia de bloqueio é >= terça
         return if (blockDays.first() >= weekDayInt) nextUnlockTimeAfterNowRestrictive(rule)
         else nextUnlockTimeBeforeNowRestrictive(rule)
 
     }
 
+    //Executado quando o primeiro dia de bloqueio da regra é < terça
     private fun nextUnlockTimeBeforeNowRestrictive(rule: Rule): LocalDateTime? {
-        Log.d("USUK", "IntervalCalculator.".plus("nextUnlockTimeBeforeNowRestrictive() rule = $rule"))
+
         var todayLocalDateTime = LocalDateTime(baseDateTime)
         val blockDays = rule.days.map { it.dayNumber }
 
-        val incrementDay = {
+        val nextDay = {
             todayLocalDateTime = todayLocalDateTime.plusDays(1).withMillisOfDay(0)// retorna o proximo dia às 00:00
         }
 
         repeat(WeekDay.entries.size) {
 
-            val weekDayInt = Calendar.getInstance()
-                .apply { timeInMillis = todayLocalDateTime.toDate().time }
-                .get(Calendar.DAY_OF_WEEK)
+            val weekDayInt = todayLocalDateTime.weekDayInt()
 
             /* Se o dia não está na lista de bloqueio da regra significa que o app está desbloqueado, porém, essa função busca
              o próximo período de desbloqueio sem considerar o atual por esse motivo, ao invés de retornar aqui, busco o fim
              do próximo período de bloqueio para retornar.
              */
             if (weekDayInt !in blockDays) {
-                incrementDay()
+                nextDay()
                 return@repeat
             }
 
-            val nextUnlockTime = iterateOverTimeRanges(todayLocalDateTime, rule)
+            val nextUnlockTime = getUnlockPeriodForDate(todayLocalDateTime, rule)
             if (nextUnlockTime != null) return nextUnlockTime
 
-            incrementDay()
-            Log.d("USUK", "IntervalCalculator.nextUnlockTimeBeforeNowRestrictive: checking tomorrow: $todayLocalDateTime")
+            nextDay()
         }
-        Log.w(
-            "USUK",
-            "IntervalCalculator.nextUnlockTimeBeforeNowRestrictive: Wasn't possible to find the next unlock period for rule: ${rule}.\nIf this wasn't caused by a blocking rule of 7 days + 24 hours, it may indicate a bug."
-        )
+
         return null
     }
 
+    //Executado quando o primeiro dia de bloqueio da regra é >= o dia de hoje
     private fun nextUnlockTimeAfterNowRestrictive(rule: Rule): LocalDateTime? {
         Log.d("USUK", "IntervalCalculator.".plus("nextUnlockTimeAfterNowRestrictive() rule = $rule"))
+
         var todayLocalDateTime = LocalDateTime(baseDateTime)
         val blockDays = rule.days.map { it.dayNumber }
-
-        val incrementDay = {
+        var goneTroughABlockDay = false
+        val nextDay = {
             todayLocalDateTime = todayLocalDateTime.plusDays(1).withMillisOfDay(0)// retorna o proximo dia às 00:00
         }
 
         repeat(WeekDay.entries.size) {
 
-            val weekDayInt = Calendar.getInstance()
-                .apply { timeInMillis = todayLocalDateTime.toDate().time }
-                .get(Calendar.DAY_OF_WEEK)
+            val weekDayInt = todayLocalDateTime.weekDayInt()
 
-            /* Se o dia não está na lista de bloqueio da regra significa que o app está desbloqueado, porém, essa função busca
-             o próximo período de desbloqueio sem considerar o atual por esse motivo, ao invés de retornar aqui, busco o fim
-             do próximo período de bloqueio para retornar.
-             */
-            if (weekDayInt !in blockDays) {
-                incrementDay()
-                return@repeat
+            if (weekDayInt in blockDays) goneTroughABlockDay = true
+            else {
+                if (goneTroughABlockDay) return todayLocalDateTime
+                else nextDay(); return@repeat
             }
 
-            val nextUnlockTime = iterateOverTimeRanges(todayLocalDateTime, rule)
+            val nextUnlockTime = getUnlockPeriodForDate(todayLocalDateTime, rule)
             if (nextUnlockTime != null) return nextUnlockTime
 
-            incrementDay()
-            Log.d("USUK", "IntervalCalculator.nextUnlockTimeAfterNowRestrictive: checking tomorrow: $todayLocalDateTime")
+            nextDay()
         }
-        Log.w(
-            "USUK",
-            "IntervalCalculator.nextUnlockTimeAfterNowRestrictive: Wasn't possible to find the next unlock period for rule: ${rule}.\nIf this wasn't caused by a blocking rule of 7 days + 24 hours, it may indicate a bug."
-        )
         return null
     }
 
@@ -135,25 +116,26 @@ class IntervalCalculator {
         return LocalDateTime.now()
     }
 
-    private fun iterateOverTimeRanges(
+    private fun getUnlockPeriodForDate(
         currentTime: LocalDateTime,
         rule: Rule,
     ): LocalDateTime? {
+
+
+        if (rule.timeRanges.size == 1 && rule.timeRanges.first().allDay) return null.also {
+            Log.d(
+                "USUK", "IntervalCalculator.iterateOverTimeRanges: all day blocked for day: $currentTime and rule: $rule"
+            )
+        }
 
         val sortedTimeRanges = rule.timeRanges.sortedBy { it.startInMinutes() }
 
         sortedTimeRanges.forEach { timeRange ->
 
-            Log.d(
-                "USUK",
-                "IntervalCalculator.iterateOverTimeRanges: checking ${timeRange.startIntervalFormatted()}:${timeRange.endIntervalFormatted()}"
-            )
-
             if (rule.ruleType == RuleType.RESTRICTIVE) {
 
-                val timeRangeRelative = LocalDateTime(currentTime)
-                    .withHourOfDay(timeRange.endHour)
-                    .withMinuteOfHour(timeRange.endMinute)
+                val timeRangeRelative =
+                    LocalDateTime(currentTime).withHourOfDay(timeRange.endHour).withMinuteOfHour(timeRange.endMinute)
 
                 if (timeRangeRelative.isAfter(currentTime)) return timeRangeRelative.plusMinutes(1).also {
                     Log.d(
@@ -179,12 +161,18 @@ class IntervalCalculator {
 
         }
 
-        Log.d("USUK", "IntervalCalculator.iterateOverTimeRanges: no timerange found for next unlock: currentTime: $currentTime")
         return null
     }
 
-    private fun LocalDateTime.withSecondsAndMillisSetToZero(): LocalDateTime {
-        return this.withSecondOfMinute(0).withMillisOfSecond(0)
-    }
 
+}
+
+private fun LocalDateTime.withSecondsAndMillisSetToZero(): LocalDateTime {
+    return this.withSecondOfMinute(0).withMillisOfSecond(0)
+}
+
+private fun LocalDateTime.weekDayInt(): Int {
+    return Calendar.getInstance()
+        .apply { timeInMillis = this@weekDayInt.toDate().time }
+        .get(Calendar.DAY_OF_WEEK)
 }
