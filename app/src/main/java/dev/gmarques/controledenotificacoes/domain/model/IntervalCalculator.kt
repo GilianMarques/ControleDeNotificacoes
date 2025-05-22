@@ -113,7 +113,7 @@ class IntervalCalculator {
             val weekDayInt = today.weekDayNumber()
 
             if (weekDayInt in allowedDays) {
-                if (!goneTroughABlockDay) return@repeat
+                if (rule.timeRanges.first().allDay && !goneTroughABlockDay) return@repeat
             } else {
                 goneTroughABlockDay = true
                 return@repeat
