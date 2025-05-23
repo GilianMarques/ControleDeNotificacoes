@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 
-import androidx.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
@@ -14,7 +14,7 @@ import org.junit.runner.RunWith
 class NextAppUnlockTimeUseCaseTest {
 
 
-    @Suppress("PropertyName")
+    @Suppress("PrivatePropertyName")
     private var tuesday_12_20__20_05_25_day_3_ofWeek = LocalDateTime.now()
         .withYear(2025)
         .withMonthOfYear(5)
