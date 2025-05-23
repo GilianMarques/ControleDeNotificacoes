@@ -40,7 +40,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(12)
@@ -73,7 +73,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -106,7 +106,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(18)
@@ -136,7 +136,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -170,7 +170,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -201,7 +201,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -232,7 +232,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(11)
@@ -264,7 +264,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -294,7 +294,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .plusDays(3)
@@ -325,7 +325,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .plusDays(0)
@@ -364,7 +364,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = NextAppUnlockTimeUseCase.Companion.INFINITE
         TestCase.assertEquals(
@@ -393,7 +393,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(8)
@@ -425,7 +425,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -456,7 +456,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(8)
@@ -486,7 +486,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -520,7 +520,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(18)
@@ -550,7 +550,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(8)
@@ -582,7 +582,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -612,7 +612,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(8)
@@ -642,7 +642,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .plusDays(0)
@@ -682,7 +682,7 @@ class NextAppUnlockTimeUseCaseTest {
             ),
         )
 
-        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().invoke(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = NextAppUnlockTimeUseCase.Companion.INFINITE
         TestCase.assertEquals(

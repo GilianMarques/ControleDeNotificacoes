@@ -14,6 +14,7 @@ import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.DeletePreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
+import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 /**
@@ -40,7 +41,7 @@ class ScheduleManagerImpl @Inject constructor(
      * @param millis O horário em milissegundos em que o alarme deve disparar.
      */
     override fun scheduleAlarm(packageId: String, millis: Long) {
-        Log.d("USUK", "ScheduleManagerImpl.scheduleAlarm: $packageId scheduled")
+        Log.d("USUK", "ScheduleManagerImpl.scheduleAlarm: $packageId scheduled at ${LocalDateTime(millis)}")
 
         cancelAlarm(packageId) // avoid multiple schedules for the same package
 

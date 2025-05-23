@@ -10,7 +10,7 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.di.entry_points.RuleEnforcerEntryPoint
 import dev.gmarques.controledenotificacoes.di.entry_points.ScheduleManagerEntryPoint
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
-import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextUnlockPeriodFromNow
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
@@ -75,7 +75,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             ruleEnforcer.enforceOnNotification(not) { not, rule ->
                 Log.d("USUK", "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.packageId}")
                 cancelNotification(notification.key)
-                scheduleManager.scheduleAlarm(not.packageId, rule.nextUnlockPeriodFromNow().millis)
+                scheduleManager.scheduleAlarm(not.packageId, rule.nextAppUnlockPeriodFromNow())
             }
         }
     }
