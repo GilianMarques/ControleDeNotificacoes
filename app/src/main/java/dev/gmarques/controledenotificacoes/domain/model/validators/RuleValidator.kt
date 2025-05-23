@@ -148,6 +148,8 @@ object RuleValidator {
 
         validateEachTimeRange(ranges)?.let { return Result.failure(it) }
 
+        // TODO:  valide timeRanges.any { it.allDay }
+
         return Result.success(ranges)
     }
 

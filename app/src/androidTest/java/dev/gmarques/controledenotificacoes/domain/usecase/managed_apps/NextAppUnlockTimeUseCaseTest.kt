@@ -1,18 +1,21 @@
-package dev.gmarques.controledenotificacoes.domain.model
+package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 
 import androidx.test.runner.AndroidJUnit4
+import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
-import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase
 import org.joda.time.LocalDateTime
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class IntervalCalculatorTest {
+class NextAppUnlockTimeUseCaseTest {
 
 
-    var tuesday_12_20__20_05_25_day_3_ofWeek = LocalDateTime.now()
+    @Suppress("PropertyName")
+    private var tuesday_12_20__20_05_25_day_3_ofWeek = LocalDateTime.now()
         .withYear(2025)
         .withMonthOfYear(5)
         .withDayOfMonth(20)
@@ -37,7 +40,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(12)
@@ -47,7 +50,7 @@ class IntervalCalculatorTest {
             .plusDays(5)
             .plusMinutes(1)// Adiciona-se um minuto ao fim dos períodos de bloqueio em regras restritivas apenas
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -70,7 +73,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -81,7 +84,7 @@ class IntervalCalculatorTest {
 
 
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -103,7 +106,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(18)
@@ -112,7 +115,7 @@ class IntervalCalculatorTest {
             .withMillisOfSecond(0)
             .plusMinutes(1)// Adiciona-se um minuto ao fim dos períodos de bloqueio em regras restritivas apenas
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -133,7 +136,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -142,7 +145,7 @@ class IntervalCalculatorTest {
             .withMillisOfSecond(0)
             .plusDays(1)
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -167,7 +170,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -176,7 +179,7 @@ class IntervalCalculatorTest {
             .withMillisOfSecond(0)
             .plusDays(1)
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -198,7 +201,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -207,7 +210,7 @@ class IntervalCalculatorTest {
             .withMillisOfSecond(0)
             .plusDays(1)
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -229,7 +232,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(11)
@@ -239,7 +242,7 @@ class IntervalCalculatorTest {
             .plusDays(1)
             .plusMinutes(1)
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -261,7 +264,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -270,7 +273,7 @@ class IntervalCalculatorTest {
             .withMillisOfSecond(0)
             .plusDays(2)
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -291,7 +294,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .plusDays(3)
@@ -301,7 +304,7 @@ class IntervalCalculatorTest {
             .withMillisOfSecond(0)
             .plusMinutes(1)// Adiciona-se um minuto ao fim dos períodos de bloqueio em regras restritivas apenas
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -322,7 +325,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .plusDays(0)
@@ -332,7 +335,7 @@ class IntervalCalculatorTest {
             .withMillisOfSecond(0)
             .plusDays(4)
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -361,10 +364,10 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
-        val expectPeriod = IntervalCalculator.INFINITE
-        assertEquals(
+        val expectPeriod = NextAppUnlockTimeUseCase.Companion.INFINITE
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod,
             nextPeriodMillis
@@ -390,7 +393,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(8)
@@ -399,7 +402,7 @@ class IntervalCalculatorTest {
             .withMillisOfSecond(0)
             .plusDays(5)
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -422,7 +425,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -431,7 +434,7 @@ class IntervalCalculatorTest {
             .withMillisOfSecond(0)
             .plusDays(5)
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -453,7 +456,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(8)
@@ -462,7 +465,7 @@ class IntervalCalculatorTest {
             .withMillisOfSecond(0)
             .plusDays(7)
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -483,7 +486,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(0)
@@ -492,7 +495,7 @@ class IntervalCalculatorTest {
             .withMillisOfSecond(0)
             .plusDays(7)
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
@@ -517,7 +520,7 @@ class IntervalCalculatorTest {
             ),
         )
 
-        val nextPeriodMillis = IntervalCalculator().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
 
         val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
             .withHourOfDay(18)
@@ -525,11 +528,170 @@ class IntervalCalculatorTest {
             .withSecondOfMinute(0)
             .withMillisOfSecond(0)
 
-        assertEquals(
+        TestCase.assertEquals(
             "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
             expectPeriod.toDate().time,
             nextPeriodMillis
         )
     }
+
+    @Test
+    fun ruleThatAllowsCurrentAndNextDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.PERMISSIVE,
+
+            days = listOf(
+                WeekDay.TUESDAY,
+                WeekDay.WEDNESDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(8, 0, 11, 45),
+            ),
+        )
+
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(8)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(1)
+
+        TestCase.assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+    }
+
+    @Test
+    fun ruleThatAllowsCurrentAndNextDayAllDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.PERMISSIVE,
+
+            days = listOf(
+                WeekDay.TUESDAY,
+                WeekDay.WEDNESDAY,
+            ),
+
+            timeRanges = listOf(
+                TimeRange(true),
+            ),
+        )
+
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(0)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(7)
+
+        TestCase.assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+    }
+
+    @Test
+    fun ruleThatAllowsAfterCurrentDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.PERMISSIVE,
+
+            days = listOf(
+                WeekDay.FRIDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(8, 0, 18, 0),
+            ),
+        )
+
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .withHourOfDay(8)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(3)
+
+        TestCase.assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+    }
+
+    @Test
+    fun ruleThatAllowsAfterCurrentDayAllDay() {
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.PERMISSIVE,
+
+            days = listOf(
+                WeekDay.FRIDAY,
+            ),
+            timeRanges = listOf(
+                TimeRange(true),
+            ),
+        )
+
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = LocalDateTime(tuesday_12_20__20_05_25_day_3_ofWeek)
+            .plusDays(0)
+            .withHourOfDay(0)
+            .withMinuteOfHour(0)
+            .withSecondOfMinute(0)
+            .withMillisOfSecond(0)
+            .plusDays(3)
+
+        TestCase.assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod.toDate().time,
+            nextPeriodMillis
+        )
+    }
+
+
+    @Test
+    fun ruleThatAllowsSevenDaysTwentyFourHours() {
+
+        val rule = Rule(
+            name = "",
+            ruleType = RuleType.PERMISSIVE,
+
+            days = listOf(
+                WeekDay.MONDAY,
+                WeekDay.TUESDAY,
+                WeekDay.WEDNESDAY,
+                WeekDay.THURSDAY,
+                WeekDay.FRIDAY,
+                WeekDay.SATURDAY,
+                WeekDay.SUNDAY,
+            ),
+
+            timeRanges = listOf(
+                TimeRange(allDay = true)
+            ),
+        )
+
+        val nextPeriodMillis = NextAppUnlockTimeUseCase().nextUnlockTime(tuesday_12_20__20_05_25_day_3_ofWeek, rule)
+
+        val expectPeriod = NextAppUnlockTimeUseCase.Companion.INFINITE
+        TestCase.assertEquals(
+            "\n   expect: $expectPeriod, \nreceived:${LocalDateTime(nextPeriodMillis)}\n",
+            expectPeriod,
+            nextPeriodMillis
+        )
+
+    }
+
 
 }
