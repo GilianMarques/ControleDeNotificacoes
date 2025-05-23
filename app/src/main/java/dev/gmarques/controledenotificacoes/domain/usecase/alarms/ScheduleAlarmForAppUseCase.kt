@@ -35,7 +35,7 @@ class ScheduleAlarmForAppUseCase @Inject constructor(
         if (scheduleTimeMillis == NextAppUnlockTimeUseCase.INFINITE) return.also {
             Log.d(
                 "USUK",
-                "ScheduleAlarmForAppUseCase.invoke: wont schedule notification for package ${app.packageId} 'casue the app is always block"
+                "ScheduleAlarmForAppUseCase.invoke: wont schedule notification for package ${app.packageId} 'cause the app is always block"
             )
         }
 
