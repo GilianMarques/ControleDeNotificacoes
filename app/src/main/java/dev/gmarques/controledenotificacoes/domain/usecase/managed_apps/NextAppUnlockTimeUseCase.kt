@@ -9,6 +9,7 @@ import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase.Companion.INFINITE
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase.Companion.REPEAT_COUNT
 import org.joda.time.LocalDateTime
+import javax.inject.Inject
 
 /**
  *
@@ -22,7 +23,7 @@ import org.joda.time.LocalDateTime
  * ou [dev.gmarques.controledenotificacoes.domain.model.enums.RuleType.PERMISSIVE] (dias/horários de liberação).
  *
  */
-class NextAppUnlockTimeUseCase {
+class NextAppUnlockTimeUseCase @Inject constructor() {
 
     companion object {
 
@@ -55,7 +56,7 @@ class NextAppUnlockTimeUseCase {
      * @param rule Regra que define os dias e horários permitidos ou bloqueados para o uso do aplicativo.
      * @return Timestamp do próximo horário de desbloqueio ou [INFINITE] se o app estiver bloqueado indefinidamente.
      */
-    fun nextUnlockTime(date: LocalDateTime = LocalDateTime.now(), rule: Rule): Long {
+    operator fun invoke(date: LocalDateTime = LocalDateTime.now(), rule: Rule): Long {
         baseDateTime = date.withSecondsAndMillisSetToZero()
 
         return when (rule.ruleType) {
