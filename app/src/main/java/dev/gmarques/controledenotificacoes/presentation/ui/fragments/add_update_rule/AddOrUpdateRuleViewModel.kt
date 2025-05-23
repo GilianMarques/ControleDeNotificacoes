@@ -10,6 +10,7 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
 import dev.gmarques.controledenotificacoes.domain.exceptions.DuplicateTimeRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.IntersectedRangeException
+import dev.gmarques.controledenotificacoes.domain.exceptions.InvalidTimeRangeValueException
 import dev.gmarques.controledenotificacoes.domain.exceptions.InversedRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.Rule
@@ -183,6 +184,11 @@ class AddOrUpdateRuleViewModel @Inject constructor(
                     R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido, RuleValidator.MAX_RANGES
                 )
             }
+
+            is InvalidTimeRangeValueException -> context.getString(
+                R.string.Voc_definiu_um_valor_inv_lido_para_o_intervalo_de_tempo,
+                exception.actual
+            )
 
             is DuplicateTimeRangeException -> context.getString(R.string.Nao_e_possivel_adicionar_um_intervalo_de_tempo_duplicado)
             is IntersectedRangeException -> context.getString(R.string.Nao_sao_permitidos_intervalos_de_tempo_que_se_interseccionam)

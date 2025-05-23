@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:padding="4dp">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/parent"
         android:layout_width="match_parent"
@@ -47,7 +46,6 @@
             app:layout_constraintStart_toEndOf="@id/iv_clock"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <TextView
             android:id="@+id/tv_start"
             android:layout_width="wrap_content"
@@ -86,6 +84,23 @@
             app:layout_constraintStart_toEndOf="@id/tv_start_as"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/tv_24h"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/back_edittext"
+            android:fontFamily="@font/urbanist_extrabold"
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:text="@string/O_dia_inteiro"
+            android:textAlignment="gravity"
+            android:textSize="16sp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/iv_remove"
+            app:layout_constraintStart_toEndOf="@id/iv_clock"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.appcompat.widget.AppCompatImageView
 
             android:id="@+id/iv_remove"
@@ -106,4 +121,6 @@
             app:tint="?colorPrimary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

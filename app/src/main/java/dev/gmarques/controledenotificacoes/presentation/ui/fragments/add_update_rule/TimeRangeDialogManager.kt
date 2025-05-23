@@ -3,132 +3,144 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dev.gmarques.controledenotificacoes.databinding.DialogTimeIntervalBinding
-import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
-import nl.joery.timerangepicker.TimeRangePicker
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.showKeyboard
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
+ *
  * Criado por Gilian Marques
  * Em sexta-feira, 09 de maio de 2025 as 14:20.
+ *
+ * Gerencia um diálogo para seleção de intervalo de tempo.
+ *
+ * @property context Contexto da aplicação.
+ * @property inflater Inflater usado para inflar o layout do diálogo.
+ * @property onRangeSelected Callback disparado ao confirmar o intervalo de tempo.
  */
 class TimeRangeDialogManager(
     private val context: Context,
     private val inflater: LayoutInflater,
     private val onRangeSelected: (TimeRange) -> Unit,
-
 ) {
 
-    private var startPeriod = TimeRangePicker.Time(8, 0)
-    private var endPeriod = TimeRangePicker.Time(18, 0)
-    private lateinit var binding: DialogTimeIntervalBinding
-    private var doNothingOnTextChanged = false
+    private var startHour = 8
+    private var startMinute = 0
+    private var endHour = 18
+    private var endMinute = 0
 
+    private lateinit var binding: DialogTimeIntervalBinding
+    private lateinit var dialog: AlertDialog
+    private var ignoreTextChange = false
+
+    /** Exibe o diálogo configurado com os campos e listeners. */
     fun show() {
         binding = DialogTimeIntervalBinding.inflate(inflater)
-        setupPicker()
-        setupListeners()
+        dialog = MaterialAlertDialogBuilder(context).setView(binding.root).show()
+
+        setupButtons()
         setupEditTexts()
-
-        MaterialAlertDialogBuilder(context).setView(binding.root).show().also { dialog ->
-            binding.fabAdd.setOnClickListener(
-                AnimatedClickListener {
-                    onRangeSelected(
-                        TimeRange(
-                            startPeriod.hour, startPeriod.minute, endPeriod.hour, endPeriod.minute
-                        )
-                    )
-                    dialog.dismiss()
-                })
-        }
-
-        updateLabel()
+        updateEditTexts()
+        requestKeyboardFocus()
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun setupEditTexts() = with(binding) {
-// TODO: isso pode ser otimizado
+    /** Define o comportamento dos botões do diálogo. */
+    private fun setupButtons() = with(binding) {
 
-        edtStart.doOnTextChanged { text, _, _, _ ->
+        fabAdd.setOnClickListener(AnimatedClickListener {
+            clearFocusFromInputs()
 
-            if (doNothingOnTextChanged) return@doOnTextChanged
+            if (startHour == 0
+                && startMinute == 0
+                && endHour == 23
+                && endMinute == 59
+            ) onRangeSelected(TimeRange(true))
+            else onRangeSelected(TimeRange(startHour, startMinute, endHour, endMinute))
 
-            if (text.toString().length == 2) {
-                edtStart.setText("${text}:")
-                edtStart.setSelection(3)
-            }
+            dialog.dismiss()
+        })
 
-            if (text.toString().length == 5) {
-                val (hour, min) = text.toString().split(":").map { it.toInt() }
-                binding.picker.startTime = TimeRangePicker.Time(hour, min)
-                startPeriod = TimeRangePicker.Time(hour, min)
-                edtEnd.requestFocus()
-            }
-        }
-
-        edtEnd.doOnTextChanged { text, _, _, _ ->
-            if (doNothingOnTextChanged) return@doOnTextChanged
-
-            if (text.toString().length == 2) {
-                edtEnd.setText("${text}:")
-                edtEnd.setSelection(3)
-            }
-
-            if (text.toString().length == 5) {
-                val (hour, min) = text.toString().split(":").map { it.toInt() }
-                binding.picker.endTime = TimeRangePicker.Time(hour, min)
-                endPeriod = TimeRangePicker.Time(hour, min)
-                edtEnd.clearFocus()
-            }
-
-        }
-
-    }
-
-    private fun setupPicker() {
-        try {
-            val hourFormatClass = Class.forName("nl.joery.timerangepicker.TimeRangePicker\$HourFormat")
-            val format24Field = hourFormatClass.getField("FORMAT_24")
-            val format24Value = format24Field.get(null)
-
-            val field = binding.picker.javaClass.getDeclaredField("_hourFormat")
-            field.isAccessible = true
-            field.set(binding.picker, format24Value)
-
-            binding.picker.invalidate()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun setupListeners() {
-        binding.picker.setOnTimeChangeListener(object : TimeRangePicker.OnTimeChangeListener {
-            override fun onStartTimeChange(startTime: TimeRangePicker.Time) {
-                startPeriod = startTime
-                updateLabel()
-            }
-
-            override fun onEndTimeChange(endTime: TimeRangePicker.Time) {
-                endPeriod = endTime
-                updateLabel()
-            }
-
-            override fun onDurationChange(duration: TimeRangePicker.TimeDuration) {
-                startPeriod = duration.start
-                endPeriod = duration.end
-                updateLabel()
-            }
+        fab24h.setOnClickListener(AnimatedClickListener {
+            onRangeSelected(TimeRange(true))
+            dialog.dismiss()
         })
     }
 
+    /** Configura os campos de entrada de horário para responder a eventos de texto e foco. */
     @SuppressLint("SetTextI18n")
-    private fun updateLabel() = with(binding) {
-        doNothingOnTextChanged = true
-        edtStart.setText("%02d:%02d".format(startPeriod.hour, startPeriod.minute))
-        edtEnd.setText("%02d:%02d".format(endPeriod.hour, endPeriod.minute))
-        doNothingOnTextChanged = false
+    private fun setupEditTexts() = with(binding) {
+        setupTimeEditText(edtStart) { hour, min ->
+            startHour = hour
+            startMinute = min
+            edtEnd.requestFocus()
+        }
+
+        setupTimeEditText(edtEnd) { hour, min ->
+            endHour = hour
+            endMinute = min
+            edtStart.clearFocus()
+        }
+    }
+
+    /**
+     * Configura o EditText para lidar com formatação e parse do horário.
+     * @param field EditText a ser configurado.
+     * @param onComplete Callback chamado quando o horário completo é digitado.
+     */
+    @SuppressLint("SetTextI18n")
+    private fun setupTimeEditText(
+        field: android.widget.EditText,
+        onComplete: (Int, Int) -> Unit,
+    ) {
+        field.doOnTextChanged { text, _, _, _ ->
+            if (ignoreTextChange) return@doOnTextChanged
+            val str = text.toString()
+            if (str.length == 2 && !str.contains(":")) {
+                field.setText("$str:")
+                field.setSelection(3)
+            } else if (str.length == 5 && str.contains(":")) {
+                val (hour, min) = str.split(":").mapNotNull { it.toIntOrNull() }
+                onComplete(hour, min)
+            }
+        }
+
+        field.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val text = field.text.toString()
+                if (text.length == 1) field.setText("0${text}:00")
+                if (text.length == 3) field.setText("${text}00")
+            }
+        }
+    }
+
+    /** Atualiza os EditTexts com os valores atuais do período. */
+    @SuppressLint("SetTextI18n")
+    private fun updateEditTexts() = with(binding) {
+        ignoreTextChange = true
+        edtStart.setText("%02d:%02d".format(startHour, startMinute))
+        edtEnd.setText("%02d:%02d".format(endHour, endMinute))
+        ignoreTextChange = false
+    }
+
+    /** Solicita o foco e exibe o teclado para o campo inicial após breve atraso. */
+    private fun requestKeyboardFocus() {
+        CoroutineScope(Main).launch {
+            delay(200)
+            binding.edtStart.showKeyboard()
+        }
+    }
+
+    /** Remove o foco dos campos de horário. */
+    private fun clearFocusFromInputs() = with(binding) {
+        edtStart.clearFocus()
+        edtEnd.clearFocus()
     }
 }

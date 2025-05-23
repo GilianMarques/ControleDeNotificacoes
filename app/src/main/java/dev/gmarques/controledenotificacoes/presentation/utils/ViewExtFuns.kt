@@ -1,8 +1,10 @@
 package dev.gmarques.controledenotificacoes.presentation.utils
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 
 
@@ -39,6 +41,13 @@ object ViewExtFuns {
             null,
             null
         )
+    }
+
+    fun View.showKeyboard() {
+        this.requestFocus()
+
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
     }
 
 }

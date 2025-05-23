@@ -108,7 +108,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
-        android:contentDescription="@string/Bot_o_de_adicionar_regra"
         android:focusable="true"
         android:text="@string/Abrir_app"
         android:transitionName="fab"

@@ -2,66 +2,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="?AppColorBackground"
-    android:padding="8dp">
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:drawablePadding="8dp"
         android:fontFamily="@font/urbanist_semibold"
         android:padding="4dp"
         android:text="@string/Selecione_o_intervalo_de_tempo"
         android:textAlignment="viewStart"
         android:textSize="18sp"
+        app:drawableStartCompat="@drawable/vec_clock"
+        app:drawableTint="?colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <nl.joery.timerangepicker.TimeRangePicker
-        android:id="@+id/picker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title"
-        app:trp_clockFace="APPLE"
-        app:trp_endTime="9:00"
-        app:trp_minDurationMinutes="60"
-        app:trp_sliderRangeGradientEnd="@color/app_icon_bg_color_end"
-        app:trp_sliderRangeGradientMiddle="@color/md_theme_primaryContainer_mediumContrast"
-        app:trp_sliderRangeGradientStart="@color/app_icon_bg_color_start"
-        app:trp_startTime="4:00"
-        app:trp_stepTimeMinutes="10" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-
-        android:id="@+id/imageView2"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:importantForAccessibility="no"
-        app:layout_constraintBottom_toBottomOf="@id/picker"
-        app:layout_constraintEnd_toEndOf="@id/picker"
-        app:layout_constraintStart_toStartOf="@id/picker"
-        app:layout_constraintTop_toTopOf="@id/picker"
-        app:srcCompat="@drawable/vec_clock"
-        app:tint="?colorPrimary" />
 
 
     <LinearLayout
         android:id="@+id/ll_user_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_margin="16dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/back_container"
         android:backgroundTint="?colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/picker">
+        app:layout_constraintTop_toBottomOf="@id/tv_title">
 
         <TextView
             android:id="@+id/tv_de"
@@ -75,7 +51,8 @@
             android:text="@string/De"
             android:textAlignment="center"
             android:textColor="?colorPrimary"
-            android:textSize="16sp" />
+            android:textSize="18sp"
+            tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edt_start"
@@ -88,16 +65,15 @@
             android:inputType="number"
             android:maxLength="5"
             android:maxLines="1"
-            android:paddingStart="8dp"
+            android:paddingStart="16dp"
             android:paddingTop="24dp"
-            android:paddingEnd="8dp"
+            android:paddingEnd="16dp"
             android:paddingBottom="24dp"
             android:selectAllOnFocus="true"
             android:textAlignment="center"
             android:textColor="?colorPrimary"
-            android:textSize="16sp"
+            android:textSize="18sp"
             tools:text="08:15" />
-
 
 
         <TextView
@@ -109,7 +85,7 @@
             android:text="@string/as"
             android:textAlignment="center"
             android:textColor="?colorPrimary"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/edt_end"
@@ -118,18 +94,18 @@
             android:background="@android:color/transparent"
             android:cursorVisible="false"
             android:fontFamily="@font/urbanist_extrabold"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNext"
             android:inputType="number"
             android:maxLength="5"
             android:maxLines="1"
-            android:paddingStart="8dp"
+            android:paddingStart="16dp"
             android:paddingTop="24dp"
             android:paddingEnd="16dp"
             android:paddingBottom="24dp"
             android:selectAllOnFocus="true"
             android:textAlignment="center"
             android:textColor="?colorPrimary"
-            android:textSize="16sp"
+            android:textSize="18sp"
             tools:text="19:25" />
 
 
@@ -140,15 +116,34 @@
         android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:clickable="true"
-        android:contentDescription="@string/Bot_o_de_adicionar_regra"
         android:focusable="true"
         android:src="@drawable/vec_check"
         android:transitionName="fab"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/fab_24h"
         app:layout_constraintTop_toBottomOf="@id/ll_user_input" />
+
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_24h"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/_24h_dia"
+        android:transitionName="fab"
+        app:icon="@drawable/vec_clock"
+        app:layout_constraintBottom_toBottomOf="@id/fab_add"
+        app:layout_constraintEnd_toStartOf="@id/fab_add"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/fab_add" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

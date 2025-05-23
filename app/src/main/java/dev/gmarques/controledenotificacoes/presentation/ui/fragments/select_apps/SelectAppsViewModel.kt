@@ -198,7 +198,6 @@ sealed class Event {
 /**
  * Representa os estados da interface
  */
-
 sealed class State {
     object Idle : State()
     object Loading : State()

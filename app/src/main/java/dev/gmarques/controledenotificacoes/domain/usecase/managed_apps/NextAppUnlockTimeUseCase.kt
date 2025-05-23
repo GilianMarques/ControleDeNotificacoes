@@ -180,7 +180,9 @@ class NextAppUnlockTimeUseCase @Inject constructor() {
             if (chainedRanges(timeRange, index, sortedTimeRanges)) return@forEachIndexed
 
             val timeRangeRelative = day.at(timeRange.endHour, timeRange.endMinute)
-            if (timeRangeRelative.isAfter(day)) return timeRangeRelative.plusMinutes(1)
+
+            val isEqualOrAfter = !timeRangeRelative.isBefore(day)
+            if (isEqualOrAfter) return timeRangeRelative.plusMinutes(1)
         }
 
         return null
@@ -204,7 +206,8 @@ class NextAppUnlockTimeUseCase @Inject constructor() {
             if (chainedRanges(timeRange, index, sortedTimeRanges)) return@forEachIndexed
 
             val timeRangeRelative = day.at(timeRange.startHour, timeRange.startMinute)
-            if (timeRangeRelative.isAfter(day)) return timeRangeRelative
+            val isEqualOrAfter = !timeRangeRelative.isBefore(day)
+            if (isEqualOrAfter) return timeRangeRelative
         }
 
         return null

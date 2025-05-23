@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -39,6 +40,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
     private val args: AddOrUpdateRuleFragmentArgs by navArgs()
 
     private lateinit var binding: FragmentAddOrUpdateRuleBinding
+
 
     companion object {
         const val RESULT_LISTENER_KEY = "add_update_rule_result"
@@ -220,7 +222,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
         }.show()
     }
 
-
     /**
      * Atualiza, com base nos updates do viewmodel a interface com base no tipo de regra (Permissiva ou Restritiva) .
      *
@@ -289,8 +290,12 @@ class AddOrUpdateRuleFragment : MyFragment() {
             if (!parent.children.none { it.tag == range.id }) return@forEachIndexed
 
             with(ItemIntervalBinding.inflate(layoutInflater)) {
-                tvStart.text = range.startIntervalFormatted()
-                tvEnd.text = range.endIntervalFormatted()
+
+                if (range.allDay) tv24h.isVisible = true
+                else {
+                    tvStart.text = range.startIntervalFormatted()
+                    tvEnd.text = range.endIntervalFormatted()
+                }
                 ivRemove.setOnClickListener(AnimatedClickListener {
 
                     viewModel.deleteTimeRange(range)

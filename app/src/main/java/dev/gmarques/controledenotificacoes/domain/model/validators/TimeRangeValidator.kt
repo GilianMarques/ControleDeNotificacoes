@@ -1,5 +1,5 @@
+import dev.gmarques.controledenotificacoes.domain.exceptions.InvalidTimeRangeValueException
 import dev.gmarques.controledenotificacoes.domain.exceptions.InversedRangeException
-import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 
 /**
@@ -21,10 +21,10 @@ object TimeRangeValidator {
      * @return Um objeto Result.
      *   - **Success:** Se o TimeRange for válido, um Result.success contendo o TimeRange original é retornado.
      *   - **Failure:** Se alguma das verificações de validação falhar, um Result.failure é retornado, contendo uma das seguintes exceções:
-     *     - **OutOfRangeException:** Se algum dos valores de hora ou minuto estiver fora de seus intervalos válidos. A mensagem de exceção indica qual campo está fora do intervalo e o intervalo permitido.
+     *     - **InvalidTimeRangeValueException:** Se algum dos valores de hora ou minuto estiver fora de seus intervalos válidos. A mensagem de exceção indica qual campo está fora do intervalo e o intervalo permitido.
      *     - **InversedIntervalException:** Se o horário de início for igual ou posterior ao horário de término. A mensagem de exceção fornece os horários de início e término em minutos.
      *
-     * @throws OutOfRangeException Se a hora ou minuto não estiverem no intervalo especificado.
+     * @throws InvalidTimeRangeValueException Se a hora ou minuto não estiverem no intervalo especificado.
      * @throws InversedRangeException Se o horário de início for igual ou posterior ao horário de término.
      */
     fun validate(timeRange: TimeRange): Result<TimeRange> {
@@ -32,38 +32,36 @@ object TimeRangeValidator {
         val hourRange = 0..23
         val minuteRange = 0..59
 
-        if (timeRange.allDay) { // TODO: uma mregra só pode ter um timerange quando um deles for allDay=true
+        if (timeRange.allDay) {
 
-            if (timeRange.startHour == 0
-                && timeRange.startMinute == 0
-                && timeRange.endHour == 0
-                && timeRange.endMinute == 0
-            ) return Result.success(timeRange)
-            else return Result.failure(
+            return if (timeRange.startHour == 0 && timeRange.startMinute == 0 && timeRange.endHour == 0 && timeRange.endMinute == 0) Result.success(
+                timeRange
+            )
+            else Result.failure(
                 IllegalStateException("Um TimeRange definido como allDay deve ter valores zerados $timeRange")
             )
         }
 
         if (timeRange.startHour !in hourRange) return Result.failure(
-            OutOfRangeException(
+            InvalidTimeRangeValueException(
                 hourRange.first, hourRange.last, timeRange.startHour
             )
         )
 
         if (timeRange.endHour !in hourRange) return Result.failure(
-            OutOfRangeException(
+            InvalidTimeRangeValueException(
                 hourRange.first, hourRange.last, timeRange.endHour
             )
         )
 
         if (timeRange.startMinute !in minuteRange) return Result.failure(
-            OutOfRangeException(
+            InvalidTimeRangeValueException(
                 minuteRange.first, minuteRange.last, timeRange.startMinute
             )
         )
 
         if (timeRange.endMinute !in minuteRange) return Result.failure(
-            OutOfRangeException(
+            InvalidTimeRangeValueException(
                 minuteRange.first, minuteRange.last, timeRange.endMinute
             )
         )
@@ -77,5 +75,6 @@ object TimeRangeValidator {
 
         return Result.success(timeRange)
     }
+
 
 }

@@ -131,6 +131,7 @@ object RuleValidator {
      *         - [Result.success] contendo a lista ordenada de [TimeRange] se todos os intervalos forem válidos.
      *         - [Result.failure] contendo uma exceção se alguma validação falhar:
      *           - [OutOfRangeException] se o número de intervalos estiver fora dos limites permitidos.
+     *           - [InvalidTimeRangeValueException] se algum intervalo individual for inválido.
      *           - Uma [DuplicateTimeRangeException] retornada por [findDuplicateRanges] se existirem intervalos duplicados.
      *           - Uma  [IntersectedRangeException] por [findIntersectedRanges] se existirem intervalos sobrepostos.
      *           - Uma exceção retornada por [validateEachTimeRange] se algum intervalo individual for inválido.
@@ -147,8 +148,6 @@ object RuleValidator {
         findIntersectedRanges(ranges)?.let { return Result.failure(it) }
 
         validateEachTimeRange(ranges)?.let { return Result.failure(it) }
-
-        // TODO:  valide timeRanges.any { it.allDay }
 
         return Result.success(ranges)
     }
@@ -179,9 +178,11 @@ object RuleValidator {
      */
     private fun findIntersectedRanges(r: List<TimeRange>): IntersectedRangeException? {
 
+        if (r.size > 1 && r.any { it.allDay }) return IntersectedRangeException(r[0], r[1])
+
         // necessario colocar do maior pro menor pra verificar as interceçoes em apenas um de dois intervalos
         val sortedRanges = r.sortedByDescending { it.startInMinutes() }
-
+// TODO: da pra melhorar o tempo e complexidade desse algoritimo
         for (i in 0 until sortedRanges.size - 1) {
             val range = sortedRanges[i]
             for (j in i + 1 until sortedRanges.size) {

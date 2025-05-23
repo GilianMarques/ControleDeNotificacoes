@@ -131,9 +131,8 @@ dependencies {
     //noinspection KaptUsageInsteadOfKsp
     kapt("com.github.bumptech.glide:compiler:4.16.0")
 
-    implementation("androidx.datastore:datastore-preferences:1.1.6")
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
 
-    implementation("nl.joery.timerangepicker:timerangepicker:1.0.0")
 
     implementation("net.danlew:android.joda:2.10.9")
 

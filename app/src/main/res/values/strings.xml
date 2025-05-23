@@ -176,6 +176,9 @@
     <string name="Relatorio_de_notificacoes">Relatório de notificações bloqueadas</string>
     <string name="App_indispon_vel">App indisponível</string>
     <string name="Ver_hist_rico">Ver histórico</string>
+    <string name="_24h_dia">24h/dia</string>
+    <string name="O_dia_inteiro">O dia inteiro</string>
+    <string name="Voc_definiu_um_valor_inv_lido_para_o_intervalo_de_tempo">Você definiu um valor inválido para o intervalo (%1$d)</string>
 
 
 </resources>
