@@ -16,10 +16,12 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
+import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetAllRulesUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
@@ -29,6 +31,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setRuleDrawable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -51,6 +54,9 @@ class AddManagedAppsFragment() : MyFragment() {
 
     @Inject
     lateinit var getAllRulesUseCase: GetAllRulesUseCase
+
+    @Inject
+    lateinit var getRuleByIdUseCase: GetRuleByIdUseCase
 
     @Inject
     lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
@@ -80,13 +86,35 @@ class AddManagedAppsFragment() : MyFragment() {
         setupSelectRuleButton()
         setupConcludeFab()
         observeViewModel()
-        loadRuleIfOnlyOneOnDb()
+        loadLastUsedOrFirstRule()
     }
 
-    private fun loadRuleIfOnlyOneOnDb() = lifecycleScope.launch {
+
+    /**
+     * Esta função tenta carregar a última regra selecionada pelo usuário a partir das preferências.
+     * Se uma regra válida for encontrada, ela é definida no `viewModel`.
+     *
+     * Caso nenhuma regra tenha sido selecionada anteriormente, a função verifica se existe apenas
+     * uma regra disponível. Se houver, essa única regra é automaticamente selecionada e definida
+     * no `viewModel`.
+     *
+     * O carregamento é realizado de forma assíncrona dentro do escopo do ciclo de vida do fragmento.
+     */
+    private fun loadLastUsedOrFirstRule() = lifecycleScope.launch {
+
+        if (viewModel.selectedRule.value != null) return@launch
+
+        val ruleId = readPreferenceUseCase(Preferences.LAST_SELECTED_RULE, "null")
+        if (ruleId != "null") {
+            getRuleByIdUseCase(ruleId)
+                ?.let { rule ->
+                    viewModel.setRule(rule)
+                    return@launch
+                }
+        }
 
         val rules = getAllRulesUseCase()
-        if (rules.size == 1 && viewModel.selectedRule.value == null) viewModel.setRule(rules.first())
+        if (rules.size == 1) viewModel.setRule(rules.first())
     }
 
     private fun setupConcludeFab() = with(binding) {
@@ -292,12 +320,8 @@ class AddManagedAppsFragment() : MyFragment() {
     private fun manageRuleView(rule: Rule) = with(binding) {
         lifecycleScope.launch {
             tvSelectedRule.text = rule.name.ifBlank { generateRuleNameUseCase(rule) }
-            tvSelectedRule.setCompoundDrawablesWithIntrinsicBounds(
-                ResourcesCompat.getDrawable(resources, rule.getAdequateIconReference(), requireActivity().theme),
-                null,
-                null,
-                null
-            )
+            val drawable = ResourcesCompat.getDrawable(resources, rule.getAdequateIconReference(), requireActivity().theme)!!
+            tvSelectedRule.setRuleDrawable(drawable)
             tvSelectedRule.isVisible = true
 
         }

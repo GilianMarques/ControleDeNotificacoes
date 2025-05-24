@@ -9,5 +9,5 @@ import javax.inject.Inject
  * Em terça-feira, 06 de maio de 2025 as 13:27.
  */
 class ReadPreferenceUseCase @Inject constructor(private val repository: PreferencesRepository) {
-    operator fun <T> invoke(key: String, default: T): T = runBlocking { repository.read(key, default) }
+    operator fun <T : Any> invoke(key: String, default: T): T = runBlocking { repository.read(key, default) }
 }

@@ -9,7 +9,7 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.DeleteRuleWithAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.DeleteAllAppNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.ObserveAppNotificationsByPkgIdUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.DeleteManagedAppUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.DeleteManagedAppAndItsNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import kotlinx.coroutines.Dispatchers.IO
@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ViewManagedAppViewModel @Inject constructor(
     private val observeRuleUseCase: ObserveRuleUseCase,
-    private val deleteManagedAppUseCase: DeleteManagedAppUseCase,
+    private val deleteManagedAppAndItsNotificationsUseCase: DeleteManagedAppAndItsNotificationsUseCase,
     private val deleteRuleWithAppsUseCase: DeleteRuleWithAppsUseCase,
     private val observeAppNotificationsByPkgIdUseCase: ObserveAppNotificationsByPkgIdUseCase,
     private val deleteAllAppNotificationsUseCase: DeleteAllAppNotificationsUseCase,
@@ -75,7 +75,7 @@ class ViewManagedAppViewModel @Inject constructor(
     }
 
     fun deleteApp() = viewModelScope.launch {
-        deleteManagedAppUseCase(_managedAppFlow.value!!.packageId)
+        deleteManagedAppAndItsNotificationsUseCase(_managedAppFlow.value!!.packageId)
         _eventsFlow.tryEmit(Event.FinishWithSuccess)
     }
 
