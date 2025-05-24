@@ -1,8 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
-import dagger.hilt.android.EntryPointAccessors
-import dev.gmarques.controledenotificacoes.App
-import dev.gmarques.controledenotificacoes.di.entry_points.UseCasesEntryPoint
+import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 
@@ -29,10 +27,7 @@ object RuleExtensionFun {
      *
      */
     fun Rule.nextAppUnlockPeriodFromNow(): Long {
-        val nextAppUnlockTimeUseCase = EntryPointAccessors.fromApplication(
-            App.context,
-            UseCasesEntryPoint::class.java
-        ).nextAppUnlockUseCase()
+        val nextAppUnlockTimeUseCase = HiltEntryPoints.nextAppUnlockUseCase()
         return nextAppUnlockTimeUseCase(rule = this)
     }
 
@@ -57,11 +52,27 @@ object RuleExtensionFun {
      */
     fun Rule.isAppInBlockPeriod(): Boolean {
 
-        val checkAppInBlockPeriodUseCase = EntryPointAccessors.fromApplication(
-            App.context,
-            UseCasesEntryPoint::class.java
-        ).checkAppInBlockPeriodUseCase()
+        val checkAppInBlockPeriodUseCase = HiltEntryPoints.checkAppInBlockPeriodUseCase()
 
         return checkAppInBlockPeriodUseCase(rule = this)
+    }
+
+    /**
+     * Retorna o nome da regra, se definido. Caso contrário, gera uma descrição  da regra.
+     *
+     * Esta função é útil para exibir informações sobre a regra ao usuário,
+     * mesmo que um nome explícito não tenha sido fornecido.
+     *
+     * A geração do nome descritivo é delegada a um `UseCase` (`generateRuleNameUseCase`)
+     * obtido através do `HiltEntryPoints`. Isso garante que a lógica de formatação
+     * do nome seja centralizada e testável.
+     *
+     * @return O nome da regra se `name` não estiver em branco, caso contrário, uma descrição gerada da regra.
+     *
+     * @see HiltEntryPoints.generateRuleNameUseCase
+     */
+    fun Rule.nameOrDescription(): String {
+        if (name.isNotBlank()) return name
+        return HiltEntryPoints.generateRuleNameUseCase()(this)
     }
 }

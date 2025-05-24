@@ -21,7 +21,7 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em sexta-feira, 16 de maio de 2025 as 11:07.
  *
- * gerencia o agendamento e cancelamento de alarmes no sistema
+ * Gerencia o agendamento e cancelamento de alarmes no sistema usados para emitir notificações
  */
 class ScheduleManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,

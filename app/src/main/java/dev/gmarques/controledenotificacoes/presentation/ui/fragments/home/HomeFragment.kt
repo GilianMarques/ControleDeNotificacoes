@@ -32,7 +32,6 @@ import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotifica
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
 import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -55,8 +54,6 @@ class HomeFragment : MyFragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: ManagedAppsAdapter
 
-    @Inject
-    lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
 
     @Inject
     lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
@@ -176,7 +173,6 @@ class HomeFragment : MyFragment() {
             getDrawable(R.drawable.vec_rule_permissive_small),
             getDrawable(R.drawable.vec_rule_restrictive_small),
             getInstalledAppIconUseCase,
-            generateRuleNameUseCase::invoke,
             ::navigateToViewManagedAppFragment
         )
 

@@ -18,12 +18,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectRuleBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRemovalDialog
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
@@ -39,9 +37,6 @@ class SelectRuleFragment : MyFragment() {
 
     private lateinit var binding: FragmentSelectRuleBinding
     private val viewModel: SelectRuleViewModel by viewModels()
-
-    @Inject
-    lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
 
     private lateinit var adapter: RulesAdapter
 
@@ -74,9 +69,7 @@ class SelectRuleFragment : MyFragment() {
 
     private fun setupRecyclerView() {
 
-        adapter = RulesAdapter(
-            generateRuleNameUseCase, ::rvOnRuleSelected, ::rvOnRuleEditClick
-        )
+        adapter = RulesAdapter(::rvOnRuleSelected, ::rvOnRuleEditClick)
 
         binding.rvApps.apply {
             layoutManager = LinearLayoutManager(requireContext())

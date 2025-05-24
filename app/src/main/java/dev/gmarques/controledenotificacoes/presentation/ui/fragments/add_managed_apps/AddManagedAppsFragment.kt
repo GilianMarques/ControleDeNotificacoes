@@ -18,8 +18,8 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBin
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
 import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetAllRulesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -48,9 +48,6 @@ class AddManagedAppsFragment() : MyFragment() {
             return AddManagedAppsFragment()
         }
     }
-
-    @Inject
-    lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
 
     @Inject
     lateinit var getAllRulesUseCase: GetAllRulesUseCase
@@ -319,7 +316,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private fun manageRuleView(rule: Rule) = with(binding) {
         lifecycleScope.launch {
-            tvSelectedRule.text = rule.name.ifBlank { generateRuleNameUseCase(rule) }
+            tvSelectedRule.text = rule.nameOrDescription()
             val drawable = ResourcesCompat.getDrawable(resources, rule.getAdequateIconReference(), requireActivity().theme)!!
             tvSelectedRule.setRuleDrawable(drawable)
             tvSelectedRule.isVisible = true
