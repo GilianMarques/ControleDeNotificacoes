@@ -28,7 +28,7 @@ import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.Preferences.SHOW_WARNING_CARD_POST_NOTIFICATION
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
-import dev.gmarques.controledenotificacoes.framework.notification_service.NotificationServiceManager
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

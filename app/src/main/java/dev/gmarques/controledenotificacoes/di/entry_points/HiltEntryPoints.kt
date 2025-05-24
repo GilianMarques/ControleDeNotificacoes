@@ -8,8 +8,8 @@ import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.CheckAppI
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
-import dev.gmarques.controledenotificacoes.framework.ReportNotificationManager
 import dev.gmarques.controledenotificacoes.framework.ScheduleManagerImpl
+import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
 /**
  * Criado por Gilian Marques

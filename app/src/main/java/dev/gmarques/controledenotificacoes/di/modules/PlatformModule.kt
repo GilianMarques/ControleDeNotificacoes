@@ -13,7 +13,7 @@ import dev.gmarques.controledenotificacoes.domain.framework.notification_service
 import dev.gmarques.controledenotificacoes.framework.RuleStringsProviderImpl
 import dev.gmarques.controledenotificacoes.framework.ScheduleManagerImpl
 import dev.gmarques.controledenotificacoes.framework.VibratorImpl
-import dev.gmarques.controledenotificacoes.framework.notification_service.RuleEnforcerImpl
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.RuleEnforcerImpl
 
 /**
  * Criado por Gilian Marques

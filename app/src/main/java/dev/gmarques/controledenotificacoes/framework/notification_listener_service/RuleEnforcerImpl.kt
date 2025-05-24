@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.framework.notification_service
+package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
 import dev.gmarques.controledenotificacoes.domain.framework.notification_service.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification

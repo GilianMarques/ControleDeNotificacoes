@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.framework
+package dev.gmarques.controledenotificacoes.framework.report_notification
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -20,6 +20,8 @@ import javax.inject.Inject
 /**
  * Criado por Gilian Marques
  * Em sábado, 24 de maio de 2025 as 15:52.
+ *
+ * Constrói e exibe notificações de relatório de notificações recebidas durante o bloqueio.
  */
 class ReportNotificationManager @Inject constructor(
     @ApplicationContext private val context: Context,

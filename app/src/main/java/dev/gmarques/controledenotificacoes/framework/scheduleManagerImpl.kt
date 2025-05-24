@@ -14,6 +14,7 @@ import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.DeletePreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
+import dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver
 import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
@@ -92,7 +93,7 @@ class ScheduleManagerImpl @Inject constructor(
 
     /**
      * Cria um [PendingIntent] para ser usado com o [AlarmManager].
-     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [AlarmReceiver].
+     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver].
      *
      * @param packageId O ID do pacote a ser incluído como extra no [Intent] do [PendingIntent].
      * @return Um [PendingIntent] configurado para enviar um broadcast.
@@ -105,10 +106,10 @@ class ScheduleManagerImpl @Inject constructor(
 
     /**
      * Cria um [Intent] para ser usado na criação do [PendingIntent].
-     * Este [Intent] é configurado para iniciar o [AlarmReceiver] e inclui o `packageId` como um extra.
+     * Este [Intent] é configurado para iniciar o [dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver] e inclui o `packageId` como um extra.
      *
      * @param packageId O ID do pacote a ser incluído como extra no [Intent].
-     * @return Um [Intent] configurado para o [AlarmReceiver].
+     * @return Um [Intent] configurado para o [dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver].
      */
     private fun createIntent(packageId: String): Intent {
         return Intent(context, AlarmReceiver::class.java).apply {

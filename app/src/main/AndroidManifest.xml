@@ -42,7 +42,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <service
-            android:name=".framework.notification_service.NotificationListener"
+            android:name=".framework.notification_listener_service.NotificationListener"
             android:exported="true"
             android:label="@string/Gerenciando_notificacoes"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
@@ -53,14 +53,14 @@
 
 
         <service
-            android:name=".framework.notification_service.NotificationServiceManager"
+            android:name=".framework.notification_listener_service.NotificationServiceManager"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
 
 
         <receiver
-            android:name=".framework.BootReceiver"
+            android:name=".framework.report_notification.BootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -69,7 +69,7 @@
         </receiver>
 
         <receiver
-            android:name=".framework.AlarmReceiver"
+            android:name=".framework.report_notification.AlarmReceiver"
             android:exported="false" />
 
     </application>

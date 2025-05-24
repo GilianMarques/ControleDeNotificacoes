@@ -1,16 +1,15 @@
-package dev.gmarques.controledenotificacoes.framework
+package dev.gmarques.controledenotificacoes.framework.report_notification
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import dagger.hilt.android.EntryPointAccessors
-import dev.gmarques.controledenotificacoes.di.entry_points.FrameworkEntryPoint
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 
 /**
- * É executado mediante agendamento no sistema para informar ao usuário que um app recém-desbloqueado
- * recebeu notificações durante o bloqueio.
+ * É executado mediante agendamento no sistema para  emitir notificações ao usuario.
+ * Usa [ReportNotificationManager] para exibir a notificação de relatório.e [dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager]
+ * para limpar os dados de agendamento após a emissao das notificações.
  */
 class AlarmReceiver : BroadcastReceiver() {
 
@@ -21,15 +20,13 @@ class AlarmReceiver : BroadcastReceiver() {
         val pkg = intent.getStringExtra("packageId") ?: return
         Log.d("USUK", "AlarmReceiver.onReceive: alarm received for $pkg")
 
-        getReportNotificationManager(context).showReportNotification(pkg)
+        getReportNotificationManager().showReportNotification(pkg)
 
         clearPreferenceForPackage(context, pkg)
     }
 
-    private fun getReportNotificationManager(context: Context): ReportNotificationManager {
-        return EntryPointAccessors
-            .fromApplication(context, FrameworkEntryPoint::class.java)
-            .reportNotificationManager()
+    private fun getReportNotificationManager(): ReportNotificationManager {
+        return HiltEntryPoints.reportNotificationManager()
     }
 
     /**

@@ -4,8 +4,8 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.domain.framework.notification_service.RuleEnforcer
-import dev.gmarques.controledenotificacoes.framework.ReportNotificationManager
 import dev.gmarques.controledenotificacoes.framework.ScheduleManagerImpl
+import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
 /**
  * Criado por Gilian Marques
