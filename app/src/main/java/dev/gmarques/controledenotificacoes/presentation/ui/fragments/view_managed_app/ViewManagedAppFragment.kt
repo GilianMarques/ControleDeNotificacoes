@@ -18,8 +18,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentViewManagedAppBinding
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRemovalDialog
@@ -37,9 +37,6 @@ class FragmentViewManagedApp() : MyFragment() {
             return FragmentViewManagedApp()
         }
     }
-
-    @Inject
-    lateinit var generateRuleNameUseCase: GenerateRuleNameUseCase
 
     @Inject
     lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
@@ -94,7 +91,7 @@ class FragmentViewManagedApp() : MyFragment() {
             ?: error("O icone deve existir pois é um recurso interno do app")
 
         tvAppName.text = app.name
-        tvRuleName.text = app.rule.name.ifBlank { generateRuleNameUseCase(app.rule) }
+        tvRuleName.text = app.rule.nameOrDescription()
         tvRuleName.setRuleDrawable(drawable)
 
         lifecycleScope.launch {

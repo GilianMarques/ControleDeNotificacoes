@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import dagger.hilt.android.EntryPointAccessors
-import dev.gmarques.controledenotificacoes.di.entry_points.ReportNotificationManagerEntryPoint
-import dev.gmarques.controledenotificacoes.di.entry_points.ScheduleManagerEntryPoint
+import dev.gmarques.controledenotificacoes.di.entry_points.FrameworkEntryPoint
+import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 
 /**
  * É executado mediante agendamento no sistema para informar ao usuário que um app recém-desbloqueado
@@ -28,8 +28,8 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun getReportNotificationManager(context: Context): ReportNotificationManager {
         return EntryPointAccessors
-            .fromApplication(context, ReportNotificationManagerEntryPoint::class.java)
-            .getReportNotificationManager()
+            .fromApplication(context, FrameworkEntryPoint::class.java)
+            .reportNotificationManager()
     }
 
     /**
@@ -42,9 +42,7 @@ class AlarmReceiver : BroadcastReceiver() {
      */
     private fun clearPreferenceForPackage(context: Context, pkg: String) {
 
-        val scheduleManager = EntryPointAccessors
-            .fromApplication(context, ScheduleManagerEntryPoint::class.java)
-            .getScheduleManager()
+        val scheduleManager = HiltEntryPoints.scheduleManager()
 
         scheduleManager.deleteScheduleData(pkg)
     }

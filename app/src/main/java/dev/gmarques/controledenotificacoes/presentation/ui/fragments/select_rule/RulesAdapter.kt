@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dev.gmarques.controledenotificacoes.databinding.ItemRuleBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
 
@@ -17,7 +17,6 @@ import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFu
  * Em sábado, 19 de abril de 2025 as 15:14.
  */
 class RulesAdapter(
-    private val ruleNameGenerator: GenerateRuleNameUseCase,
     private val onRuleSelected: (Rule) -> Unit,
     private val onRuleMenuClick: (View, Rule) -> Unit,
 ) : ListAdapter<Rule, RulesAdapter.AppViewHolder>(DiffCallback()) {
@@ -36,7 +35,7 @@ class RulesAdapter(
 
         fun bind(rule: Rule) = with(binding) {
 
-            tvName.text = rule.name.ifBlank { ruleNameGenerator(rule) }
+            tvName.text = rule.nameOrDescription()
             ivIcon.setImageResource(rule.getAdequateIconReference())
 
             parent.setOnClickListener(AnimatedClickListener {

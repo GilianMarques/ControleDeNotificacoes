@@ -11,7 +11,6 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em sexta-feira, 04 de abril de 2025 as 17:43.
  */
-// TODO: tem que ter um jeito de simplificar essa classe, talvez cria uma função de extensao ou helper...
 class GenerateRuleNameUseCase @Inject constructor(
     private val ruleStringsProvider: RuleStringsProvider,
 ) {

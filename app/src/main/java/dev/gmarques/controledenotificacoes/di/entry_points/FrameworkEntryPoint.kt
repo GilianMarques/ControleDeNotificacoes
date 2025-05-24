@@ -3,7 +3,9 @@ package dev.gmarques.controledenotificacoes.di.entry_points
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.gmarques.controledenotificacoes.domain.framework.notification_service.RuleEnforcer
 import dev.gmarques.controledenotificacoes.framework.ReportNotificationManager
+import dev.gmarques.controledenotificacoes.framework.ScheduleManagerImpl
 
 /**
  * Criado por Gilian Marques
@@ -11,6 +13,9 @@ import dev.gmarques.controledenotificacoes.framework.ReportNotificationManager
  */
 @InstallIn(SingletonComponent::class)
 @EntryPoint
-interface ReportNotificationManagerEntryPoint {
-    fun getReportNotificationManager(): ReportNotificationManager
+interface FrameworkEntryPoint {
+    fun reportNotificationManager(): ReportNotificationManager
+    fun ruleEnforcer(): RuleEnforcer
+    fun scheduleManager(): ScheduleManagerImpl
+
 }

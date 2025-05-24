@@ -5,10 +5,7 @@ import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
-import dagger.hilt.android.EntryPointAccessors
-import dev.gmarques.controledenotificacoes.App
-import dev.gmarques.controledenotificacoes.di.entry_points.RuleEnforcerEntryPoint
-import dev.gmarques.controledenotificacoes.di.entry_points.ScheduleManagerEntryPoint
+import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
 import kotlinx.coroutines.CoroutineScope
@@ -22,13 +19,9 @@ import kotlinx.coroutines.launch
  */
 class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope() {
 
-    private val ruleEnforcer = EntryPointAccessors
-        .fromApplication(App.context, RuleEnforcerEntryPoint::class.java)
-        .getRuleEnforcer()
+    private val ruleEnforcer = HiltEntryPoints.ruleEnforcer()
 
-    private val scheduleManager = EntryPointAccessors
-        .fromApplication<ScheduleManagerEntryPoint>(App.context)
-        .getScheduleManager()
+    private val scheduleManager = HiltEntryPoints.scheduleManager()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
