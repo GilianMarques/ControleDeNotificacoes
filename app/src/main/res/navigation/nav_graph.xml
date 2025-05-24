@@ -15,9 +15,11 @@
         <action
             android:id="@+id/to_addManagedAppsFragment"
             app:destination="@id/fragmentViewManagedApp" />
+
         <action
             android:id="@+id/to_profileFragment"
             app:destination="@id/profileFragment" />
+
         <action
             android:id="@+id/to_viewManagedAppFragment"
             app:destination="@id/viewManagedAppFragment" />
@@ -29,10 +31,20 @@
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app.FragmentViewManagedApp"
         android:label="fragment_view_managed_app"
         tools:layout="@layout/fragment_view_managed_app">
+
         <argument
             android:name="app"
+            android:defaultValue="@null"
             app:argType="dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule"
-            app:nullable="false" />
+            app:nullable="true" />
+
+        <argument
+            android:name="packageId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+
+        <deepLink app:uri="app://app/details/{packageId}" />
 
         <action
             android:id="@+id/to_addRuleFragment"

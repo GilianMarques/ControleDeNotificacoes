@@ -1,15 +1,20 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.DeleteRuleWithAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.DeleteAllAppNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.ObserveAppNotificationsByPkgIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.DeleteManagedAppAndItsNotificationsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import kotlinx.coroutines.Dispatchers.IO
@@ -28,6 +33,9 @@ class ViewManagedAppViewModel @Inject constructor(
     private val deleteRuleWithAppsUseCase: DeleteRuleWithAppsUseCase,
     private val observeAppNotificationsByPkgIdUseCase: ObserveAppNotificationsByPkgIdUseCase,
     private val deleteAllAppNotificationsUseCase: DeleteAllAppNotificationsUseCase,
+    private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
+    private val getRuleByIdUseCase: GetRuleByIdUseCase,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private var initialized = false
@@ -86,6 +94,21 @@ class ViewManagedAppViewModel @Inject constructor(
 
     fun clearHistory() = viewModelScope.launch {
         deleteAllAppNotificationsUseCase(managedAppFlow.value!!.packageId)
+    }
+
+    fun setup(pkg: String) = viewModelScope.launch {
+
+        val ruleId = getManagedAppByPackageIdUseCase(pkg)?.ruleId
+        if (ruleId == null) return@launch
+
+        val rule = getRuleByIdUseCase(ruleId)
+        if (rule == null) return@launch
+
+        val packageManager: PackageManager = context.packageManager
+        val appInfo = packageManager.getApplicationInfo(pkg, PackageManager.GET_META_DATA)
+        val appName = packageManager.getApplicationLabel(appInfo).toString()
+
+        setup(ManagedAppWithRule(appName, pkg, rule))
     }
 
 }

@@ -60,7 +60,11 @@ class FragmentViewManagedApp() : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.setup(args.app)
+
+        if (args.packageId != null) viewModel.setup(args.packageId!!)
+        else if (args.app != null) viewModel.setup(args.app!!)
+        else goBack()
+
         observeRuleChanges()
         observeNotificationHistory()
         observeEvents()
@@ -82,8 +86,6 @@ class FragmentViewManagedApp() : MyFragment() {
             }
         })
     }
-
-
 
 
     private fun setupActionBar(app: ManagedAppWithRule) = with(binding) {
@@ -219,7 +221,7 @@ class FragmentViewManagedApp() : MyFragment() {
 
     private fun observeRuleChanges() {
         collectFlow(viewModel.managedAppFlow) { app ->
-            setupActionBar(app!!)
+            app?.let { setupActionBar(app) }
         }
     }
 
