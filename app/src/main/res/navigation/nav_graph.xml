@@ -14,7 +14,7 @@
 
         <action
             android:id="@+id/to_addManagedAppsFragment"
-            app:destination="@id/fragmentViewManagedApp" />
+            app:destination="@id/addManagedAppsFragment" />
 
         <action
             android:id="@+id/to_profileFragment"
@@ -25,7 +25,6 @@
             app:destination="@id/viewManagedAppFragment" />
     </fragment>
 
-
     <fragment
         android:id="@+id/viewManagedAppFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app.FragmentViewManagedApp"
@@ -33,15 +32,15 @@
         tools:layout="@layout/fragment_view_managed_app">
 
         <argument
-            android:name="app"
-            android:defaultValue="@null"
-            app:argType="dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule"
-            app:nullable="true" />
-
-        <argument
             android:name="packageId"
             android:defaultValue="@null"
             app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="app"
+            android:defaultValue="@null"
+            app:argType="dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule"
             app:nullable="true" />
 
         <deepLink app:uri="app://app/details/{packageId}" />
@@ -79,7 +78,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/fragmentViewManagedApp"
+        android:id="@+id/addManagedAppsFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment"
         android:label="fragment_add_managed_apps"
         tools:layout="@layout/fragment_add_managed_apps">
@@ -117,6 +116,7 @@
             app:argType="string[]"
             app:nullable="false" />
     </fragment>
+
     <fragment
         android:id="@+id/selectRuleFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment"
@@ -126,6 +126,7 @@
             android:id="@+id/to_addRuleFragment"
             app:destination="@id/addRuleFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/profileFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment"

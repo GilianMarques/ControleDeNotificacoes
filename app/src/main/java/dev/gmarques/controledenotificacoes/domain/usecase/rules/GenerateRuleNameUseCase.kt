@@ -2,7 +2,6 @@ package dev.gmarques.controledenotificacoes.domain.usecase.rules
 
 import dev.gmarques.controledenotificacoes.domain.framework.RuleStringsProvider
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.wholeDay
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import javax.inject.Inject
@@ -72,7 +71,7 @@ class GenerateRuleNameUseCase @Inject constructor(
     private fun formatTimeRanges(rule: Rule): String {
         if (rule.timeRanges.isEmpty()) return ""
 
-        if (rule.timeRanges.size == 1 && rule.timeRanges[0].wholeDay()) return ruleStringsProvider.wholeDay()
+        if (rule.timeRanges.any { it.allDay }) return ruleStringsProvider.wholeDay()
 
 
         val start = rule.timeRanges.minByOrNull { it.startHour * 60 + it.startMinute }!!

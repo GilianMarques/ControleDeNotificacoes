@@ -193,7 +193,7 @@ class HomeFragment : MyFragment() {
         )
 
         findNavController().navigate(
-            HomeFragmentDirections.toViewManagedAppFragment(app), extras
+            HomeFragmentDirections.toViewManagedAppFragment(app = app), extras
         )
         binding.edtSearch.setText("")
     }

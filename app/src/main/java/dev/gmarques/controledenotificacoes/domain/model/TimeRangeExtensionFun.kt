@@ -69,13 +69,4 @@ object TimeRangeExtensionFun {
      */
     fun TimeRange.asRange() = this.startInMinutes()..this.endInMinutes()
 
-    /**
-     * Verifica se um [TimeRange] representa um dia inteiro (das 00:00 às 23:59).
-     *
-     * Um dia inteiro é considerado um [TimeRange] que começa no minuto 0 (00:00) e termina no minuto 1439 (23:59).
-     *
-     * @return true se o [TimeRange] representa um dia inteiro, false caso contrário.
-     */
-    fun TimeRange.wholeDay() = this.startInMinutes() == 0 && this.endInMinutes() == 1439
-
 }

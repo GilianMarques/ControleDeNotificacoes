@@ -53,6 +53,8 @@ class ViewManagedAppViewModel @Inject constructor(
 
         if (initialized) error("Não chame essa função mais que 1 vez")
 
+        Log.d("USUK", "ViewManagedAppViewModel.setup: $app")
+
         _managedAppFlow.tryEmit(app)
 
         observeAppNotificationsByPkgIdUseCase(app.packageId)
@@ -61,6 +63,7 @@ class ViewManagedAppViewModel @Inject constructor(
             }
 
         observeRuleChanges(app.rule)
+        initialized = true
     }
 
 
@@ -97,7 +100,7 @@ class ViewManagedAppViewModel @Inject constructor(
     }
 
     fun setup(pkg: String) = viewModelScope.launch {
-
+        Log.d("USUK", "ViewManagedAppViewModel.setup: $pkg")
         val ruleId = getManagedAppByPackageIdUseCase(pkg)?.ruleId
         if (ruleId == null) return@launch
 
