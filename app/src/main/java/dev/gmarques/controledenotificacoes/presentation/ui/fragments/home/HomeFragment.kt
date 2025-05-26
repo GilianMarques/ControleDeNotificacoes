@@ -235,6 +235,7 @@ class HomeFragment : MyFragment() {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
+            delay(1000)
 
             binding.containerWarnings.removeAllViews()
 

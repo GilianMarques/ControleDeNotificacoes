@@ -35,4 +35,4 @@ google-services.json
 *.hprof
 
 # release keystore data
-/app/keystore.properties
+/keystore.properties
