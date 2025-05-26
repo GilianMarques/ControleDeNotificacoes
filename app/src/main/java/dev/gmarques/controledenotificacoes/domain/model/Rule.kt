@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
+import androidx.annotation.Keep
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import java.io.Serializable
@@ -13,6 +14,7 @@ import java.util.UUID
  *
  */
 
+@Keep
 data class Rule(
     val id: String = UUID.randomUUID().toString(),
     val name: String,

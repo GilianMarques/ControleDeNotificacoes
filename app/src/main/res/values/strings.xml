@@ -158,7 +158,7 @@
     <string name="Permitir_acesso">Permitir acesso</string>
     <string name="Privacidade">Privacidade</string>
     <string name="Sua_privacidade_importa">Sua privacidade importa</string>
-    <string name="Voce_nao_ser_avisado_sobre_notifica_es_bloqueadas_ao_fim_do_per_odo_de_bloqueio_dos_apps_conceda_a_permiss_o_para_n_o_perder_alertas_importantes">Você não será avisado sobre notificações bloqueadas ao fim do período de bloqueio dos apps. Conceda a permissão para não perder alertas importantes.</string>
+    <string name="Voce_nao_ser_avisado_sobre_notifica_es_bloqueadas_ao_fim_do_per_odo_de_bloqueio_dos_apps_conceda_a_permiss_o_para_n_o_perder_alertas_importantes">Você não será avisado(a) sobre notificações bloqueadas ao fim do período de bloqueio dos apps. Conceda a permissão para não perder alertas importantes.</string>
     <string name="Permissao_nao_concedida">Permissão não concedida</string>
     <string name="Fragment_home">Fragment_home</string>
     <string name="Remover_restricoes">Remover restrições</string>

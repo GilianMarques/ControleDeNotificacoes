@@ -1,5 +1,8 @@
 package dev.gmarques.controledenotificacoes.domain.model.enums
 
+import androidx.annotation.Keep
+
+@Keep
 enum class WeekDay(val dayNumber: Int) {
 
     SUNDAY(1),
