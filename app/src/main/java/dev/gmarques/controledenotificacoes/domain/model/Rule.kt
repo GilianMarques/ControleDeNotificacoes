@@ -19,8 +19,4 @@ data class Rule(
     val days: List<WeekDay>,
     val timeRanges: List<TimeRange>,
     val ruleType: RuleType = RuleType.RESTRICTIVE,
-) : Serializable {
-    companion object {
-        const val MAX_APPS_PER_RULE = 999 // TODO: validar isso no validator depois de implmentado
-    }
-}
+) : Serializable

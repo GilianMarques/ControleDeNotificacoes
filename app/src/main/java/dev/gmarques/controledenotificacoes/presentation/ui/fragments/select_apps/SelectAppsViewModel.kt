@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.Preferences
-import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
@@ -42,6 +41,10 @@ class SelectAppsViewModel @Inject constructor(
     @ApplicationContext
     private val context: android.content.Context,
 ) : ViewModel() {
+
+    companion object {
+        const val MAX_APPS_PER_RULE = 999
+    }
 
     private val _installedApps = MutableStateFlow<List<SelectableApp>>(listOf<SelectableApp>())
     val installedApps: StateFlow<List<SelectableApp>> = _installedApps
@@ -106,7 +109,7 @@ class SelectAppsViewModel @Inject constructor(
                 notifyErrorMessage(
                     context.getString(
                         R.string.Nao_possivel_selecionar_mais_que_x_aplicativos,
-                        Rule.MAX_APPS_PER_RULE
+                        MAX_APPS_PER_RULE
                     )
                 )
 
@@ -141,7 +144,7 @@ class SelectAppsViewModel @Inject constructor(
     }
 
     fun shouldBlockSelection(): Boolean {
-        return (selectedApps.size + preSelectedAppsToHide.size) >= Rule.MAX_APPS_PER_RULE
+        return (selectedApps.size + preSelectedAppsToHide.size) >= MAX_APPS_PER_RULE
     }
 
     fun validateSelection() = viewModelScope.launch(IO) {

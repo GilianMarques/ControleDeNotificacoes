@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.util.LruCache
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.repository.AppRepository
+import dev.gmarques.controledenotificacoes.domain.repository.InstalledAppRepository
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import kotlinx.coroutines.Dispatchers
@@ -20,10 +20,10 @@ import javax.inject.Inject
  * Em terça-feira, 15 de abril de 2025 as 14:57.
  * Implementação da camada de dados para obtenção de apps instalados.
  */
-class InstalledAppRepositoryImpl @Inject constructor(
+class InstalledInstalledAppRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
-) : AppRepository {
+) : InstalledAppRepository {
 
     private val packageManager: PackageManager = context.packageManager
     private val iconCache = object : LruCache<String, Drawable>(100) {}

@@ -192,7 +192,7 @@ class NextAppUnlockTimeUseCase @Inject constructor() {
      * Calcula o próximo instante de liberação em um dia específico para regras [RuleType.PERMISSIVE].
      *
      * A liberação ocorre no início do primeiro intervalo de permissão futuro que ainda não começou.
-     * Se a regra for válida o dia todo, retorna o início do dia (00:00).
+     * Se a regra for válida o dia to.do, retorna o início do dia (00:00).
      *
      * @param day Dia em que a regra será avaliada.
      * @param rule Regra contendo os intervalos de permissão.

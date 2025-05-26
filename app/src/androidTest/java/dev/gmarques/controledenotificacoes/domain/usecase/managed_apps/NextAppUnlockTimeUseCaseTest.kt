@@ -546,7 +546,7 @@ class NextAppUnlockTimeUseCaseTest {
 
             timeRanges = listOf(
                 TimeRange(8, 0, 11, 45),
-                TimeRange(13, 0, 18, 0),// TODO: acho que o teste ta errado, veja o retorno
+                TimeRange(13, 0, 18, 0),
                 TimeRange(18, 1, 23, 59),
             ),
         )

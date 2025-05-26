@@ -182,14 +182,15 @@ object RuleValidator {
 
         // necessario colocar do maior pro menor pra verificar as interceçoes em apenas um de dois intervalos
         val sortedRanges = r.sortedByDescending { it.startInMinutes() }
-// TODO: da pra melhorar o tempo e complexidade desse algoritimo
-        for (i in 0 until sortedRanges.size - 1) {
+
+        for (i in 0..sortedRanges.size) {
+
             val range = sortedRanges[i]
-            for (j in i + 1 until sortedRanges.size) {
-                val other = sortedRanges[j]
-                if (range.startInMinutes() in other.asRange() || range.endInMinutes() in other.asRange()) {
-                    return IntersectedRangeException(range, other)
-                }
+            val nextRange = sortedRanges.getOrNull(i + 1)
+            if (nextRange == null) return null
+
+            if (range.startInMinutes() in nextRange.asRange() || range.endInMinutes() in nextRange.asRange()) {
+                return IntersectedRangeException(range, nextRange)
             }
         }
         return null

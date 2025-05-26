@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase
 
-import dev.gmarques.controledenotificacoes.domain.repository.AppRepository
+import dev.gmarques.controledenotificacoes.domain.repository.InstalledAppRepository
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +16,7 @@ import kotlin.test.assertEquals
 class GetInstalledAppsUseCaseTest {
 
     private lateinit var useCase: GetAllInstalledAppsUseCase
-    private lateinit var repository: AppRepository
+    private lateinit var repository: InstalledAppRepository
 
     @BeforeEach
     fun configurar() {

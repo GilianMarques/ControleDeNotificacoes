@@ -19,7 +19,6 @@ class AppNotificationAdapter : ListAdapter<AppNotification, AppNotificationAdapt
     inner class ViewHolder(private val binding: ItemAppNotificationBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(notification: AppNotification) = with(binding) {
-            // TODO: inicializar as strings apenas uma vez
             tvTitle.text = notification.title
             tvContent.text = notification.content
             tvTime.text = notification.timeFormatted()

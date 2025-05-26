@@ -7,13 +7,13 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.data.repository.AppNotificationRepositoryImpl
-import dev.gmarques.controledenotificacoes.data.repository.InstalledAppRepositoryImpl
+import dev.gmarques.controledenotificacoes.data.repository.InstalledInstalledAppRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.ManagedAppRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.PreferencesRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.RuleRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.UserRepositoryImpl
 import dev.gmarques.controledenotificacoes.domain.repository.AppNotificationRepository
-import dev.gmarques.controledenotificacoes.domain.repository.AppRepository
+import dev.gmarques.controledenotificacoes.domain.repository.InstalledAppRepository
 import dev.gmarques.controledenotificacoes.domain.repository.ManagedAppRepository
 import dev.gmarques.controledenotificacoes.domain.repository.PreferencesRepository
 import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
@@ -36,7 +36,7 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindAppRepository(impl: InstalledAppRepositoryImpl): AppRepository
+    abstract fun bindAppRepository(impl: InstalledInstalledAppRepositoryImpl): InstalledAppRepository
 
     @Binds
     @Singleton

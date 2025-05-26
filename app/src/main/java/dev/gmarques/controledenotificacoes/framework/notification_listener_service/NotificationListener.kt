@@ -41,7 +41,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     /**
      * Lê todas as notificações ativas no momento em que o serviço é conectado.
-     * Processa cada notificação ativa usando o método [manageNotification].
+     * Processa cada notificação ativa usando o mét.odo [manageNotification].
      */
     private fun readActiveNotifications() {
         val active = activeNotifications ?: return

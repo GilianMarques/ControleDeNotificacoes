@@ -9,7 +9,7 @@ import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
  * Em terça-feira, 15 de abril de 2025 as 14:56.
  * Interface da camada de domínio responsável por fornecer apps instalados no dispositivo.
  */
-interface AppRepository {
+interface InstalledAppRepository {
 
 
     /**

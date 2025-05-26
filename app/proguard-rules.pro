@@ -20,7 +20,3 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-# Necessary to be able to set 24-hour time in TimePicker
-# Only TimeRangePicker and HourFormat are kept
--keep class nl.joery.timerangepicker.TimeRangePicker { *; }
--keep class nl.joery.timerangepicker.TimeRangePicker$HourFormat { *; }
