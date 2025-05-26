@@ -52,6 +52,7 @@ android {
             signingConfig = signingConfigs.getByName("release")
             // sufixo no nome exibido no ícone
             resValue("string", "app_name", "Controle (Staging)")
+            resValue("color", "app_icon_bg_color", "#9A0098")
 
         }
 
