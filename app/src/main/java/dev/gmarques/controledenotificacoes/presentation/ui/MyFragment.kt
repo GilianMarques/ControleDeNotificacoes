@@ -2,6 +2,9 @@ package dev.gmarques.controledenotificacoes.presentation.ui
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -9,6 +12,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.net.toUri
 import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
@@ -24,6 +28,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
 import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
@@ -45,6 +50,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.Serializable
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 /**
  * Criado por Gilian Marques
@@ -113,11 +119,11 @@ open class MyFragment() : Fragment() {
             duration = 400
         }
 
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        blockAppIfNeeded()
     }
 
     private fun setupGoBackButton(ivGoBack: AppCompatImageView) {
@@ -345,5 +351,74 @@ open class MyFragment() : Fragment() {
             }).start()
     }
 
+    /**
+     *  Define o app como bloqueado com base em sua versao e configurações do remote config
+     */
+    private fun blockAppIfNeeded() {
+
+        collectFlow(App.context.remoteConfigValues) {
+            if (it == null || !it.blockApp) return@collectFlow
+
+            vibrator.error()
+            MaterialAlertDialogBuilder(requireActivity())
+                .setTitle(getString(R.string.Atencao))
+                .setMessage(
+                    getString(
+                        R.string.Esta_versao_do_app_foi_bloqueada_verifique_atualiza_es_na_play_store,
+                        getString(R.string.app_name)
+                    )
+                )
+                .setPositiveButton(getString(R.string.Ir_a_loja)) { dialog, _ ->
+                    openPlayStore()
+                }
+                .setNegativeButton(getString(R.string.Sair)) { dialog, _ ->
+                    exitProcess(0)
+                }
+                .setCancelable(false)
+                .show()
+        }
+
+    }
+
+    protected fun openPlayStore() {
+        val appPackageName = App.context.packageName
+        // TODO: otimizar depois dos testes
+
+        val playStoreLink = App.context.remoteConfigValues.value?.playStoreAppLink
+        if (!playStoreLink.isNullOrBlank()) {
+
+            try {
+
+                val intent = Intent(Intent.ACTION_VIEW, playStoreLink.toUri()).apply {
+                    addFlags(FLAG_ACTIVITY_NEW_TASK)
+                    setPackage("com.android.vending")
+                }
+                startActivity(intent)
+
+            } catch (_: ActivityNotFoundException) {
+
+                val intent = Intent(Intent.ACTION_VIEW, playStoreLink.toUri()).apply {
+                    addFlags(FLAG_ACTIVITY_NEW_TASK)
+                }
+                startActivity(intent)
+
+            }
+        } else try {
+
+            val intent = Intent(
+                Intent.ACTION_VIEW, "market://details?id=$appPackageName".toUri()
+            ).addFlags(FLAG_ACTIVITY_NEW_TASK)
+            intent.setPackage("com.android.vending")
+            startActivity(intent)
+
+        } catch (_: ActivityNotFoundException) {
+
+            val intent = Intent(
+                Intent.ACTION_VIEW, "https://play.google.com/store/apps/details?id=$appPackageName".toUri()
+            ).addFlags(FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+
+        }
+    }
 
 }

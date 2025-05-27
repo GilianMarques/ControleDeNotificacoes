@@ -78,6 +78,7 @@ data class NavigationRequirements(
     enum class Requirement {
         NONE,
         DATA_LOADED,
+        APP_NOT_BLOCKED,
         USER_LOGGED_IN;
     }
 }

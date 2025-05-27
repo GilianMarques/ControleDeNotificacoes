@@ -144,6 +144,9 @@
     <string name="Incluir_apps_gerenciados">Incluir apps gerenciados</string>
     <string name="Gerenciado">Gerenciado</string>
     <string name="Atencao">Atenção</string>
+    <string name="Esta_versao_do_app_foi_bloqueada_verifique_atualiza_es_na_play_store">Esta versão do app %1$s foi bloqueada, verifique atualizações na play store</string>
+    <string name="Ir_a_loja">Ir a loja</string>
+
     <string name="Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados">Um ou mais dos apps selecionados já estão sendo gerenciados. Aplicar uma nova regra a estes apps substituirá a regra existente.</string>
     <string name="Mais_x_apps">+%1$d apps</string>
     <string name="Preferencias">Preferências</string>
@@ -179,6 +182,7 @@
     <string name="_24h_dia">24h/dia</string>
     <string name="O_dia_inteiro">O dia inteiro</string>
     <string name="Voc_definiu_um_valor_inv_lido_para_o_intervalo_de_tempo">Você definiu um valor inválido para o intervalo (%1$d)</string>
+    <string name="Uma_nova_vers_o_est_dispon_vel">Uma nova versão está disponível</string>
 
 
 </resources>

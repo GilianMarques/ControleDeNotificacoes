@@ -36,6 +36,8 @@ class HomeViewModel @Inject constructor(
     @ApplicationContext context: Context,
 ) : ViewModel() {
 
+    var hasUpdateAvailableShown = false
+
     /**
      * Um aplicativo gerenciado pode ser desinstalado pelo usuário do dispositivo.
      * Caso isso aconteça, essa instância padrão é usada no lugar até que o usuário remova o aplicativo da lista de gerenciados

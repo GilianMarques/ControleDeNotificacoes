@@ -104,6 +104,7 @@ dependencies {
 
     implementation("com.firebaseui:firebase-ui-auth:9.0.0")
     implementation("com.google.firebase:firebase-crashlytics:19.4.3")
+    implementation("com.google.firebase:firebase-config:22.1.2")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
 

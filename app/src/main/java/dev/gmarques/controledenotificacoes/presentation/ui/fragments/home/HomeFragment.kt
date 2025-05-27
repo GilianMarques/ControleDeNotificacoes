@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.doOnPreDraw
+import androidx.core.view.isEmpty
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
@@ -24,6 +26,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
@@ -40,6 +43,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.joda.time.LocalDateTime
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -99,7 +103,30 @@ class HomeFragment : MyFragment() {
             observeViewModel()
             setupFabAddManagedApp()
             setupSearch()
+            notifyAboutUpdateVersionIfNeed()
         }
+    }
+
+    private fun notifyAboutUpdateVersionIfNeed() = lifecycleScope.launch {
+        delay(1000)
+
+        if (viewModel.hasUpdateAvailableShown) return@launch
+
+        val doNotShow = -1L
+        val date = readPreferenceUseCase(Preferences.SHOW_UPDATE_DIALOG_AT_DATE, doNotShow)
+        if (date == doNotShow || date > System.currentTimeMillis()) return@launch
+
+        viewModel.hasUpdateAvailableShown = true
+        Log.d("USUK", "HomeFragment.notifyAboutUpdateVersionIfNeed: ${LocalDateTime(date)}")
+        vibrator.success()
+        Snackbar.make(requireView(), getString(R.string.Uma_nova_vers_o_est_dispon_vel), Snackbar.LENGTH_LONG)
+            .setAnchorView(binding.fabAdd)
+            .setAction(getString(R.string.Ir_a_loja)) {
+                savePreferenceUseCase(Preferences.SHOW_UPDATE_DIALOG_AT_DATE, doNotShow)
+                openPlayStore()
+            }.show()
+
+
     }
 
     fun setupPopUpMenu() {
@@ -234,10 +261,9 @@ class HomeFragment : MyFragment() {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch {
-            delay(1000)
 
-            binding.containerWarnings.removeAllViews()
+        if (binding.containerWarnings.isEmpty()) lifecycleScope.launch {
+            delay(1000)
 
             if (!requireMainActivity().isNotificationListenerEnabled()) {
                 showListenNotificationWarning()

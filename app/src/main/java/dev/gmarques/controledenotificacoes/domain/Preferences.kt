@@ -14,6 +14,7 @@ object Preferences {
 
     const val SCHEDULED_ALARMS = "scheduled_alarms"
     const val LAST_SELECTED_RULE = "last_selected_rule"
+    const val SHOW_UPDATE_DIALOG_AT_DATE = "show_update_dialog_at_date"
 
     const val SHOW_DIALOG_NOT_PERMISSION_DENIED = "dialog_not_permission_denied"
     const val SHOW_WARNING_CARD_POST_NOTIFICATION = "show_warning_card_post_notification"

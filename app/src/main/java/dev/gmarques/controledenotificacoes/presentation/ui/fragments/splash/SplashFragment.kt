@@ -12,15 +12,16 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentSplashBinding
 import dev.gmarques.controledenotificacoes.domain.model.User
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeViewModel
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.login.LoginFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.login.LoginFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
 
 /**
  * Criado por Gilian Marques
@@ -47,6 +48,7 @@ class SplashFragment : MyFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         observeViewModelEvents()
+        observeRemoteConfig()
         observeNavigationEvent()
         observeSharedViewModel()
 
@@ -56,6 +58,19 @@ class SplashFragment : MyFragment() {
         } else viewModel.checkLoginState()
 
 
+    }
+
+    /**
+     * Observa as configurações remotas do aplicativo.
+     * Esta função coleta um fluxo de valores de configuração remota e atualiza os requisitos de navegação
+     * com base no status de bloqueio do aplicativo.
+     */
+    private fun observeRemoteConfig() {
+        collectFlow(App.context.remoteConfigValues) {
+            it?.blockApp?.let {
+                if (!it) viewModel.addNavigationRequirement(NavigationRequirements.Requirement.APP_NOT_BLOCKED)
+            }
+        }
     }
 
     /**
@@ -121,7 +136,7 @@ class SplashFragment : MyFragment() {
          */
         with(binding) {
 
-            val nome = user.name.split(" ").firstOrNull().orEmpty().ifBlank { "?" }
+            user.name.split(" ").firstOrNull().orEmpty().ifBlank { "?" }
 
             vibrator.success()
 
