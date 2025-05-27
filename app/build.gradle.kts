@@ -19,7 +19,7 @@ android {
         applicationId = "dev.gmarques.controledenotificacoes"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
+        versionCode = 2
         versionName = "0.0.1-beta"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -144,6 +144,9 @@ dependencies {
     // Views/Fragments integration
     implementation("androidx.navigation:navigation-fragment-ktx:2.9.0")
     implementation("androidx.navigation:navigation-ui-ktx:2.9.0")
+
+    // Permite usar NavDeepLinkBuilder para abrir fragmentos especificos via notificação com argumentos
+    implementation("androidx.navigation:navigation-common-ktx:2.9.0")
 
     // Feature module support for Fragments
     implementation("androidx.navigation:navigation-dynamic-features-fragment:2.9.0")

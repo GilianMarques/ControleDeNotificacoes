@@ -1,15 +1,16 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.net.toUri
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isEmpty
 import androidx.core.view.isGone
@@ -28,6 +29,7 @@ import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningBatteryOptimizationsBinding
@@ -43,7 +45,6 @@ import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.joda.time.LocalDateTime
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -53,11 +54,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeFragment : MyFragment() {
 
-
     private val viewModel: HomeViewModel by activityViewModels()
     private lateinit var binding: FragmentHomeBinding
     private lateinit var adapter: ManagedAppsAdapter
-
 
     @Inject
     lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
@@ -108,7 +107,6 @@ class HomeFragment : MyFragment() {
     }
 
     private fun notifyAboutUpdateVersionIfNeed() = lifecycleScope.launch {
-        delay(1000)
 
         if (viewModel.hasUpdateAvailableShown) return@launch
 
@@ -117,9 +115,10 @@ class HomeFragment : MyFragment() {
         if (date == doNotShow || date > System.currentTimeMillis()) return@launch
 
         viewModel.hasUpdateAvailableShown = true
-        Log.d("USUK", "HomeFragment.notifyAboutUpdateVersionIfNeed: ${LocalDateTime(date)}")
+
         vibrator.success()
         Snackbar.make(requireView(), getString(R.string.Uma_nova_vers_o_est_dispon_vel), Snackbar.LENGTH_LONG)
+            .setDuration(10_000)
             .setAnchorView(binding.fabAdd)
             .setAction(getString(R.string.Ir_a_loja)) {
                 savePreferenceUseCase(Preferences.SHOW_UPDATE_DIALOG_AT_DATE, doNotShow)
@@ -129,17 +128,17 @@ class HomeFragment : MyFragment() {
 
     }
 
-    fun setupPopUpMenu() {
+    private fun setupPopUpMenu() {
         val popupMenu = popupMenu {
 
 
             section {
 
                 item {
-                    label = getString(R.string.Atribuicoes)
-                    icon = R.drawable.vec_add
+                    label = getString(R.string.Feedback)
+                    icon = R.drawable.vec_feedback
                     callback = {
-                        Toast.makeText(requireContext(), "implementar...", Toast.LENGTH_SHORT).show()
+                        showHowToFeedbackDialog()
                     }
                 }
             }
@@ -335,5 +334,42 @@ class HomeFragment : MyFragment() {
             binding.containerWarnings.removeView(view)
         }
     }
+
+    private fun showHowToFeedbackDialog() {
+        MaterialAlertDialogBuilder(requireActivity())
+            .setTitle(getString(R.string.Enviar_feedback))
+            .setIcon(R.drawable.vec_info)
+            .setMessage(getString(R.string.Como_voc_gostaria_de_enviar_seu_feedback))
+            .setPositiveButton(getString(R.string.enviar_um_e_mail_ao_desenvolvedor)) { _, _ ->
+                openMailToSendFeedback()
+            }
+            .setNegativeButton(getString(R.string.Comentar_na_play_store)) { _, _ ->
+                openPlayStore()
+            }
+            .show()
+    }
+
+    private fun openMailToSendFeedback() {
+        val email = App.context.remoteConfigValues.value?.contactEmail
+        if (email == null) return
+
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = "mailto:".toUri()
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+            putExtra(
+                Intent.EXTRA_TEXT,
+                (getString(R.string.Insira_aqui_suas_duvidas_sugestoes_de_melhorias_e_funcionalidades_ou_problemas_que_ocorreram_durante_o_uso))
+            )
+            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.Feedback_do_app))
+        }
+
+        if (intent.resolveActivity(App.context.packageManager) != null) {
+            App.context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        } else {
+            Toast.makeText(App.context, getString(R.string.Nenhum_app_de_e_mail_encontrado), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
 
 }

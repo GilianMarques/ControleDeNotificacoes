@@ -80,9 +80,7 @@ class MainActivity() : AppCompatActivity() {
         }
 
         observeNavigationChanges()
-
-        ContextCompat.startForegroundService(this, Intent(this, NotificationServiceManager::class.java))
-
+        startNotificationListenerServiceManager()
     }
 
     private fun observeNavigationChanges() {
@@ -113,7 +111,6 @@ class MainActivity() : AppCompatActivity() {
         backgroundChanged = true
     }
 
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -135,6 +132,8 @@ class MainActivity() : AppCompatActivity() {
                 } else {
                     savePreferenceUseCase(SHOW_WARNING_CARD_POST_NOTIFICATION, false)
                 }
+            } else {
+                restartNotificationListenerServiceManager()
             }
 
         }
@@ -194,6 +193,19 @@ class MainActivity() : AppCompatActivity() {
             }
             startActivity(intent)
         }
+    }
+
+    fun startNotificationListenerServiceManager() {
+        ContextCompat.startForegroundService(this, Intent(this, NotificationServiceManager::class.java))
+    }
+
+    fun restartNotificationListenerServiceManager() {
+
+        val intent = Intent(this, NotificationServiceManager::class.java)
+        stopService(intent)
+
+        startNotificationListenerServiceManager()
+
     }
 
 }

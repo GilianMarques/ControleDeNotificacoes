@@ -183,6 +183,14 @@
     <string name="O_dia_inteiro">O dia inteiro</string>
     <string name="Voc_definiu_um_valor_inv_lido_para_o_intervalo_de_tempo">Você definiu um valor inválido para o intervalo (%1$d)</string>
     <string name="Uma_nova_vers_o_est_dispon_vel">Uma nova versão está disponível</string>
+    <string name="Feedback">Feedback</string>
+    <string name="Como_voc_gostaria_de_enviar_seu_feedback">Como você gostaria de enviar seu feedback?</string>
+    <string name="enviar_um_e_mail_ao_desenvolvedor">Enviar um e-mail ao desenvolvedor</string>
+    <string name="Comentar_na_play_store">Comentar na Play Store</string>
+    <string name="Enviar_feedback">Enviar feedback</string>
+    <string name="Insira_aqui_suas_duvidas_sugestoes_de_melhorias_e_funcionalidades_ou_problemas_que_ocorreram_durante_o_uso">Insira aqui suas dúvidas, sugestões de melhorias e funcionalidades ou problemas que ocorreram durante o uso.\n\nEm caso de erros no app, forneça as instruções de como recriar o problema, explique o passo-a-passo do que você fez quando o app falhou. Essas instruções ajudam a recriar a situação para poder corrigi-la.</string>
+    <string name="Feedback_do_app">Feedback do App</string>
+    <string name="Nenhum_app_de_e_mail_encontrado">Nenhum app de e-mail encontrado</string>
 
 
 </resources>

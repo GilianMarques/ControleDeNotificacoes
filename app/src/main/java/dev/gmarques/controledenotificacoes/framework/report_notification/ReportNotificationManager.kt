@@ -12,7 +12,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.createBitmap
-import androidx.core.net.toUri
+import androidx.core.os.bundleOf
+import androidx.navigation.NavDeepLinkBuilder
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import javax.inject.Inject
@@ -58,7 +59,7 @@ class ReportNotificationManager @Inject constructor(
             .setOngoing(false)
             .setAutoCancel(true)
             .addAction(createOpenTargetAppAction(packageName))
-            .addAction(createOpenMyAppAction(packageName))
+            .addAction(createOpenNotificationHistoryAction(packageName))
             .build()
     }
 
@@ -99,17 +100,13 @@ class ReportNotificationManager @Inject constructor(
         ).build()
     }
 
-    private fun createOpenMyAppAction(packageName: String): NotificationCompat.Action {
-        val deepLinkUri = "app://app/details/$packageName".toUri()
+    private fun createOpenNotificationHistoryAction(packageName: String): NotificationCompat.Action {
 
-        val intent = Intent(Intent.ACTION_VIEW, deepLinkUri).apply {
-            setPackage(context.packageName)
-        }
-
-        val pendingIntent = PendingIntent.getActivity(
-            context, 1, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
+        val pendingIntent = NavDeepLinkBuilder(context)
+            .setGraph(R.navigation.nav_graph)
+            .setDestination(R.id.viewManagedAppFragment)
+            .setArguments(bundleOf("packageId" to packageName))
+            .createPendingIntent()
 
         return NotificationCompat.Action.Builder(
             R.drawable.ic_launcher_foreground,
@@ -117,6 +114,7 @@ class ReportNotificationManager @Inject constructor(
             pendingIntent
         ).build()
     }
+
 
     private fun createFallbackAction(label: String): NotificationCompat.Action {
         val emptyIntent = PendingIntent.getActivity(
