@@ -269,11 +269,6 @@ class HomeFragment : MyFragment() {
                 return@launch
             }
 
-            if (!requireMainActivity().isAppInsetFromBatterySaving()) {
-                showBatteryRestrictionsWarning()
-                return@launch
-            }
-
             if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
                 lifecycleScope.launch {
                     if (readPreferenceUseCase(Preferences.SHOW_WARNING_CARD_POST_NOTIFICATION, true)) {
@@ -282,6 +277,12 @@ class HomeFragment : MyFragment() {
                     return@launch
                 }
             }
+
+            if (!requireMainActivity().isAppInsetFromBatterySaving()) {
+                showBatteryRestrictionsWarning()
+                return@launch
+            }
+
         }
     }
 
