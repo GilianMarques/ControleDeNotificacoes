@@ -144,8 +144,7 @@ class SplashFragment : MyFragment() {
 
             tvUserName.isVisible = true
 
-            ivProfilePicture.isVisible = true
-            ivAppLogo.isVisible = false
+
 
 
             user.photoUrl.let { photoUrl ->
@@ -156,6 +155,9 @@ class SplashFragment : MyFragment() {
                     .into(ivProfilePicture)
 
             }
+
+            delay(100)
+            ivProfilePicture.isVisible = true
         }
     }
 

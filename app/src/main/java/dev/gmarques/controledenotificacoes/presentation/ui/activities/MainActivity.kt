@@ -91,7 +91,8 @@ class MainActivity() : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { navController, destination, bundle ->
             currentFragmentLabel = destination.label.toString()
-            applyDefaultBackgroundColor()
+
+            if (currentFragmentLabel != getString(R.string.Splash_fragment)) applyDefaultBackgroundColor()
 
         }
     }
