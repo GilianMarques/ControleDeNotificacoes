@@ -20,11 +20,10 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.0.1-beta"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // Carrego o arquivo local de configuração do keystore
     val keystorePropertiesFile = rootProject.file("keystore.properties")
     val keystoreProperties = Properties()
     if (keystorePropertiesFile.exists()) {
@@ -50,10 +49,8 @@ android {
             applicationIdSuffix = ".staging"
             versionNameSuffix = "-staging"
             signingConfig = signingConfigs.getByName("release")
-            // sufixo no nome exibido no ícone
             resValue("string", "app_name", "Controle (Staging)")
             resValue("color", "app_icon_bg_color", "#9A0098")
-
         }
 
         getByName("release") {
