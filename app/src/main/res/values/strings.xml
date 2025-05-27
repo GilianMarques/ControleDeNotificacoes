@@ -3,7 +3,7 @@
     <string name="app_name">Controle de notificações</string>
     <string name="O_nome_n_o_pode_ficar_em_branco">O nome não pode ficar em branco.</string>
     <string name="O_nome_deve_ter_entre_e_caracteres">O nome deve ter entre %1$d e %2$d caracteres.</string>
-    <string name="Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados">As notificações só serão exibidas nos dias e horários selecionados.</string>
+    <string name="Permite_mostrar_as_notifica_es_nos_dias_e_horarios_selecionados">Notificações serão exibidas apenas nos dias e horários selecionados.</string>
     <string name="Permissiva">Permissiva</string>
     <string name="Tipo_de_regra">Tipo de regra</string>
     <string name="Restritiva">Restritiva</string>
@@ -22,7 +22,7 @@
     <string name="_11_30">11:30</string>
     <string name="as">às</string>
     <string name="Bot_o_para_remover_o_intervalo_de_tempo">Botão para remover o intervalo de tempo</string>
-    <string name="As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados">Bloquearemos as notificações nos dias e horários selecionados.</string>
+    <string name="As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados">Notificações serão bloqueadas nos dias e horários selecionados.</string>
     <string name="Selecione_o_fim_do_intervalo_de_tempo">Selecione o fim do intervalo de tempo</string>
     <string name="Selecione_o_in_cio_do_intervalo_de_tempo">Selecione o início do intervalo de tempo</string>
     <string name="format_time">%1$s:%2$s</string>
@@ -191,6 +191,9 @@
     <string name="Insira_aqui_suas_duvidas_sugestoes_de_melhorias_e_funcionalidades_ou_problemas_que_ocorreram_durante_o_uso">Insira aqui suas dúvidas, sugestões de melhorias e funcionalidades ou problemas que ocorreram durante o uso.\n\nEm caso de erros no app, forneça as instruções de como recriar o problema, explique o passo-a-passo do que você fez quando o app falhou. Essas instruções ajudam a recriar a situação para poder corrigi-la.</string>
     <string name="Feedback_do_app">Feedback do App</string>
     <string name="Nenhum_app_de_e_mail_encontrado">Nenhum app de e-mail encontrado</string>
+    <string name="como_adicionar_o_primeiro_app">
+    Como adicionar o primeiro app:\n\n1. Crie uma regra:\nRegras determinam os dias e horários em que um app pode ou não emitir notificações.\n\n2. Aplique a regra a um ou mais apps:\nVocê pode, por exemplo, criar uma regra para os seus apps pessoais e outra para apps de trabalho. Também é possível definir uma regra individual para cada aplicativo. A escolha é toda sua!
+</string>
 
 
 </resources>

@@ -84,6 +84,7 @@ class AddManagedAppsFragment() : MyFragment() {
         setupConcludeFab()
         observeViewModel()
         loadLastUsedOrFirstRule()
+        showHintDialog(Preferences.SHOW_HINT_HOW_RULES_AND_MANAGED_APPS_WORK, getString(R.string.como_adicionar_o_primeiro_app))
     }
 
 
