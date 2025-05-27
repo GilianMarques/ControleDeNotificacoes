@@ -53,12 +53,13 @@
         android:layout_marginBottom="6dp"
         android:elevation="19dp"
         android:fontFamily="@font/urbanist_extrabold"
+        android:maxLines="1"
         android:textSize="24sp"
         android:transitionName="username"
         app:layout_constraintBottom_toBottomOf="@id/iv_profile_picture"
         app:layout_constraintEnd_toStartOf="@id/iv_menu"
         app:layout_constraintStart_toEndOf="@id/iv_profile_picture"
-        tools:text="Gilian Marques" />
+        tools:text="Gilian Marques Fernandes" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_menu"
@@ -176,8 +177,8 @@
                 android:layout_height="0dp"
                 android:contentDescription="@string/Lista_de_aplicativos_instalados_no_dispositivo"
                 android:paddingStart="4dp"
-                android:paddingEnd="4dp"
                 android:paddingTop="4dp"
+                android:paddingEnd="4dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

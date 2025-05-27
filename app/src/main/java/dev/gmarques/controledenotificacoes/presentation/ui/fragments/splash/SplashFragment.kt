@@ -141,11 +141,7 @@ class SplashFragment : MyFragment() {
             vibrator.success()
 
             tvUserName.text = user.name
-
             tvUserName.isVisible = true
-
-
-
 
             user.photoUrl.let { photoUrl ->
                 Glide.with(root.context)

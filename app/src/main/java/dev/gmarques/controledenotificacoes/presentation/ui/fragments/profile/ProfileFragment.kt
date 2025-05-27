@@ -17,7 +17,6 @@ import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
 import dev.gmarques.controledenotificacoes.databinding.FragmentProfileBinding
-import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.LogOffUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -28,7 +27,6 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.jvm.java
 
 @AndroidEntryPoint
 class ProfileFragment : MyFragment() {
@@ -88,6 +86,11 @@ class ProfileFragment : MyFragment() {
         setupLogOffButton()
         setupResetHintsButton()
         observeEvents()
+        setupVersion()
+    }
+
+    private fun setupVersion() {
+        binding.tvVersion.text = BuildConfig.VERSION_NAME
     }
 
     private fun setupResetHintsButton() = with(binding) {
@@ -105,7 +108,8 @@ class ProfileFragment : MyFragment() {
             when (event) {
                 is Event.PreferencesCleaned -> {
                     vibrator.success()
-                    Snackbar.make(binding.nsv, getString(R.string.Os_di_logos_de_ajuda_ser_o_re_exibidos), Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(binding.nsv, getString(R.string.Os_di_logos_de_ajuda_ser_o_re_exibidos), Snackbar.LENGTH_LONG)
+                        .show()
                 }
             }
         }
