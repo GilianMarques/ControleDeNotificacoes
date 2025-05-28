@@ -48,4 +48,5 @@ class BootReceiver : BroadcastReceiver(), CoroutineScope by MainScope() {
             context.startService(serviceIntent)
         }
     }
+
 }

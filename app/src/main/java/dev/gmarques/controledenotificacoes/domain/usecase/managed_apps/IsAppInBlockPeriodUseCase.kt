@@ -1,19 +1,23 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAllDayRule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType.PERMISSIVE
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType.RESTRICTIVE
-import java.util.Calendar
+import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.weekDayNumber
+import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.withSecondsAndMillisSetToZero
+import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
  * Em sexta-feira, 23 de maio de 2025 as 17:46.
  */
-class CheckAppInBlockPeriodUseCase @Inject constructor() {
+class IsAppInBlockPeriodUseCase @Inject constructor() {
+
     /**
      * Verifica se o aplicativo está dentro de um período de bloqueio com base na regra e horario (momento) da chamada.
      *
@@ -33,19 +37,22 @@ class CheckAppInBlockPeriodUseCase @Inject constructor() {
      * Se for Segunda-feira às 11:00, `isAppInBlockPeriod()` retornará `true`.
      * Se for Quarta-feira às 11:00, `isAppInBlockPeriod()` retornará `false`.
      */
-    operator fun invoke(rule: Rule): Boolean {
+    operator fun invoke(rule: Rule, baseDate: LocalDateTime = LocalDateTime()): Boolean {
 
-        val now = Calendar.getInstance()
-        val currentDay = now.get(Calendar.DAY_OF_WEEK)
-        val currentMinutes = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
+        val now = LocalDateTime(baseDate).withSecondsAndMillisSetToZero()
+        val currentDay = now.weekDayNumber()
+        val currentMinutes = now.hourOfDay * 60 + now.minuteOfHour
 
         val isDayMatched = rule.days.any { it.dayNumber == currentDay }
 
         if (!isDayMatched) {
+            //se o dia nao ta na lista de dias aplicados na regra
+            // se a regra for permissiva retorna true: o app esta em periodo de bloqueio.
+            // se a regra for restritiva retorna false: o app nao esta em periodo de bloqueio.
             return rule.ruleType == PERMISSIVE
         }
 
-        val isTimeMatched = rule.timeRanges.any { range ->
+        val isTimeMatched = if (rule.isAllDayRule()) true else rule.timeRanges.any { range ->
             currentMinutes in range.startInMinutes()..range.endInMinutes()
         }
 

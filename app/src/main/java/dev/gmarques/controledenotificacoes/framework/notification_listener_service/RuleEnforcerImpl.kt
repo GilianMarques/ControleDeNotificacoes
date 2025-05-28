@@ -28,11 +28,11 @@ class RuleEnforcerImpl @Inject constructor(
         removeNotificationCallback: (AppNotification, Rule) -> Any,
     ) = withContext(IO) {
 
-        val managedApp = getManagedAppByPackageIdUseCase(notification.packageId)
+
+    val managedApp = getManagedAppByPackageIdUseCase(notification.packageId)
         if (managedApp == null) {
             return@withContext
         }
-
         val rule = getRuleByIdUseCase(managedApp.ruleId)
             ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
 

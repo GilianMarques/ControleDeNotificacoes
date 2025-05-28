@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
+import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 
 /**
@@ -52,9 +53,9 @@ object RuleExtensionFun {
      */
     fun Rule.isAppInBlockPeriod(): Boolean {
 
-        val checkAppInBlockPeriodUseCase = HiltEntryPoints.checkAppInBlockPeriodUseCase()
+        val isAppInBlockPeriodUseCase = HiltEntryPoints.isAppInBlockPeriodUseCase()
 
-        return checkAppInBlockPeriodUseCase(rule = this)
+        return isAppInBlockPeriodUseCase(rule = this)
     }
 
     /**
@@ -75,4 +76,16 @@ object RuleExtensionFun {
         if (name.isNotBlank()) return name
         return HiltEntryPoints.generateRuleNameUseCase()(this)
     }
+
+    /**
+     * Verifica se a regra representa um dia de permissão/bloqueio integral, ou seja, 24 horas.
+     *
+     * @return `true` se a regra contiver ao menos um intervalo com flag `allDay = true`
+     */
+    fun Rule.isAllDayRule(): Boolean = timeRanges.any { it.allDay }
+
+    /**
+     * Retorna a lista de [TimeRange]s ordenada pelo horário de início.
+     */
+    fun Rule.sortedRanges() = timeRanges.sortedBy { it.startInMinutes() }
 }

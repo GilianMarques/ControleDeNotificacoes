@@ -11,6 +11,7 @@ import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.DeletePreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
@@ -42,6 +43,11 @@ class ScheduleManagerImpl @Inject constructor(
      * @param millis O horário em milissegundos em que o alarme deve disparar.
      */
     override fun scheduleAlarm(packageId: String, millis: Long) {
+        if (millis == NextAppUnlockTimeUseCase.INFINITE) {
+            Log.d("USUK", "ScheduleManagerImpl.scheduleAlarm: not schedule alarm for $packageId 'cause it always blocked")
+            return
+        }
+
         Log.d("USUK", "ScheduleManagerImpl.scheduleAlarm: $packageId scheduled at ${LocalDateTime(millis)}")
 
         cancelAlarm(packageId) // avoid multiple schedules for the same package

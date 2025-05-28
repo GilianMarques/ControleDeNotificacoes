@@ -11,7 +11,7 @@ import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
  * Criado por Gilian Marques
@@ -29,9 +29,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        // Conectado — serviço pronto
-        //   Log.d("USUK", "NotificationListener.".plus("onListenerConnected() "))
-
+        Log.d("USUK", "NotificationListener.onListenerConnected: ")
         readActiveNotifications()
     }
 
@@ -64,7 +62,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
         val not = AppNotification(pkg, title, content, System.currentTimeMillis())
 
-        launch {
+        runBlocking {
             ruleEnforcer.enforceOnNotification(not) { not, rule ->
                 Log.d("USUK", "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.packageId}")
                 cancelNotification(notification.key)
@@ -73,9 +71,8 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         }
     }
 
-
     override fun onListenerDisconnected() {
-        cancel() //cancela corrotinas em execução quando o serviço é desconectado
+        cancel()
         super.onListenerDisconnected()
         Log.d("USUK", "NotificationListener.".plus("onListenerDisconnected() "))
     }

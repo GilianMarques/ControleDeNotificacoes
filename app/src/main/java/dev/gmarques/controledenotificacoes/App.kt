@@ -101,5 +101,7 @@ class App() : Application(), CoroutineScope by MainScope() {
             else System.currentTimeMillis() + 2 * 60 * 60 * 1_000L /*2 horas*/
         )
     }
+
+
 }
 

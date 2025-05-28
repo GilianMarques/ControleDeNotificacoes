@@ -1,13 +1,17 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 
-import android.icu.util.Calendar
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAllDayRule
+import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.sortedRanges
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase.Companion.INFINITE
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase.Companion.REPEAT_COUNT
+import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.at
+import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.weekDayNumber
+import dev.gmarques.controledenotificacoes.framework.LocalDateTimeExtFuns.withSecondsAndMillisSetToZero
 import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
@@ -246,40 +250,4 @@ class NextAppUnlockTimeUseCase @Inject constructor() {
         return timeRange.endInMinutes() + 1 == sortedTimeRanges.getOrNull(index + 1)?.startInMinutes()
     }
 
-    /**
-     * Retorna um novo [LocalDateTime] com os valores de hora e minuto definidos conforme os parâmetros.
-     *
-     * @param hour Hora desejada (0–23)
-     * @param minute Minuto desejado (0–59)
-     */
-    private fun LocalDateTime.at(hour: Int, minute: Int): LocalDateTime = this.withHourOfDay(hour).withMinuteOfHour(minute)
-
-    /**
-     * Verifica se a regra representa um dia de permissão/bloqueio integral, ou seja, 24 horas.
-     *
-     * @return `true` se a regra contiver ao menos um intervalo com flag `allDay = true`
-     */
-    private fun Rule.isAllDayRule(): Boolean = timeRanges.any { it.allDay }
-
-    /**
-     * Retorna a lista de [TimeRange]s ordenada pelo horário de início.
-     */
-    private fun Rule.sortedRanges() = timeRanges.sortedBy { it.startInMinutes() }
-
-    /**
-     * Zera segundos e milissegundos de um [LocalDateTime].
-     * Útil para garantir consistência em comparações e testes.
-     */
-    private fun LocalDateTime.withSecondsAndMillisSetToZero(): LocalDateTime {
-        return this.withSecondOfMinute(0).withMillisOfSecond(0)
-    }
-
-    /**
-     * Retorna o número do dia da semana correspondente ao [LocalDateTime],
-     * utilizando a enumeração do Android `Calendar.DAY_OF_WEEK` (1 = Domingo, 7 = Sábado).
-     */
-    private fun LocalDateTime.weekDayNumber(): Int {
-        return Calendar.getInstance().apply { timeInMillis = this@weekDayNumber.toDate().time }
-            .get(Calendar.DAY_OF_WEEK)
-    }
 }

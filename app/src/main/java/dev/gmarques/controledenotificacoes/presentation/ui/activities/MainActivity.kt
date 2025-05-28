@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
-import android.util.Log
 import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -87,20 +86,9 @@ class MainActivity() : AppCompatActivity() {
         startNotificationListenerServiceManager()
     }
 
-    override fun onPause() {
-        Log.d("USUK", "MainActivity.onPause: ")
-        super.onPause()
-    }
-
     override fun onStop() {
-        Log.d("USUK", "MainActivity.onStop: ")
         requestIgnoreBatteryOptimizationsJob?.cancel()
         super.onStop()
-    }
-
-    override fun onResume() {
-        Log.d("USUK", "MainActivity.onResume: ")
-        super.onResume()
     }
 
     private fun observeNavigationChanges() {

@@ -4,7 +4,7 @@ import dagger.hilt.android.EntryPointAccessors
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.domain.framework.notification_service.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.CheckAppInBlockPeriodUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.IsAppInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
@@ -55,8 +55,8 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
     override fun nextAppUnlockUseCase(): NextAppUnlockTimeUseCase =
         entryPoint<UseCasesEntryPoint>().nextAppUnlockUseCase()
 
-    override fun checkAppInBlockPeriodUseCase(): CheckAppInBlockPeriodUseCase =
-        entryPoint<UseCasesEntryPoint>().checkAppInBlockPeriodUseCase()
+    override fun isAppInBlockPeriodUseCase(): IsAppInBlockPeriodUseCase =
+        entryPoint<UseCasesEntryPoint>().isAppInBlockPeriodUseCase()
 
     override fun generateRuleNameUseCase(): GenerateRuleDescriptionUseCase =
         entryPoint<UseCasesEntryPoint>().generateRuleNameUseCase()

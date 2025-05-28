@@ -8,18 +8,18 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
 import dev.gmarques.controledenotificacoes.framework.RuleStringsProviderImpl
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class GenerateRuleNameUseCaseTest {
+class GenerateRuleDescriptionUseCaseTest {
 
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val ruleStringsProvider = RuleStringsProviderImpl(context)
-    private val useCase = GenerateRuleNameUseCase(ruleStringsProvider)
+    private val useCase = GenerateRuleDescriptionUseCase(ruleStringsProvider)
 
     @Test
     fun testReturnedName() {
@@ -54,7 +54,7 @@ class GenerateRuleNameUseCaseTest {
             val name = useCase(it.first)
             val name2 = it.second
 
-            Log.d("USUK", "GenerateRuleNameUseCaseTest.tesReturnedName: \n$name\n$name2")
+            Log.d("USUK", "GenerateRuleDescriptionUseCaseTest.tesReturnedName: \n$name\n$name2")
             assertEquals("valores '$name' '$name2'", name, name2)
         }
     }
