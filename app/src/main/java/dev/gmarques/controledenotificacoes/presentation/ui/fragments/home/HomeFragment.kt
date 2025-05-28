@@ -244,7 +244,7 @@ class HomeFragment : MyFragment() {
 
             lifecycleScope.launch {
                 delay(300)
-                binding.emptyView.parent.isGone = apps?.size != 0
+                binding.emptyView.isGone = apps?.size != 0
 
             }
         }

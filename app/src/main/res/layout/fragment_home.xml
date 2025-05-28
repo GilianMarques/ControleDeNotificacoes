@@ -6,16 +6,6 @@
     android:layout_height="match_parent"
     tools:background="?attr/AppColorBackground">
 
-    <include
-        android:id="@+id/empty_view"
-        layout="@layout/view_empty"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_profile_picture"
         android:layout_width="64dp"
@@ -26,7 +16,7 @@
         android:layout_marginBottom="16dp"
         android:background="@drawable/back_profile_picture"
         android:contentDescription="@string/Foto_de_perfil_do_usuario"
-        android:elevation="20dp"
+        android:elevation="5dp"
         android:padding="3dp"
         android:transitionName="profile_picture"
         app:layout_constraintStart_toStartOf="parent"
@@ -101,7 +91,7 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:elevation="1dp"
+        android:elevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider">
 
@@ -153,11 +143,52 @@
             android:orientation="vertical"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/empty_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:elevation="1dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_art"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:elevation="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/art_empty" />
+
+                <TextView
+                    android:id="@+id/tv_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:elevation="10dp"
+                    android:fontFamily="@font/urbanist_extrabold"
+                    android:maxWidth="350dp"
+                    android:text="@string/Clique_no_bot_o_para_configurar_o_primeiro_app"
+                    android:textAlignment="center"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="@id/iv_art"
+                    app:layout_constraintStart_toStartOf="@id/iv_art"
+                    app:layout_constraintTop_toBottomOf="@id/iv_art" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <FrameLayout
                 android:id="@+id/container_warnings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:animateLayoutChanges="true"
+                android:elevation="3dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
