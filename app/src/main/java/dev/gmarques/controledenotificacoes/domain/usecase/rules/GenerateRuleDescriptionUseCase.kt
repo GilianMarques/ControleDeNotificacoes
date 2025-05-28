@@ -10,9 +10,10 @@ import javax.inject.Inject
  * Criado por Gilian Marques
  * Em sexta-feira, 04 de abril de 2025 as 17:43.
  */
-class GenerateRuleNameUseCase @Inject constructor(
+class GenerateRuleDescriptionUseCase @Inject constructor(
     private val ruleStringsProvider: RuleStringsProvider,
 ) {
+
     operator fun invoke(rule: Rule): String {
         val formattedDays = formatCondensedDays(rule.days)
         val range = formatTimeRanges(rule)
