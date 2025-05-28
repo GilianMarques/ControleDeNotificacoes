@@ -2,7 +2,6 @@ package dev.gmarques.controledenotificacoes.presentation.ui.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 import android.content.pm.PackageManager
@@ -31,6 +30,8 @@ import dev.gmarques.controledenotificacoes.domain.Preferences.SHOW_WARNING_CARD_
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -47,6 +48,7 @@ class MainActivity() : AppCompatActivity() {
     private lateinit var splashLabel: String
     private lateinit var homeLabel: String
     private var currentFragmentLabel = ""
+    private var requestIgnoreBatteryOptimizationsJob: Job? = null
 
     @Inject
     lateinit var readPreferenceUseCase: ReadPreferenceUseCase
@@ -83,6 +85,22 @@ class MainActivity() : AppCompatActivity() {
 
         observeNavigationChanges()
         startNotificationListenerServiceManager()
+    }
+
+    override fun onPause() {
+        Log.d("USUK", "MainActivity.onPause: ")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        Log.d("USUK", "MainActivity.onStop: ")
+        requestIgnoreBatteryOptimizationsJob?.cancel()
+        super.onStop()
+    }
+
+    override fun onResume() {
+        Log.d("USUK", "MainActivity.onResume: ")
+        super.onResume()
     }
 
     private fun observeNavigationChanges() {
@@ -185,16 +203,21 @@ class MainActivity() : AppCompatActivity() {
         return pm.isIgnoringBatteryOptimizations(packageName)
     }
 
+    /**
+     * Tenta abrir a tela de otimização de bateria especifica do app e agenda a tela geral de otimização de bateria para ser aberta após um tempo
+     * se a 1° tela for aberta o app sera minimizaodo e o [onStop] da activity vai cancelar o [requestIgnoreBatteryOptimizationsJob] que abriria a 2°
+     * tela, senao a 2° tela será aberta para que o usuario procure o app manualmente e o isente das restrilções de bateria
+     */
     @SuppressLint("BatteryLife")
     fun requestIgnoreBatteryOptimizations() {
 
-        try {
-// TODO: ajustar o fluxo
-            startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
-            startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, "package:$packageName".toUri()))
-        } catch (ex: ActivityNotFoundException) {
-            Log.w("USUK", "MainActivity.requestIgnoreBatteryOptimizations: $ex")
-        }
+        startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, "package:$packageName".toUri()))
+
+        requestIgnoreBatteryOptimizationsJob =
+            lifecycleScope.launch {
+                delay(1500)
+                startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+            }
 
     }
 
