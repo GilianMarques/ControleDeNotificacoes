@@ -10,7 +10,7 @@ import java.util.UUID
  * Criado por Gilian Marques
  * Em sábado, 29 de março de 2025 às 14:39.
  *
- * Obtenha uma descrição legível dessa regra usando [dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase] caso o nome esteja vazio
+ * Obtenha uma descrição legível dessa regra usando [dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase] caso o nome esteja vazio
  *
  */
 

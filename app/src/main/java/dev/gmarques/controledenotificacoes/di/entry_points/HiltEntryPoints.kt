@@ -6,7 +6,7 @@ import dev.gmarques.controledenotificacoes.domain.framework.notification_service
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.CheckAppInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleNameUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.framework.ScheduleManagerImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
@@ -58,7 +58,7 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
     override fun checkAppInBlockPeriodUseCase(): CheckAppInBlockPeriodUseCase =
         entryPoint<UseCasesEntryPoint>().checkAppInBlockPeriodUseCase()
 
-    override fun generateRuleNameUseCase(): GenerateRuleNameUseCase =
+    override fun generateRuleNameUseCase(): GenerateRuleDescriptionUseCase =
         entryPoint<UseCasesEntryPoint>().generateRuleNameUseCase()
 
 }
