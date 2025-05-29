@@ -9,7 +9,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.repository.PreferencesRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.PreferencesRepository
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 

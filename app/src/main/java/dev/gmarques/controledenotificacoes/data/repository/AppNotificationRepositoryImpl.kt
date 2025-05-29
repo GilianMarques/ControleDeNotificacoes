@@ -2,8 +2,8 @@ package dev.gmarques.controledenotificacoes.data.repository
 
 import dev.gmarques.controledenotificacoes.data.local.room.dao.AppNotificationDao
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.AppNotificationMapper
+import dev.gmarques.controledenotificacoes.domain.data.repository.AppNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
-import dev.gmarques.controledenotificacoes.domain.repository.AppNotificationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

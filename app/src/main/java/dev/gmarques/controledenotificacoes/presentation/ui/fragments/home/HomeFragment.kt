@@ -31,11 +31,11 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentHomeBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningBatteryOptimizationsBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningListenNotificationPermissionBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewWarningPostNotificationsPermissionBinding
-import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
@@ -110,9 +110,8 @@ class HomeFragment : MyFragment() {
 
         if (viewModel.hasUpdateAvailableShown) return@launch
 
-        val doNotShow = -1L
-        val date = readPreferenceUseCase(Preferences.SHOW_UPDATE_DIALOG_AT_DATE, doNotShow)
-        if (date == doNotShow || date > System.currentTimeMillis()) return@launch
+        val pref = PreferencesImpl.showUpdateDialogAtDate
+        if (pref.isDefault() || pref.value > System.currentTimeMillis()) return@launch
 
         viewModel.hasUpdateAvailableShown = true
 
@@ -121,7 +120,7 @@ class HomeFragment : MyFragment() {
             .setDuration(10_000)
             .setAnchorView(binding.fabAdd)
             .setAction(getString(R.string.Ir_a_loja)) {
-                savePreferenceUseCase(Preferences.SHOW_UPDATE_DIALOG_AT_DATE, doNotShow)
+                PreferencesImpl.showUpdateDialogAtDate.reset()
                 openPlayStore()
             }.show()
 
@@ -271,7 +270,7 @@ class HomeFragment : MyFragment() {
 
             if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
                 lifecycleScope.launch {
-                    if (readPreferenceUseCase(Preferences.SHOW_WARNING_CARD_POST_NOTIFICATION, true)) {
+                    if (PreferencesImpl.showWarningCardPostNotification.isDefault()) {
                         showPostNotificationRestrictionsWarning()
                     }
                     return@launch

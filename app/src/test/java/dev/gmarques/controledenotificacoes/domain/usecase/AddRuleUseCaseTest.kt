@@ -1,9 +1,9 @@
 package dev.gmarques.controledenotificacoes.domain.usecase
 
+import dev.gmarques.controledenotificacoes.domain.data.repository.RuleRepository
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
-import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach

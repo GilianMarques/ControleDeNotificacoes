@@ -2,10 +2,12 @@ package dev.gmarques.controledenotificacoes.di.entry_points
 
 import dagger.hilt.android.EntryPointAccessors
 import dev.gmarques.controledenotificacoes.App
-import dev.gmarques.controledenotificacoes.domain.framework.notification_service.RuleEnforcer
+import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.IsAppInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.framework.ScheduleManagerImpl
@@ -33,27 +35,27 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
      *
      * @return A instância do EntryPoint correspondente ao tipo [T].
      */
-    private inline fun <reified T> entryPoint(): T =
-        EntryPointAccessors.fromApplication(App.context, T::class.java)
+    private inline fun <reified T> entryPoint(): T = EntryPointAccessors.fromApplication(App.context, T::class.java)
 
 
     override fun reportNotificationManager(): ReportNotificationManager =
         entryPoint<FrameworkEntryPoint>().reportNotificationManager()
 
-    override fun ruleEnforcer(): RuleEnforcer =
-        entryPoint<FrameworkEntryPoint>().ruleEnforcer()
+    override fun ruleEnforcer(): RuleEnforcer = entryPoint<FrameworkEntryPoint>().ruleEnforcer()
 
-    override fun scheduleManager(): ScheduleManagerImpl =
-        entryPoint<FrameworkEntryPoint>().scheduleManager()
+    override fun scheduleManager(): ScheduleManagerImpl = entryPoint<FrameworkEntryPoint>().scheduleManager()
 
-    override fun getAppUserUseCase(): GetUserUseCase =
-        entryPoint<UseCasesEntryPoint>().getAppUserUseCase()
+    override fun readPreferenceUseCase(): ReadPreferenceUseCase = entryPoint<FrameworkEntryPoint>().readPreferenceUseCase()
+
+
+    override fun savePreferenceUseCase(): SavePreferenceUseCase = entryPoint<FrameworkEntryPoint>().savePreferenceUseCase()
+
+    override fun getAppUserUseCase(): GetUserUseCase = entryPoint<UseCasesEntryPoint>().getAppUserUseCase()
 
     override fun rescheduleAlarmsOnBootUseCase(): RescheduleAlarmsOnBootUseCase =
         entryPoint<UseCasesEntryPoint>().rescheduleAlarmsOnBootUseCase()
 
-    override fun nextAppUnlockUseCase(): NextAppUnlockTimeUseCase =
-        entryPoint<UseCasesEntryPoint>().nextAppUnlockUseCase()
+    override fun nextAppUnlockUseCase(): NextAppUnlockTimeUseCase = entryPoint<UseCasesEntryPoint>().nextAppUnlockUseCase()
 
     override fun isAppInBlockPeriodUseCase(): IsAppInBlockPeriodUseCase =
         entryPoint<UseCasesEntryPoint>().isAppInBlockPeriodUseCase()

@@ -1,7 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.rules
 
+import dev.gmarques.controledenotificacoes.domain.data.repository.RuleRepository
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

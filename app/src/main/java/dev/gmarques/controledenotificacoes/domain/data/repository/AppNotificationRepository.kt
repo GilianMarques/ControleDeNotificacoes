@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.repository
+package dev.gmarques.controledenotificacoes.domain.data.repository
 
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import kotlinx.coroutines.flow.Flow

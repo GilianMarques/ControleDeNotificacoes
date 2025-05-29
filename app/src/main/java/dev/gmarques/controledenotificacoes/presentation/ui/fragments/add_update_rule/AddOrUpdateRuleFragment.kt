@@ -14,9 +14,9 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddOrUpdateRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
-import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endIntervalFormatted
@@ -92,7 +92,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
             binding.toolbar.tvTitle.text = getString(R.string.Editar_regra)
 
             showHintDialog(
-                Preferences.SHOW_HINT_EDIT_RULE_1,
+                PreferencesImpl.showHintEditFirstRule,
                 getString(R.string.Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos)
             )
 

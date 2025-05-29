@@ -14,9 +14,9 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
-import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
@@ -84,7 +84,7 @@ class AddManagedAppsFragment() : MyFragment() {
         setupConcludeFab()
         observeViewModel()
         loadLastUsedOrFirstRule()
-        showHintDialog(Preferences.SHOW_HINT_HOW_RULES_AND_MANAGED_APPS_WORK, getString(R.string.como_adicionar_o_primeiro_app))
+        showHintDialog(PreferencesImpl.showHintHowRulesAndManagedAppsWork, getString(R.string.como_adicionar_o_primeiro_app))
     }
 
 
@@ -102,9 +102,9 @@ class AddManagedAppsFragment() : MyFragment() {
 
         if (viewModel.selectedRule.value != null) return@launch
 
-        val ruleId = readPreferenceUseCase(Preferences.LAST_SELECTED_RULE, "null")
-        if (ruleId != "null") {
-            getRuleByIdUseCase(ruleId)
+        val pref = PreferencesImpl.lastSelectedRule
+        if (!pref.isDefault()) {
+            getRuleByIdUseCase(pref.value)
                 ?.let { rule ->
                     viewModel.setRule(rule)
                     return@launch

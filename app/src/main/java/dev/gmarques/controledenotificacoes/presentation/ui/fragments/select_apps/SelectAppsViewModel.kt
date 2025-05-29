@@ -5,10 +5,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.domain.Preferences
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.SelectableApp
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.Event.BlockSelection
@@ -36,8 +34,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SelectAppsViewModel @Inject constructor(
     private val getAllInstalledAppsUseCase: GetAllInstalledAppsUseCase,
-    private val readPreferenceUseCase: ReadPreferenceUseCase,
-    private val savePreferenceUseCase: SavePreferenceUseCase,
     @ApplicationContext
     private val context: android.content.Context,
 ) : ViewModel() {
@@ -93,8 +89,8 @@ class SelectAppsViewModel @Inject constructor(
     }
 
     private fun loadPreferences() = runBlocking {
-        includeSystemApps = readPreferenceUseCase(Preferences.PREF_INCLUDE_SYSTEM_APPS, false)
-        includeManagedApps = readPreferenceUseCase(Preferences.PREF_INCLUDE_MANAGED_APPS, false)
+        includeSystemApps = PreferencesImpl.prefIncludeSystemApps.value
+        includeManagedApps = PreferencesImpl.prefIncludeManagedApps.value
     }
 
     /**
@@ -176,13 +172,13 @@ class SelectAppsViewModel @Inject constructor(
 
     fun toggleIncludeSystemApps() = viewModelScope.launch {
         includeSystemApps = !includeSystemApps
-        savePreferenceUseCase(Preferences.PREF_INCLUDE_SYSTEM_APPS, includeSystemApps)
+        PreferencesImpl.prefIncludeSystemApps(includeManagedApps)
         searchApps()
     }
 
     fun toggleIncludeManagedApps() = viewModelScope.launch {
         includeManagedApps = !includeManagedApps
-        savePreferenceUseCase(Preferences.PREF_INCLUDE_MANAGED_APPS, includeManagedApps)
+        PreferencesImpl.prefIncludeManagedApps(includeManagedApps)
         searchApps()
     }
 

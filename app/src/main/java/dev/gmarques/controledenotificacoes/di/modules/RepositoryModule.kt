@@ -12,12 +12,12 @@ import dev.gmarques.controledenotificacoes.data.repository.ManagedAppRepositoryI
 import dev.gmarques.controledenotificacoes.data.repository.PreferencesRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.RuleRepositoryImpl
 import dev.gmarques.controledenotificacoes.data.repository.UserRepositoryImpl
-import dev.gmarques.controledenotificacoes.domain.repository.AppNotificationRepository
-import dev.gmarques.controledenotificacoes.domain.repository.InstalledAppRepository
-import dev.gmarques.controledenotificacoes.domain.repository.ManagedAppRepository
-import dev.gmarques.controledenotificacoes.domain.repository.PreferencesRepository
-import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
-import dev.gmarques.controledenotificacoes.domain.repository.UserRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.AppNotificationRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.InstalledAppRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.ManagedAppRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.PreferencesRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.RuleRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.UserRepository
 import javax.inject.Singleton
 
 

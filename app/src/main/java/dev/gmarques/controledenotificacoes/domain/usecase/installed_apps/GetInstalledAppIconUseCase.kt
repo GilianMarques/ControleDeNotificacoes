@@ -1,7 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.installed_apps
 
 import android.graphics.drawable.Drawable
-import dev.gmarques.controledenotificacoes.domain.repository.InstalledAppRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.InstalledAppRepository
 import javax.inject.Inject
 
 /**

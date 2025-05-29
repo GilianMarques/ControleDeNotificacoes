@@ -3,9 +3,9 @@ package dev.gmarques.controledenotificacoes.domain.usecase
 import android.util.Log
 import androidx.room.withTransaction
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
+import dev.gmarques.controledenotificacoes.domain.data.repository.ManagedAppRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.RuleRepository
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.repository.ManagedAppRepository
-import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
 import javax.inject.Inject
 
 /**

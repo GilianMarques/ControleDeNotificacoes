@@ -9,12 +9,10 @@ import android.util.Log
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.Preferences
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.settings.DeletePreferenceUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver
 import org.joda.time.LocalDateTime
 import javax.inject.Inject
@@ -27,9 +25,6 @@ import javax.inject.Inject
  */
 class ScheduleManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val savePreferenceUseCase: SavePreferenceUseCase,
-    private val deletePreferenceUseCase: DeletePreferenceUseCase,
-    private val readPreferenceUseCase: ReadPreferenceUseCase,
 ) : ScheduleManager {
 
     private val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
@@ -81,7 +76,7 @@ class ScheduleManagerImpl @Inject constructor(
      * @return `true` se houver um alarme agendado para o pacote, `false` caso contrário.
      */
     override fun isThereAnyAlarmSetForPackage(packageId: String): Boolean {
-        val json = readPreferenceUseCase(Preferences.SCHEDULED_ALARMS, "")
+        val json = PreferencesImpl.scheduledAlarms.value
         return (MoshiListConverter.fromJson(json) ?: mutableListOf()).contains(packageId)
     }
 
@@ -93,7 +88,7 @@ class ScheduleManagerImpl @Inject constructor(
      * estiver agendado ou se a preferência não existir.
      */
     override fun getAllSchedules(): List<String> {
-        val json = readPreferenceUseCase(Preferences.SCHEDULED_ALARMS, "")
+        val json = PreferencesImpl.scheduledAlarms.value
         return MoshiListConverter.fromJson(json) ?: mutableListOf()
     }
 
@@ -132,13 +127,13 @@ class ScheduleManagerImpl @Inject constructor(
      */
     private fun saveScheduleData(packageId: String) {
 
-        val json = readPreferenceUseCase(Preferences.SCHEDULED_ALARMS, "")
+        val json = PreferencesImpl.scheduledAlarms.value
         val list = (MoshiListConverter.fromJson(json) ?: mutableListOf())
             .apply { if (!this.contains(packageId)) add(packageId) }
 
         val updateJson = MoshiListConverter.toJson(list)
 
-        savePreferenceUseCase(Preferences.SCHEDULED_ALARMS, updateJson)
+        PreferencesImpl.scheduledAlarms(updateJson)
     }
 
     /**
@@ -148,7 +143,7 @@ class ScheduleManagerImpl @Inject constructor(
      */
     override fun deleteScheduleData(packageId: String) {
 
-        val json = readPreferenceUseCase(Preferences.SCHEDULED_ALARMS, "")
+        val json = PreferencesImpl.scheduledAlarms.value
         val list = (MoshiListConverter.fromJson(json) ?: mutableListOf())
             .apply { remove(packageId) }
 
@@ -162,7 +157,7 @@ class ScheduleManagerImpl @Inject constructor(
                 }"
             )
         )
-        savePreferenceUseCase(Preferences.SCHEDULED_ALARMS, updateJson)
+        PreferencesImpl.scheduledAlarms(updateJson)
 
     }
 

@@ -6,7 +6,7 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.util.LruCache
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.repository.InstalledAppRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.InstalledAppRepository
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import kotlinx.coroutines.Dispatchers

@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.domain.repository
+package dev.gmarques.controledenotificacoes.domain.data.repository
 
 import android.graphics.drawable.Drawable
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp

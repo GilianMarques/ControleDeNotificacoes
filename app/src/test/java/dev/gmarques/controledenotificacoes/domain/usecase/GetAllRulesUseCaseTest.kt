@@ -1,6 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase
 
-import dev.gmarques.controledenotificacoes.domain.repository.RuleRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.RuleRepository
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetAllRulesUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach

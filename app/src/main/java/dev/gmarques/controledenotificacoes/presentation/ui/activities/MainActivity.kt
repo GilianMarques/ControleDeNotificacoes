@@ -23,16 +23,12 @@ import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
-import dev.gmarques.controledenotificacoes.domain.Preferences
-import dev.gmarques.controledenotificacoes.domain.Preferences.SHOW_WARNING_CARD_POST_NOTIFICATION
-import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 
 /**
@@ -48,12 +44,6 @@ class MainActivity() : AppCompatActivity() {
     private lateinit var homeLabel: String
     private var currentFragmentLabel = ""
     private var requestIgnoreBatteryOptimizationsJob: Job? = null
-
-    @Inject
-    lateinit var readPreferenceUseCase: ReadPreferenceUseCase
-
-    @Inject
-    lateinit var savePreferenceUseCase: SavePreferenceUseCase
 
     companion object {
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 22041961
@@ -131,15 +121,15 @@ class MainActivity() : AppCompatActivity() {
             val granted = grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
             if (!granted) {
 
-                if (readPreferenceUseCase(Preferences.SHOW_DIALOG_NOT_PERMISSION_DENIED, true)) {
+                if (PreferencesImpl.showDialogNotPermissionDenied.isDefault()) {
 
                     MaterialAlertDialogBuilder(this@MainActivity).setTitle(getString(R.string.Permissao_nao_concedida))
                         .setMessage(getString(R.string.Voce_nao_ser_avisado_sobre_notifica_es_bloqueadas_ao_fim_do_per_odo_de_bloqueio_dos_apps_conceda_a_permiss_o_para_n_o_perder_alertas_importantes))
                         .setPositiveButton(getString(R.string.Entendi)) { _, _ ->
-                            lifecycleScope.launch { savePreferenceUseCase(Preferences.SHOW_DIALOG_NOT_PERMISSION_DENIED, false) }
+                            lifecycleScope.launch { PreferencesImpl.showDialogNotPermissionDenied(false) }
                         }.setCancelable(false).show()
                 } else {
-                    savePreferenceUseCase(SHOW_WARNING_CARD_POST_NOTIFICATION, false)
+                    PreferencesImpl.showWarningCardPostNotification(false)
                 }
             } else {
                 restartNotificationListenerServiceManager()

@@ -4,8 +4,8 @@ import android.content.Context
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.domain.data.repository.UserRepository
 import dev.gmarques.controledenotificacoes.domain.model.User
-import dev.gmarques.controledenotificacoes.domain.repository.UserRepository
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 

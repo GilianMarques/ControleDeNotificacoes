@@ -1,6 +1,6 @@
-package dev.gmarques.controledenotificacoes.domain.usecase.settings
+package dev.gmarques.controledenotificacoes.domain.usecase.preferences
 
-import dev.gmarques.controledenotificacoes.domain.repository.PreferencesRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.PreferencesRepository
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 

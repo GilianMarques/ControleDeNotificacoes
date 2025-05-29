@@ -7,18 +7,15 @@ import com.google.firebase.crashlytics.setCustomKeys
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 import dagger.hilt.android.HiltAndroidApp
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
-import dev.gmarques.controledenotificacoes.domain.Preferences
-import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.framework.model.RemoteConfigValues
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
 
 /**
  * Criado por Gilian Marques
@@ -33,9 +30,6 @@ class App() : Application(), CoroutineScope by MainScope() {
 
     private val _remoteConfigValues = MutableStateFlow<RemoteConfigValues?>(null)
     val remoteConfigValues get() = _remoteConfigValues
-
-    @Inject
-    lateinit var savePreferenceUseCase: SavePreferenceUseCase
 
     override fun onCreate() {
         context = this
@@ -91,17 +85,14 @@ class App() : Application(), CoroutineScope by MainScope() {
      */
     private fun setupUpdateAvailable() = launch(IO) {
 
-        //preciso esperar antes de fazer o agendamento para nao sobrescrever um agendamento de um alerta que
-        // pode estar para ser exibiado por agora na interface
-        delay(10_000)
+        val preference = PreferencesImpl.showUpdateDialogAtDate
 
-        savePreferenceUseCase(
-            Preferences.SHOW_UPDATE_DIALOG_AT_DATE, if (BuildConfig.DEBUG)
+        if (preference.isDefault()) preference(
+            if (BuildConfig.DEBUG)
                 System.currentTimeMillis() + 5_000L
             else System.currentTimeMillis() + 2 * 60 * 60 * 1_000L /*2 horas*/
         )
+
     }
-
-
 }
 

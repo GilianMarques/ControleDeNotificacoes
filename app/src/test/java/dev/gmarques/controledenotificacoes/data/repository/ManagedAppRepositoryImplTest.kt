@@ -2,9 +2,9 @@ package dev.gmarques.controledenotificacoes.data.repository
 
 import dev.gmarques.controledenotificacoes.data.local.room.dao.ManagedAppDao
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.ManagedAppMapper
+import dev.gmarques.controledenotificacoes.domain.data.repository.ManagedAppRepository
 import dev.gmarques.controledenotificacoes.domain.exceptions.BlankStringException
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
-import dev.gmarques.controledenotificacoes.domain.repository.ManagedAppRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test

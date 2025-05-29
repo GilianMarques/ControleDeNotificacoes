@@ -3,8 +3,8 @@ package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 import android.util.Log
 import androidx.room.withTransaction
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
-import dev.gmarques.controledenotificacoes.domain.repository.AppNotificationRepository
-import dev.gmarques.controledenotificacoes.domain.repository.ManagedAppRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.AppNotificationRepository
+import dev.gmarques.controledenotificacoes.domain.data.repository.ManagedAppRepository
 import javax.inject.Inject
 
 /**

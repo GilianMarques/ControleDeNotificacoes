@@ -9,12 +9,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.domain.Preferences
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmOnAppsRuleChangeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import kotlinx.coroutines.Dispatchers.Main
@@ -30,7 +29,6 @@ class AddManagedAppsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addManagedAppUseCase: AddManagedAppUseCase,
     private val rescheduleAlarmOnAppsRuleChangeUseCase: RescheduleAlarmOnAppsRuleChangeUseCase,
-    private val savePreferenceUseCase: SavePreferenceUseCase,
 ) : ViewModel() {
 
     private val _selectedApps = MutableLiveData<Map<String, InstalledApp>>(emptyMap())
@@ -53,7 +51,7 @@ class AddManagedAppsViewModel @Inject constructor(
 
     fun setRule(rule: Rule) = viewModelScope.launch(Main) {
         _selectedRule.value = rule
-        savePreferenceUseCase(Preferences.LAST_SELECTED_RULE, rule.id)
+        PreferencesImpl.lastSelectedRule(rule.id)
     }
 
     fun getSelectedPackages(): Array<String> {

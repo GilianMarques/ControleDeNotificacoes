@@ -31,9 +31,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
+import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
 import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
-import dev.gmarques.controledenotificacoes.domain.usecase.settings.ReadPreferenceUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.settings.SavePreferenceUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.framework.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
@@ -269,7 +270,7 @@ open class MyFragment() : Fragment() {
     /**
      * Exibe um diálogo de dica para o usuário. O diálogo será mostrado apenas uma vez para cada chave de dica.
      *
-     * @param key Uma chave única para identificar esta dica. Usada para rastrear se a dica já foi exibida.
+     * @param showHintPreference Uma chave única para identificar esta dica. Usada para rastrear se a dica já foi exibida.
      * @param msg A mensagem de texto da dica a ser exibida no diálogo.
      * @param delay Um atraso opcional em milissegundos antes de exibir o diálogo. O padrão é 500.
      *
@@ -279,13 +280,13 @@ open class MyFragment() : Fragment() {
      *
      */
     protected fun showHintDialog(
-        key: String,
+        showHintPreference: PreferenceProperty<Boolean>,
         msg: String,
         delay: Long = 500L,
     ) = lifecycleScope.launch {
 
 
-        if (readPreferenceUseCase(key, false)) return@launch
+        if (showHintPreference.value == false) return@launch
 
         dialogHint?.dismiss()
 
@@ -295,7 +296,7 @@ open class MyFragment() : Fragment() {
 
         dialogHint = MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Dica)).setMessage(msg)
             .setPositiveButton(getString(R.string.Entendi)) { dialog, _ ->
-                lifecycleScope.launch { savePreferenceUseCase(key, true) }
+                lifecycleScope.launch { showHintPreference(false) }
             }.setNegativeButton(getString(R.string.Lembre_me_da_proxima_vez)) { dialog, _ ->
             }.setCancelable(false).setIcon(R.drawable.vec_hint)
             .show()

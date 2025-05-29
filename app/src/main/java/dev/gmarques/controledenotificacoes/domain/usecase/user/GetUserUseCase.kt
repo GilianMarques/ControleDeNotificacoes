@@ -1,7 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.user
 
+import dev.gmarques.controledenotificacoes.domain.data.repository.UserRepository
 import dev.gmarques.controledenotificacoes.domain.model.User
-import dev.gmarques.controledenotificacoes.domain.repository.UserRepository
 import javax.inject.Inject
 
 /**

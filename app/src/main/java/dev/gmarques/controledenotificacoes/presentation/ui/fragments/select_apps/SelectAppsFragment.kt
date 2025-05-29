@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.setFragmentResult
@@ -15,9 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectAppsBinding
 import dev.gmarques.controledenotificacoes.databinding.ViewActivityHeaderBinding
-import dev.gmarques.controledenotificacoes.domain.Preferences
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -174,7 +173,7 @@ class SelectAppsFragment : MyFragment() {
 
                 Event.SelectedAlreadyManagedApp -> {
                     showHintDialog(
-                        Preferences.SHOW_HINT_SELECTED_APPS_ALREADY_MANAGED,
+                        PreferencesImpl.showHintSelectedAppsAlreadyManaged,
                         getString(R.string.Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados),
                         100
                     )
@@ -245,10 +244,7 @@ class SelectAppsFragment : MyFragment() {
                         getString(R.string.Excluir_apps_gerenciados)
                     else getString(R.string.Incluir_apps_gerenciados)
                     icon = R.drawable.vec_app
-                    callback = {
-                        viewModel.toggleIncludeManagedApps()
-                        Toast.makeText(requireContext(), "Em desenvolvimento", Toast.LENGTH_SHORT).show()
-                    }
+                    callback = { viewModel.toggleIncludeManagedApps() }
                 }
 
             }

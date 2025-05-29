@@ -1,7 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 
+import dev.gmarques.controledenotificacoes.domain.data.repository.ManagedAppRepository
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
-import dev.gmarques.controledenotificacoes.domain.repository.ManagedAppRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
