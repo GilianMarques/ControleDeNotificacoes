@@ -29,7 +29,6 @@ class ProfileViewModel @Inject constructor(private val savePreferenceUseCase: Sa
         var errors = false
 
         PreferencesImpl::class.java.declaredFields
-            .filter { it.name.lowercase().startsWith("showhint") }
             .forEach { field ->
                 field.isAccessible = true
                 val lazyValue = field.get(PreferencesImpl)

@@ -5,10 +5,6 @@ import androidx.annotation.Keep
 @Keep
 interface Preferences {
 
-    val showHintEditFirstRule: PreferenceProperty<Boolean>
-    val showHintHowRulesAndManagedAppsWork: PreferenceProperty<Boolean>
-    val showHintSelectedAppsAlreadyManaged: PreferenceProperty<Boolean>
-
     val prefIncludeSystemApps: PreferenceProperty<Boolean>
     val prefIncludeManagedApps: PreferenceProperty<Boolean>
 
@@ -19,4 +15,17 @@ interface Preferences {
     val showDialogNotPermissionDenied: PreferenceProperty<Boolean>
     val showWarningCardPostNotification: PreferenceProperty<Boolean>
 
+    @Keep
+    interface Resetable {
+        val showHintEditFirstRule: PreferenceProperty<Boolean>
+        val showHintHowRulesAndManagedAppsWork: PreferenceProperty<Boolean>
+        val showHintSelectedAppsAlreadyManaged: PreferenceProperty<Boolean>
+    }
+
 }
+
+
+
+
+
+

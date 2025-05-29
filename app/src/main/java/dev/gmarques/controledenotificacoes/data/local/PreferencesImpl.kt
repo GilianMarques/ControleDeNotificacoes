@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes.data.local
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
 import dev.gmarques.controledenotificacoes.domain.data.Preferences
+import dev.gmarques.controledenotificacoes.domain.data.Preferences.Resetable
 
 /**
  * Criado por Gilian Marques
@@ -13,7 +14,7 @@ import dev.gmarques.controledenotificacoes.domain.data.Preferences
  *
  *
  */
-object PreferencesImpl : Preferences {
+object PreferencesImpl : Preferences, Resetable {
 
     private val reader = HiltEntryPoints.readPreferenceUseCase()
     private val saver = HiltEntryPoints.savePreferenceUseCase()
