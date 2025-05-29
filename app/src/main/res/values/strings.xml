@@ -151,7 +151,7 @@
     <string name="Mais_x_apps">+%1$d apps</string>
     <string name="Preferencias">Preferências</string>
     <string name="Resetar_exibi_o_de_dicas">Resetar exibição de dicas</string>
-    <string name="Os_di_logos_de_ajuda_ser_o_re_exibidos">Os diálogos de ajuda serão re-exibidos</string>
+    <string name="Os_di_logos_de_ajuda_ser_o_re_exibidos">Os diálogos de ajuda serão exibidos novamente</string>
     <string name="Dia_inteiro">24h/dia</string>
     <string name="Todos_os_dias">Todos os dias</string>
     <string name="intervalo_0800_1200h">08:00–12:00</string>
@@ -196,6 +196,7 @@
 </string>
     <string name="Erro">Erro</string>
     <string name="Nao_foi_poss_vel_abrir_a_tela_de_configuracoes">Não foi possível abrir a tela de configurações. Desative as restrições de bateria para o app nas configurações do seu dispositivo.</string>
+    <string name="Houve_um_erro_tetando_resetar_as_prefer_ncias">Houve um erro tentando resetar as preferências</string>
 
 
 </resources>

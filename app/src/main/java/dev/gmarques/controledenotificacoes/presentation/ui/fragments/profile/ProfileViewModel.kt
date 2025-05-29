@@ -24,21 +24,30 @@ class ProfileViewModel @Inject constructor(private val savePreferenceUseCase: Sa
     private val _eventsFlow = MutableSharedFlow<Event>(replay = 1)
     val eventsFlow: SharedFlow<Event> get() = _eventsFlow
 
-    // TODO: nao ta funcionando
     fun resetHints() = viewModelScope.launch(IO) {
+
+        var errors = false
+
         PreferencesImpl::class.java.declaredFields
-            .filter { it.name.lowercase().startsWith("show_hint") }
+            .filter { it.name.lowercase().startsWith("showhint") }
             .forEach { field ->
-                Log.d("USUK", "ProfileViewModel.resetHints: ${field.name}")
                 field.isAccessible = true
-                val value = field.get(PreferencesImpl)
-                if (value is PreferenceProperty<*>) {
-                    value.reset()
+                val lazyValue = field.get(PreferencesImpl)
+
+                // Se for Lazy, acessa o valor real
+                val value = if (lazyValue is Lazy<*>) lazyValue.value else lazyValue
+
+                if (value is PreferenceProperty<*>) value.reset()
+                else {
+                    errors = true
+                    Log.e("USUK", "ProfileViewModel.resetHints: unsupported type ${field.type}")
                 }
+
             }
 
-        _eventsFlow.tryEmit(Event.PreferencesCleaned)
+        _eventsFlow.tryEmit(Event.PreferencesCleaned(errors == false))
     }
+
 
 }
 
@@ -46,5 +55,5 @@ class ProfileViewModel @Inject constructor(private val savePreferenceUseCase: Sa
  * Representa os eventos (consumo unico) que podem ser disparados para a UI
  */
 sealed class Event {
-    object PreferencesCleaned : Event()
+    class PreferencesCleaned(val success: Boolean) : Event()
 }

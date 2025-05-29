@@ -27,6 +27,7 @@ object PreferencesImpl : Preferences {
         )
     }
 
+
     override val showHintHowRulesAndManagedAppsWork: PreferenceProperty<Boolean> by lazy {
         PreferenceProperty(
             key = "show_hint_how_rules_and_managed_apps_work",

@@ -107,9 +107,17 @@ class ProfileFragment : MyFragment() {
         collectFlow(viewModel.eventsFlow) { event ->
             when (event) {
                 is Event.PreferencesCleaned -> {
-                    vibrator.success()
-                    Snackbar.make(binding.nsv, getString(R.string.Os_di_logos_de_ajuda_ser_o_re_exibidos), Snackbar.LENGTH_LONG)
-                        .show()
+
+                    if (event.success) vibrator.success()
+                    else vibrator.error()
+
+                    Snackbar.make(
+                        binding.nsv, getString(
+                            if (event.success) R.string.Os_di_logos_de_ajuda_ser_o_re_exibidos
+                            else R.string.Houve_um_erro_tetando_resetar_as_prefer_ncias
+                        ),
+                        Snackbar.LENGTH_LONG
+                    ).show()
                 }
             }
         }

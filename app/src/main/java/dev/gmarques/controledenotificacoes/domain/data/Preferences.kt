@@ -5,7 +5,6 @@ import androidx.annotation.Keep
 @Keep
 interface Preferences {
 
-    // variaveis com nome (nome da variavel, nao o valor) começando com show_hint podem ser limpos por opção do usuario através de reflexão
     val showHintEditFirstRule: PreferenceProperty<Boolean>
     val showHintHowRulesAndManagedAppsWork: PreferenceProperty<Boolean>
     val showHintSelectedAppsAlreadyManaged: PreferenceProperty<Boolean>
