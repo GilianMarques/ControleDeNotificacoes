@@ -112,6 +112,7 @@ class AddManagedAppsFragment() : MyFragment() {
         }
 
         val rules = getAllRulesUseCase()
+        if (rules.isEmpty()) binding.tvAddRule.text = getString(R.string.Adicionar)
         if (rules.size == 1) viewModel.setRule(rules.first())
     }
 
@@ -125,7 +126,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private fun setupSelectAppsButton() = with(binding) {
 
-        ivAddApp.setOnClickListener(AnimatedClickListener {
+        tvAddApp.setOnClickListener(AnimatedClickListener {
 
 
             findNavController().navigate(
@@ -185,7 +186,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private fun setupSelectRuleButton() = with(binding) {
 
-        ivAddRule.setOnClickListener(AnimatedClickListener {
+        tvAddRule.setOnClickListener(AnimatedClickListener {
             lifecycleScope.launch {
                 if (getAllRulesUseCase().isEmpty()) {
                     findNavController().navigate(

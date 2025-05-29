@@ -141,8 +141,7 @@ class MainActivity() : AppCompatActivity() {
     fun isPostNotificationsPermissionEnable(): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.POST_NOTIFICATIONS
+                this, Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         } else {
             true
@@ -170,9 +169,7 @@ class MainActivity() : AppCompatActivity() {
         val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
         startActivity(intent)
         Toast.makeText(
-            this,
-            getString(R.string.Permita_que_x_acesse_as_notificacoes, getString(R.string.app_name)),
-            Toast.LENGTH_LONG
+            this, getString(R.string.Permita_que_x_acesse_as_notificacoes, getString(R.string.app_name)), Toast.LENGTH_LONG
         ).show()
     }
 
@@ -189,13 +186,26 @@ class MainActivity() : AppCompatActivity() {
     @SuppressLint("BatteryLife")
     fun requestIgnoreBatteryOptimizations() {
 
-        startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, "package:$packageName".toUri()))
+        try {
+            startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, "package:$packageName".toUri()))
+        } catch (_: Exception) {
+        }
 
-        requestIgnoreBatteryOptimizationsJob =
-            lifecycleScope.launch {
-                delay(1500)
+        requestIgnoreBatteryOptimizationsJob = lifecycleScope.launch {
+            delay(1000)
+            try {
                 startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+            } catch (_: Exception) {
+                showRequestIgnorebatteryOptimizationErrorDialog()
             }
+        }
+
+    }
+
+    private fun showRequestIgnorebatteryOptimizationErrorDialog() {
+        MaterialAlertDialogBuilder(this@MainActivity).setTitle(getString(R.string.Erro))
+            .setMessage(getString(R.string.Nao_foi_poss_vel_abrir_a_tela_de_configuracoes))
+            .setPositiveButton(R.string.Entendi) { _, _ -> }.setIcon(R.drawable.vec_alert).show()
 
     }
 

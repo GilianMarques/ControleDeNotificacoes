@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes
 
 import android.app.Application
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.setCustomKeys
@@ -85,11 +86,13 @@ class App() : Application(), CoroutineScope by MainScope() {
      */
     private fun setupUpdateAvailable(updateAvailable: Boolean) = launch(IO) {
 
+        Log.d("USUK", "App.setupUpdateAvailable: updateAvailable: $updateAvailable")
+
         if (!updateAvailable) {
             PreferencesImpl.showUpdateDialogAtDate.reset()
             return@launch
         }
-
+        Log.d("USUK", "App.setupUpdateAvailable: updateAvailable: ${PreferencesImpl.showUpdateDialogAtDate.value}")
         with(PreferencesImpl.showUpdateDialogAtDate) {
             if (isDefault()) invoke(
                 if (BuildConfig.DEBUG)
