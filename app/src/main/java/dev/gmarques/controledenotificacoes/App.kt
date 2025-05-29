@@ -72,7 +72,7 @@ class App() : Application(), CoroutineScope by MainScope() {
             )
         )
 
-        if (updateAvailable) setupUpdateAvailable()
+        setupUpdateAvailable(updateAvailable)
     }
 
     /**
@@ -83,15 +83,20 @@ class App() : Application(), CoroutineScope by MainScope() {
      * podendo demorar mais. Afim de evitar falsos positivos, agenda-se o alerta para algumas horas depois, para garantir que a
      * atualização já esteja disponível a loja quando o usuario for avisado.
      */
-    private fun setupUpdateAvailable() = launch(IO) {
+    private fun setupUpdateAvailable(updateAvailable: Boolean) = launch(IO) {
 
-        val preference = PreferencesImpl.showUpdateDialogAtDate
+        if (!updateAvailable) {
+            PreferencesImpl.showUpdateDialogAtDate.reset()
+            return@launch
+        }
 
-        if (preference.isDefault()) preference(
-            if (BuildConfig.DEBUG)
-                System.currentTimeMillis() + 5_000L
-            else System.currentTimeMillis() + 2 * 60 * 60 * 1_000L /*2 horas*/
-        )
+        with(PreferencesImpl.showUpdateDialogAtDate) {
+            if (isDefault()) invoke(
+                if (BuildConfig.DEBUG)
+                    System.currentTimeMillis() + 5_000L
+                else System.currentTimeMillis() + 2 * 60 * 60 * 1_000L /*2 horas*/
+            )
+        }
 
     }
 }
