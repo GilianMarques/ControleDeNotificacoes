@@ -116,10 +116,8 @@ class HomeFragment : MyFragment() {
         viewModel.hasUpdateAvailableShown = true
 
         vibrator.success()
-        Snackbar.make(requireView(), getString(R.string.Uma_nova_vers_o_est_dispon_vel), Snackbar.LENGTH_LONG)
-            .setDuration(10_000)
-            .setAnchorView(binding.fabAdd)
-            .setAction(getString(R.string.Ir_a_loja)) {
+        Snackbar.make(requireView(), getString(R.string.Uma_nova_vers_o_est_dispon_vel), Snackbar.LENGTH_LONG).setDuration(10_000)
+            .setAnchorView(binding.fabAdd).setAction(getString(R.string.Ir_a_loja)) {
                 PreferencesImpl.showUpdateDialogAtDate.reset()
                 openPlayStore()
             }.show()
@@ -212,6 +210,7 @@ class HomeFragment : MyFragment() {
         adapter = ManagedAppsAdapter(
             getDrawable(R.drawable.vec_rule_permissive_small),
             getDrawable(R.drawable.vec_rule_restrictive_small),
+            getDrawable(R.drawable.vec_dot_notification_indicator),
             getInstalledAppIconUseCase,
             ::navigateToViewManagedAppFragment
         )
@@ -251,6 +250,7 @@ class HomeFragment : MyFragment() {
      */
     private fun observeViewModel() = lifecycleScope.launch {
         collectFlow(viewModel.managedAppsWithRules) { apps ->
+
             adapter.submitList(apps)
 
             binding.progressBar.isGone = apps != null
@@ -358,30 +358,23 @@ class HomeFragment : MyFragment() {
     }
 
     private fun showHowToFeedbackDialog() {
-        MaterialAlertDialogBuilder(requireActivity())
-            .setTitle(getString(R.string.Enviar_feedback))
-            .setIcon(R.drawable.vec_info)
+        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Enviar_feedback)).setIcon(R.drawable.vec_info)
             .setMessage(getString(R.string.Como_voc_gostaria_de_enviar_seu_feedback))
             .setPositiveButton(getString(R.string.enviar_um_e_mail_ao_desenvolvedor)) { _, _ ->
                 openMailToSendFeedback()
-            }
-            .setNegativeButton(getString(R.string.Comentar_na_play_store)) { _, _ ->
+            }.setNegativeButton(getString(R.string.Comentar_na_play_store)) { _, _ ->
                 openPlayStore()
-            }
-            .show()
+            }.show()
     }
 
     private fun showDialogBatteryRestrictionRemoved() {
-        MaterialAlertDialogBuilder(requireActivity())
-            .setTitle(getString(R.string.Restrcoes_de_bateria))
+        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Restrcoes_de_bateria))
             .setIcon(R.drawable.vec_alert)
             .setMessage(getString(R.string.em_alguns_dispositivos_o_app_n_o_consegue_confirmar_se_foi_removido_da_restri_o_de_economia))
             .setPositiveButton(getString(R.string.Eu_removi_a_restri_o)) { _, _ ->
                 PreferencesImpl.showWarningCardBatteryRestriction(false)
-            }
-            .setNegativeButton(getString(R.string.Preciso_confirmar)) { _, _ ->
-            }
-            .show()
+            }.setNegativeButton(getString(R.string.Preciso_confirmar)) { _, _ ->
+            }.show()
     }
 
     private fun openMailToSendFeedback() {

@@ -11,6 +11,7 @@ import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -20,8 +21,8 @@ import kotlinx.coroutines.runBlocking
 class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope() {
 
     private val ruleEnforcer = HiltEntryPoints.ruleEnforcer()
-
     private val scheduleManager = HiltEntryPoints.scheduleManager()
+    private val updateManagedAppUseCase = HiltEntryPoints.updateManagedAppUseCase()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
@@ -63,10 +64,11 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         val not = AppNotification(pkg, title, content, System.currentTimeMillis())
 
         runBlocking {
-            ruleEnforcer.enforceOnNotification(not) { not, rule ->
+            ruleEnforcer.enforceOnNotification(not) { not, rule, managedApp ->
                 Log.d("USUK", "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.packageId}")
                 cancelNotification(notification.key)
                 scheduleManager.scheduleAlarm(not.packageId, rule.nextAppUnlockPeriodFromNow())
+                launch { updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true)) }
             }
         }
     }

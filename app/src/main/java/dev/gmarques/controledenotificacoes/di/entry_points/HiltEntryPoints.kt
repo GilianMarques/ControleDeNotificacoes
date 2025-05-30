@@ -6,6 +6,7 @@ import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.IsAppInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
@@ -62,5 +63,9 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     override fun generateRuleNameUseCase(): GenerateRuleDescriptionUseCase =
         entryPoint<UseCasesEntryPoint>().generateRuleNameUseCase()
+
+    override fun updateManagedAppUseCase(): UpdateManagedAppUseCase {
+        return entryPoint<UseCasesEntryPoint>().updateManagedAppUseCase()
+    }
 
 }

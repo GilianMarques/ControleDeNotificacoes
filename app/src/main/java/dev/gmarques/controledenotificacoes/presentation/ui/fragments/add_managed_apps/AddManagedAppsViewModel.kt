@@ -102,7 +102,7 @@ class AddManagedAppsViewModel @Inject constructor(
         val x = measureTime {
             apps.map {
                 async {
-                    val managedApp = ManagedApp(it.packageId, rule.id)
+                    val managedApp = ManagedApp(it.packageId, rule.id, false)
                     addManagedApp(managedApp)
                     rescheduleAlarm(it, managedApp, rule)
                 }

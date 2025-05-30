@@ -25,7 +25,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRemovalDialog
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReferenceSmall
-import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setRuleDrawable
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -92,7 +92,7 @@ class FragmentViewManagedApp() : MyFragment() {
 
         tvAppName.text = app.name
         tvRuleName.text = app.rule.nameOrDescription()
-        tvRuleName.setRuleDrawable(drawable)
+        tvRuleName.setStartDrawable(drawable)
 
         lifecycleScope.launch {
             Glide.with(binding.ivAppIcon.context)

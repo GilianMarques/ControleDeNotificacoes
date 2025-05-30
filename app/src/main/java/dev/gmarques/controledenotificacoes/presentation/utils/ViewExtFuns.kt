@@ -34,7 +34,7 @@ object ViewExtFuns {
         }, 300)
     }
 
-    fun TextView.setRuleDrawable(adequatedDrawable: Drawable) {
+    fun TextView.setStartDrawable(adequatedDrawable: Drawable) {
         this.setCompoundDrawablesWithIntrinsicBounds(
             adequatedDrawable,
             null,
@@ -42,6 +42,7 @@ object ViewExtFuns {
             null
         )
     }
+
 
     fun View.showKeyboard() {
         this.requestFocus()

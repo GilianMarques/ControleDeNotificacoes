@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.framework.notification_listener_serv
 
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
@@ -25,11 +26,12 @@ class RuleEnforcerImpl @Inject constructor(
 
     override suspend fun enforceOnNotification(
         notification: AppNotification,
-        removeNotificationCallback: (AppNotification, Rule) -> Any,
+        removeNotificationCallback: (AppNotification, Rule, ManagedApp) -> Any,
     ) = withContext(IO) {
 
 
-    val managedApp = getManagedAppByPackageIdUseCase(notification.packageId)
+        val managedApp = getManagedAppByPackageIdUseCase(notification.packageId)
+
         if (managedApp == null) {
             return@withContext
         }
@@ -38,7 +40,7 @@ class RuleEnforcerImpl @Inject constructor(
 
 
         if (rule.isAppInBlockPeriod()) {
-            removeNotificationCallback(notification, rule)
+            removeNotificationCallback(notification, rule, managedApp)
             saveNotificationOnHistory(notification)
         }
 

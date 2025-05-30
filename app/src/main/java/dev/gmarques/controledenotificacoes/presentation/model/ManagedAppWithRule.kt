@@ -13,4 +13,5 @@ data class ManagedAppWithRule(
     val name: String,
     val packageId: String,
     val rule: Rule,
+    val hasPendingNotifications: Boolean,
 ) : Serializable

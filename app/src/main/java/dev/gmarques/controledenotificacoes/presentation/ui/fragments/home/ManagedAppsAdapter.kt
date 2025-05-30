@@ -14,7 +14,7 @@ import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
-import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setRuleDrawable
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 class ManagedAppsAdapter(
     private val iconPermissive: Drawable,
     private val iconRestrictive: Drawable,
+    private val iconNotificationIndicator: Drawable,
     private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
     private val onItemClick: (ManagedAppWithRule) -> Unit,
 ) :
@@ -38,7 +39,14 @@ class ManagedAppsAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(iconPermissive, iconRestrictive, getInstalledAppIconUseCase, getItem(position), onItemClick)
+        holder.bind(
+            iconPermissive,
+            iconRestrictive,
+            iconNotificationIndicator,
+            getInstalledAppIconUseCase,
+            getItem(position),
+            onItemClick
+        )
     }
 
     fun submitList(apps: List<ManagedAppWithRule>, query: String) {
@@ -52,13 +60,17 @@ class ManagedAppsAdapter(
         fun bind(
             iconPermissive: Drawable,
             iconRestrictive: Drawable,
+            iconNotificationIndicator: Drawable,
             getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
             app: ManagedAppWithRule,
             onItemClick: (ManagedAppWithRule) -> Unit,
         ) {
             binding.tvAppName.text = app.name
+
+            if (app.hasPendingNotifications) binding.tvAppName.setStartDrawable(iconNotificationIndicator)
+
             binding.tvRuleName.text = app.rule.nameOrDescription()
-            binding.tvRuleName.setRuleDrawable(if (app.rule.ruleType == RuleType.PERMISSIVE) iconPermissive else iconRestrictive)
+            binding.tvRuleName.setStartDrawable(if (app.rule.ruleType == RuleType.PERMISSIVE) iconPermissive else iconRestrictive)
 
             CoroutineScope(Main).launch {
                 Glide.with(binding.ivAppIcon.context)

@@ -35,7 +35,7 @@
             android:textAlignment="viewStart"
             android:textSize="16sp"
             android:transitionName="not_title"
-            app:drawableStartCompat="@drawable/vec_notification_unread"
+            app:drawableStartCompat="@drawable/vec_notification"
             app:drawableTint="?colorPrimary"
             app:layout_constraintStart_toStartOf="@id/parent"
             app:layout_constraintTop_toTopOf="parent"

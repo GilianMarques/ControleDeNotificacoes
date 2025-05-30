@@ -15,4 +15,5 @@ import java.io.Serializable
 data class ManagedApp(
     val packageId: String,
     val ruleId: String,
+    val hasPendingNotifications: Boolean,
 ) : Serializable

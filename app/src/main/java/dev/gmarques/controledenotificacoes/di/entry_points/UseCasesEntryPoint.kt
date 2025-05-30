@@ -6,6 +6,7 @@ import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.IsAppInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 
@@ -17,4 +18,5 @@ interface UseCasesEntryPoint {
     fun nextAppUnlockUseCase(): NextAppUnlockTimeUseCase
     fun isAppInBlockPeriodUseCase(): IsAppInBlockPeriodUseCase
     fun generateRuleNameUseCase(): GenerateRuleDescriptionUseCase
+    fun updateManagedAppUseCase(): UpdateManagedAppUseCase
 }

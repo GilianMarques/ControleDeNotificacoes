@@ -31,7 +31,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
-import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setRuleDrawable
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -320,7 +320,7 @@ class AddManagedAppsFragment() : MyFragment() {
         lifecycleScope.launch {
             tvSelectedRule.text = rule.nameOrDescription()
             val drawable = ResourcesCompat.getDrawable(resources, rule.getAdequateIconReference(), requireActivity().theme)!!
-            tvSelectedRule.setRuleDrawable(drawable)
+            tvSelectedRule.setStartDrawable(drawable)
             tvSelectedRule.isVisible = true
 
         }

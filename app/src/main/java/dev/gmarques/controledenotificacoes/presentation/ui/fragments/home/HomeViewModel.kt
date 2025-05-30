@@ -115,10 +115,11 @@ class HomeViewModel @Inject constructor(
             ManagedAppWithRule(
                 name = installedApp.name,
                 packageId = installedApp.packageId,
-                rule = rulesMap[managedApp.ruleId] ?: defaultRuleIfNotFound
+                rule = rulesMap[managedApp.ruleId] ?: defaultRuleIfNotFound,
+                hasPendingNotifications = managedApp.hasPendingNotifications,
             )
 
-        }.sortedBy { it.name }
+        }.sortedWith(compareByDescending<ManagedAppWithRule> { it.hasPendingNotifications }.thenBy { it.name.lowercase() })
 
     }
 

@@ -25,7 +25,8 @@ object ManagedAppMapper {
 
         return ManagedAppEntity(
             ruleId = managedApp.ruleId,
-            packageId = managedApp.packageId
+            packageId = managedApp.packageId,
+            hasPendingNotifications = managedApp.hasPendingNotifications
         )
     }
 
@@ -44,7 +45,8 @@ object ManagedAppMapper {
 
         return ManagedApp(
             ruleId = entity.ruleId,
-            packageId = entity.packageId
+            packageId = entity.packageId,
+            hasPendingNotifications = entity.hasPendingNotifications
         )
     }
 

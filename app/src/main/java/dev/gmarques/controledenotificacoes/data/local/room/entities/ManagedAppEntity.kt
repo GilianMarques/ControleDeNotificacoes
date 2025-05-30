@@ -12,5 +12,6 @@ data class ManagedAppEntity(
     @PrimaryKey
     val packageId: String,
     val ruleId: String,
+    val hasPendingNotifications: Boolean,
 )
 

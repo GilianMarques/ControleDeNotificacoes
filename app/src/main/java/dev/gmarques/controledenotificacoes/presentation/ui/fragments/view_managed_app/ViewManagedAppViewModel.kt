@@ -14,6 +14,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.Delet
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.ObserveAppNotificationsByPkgIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.DeleteManagedAppAndItsNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
@@ -35,6 +36,7 @@ class ViewManagedAppViewModel @Inject constructor(
     private val deleteAllAppNotificationsUseCase: DeleteAllAppNotificationsUseCase,
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
+    private val updateManagedAppUseCase: UpdateManagedAppUseCase,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
@@ -55,6 +57,8 @@ class ViewManagedAppViewModel @Inject constructor(
 
         Log.d("USUK", "ViewManagedAppViewModel.setup: $app")
 
+        removeNotificationIndicator(app.packageId)
+
         _managedAppFlow.tryEmit(app)
 
         observeAppNotificationsByPkgIdUseCase(app.packageId)
@@ -64,6 +68,12 @@ class ViewManagedAppViewModel @Inject constructor(
 
         observeRuleChanges(app.rule)
         initialized = true
+    }
+
+    private fun removeNotificationIndicator(packageId: String) = viewModelScope.launch(IO) {
+        getManagedAppByPackageIdUseCase(packageId)?.let { app ->
+            updateManagedAppUseCase(app.copy(hasPendingNotifications = false))
+        }
     }
 
 
@@ -101,7 +111,10 @@ class ViewManagedAppViewModel @Inject constructor(
 
     fun setup(pkg: String) = viewModelScope.launch {
         Log.d("USUK", "ViewManagedAppViewModel.setup: $pkg")
-        val ruleId = getManagedAppByPackageIdUseCase(pkg)?.ruleId
+
+        val managedApp = getManagedAppByPackageIdUseCase(pkg)
+
+        val ruleId = managedApp?.ruleId
         if (ruleId == null) return@launch
 
         val rule = getRuleByIdUseCase(ruleId)
@@ -111,7 +124,7 @@ class ViewManagedAppViewModel @Inject constructor(
         val appInfo = packageManager.getApplicationInfo(pkg, PackageManager.GET_META_DATA)
         val appName = packageManager.getApplicationLabel(appInfo).toString()
 
-        setup(ManagedAppWithRule(appName, pkg, rule))
+        setup(ManagedAppWithRule(appName, pkg, rule, managedApp.hasPendingNotifications))
     }
 
 }
