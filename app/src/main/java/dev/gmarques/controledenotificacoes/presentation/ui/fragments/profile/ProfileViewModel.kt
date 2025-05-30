@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
+import dev.gmarques.controledenotificacoes.domain.data.Preferences
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,7 +29,15 @@ class ProfileViewModel @Inject constructor(private val savePreferenceUseCase: Sa
 
         var errors = false
 
+
+        val resettablePreferences = Preferences.Resettable::class.java.declaredMethods.toHashSet().map {
+            it.name.removePrefix("get").replaceFirstChar { it.lowercase() }
+        }
+
         PreferencesImpl::class.java.declaredFields
+            .filter {
+                it.name.removeSuffix("\$delegate") in resettablePreferences
+            }
             .forEach { field ->
                 field.isAccessible = true
                 val lazyValue = field.get(PreferencesImpl)

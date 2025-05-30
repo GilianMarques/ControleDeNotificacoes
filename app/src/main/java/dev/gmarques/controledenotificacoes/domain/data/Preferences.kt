@@ -16,7 +16,7 @@ interface Preferences {
     val showWarningCardPostNotification: PreferenceProperty<Boolean>
 
     @Keep
-    interface Resetable {
+    interface Resettable {
         val showHintEditFirstRule: PreferenceProperty<Boolean>
         val showHintHowRulesAndManagedAppsWork: PreferenceProperty<Boolean>
         val showHintSelectedAppsAlreadyManaged: PreferenceProperty<Boolean>
