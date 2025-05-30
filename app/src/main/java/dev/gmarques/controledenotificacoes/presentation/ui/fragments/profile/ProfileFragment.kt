@@ -20,7 +20,6 @@ import dev.gmarques.controledenotificacoes.databinding.FragmentProfileBinding
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.LogOffUserUseCase
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
-import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -84,19 +83,7 @@ class ProfileFragment : MyFragment() {
         setupActionBar(binding.toolbar)
         loadUserData()
         setupLogOffButton()
-        setupResetHintsButton()
         observeEvents()
-        setupVersion()
-    }
-
-    private fun setupVersion() {
-        binding.tvVersion.text = BuildConfig.VERSION_NAME
-    }
-
-    private fun setupResetHintsButton() = with(binding) {
-        tvResetHints.setOnClickListener(AnimatedClickListener {
-            viewModel.resetHints()
-        })
     }
 
     /**

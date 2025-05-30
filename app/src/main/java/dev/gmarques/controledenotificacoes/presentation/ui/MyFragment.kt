@@ -43,6 +43,7 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFr
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.SelectAppsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.settings.SettingsFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash.SplashFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.SlideTransition
@@ -178,6 +179,13 @@ open class MyFragment() : Fragment() {
 
                 setupGoBackButton(binding.ivGoBack)
                 binding.tvTitle.text = getString(R.string.Perfil)
+                binding.ivMenu.isGone = true
+            }
+
+            is SettingsFragment -> {
+
+                setupGoBackButton(binding.ivGoBack)
+                binding.tvTitle.text = getString(R.string.Configuracoes)
                 binding.ivMenu.isGone = true
             }
 

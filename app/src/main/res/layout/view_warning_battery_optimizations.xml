@@ -53,7 +53,26 @@
                 app:layout_constraintTop_toTopOf="@id/iv_art" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_give_permission"
+                android:id="@+id/chip_restriction_removed"
+                style="@style/Widget.MaterialComponents.Chip.Action"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/Esta_feito"
+                android:textColor="?attr/colorOnPrimaryFixed"
+                app:chipBackgroundColor="?attr/colorPrimaryFixed"
+                app:chipCornerRadius="16dp"
+                app:chipIcon="@drawable/vec_check"
+                app:chipIconTint="?attr/colorOnPrimaryFixed"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/chip_remove_restriction"
+                app:layout_constraintStart_toEndOf="@id/chip_restriction_removed"
+                app:layout_constraintStart_toStartOf="@id/parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_hint" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_remove_restriction"
                 style="@style/Widget.MaterialComponents.Chip.Action"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -69,6 +88,7 @@
                 app:chipIconTint="?colorOnPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/chip_restriction_removed"
                 app:layout_constraintTop_toBottomOf="@id/tv_hint" />
 
 

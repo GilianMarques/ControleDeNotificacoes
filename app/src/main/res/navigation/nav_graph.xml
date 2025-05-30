@@ -23,6 +23,9 @@
         <action
             android:id="@+id/to_viewManagedAppFragment"
             app:destination="@id/viewManagedAppFragment" />
+        <action
+            android:id="@+id/to_settingsFragment"
+            app:destination="@id/settingsFragment" />
     </fragment>
 
     <fragment
@@ -112,7 +115,7 @@
         android:label="SelectAppsFragment"
         tools:layout="@layout/fragment_select_apps">
 
-    <argument
+        <argument
             android:name="excludePackages"
             app:argType="string[]"
             app:nullable="false" />
@@ -148,5 +151,11 @@
             app:popUpToInclusive="true" />
 
     </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        android:layout="@layout/fragment_settings" />
 
 </navigation>

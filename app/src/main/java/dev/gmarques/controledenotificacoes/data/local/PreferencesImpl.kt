@@ -3,20 +3,20 @@ package dev.gmarques.controledenotificacoes.data.local
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.data.PreferenceProperty
 import dev.gmarques.controledenotificacoes.domain.data.Preferences
-import dev.gmarques.controledenotificacoes.domain.data.Preferences.Resettable
+import dev.gmarques.controledenotificacoes.domain.data.Preferences.ResettableDialogHints
 
 /**
  * Criado por Gilian Marques
  * Em quarta-feira, 28 de maio de 2025 as 20:43.
  *
- * Implementa [Preferences] e [Preferences.Resettable] que definem quais sao as preferencias disponiveis no app e faz a implementação
+ * Implementa [Preferences] e [Preferences.ResettableDialogHints] que definem quais sao as preferencias disponiveis no app e faz a implementação
  * dessas preferenias usando instancias de [PreferenceProperty] inicializadas sob demanda para  facilitar o acesso, leitura e escrita
  * das preferências através dos usecases
  * [dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase] e [dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase]
  * Isso permite acessar e modificar as preferencias de maneira simples, funcional e escalavel
  *
  */
-object PreferencesImpl : Preferences, Resettable {
+object PreferencesImpl : Preferences, ResettableDialogHints {
 
     private val reader = HiltEntryPoints.readPreferenceUseCase()
     private val saver = HiltEntryPoints.savePreferenceUseCase()
@@ -111,4 +111,15 @@ object PreferencesImpl : Preferences, Resettable {
             preferenceSaver = saver::invoke
         )
     }
+
+    override val showWarningCardBatteryRestriction: PreferenceProperty<Boolean> by lazy {
+        PreferenceProperty(
+            key = "show_warning_card_battery_restriction",
+            defaultValue = true,
+            preferenceReader = reader::invoke,
+            preferenceSaver = saver::invoke
+        )
+    }
+
+
 }

@@ -142,11 +142,26 @@ class HomeFragment : MyFragment() {
                 }
             }
 
+            section {
+
+                item {
+                    label = getString(R.string.Configuracoes)
+                    icon = R.drawable.vec_settings
+                    callback = {
+                        navigateToSettingsFragment()
+                    }
+                }
+            }
+
         }
 
         binding.ivMenu.setOnClickListener(AnimatedClickListener {
             popupMenu.show(this@HomeFragment.requireContext(), binding.ivMenu)
         })
+    }
+
+    private fun navigateToSettingsFragment() {
+        findNavController().navigate(HomeFragmentDirections.toSettingsFragment())
     }
 
     private fun setupUiWithUserData() = binding.apply {
@@ -278,8 +293,10 @@ class HomeFragment : MyFragment() {
             }
 
             if (!requireMainActivity().isAppInsetFromBatterySaving()) {
-                showBatteryRestrictionsWarning()
-                return@launch
+                if (PreferencesImpl.showWarningCardBatteryRestriction.isDefault()) {
+                    showBatteryRestrictionsWarning()
+                    return@launch
+                }
             }
 
         }
@@ -308,9 +325,14 @@ class HomeFragment : MyFragment() {
 
         val warningBinding = ViewWarningBatteryOptimizationsBinding.inflate(layoutInflater)
 
-        warningBinding.chipGivePermission.setOnClickListener(AnimatedClickListener {
+        warningBinding.chipRemoveRestriction.setOnClickListener(AnimatedClickListener {
             requireMainActivity().requestIgnoreBatteryOptimizations()
             removerWarning(warningBinding.root)
+        })
+
+        warningBinding.chipRestrictionRemoved.setOnClickListener(AnimatedClickListener {
+            removerWarning(warningBinding.root)
+            showDialogBatteryRestrictionRemoved()
         })
 
         binding.containerWarnings.addViewWithTwoStepsAnimation(warningBinding.root)
@@ -349,6 +371,19 @@ class HomeFragment : MyFragment() {
             .show()
     }
 
+    private fun showDialogBatteryRestrictionRemoved() {
+        MaterialAlertDialogBuilder(requireActivity())
+            .setTitle(getString(R.string.Restrcoes_de_bateria))
+            .setIcon(R.drawable.vec_alert)
+            .setMessage(getString(R.string.em_alguns_dispositivos_o_app_n_o_consegue_confirmar_se_foi_removido_da_restri_o_de_economia))
+            .setPositiveButton(getString(R.string.Eu_removi_a_restri_o)) { _, _ ->
+                PreferencesImpl.showWarningCardBatteryRestriction(false)
+            }
+            .setNegativeButton(getString(R.string.Preciso_confirmar)) { _, _ ->
+            }
+            .show()
+    }
+
     private fun openMailToSendFeedback() {
         val email = App.context.remoteConfigValues.value?.contactEmail
         if (email == null) return
@@ -370,5 +405,6 @@ class HomeFragment : MyFragment() {
         }
     }
 
-
 }
+
+

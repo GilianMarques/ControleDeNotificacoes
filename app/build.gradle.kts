@@ -107,7 +107,6 @@ dependencies {
     implementation("com.google.firebase:firebase-config:22.1.2")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
-
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
     implementation("androidx.room:room-runtime:2.7.1")

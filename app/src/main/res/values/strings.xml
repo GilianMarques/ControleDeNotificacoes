@@ -197,6 +197,13 @@
     <string name="Erro">Erro</string>
     <string name="Nao_foi_poss_vel_abrir_a_tela_de_configuracoes">Não foi possível abrir a tela de configurações. Desative as restrições de bateria para o app nas configurações do seu dispositivo.</string>
     <string name="Houve_um_erro_tetando_resetar_as_prefer_ncias">Houve um erro tentando resetar as preferências</string>
+    <string name="Restrcoes_de_bateria">Restrições de bateria</string>
+    <string name="em_alguns_dispositivos_o_app_n_o_consegue_confirmar_se_foi_removido_da_restri_o_de_economia">Antes de ocultar este aviso, certifique-se de que removeu a restrição, caso contrário, o sistema pode encerrar o app impedindo o gerenciamento das notificações.</string>
+    <string name="Eu_removi_a_restri_o">Eu removi a restrição</string>
+    <string name="Preciso_confirmar">Preciso confirmar</string>
+    <string name="Configuracoes">Configurações</string>
+    <string name="Resetar_aviso_de_otimiza_o_de_bateria">Resetar aviso de otimização de bateria</string>
+    <string name="O_aviso_de_otimiza_o_de_bateria_ser_reexibido_se_as_restri_es_estiverem_ativas">O aviso de otimização de bateria será reexibido se as restrições estiverem ativas</string>
 
 
 </resources>
