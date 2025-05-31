@@ -310,6 +310,17 @@ open class MyFragment() : Fragment() {
             .show()
     }
 
+    /**
+     * Configura um listener de scroll em um RecyclerView para ocultar ou exibir uma view alvo (tipicamente um ExtendedFloatingActionButton)
+     * com base na direção do scroll.
+     *
+     * Quando o usuário rola para baixo (dy > 0) e o botão está visível, ele é ocultado com uma animação.
+     * Quando o usuário rola para cima (dy < 0) e o botão está oculto, ele é exibido com uma animação.
+     *
+     * @param recyclerView O RecyclerView ao qual o listener de scroll será adicionado.
+     * @param targetView A view (geralmente um ExtendedFloatingActionButton) que será ocultada ou exibida.
+     * @see toggleFabVisibility
+     */
     protected fun hideViewOnRVScroll(
         recyclerView: RecyclerView,
         targetView: ExtendedFloatingActionButton,
@@ -389,6 +400,14 @@ open class MyFragment() : Fragment() {
 
     }
 
+    /**
+     * Abre a página do aplicativo na Play Store.
+     *
+     * Tenta abrir diretamente no aplicativo da Play Store. Se não estiver instalado,
+     * abre no navegador.
+     *
+     * Utiliza um link do Firebase Remote Config se disponível, caso contrário, usa o nome do pacote do aplicativo.
+     */
     protected fun openPlayStore() {
         val appPackageName = App.context.packageName
         // TODO: otimizar depois dos testes

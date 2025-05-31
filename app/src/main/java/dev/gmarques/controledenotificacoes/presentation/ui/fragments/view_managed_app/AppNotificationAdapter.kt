@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -14,7 +15,8 @@ import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtension
  * Criado por Gilian Marques
  * Em terça-feira, 13 de maio de 2025 as 16:06.
  */
-class AppNotificationAdapter : ListAdapter<AppNotification, AppNotificationAdapter.ViewHolder>(DiffCallback) {
+class AppNotificationAdapter(private val appIcon: Drawable) :
+    ListAdapter<AppNotification, AppNotificationAdapter.ViewHolder>(DiffCallback) {
 
     inner class ViewHolder(private val binding: ItemAppNotificationBinding) : RecyclerView.ViewHolder(binding.root) {
 
@@ -22,6 +24,7 @@ class AppNotificationAdapter : ListAdapter<AppNotification, AppNotificationAdapt
             tvTitle.text = notification.title
             tvContent.text = notification.content
             tvTime.text = notification.timeFormatted()
+            ivAppIcon.setImageDrawable(appIcon)
         }
     }
 

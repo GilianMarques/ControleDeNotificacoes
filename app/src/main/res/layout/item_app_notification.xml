@@ -14,9 +14,9 @@
         android:layout_height="wrap_content"
         android:background="@drawable/back_container"
         android:foreground="?attr/selectableItemBackground"
-        android:paddingStart="4dp"
+        android:paddingStart="8dp"
         android:paddingTop="8dp"
-        android:paddingEnd="4dp"
+        android:paddingEnd="8dp"
         android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,9 +24,19 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_app_icon"
+            android:layout_width="30dp"
+            android:layout_height="0dp"
+            android:padding="4dp"
+            app:layout_constraintBottom_toBottomOf="@id/tv_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_title"
+            app:srcCompat="@drawable/vec_app" />
+
         <TextView
             android:id="@+id/tv_title"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:drawablePadding="8dp"
             android:fontFamily="@font/urbanist_extrabold"
@@ -35,9 +45,9 @@
             android:textAlignment="viewStart"
             android:textSize="16sp"
             android:transitionName="not_title"
-            app:drawableStartCompat="@drawable/vec_notification"
             app:drawableTint="?colorPrimary"
-            app:layout_constraintStart_toStartOf="@id/parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_app_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Whatsapp" />
 

@@ -2,16 +2,21 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_manag
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.DeleteRuleWithAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.DeleteAllAppNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.ObserveAppNotificationsByPkgIdUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.DeleteManagedAppAndItsNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
@@ -24,6 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 
@@ -37,6 +43,7 @@ class ViewManagedAppViewModel @Inject constructor(
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
     private val updateManagedAppUseCase: UpdateManagedAppUseCase,
+    private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
@@ -61,8 +68,7 @@ class ViewManagedAppViewModel @Inject constructor(
 
         _managedAppFlow.tryEmit(app)
 
-        observeAppNotificationsByPkgIdUseCase(app.packageId)
-            .collect {
+        observeAppNotificationsByPkgIdUseCase(app.packageId).collect {
                 _appNotificationHistoryFlow.tryEmit(it.toMutableList().apply { reverse() })
             }
 
@@ -125,6 +131,10 @@ class ViewManagedAppViewModel @Inject constructor(
         val appName = packageManager.getApplicationLabel(appInfo).toString()
 
         setup(ManagedAppWithRule(appName, pkg, rule, managedApp.hasPendingNotifications))
+    }
+
+    fun loadAppIcon(pkg: String, context: FragmentActivity): Drawable = runBlocking {
+        return@runBlocking getInstalledAppIconUseCase(pkg) ?: ContextCompat.getDrawable(context, R.drawable.vec_app)
     }
 
 }

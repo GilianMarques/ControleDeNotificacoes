@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
 import android.content.DialogInterface
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentViewManagedAppBinding
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
-import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRemovalDialog
@@ -27,7 +27,6 @@ import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListe
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReferenceSmall
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class FragmentViewManagedApp() : MyFragment() {
@@ -38,14 +37,12 @@ class FragmentViewManagedApp() : MyFragment() {
         }
     }
 
-    @Inject
-    lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
-
     private lateinit var adapter: AppNotificationAdapter
 
     private val viewModel: ViewManagedAppViewModel by viewModels()
     private lateinit var binding: FragmentViewManagedAppBinding
     private val args: FragmentViewManagedAppArgs by navArgs()
+    private lateinit var appIcon: Drawable
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,15 +55,26 @@ class FragmentViewManagedApp() : MyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (args.packageId != null) viewModel.setup(args.packageId!!)
-        else if (args.app != null) viewModel.setup(args.app!!)
-        else goBack()
+        val pkg = if (args.packageId != null) {
+            viewModel.setup(args.packageId!!)
+            args.packageId!!
+        } else if (args.app != null) {
+            viewModel.setup(args.app!!)
+            args.app!!.packageId
+        } else {
+            goBack()
+            null
+        }
+
+
+        pkg?.let { appIcon = viewModel.loadAppIcon(pkg, requireActivity()) }
 
         observeRuleChanges()
         observeNotificationHistory()
         observeEvents()
         setupRecyclerView()
         setupFabOpenApp()
+
     }
 
     private fun setupFabOpenApp() = with(binding) {
@@ -84,7 +92,6 @@ class FragmentViewManagedApp() : MyFragment() {
         })
     }
 
-
     private fun setupActionBar(app: ManagedAppWithRule) = with(binding) {
 
         val drawable = ContextCompat.getDrawable(requireActivity(), app.rule.getAdequateIconReferenceSmall())
@@ -96,8 +103,9 @@ class FragmentViewManagedApp() : MyFragment() {
 
         lifecycleScope.launch {
             Glide.with(binding.ivAppIcon.context)
-                .load(getInstalledAppIconUseCase(app.packageId))
+                .load(appIcon)
                 .transition(DrawableTransitionOptions.withCrossFade())
+                .error(R.drawable.vec_app)
                 .into(binding.ivAppIcon)
         }
 
@@ -112,7 +120,7 @@ class FragmentViewManagedApp() : MyFragment() {
     }
 
     private fun setupRecyclerView() = with(binding) {
-        adapter = AppNotificationAdapter()
+        adapter = AppNotificationAdapter(appIcon)
         rvHistory.adapter = adapter
         rvHistory.layoutManager = LinearLayoutManager(requireContext())
         rvHistory.setHasFixedSize(true)
@@ -218,7 +226,9 @@ class FragmentViewManagedApp() : MyFragment() {
 
     private fun observeRuleChanges() {
         collectFlow(viewModel.managedAppFlow) { app ->
-            app?.let { setupActionBar(app) }
+            app?.let {
+                setupActionBar(app)
+            }
         }
     }
 

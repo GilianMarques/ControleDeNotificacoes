@@ -43,6 +43,15 @@ object ViewExtFuns {
         )
     }
 
+    fun TextView.removeDrawables() {
+        this.setCompoundDrawablesWithIntrinsicBounds(
+            null,
+            null,
+            null,
+            null
+        )
+    }
+
 
     fun View.showKeyboard() {
         this.requestFocus()

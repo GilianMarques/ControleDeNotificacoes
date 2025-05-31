@@ -49,7 +49,7 @@
                         android:background="@drawable/back_profile_picture"
                         android:contentDescription="@string/Foto_de_perfil_do_usuario"
                         android:elevation="5dp"
-                        android:padding="2dp"
+                        android:padding="4dp"
                         android:transitionName="profile_picture"
                         app:layout_constraintBottom_toTopOf="@id/tv_user_name"
                         app:layout_constraintEnd_toEndOf="parent"

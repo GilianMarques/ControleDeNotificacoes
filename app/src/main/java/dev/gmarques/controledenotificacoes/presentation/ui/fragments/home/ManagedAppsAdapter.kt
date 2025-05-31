@@ -8,12 +8,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.ItemManagedAppBinding
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.removeDrawables
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
@@ -65,17 +67,19 @@ class ManagedAppsAdapter(
             app: ManagedAppWithRule,
             onItemClick: (ManagedAppWithRule) -> Unit,
         ) {
+            binding.tvAppName.removeDrawables()
             binding.tvAppName.text = app.name
-
             if (app.hasPendingNotifications) binding.tvAppName.setStartDrawable(iconNotificationIndicator)
 
             binding.tvRuleName.text = app.rule.nameOrDescription()
             binding.tvRuleName.setStartDrawable(if (app.rule.ruleType == RuleType.PERMISSIVE) iconPermissive else iconRestrictive)
 
+
             CoroutineScope(Main).launch {
                 Glide.with(binding.ivAppIcon.context)
                     .load(getInstalledAppIconUseCase(app.packageId))
                     .transition(DrawableTransitionOptions.withCrossFade())
+                    .error(R.drawable.vec_app)
                     .into(binding.ivAppIcon)
 
             }
