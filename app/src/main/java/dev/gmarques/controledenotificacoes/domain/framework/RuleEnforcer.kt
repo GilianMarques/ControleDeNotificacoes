@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.framework
 
+import android.service.notification.StatusBarNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
@@ -13,5 +14,5 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
  * deve ou não ser bloqueada assim como manter histórico das notificações de apps gerenciados, Através dos usecases.
  */
 interface RuleEnforcer {
-    suspend fun enforceOnNotification(notification: AppNotification, callback: (AppNotification, Rule, ManagedApp) -> Any)
+    suspend fun enforceOnNotification(notification: StatusBarNotification, callback: (AppNotification, Rule, ManagedApp) -> Any)
 }

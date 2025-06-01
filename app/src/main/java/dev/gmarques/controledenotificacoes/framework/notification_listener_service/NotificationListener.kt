@@ -1,17 +1,13 @@
 package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
-import android.app.Notification
 import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
-import dev.gmarques.controledenotificacoes.domain.model.AppNotification
-import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -21,8 +17,7 @@ import kotlinx.coroutines.runBlocking
 class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope() {
 
     private val ruleEnforcer = HiltEntryPoints.ruleEnforcer()
-    private val scheduleManager = HiltEntryPoints.scheduleManager()
-    private val updateManagedAppUseCase = HiltEntryPoints.updateManagedAppUseCase()
+
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
@@ -55,23 +50,16 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * Em seguida, utiliza o RuleEnforcer para aplicar as regras configuradas.
      *
      */
-    private fun manageNotification(notification: StatusBarNotification) {
-
-        val pkg = notification.packageName
-        val title = notification.notification.extras.getString(Notification.EXTRA_TITLE).orEmpty()
-        val content = notification.notification.extras.getString(Notification.EXTRA_TEXT).orEmpty()
-
-        val not = AppNotification(pkg, title, content, System.currentTimeMillis())
+    private fun manageNotification(sbn: StatusBarNotification) {
 
         runBlocking {
-            ruleEnforcer.enforceOnNotification(not) { not, rule, managedApp ->
+            ruleEnforcer.enforceOnNotification(sbn) { not, rule, managedApp ->
                 Log.d("USUK", "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.packageId}")
-                cancelNotification(notification.key)
-                scheduleManager.scheduleAlarm(not.packageId, rule.nextAppUnlockPeriodFromNow())
-                launch { updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true)) }
+                cancelNotification(not.packageId)
             }
         }
     }
+
 
     override fun onListenerDisconnected() {
         cancel()

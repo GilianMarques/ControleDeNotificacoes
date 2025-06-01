@@ -4,6 +4,7 @@ import dagger.hilt.android.EntryPointAccessors
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.IsAppInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
@@ -36,36 +37,56 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
      *
      * @return A instância do EntryPoint correspondente ao tipo [T].
      */
-    private inline fun <reified T> entryPoint(): T = EntryPointAccessors.fromApplication(App.context, T::class.java)
+    private inline fun <reified T> entryPoint(): T {
+        return EntryPointAccessors.fromApplication(App.context, T::class.java)
+    }
 
+    override fun reportNotificationManager(): ReportNotificationManager {
+        return entryPoint<FrameworkEntryPoint>().reportNotificationManager()
+    }
 
-    override fun reportNotificationManager(): ReportNotificationManager =
-        entryPoint<FrameworkEntryPoint>().reportNotificationManager()
+    override fun ruleEnforcer(): RuleEnforcer {
+        return entryPoint<FrameworkEntryPoint>().ruleEnforcer()
+    }
 
-    override fun ruleEnforcer(): RuleEnforcer = entryPoint<FrameworkEntryPoint>().ruleEnforcer()
+    override fun scheduleManager(): ScheduleManagerImpl {
+        return entryPoint<FrameworkEntryPoint>().scheduleManager()
+    }
 
-    override fun scheduleManager(): ScheduleManagerImpl = entryPoint<FrameworkEntryPoint>().scheduleManager()
+    override fun readPreferenceUseCase(): ReadPreferenceUseCase {
+        return entryPoint<FrameworkEntryPoint>().readPreferenceUseCase()
+    }
 
-    override fun readPreferenceUseCase(): ReadPreferenceUseCase = entryPoint<FrameworkEntryPoint>().readPreferenceUseCase()
+    override fun savePreferenceUseCase(): SavePreferenceUseCase {
+        return entryPoint<FrameworkEntryPoint>().savePreferenceUseCase()
+    }
 
+    override fun getAppUserUseCase(): GetUserUseCase {
+        return entryPoint<UseCasesEntryPoint>().getAppUserUseCase()
+    }
 
-    override fun savePreferenceUseCase(): SavePreferenceUseCase = entryPoint<FrameworkEntryPoint>().savePreferenceUseCase()
+    override fun rescheduleAlarmsOnBootUseCase(): RescheduleAlarmsOnBootUseCase {
+        return entryPoint<UseCasesEntryPoint>().rescheduleAlarmsOnBootUseCase()
+    }
 
-    override fun getAppUserUseCase(): GetUserUseCase = entryPoint<UseCasesEntryPoint>().getAppUserUseCase()
+    override fun nextAppUnlockUseCase(): NextAppUnlockTimeUseCase {
+        return entryPoint<UseCasesEntryPoint>().nextAppUnlockUseCase()
+    }
 
-    override fun rescheduleAlarmsOnBootUseCase(): RescheduleAlarmsOnBootUseCase =
-        entryPoint<UseCasesEntryPoint>().rescheduleAlarmsOnBootUseCase()
+    override fun isAppInBlockPeriodUseCase(): IsAppInBlockPeriodUseCase {
+        return entryPoint<UseCasesEntryPoint>().isAppInBlockPeriodUseCase()
+    }
 
-    override fun nextAppUnlockUseCase(): NextAppUnlockTimeUseCase = entryPoint<UseCasesEntryPoint>().nextAppUnlockUseCase()
-
-    override fun isAppInBlockPeriodUseCase(): IsAppInBlockPeriodUseCase =
-        entryPoint<UseCasesEntryPoint>().isAppInBlockPeriodUseCase()
-
-    override fun generateRuleNameUseCase(): GenerateRuleDescriptionUseCase =
-        entryPoint<UseCasesEntryPoint>().generateRuleNameUseCase()
+    override fun generateRuleNameUseCase(): GenerateRuleDescriptionUseCase {
+        return entryPoint<UseCasesEntryPoint>().generateRuleNameUseCase()
+    }
 
     override fun updateManagedAppUseCase(): UpdateManagedAppUseCase {
         return entryPoint<UseCasesEntryPoint>().updateManagedAppUseCase()
+    }
+
+    override fun insertAppNotificationUseCase(): InsertAppNotificationUseCase {
+        return entryPoint<UseCasesEntryPoint>().insertAppNotificationUseCase()
     }
 
 }
