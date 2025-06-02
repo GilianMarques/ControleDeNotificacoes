@@ -48,6 +48,8 @@ class ViewManagedAppFragment() : MyFragment() {
     private val args: ViewManagedAppFragmentArgs by navArgs()
     private lateinit var appIcon: Drawable
 
+    // TODO: nao ta atualizando depos que muda a regra. esta sendo recriado o frag e o viewmodel?
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -78,6 +80,7 @@ class ViewManagedAppFragment() : MyFragment() {
         observeEvents()
         setupRecyclerView()
         setupFabOpenApp()
+
 
     }
 
@@ -161,6 +164,14 @@ class ViewManagedAppFragment() : MyFragment() {
                 title = getString(R.string.Regras)
 
                 item {
+                    label = getString(R.string.Alterar_regra)
+                    icon = R.drawable.vec_change_rule
+                    callback = {
+                        navigateToSelectRule()
+                    }
+                }
+
+                item {
                     label = getString(R.string.Editar_regra)
                     icon = R.drawable.vec_edit_rule
                     callback = {
@@ -210,6 +221,10 @@ class ViewManagedAppFragment() : MyFragment() {
 
     private fun navigateToEditRule() {
         findNavController().navigate(ViewManagedAppFragmentDirections.toAddRuleFragment(viewModel.managedAppFlow.value!!.rule))
+    }
+
+    private fun navigateToSelectRule() {
+        findNavController().navigate(ViewManagedAppFragmentDirections.toAddManagedAppsFragment(viewModel.managedAppFlow.value?.packageId))
     }
 
     private fun confirmRemoveRule() {

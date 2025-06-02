@@ -13,13 +13,16 @@ import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmOnAppsRuleChangeUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.time.measureTime
 
@@ -28,6 +31,7 @@ import kotlin.time.measureTime
 class AddManagedAppsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addManagedAppUseCase: AddManagedAppUseCase,
+    private val getInstalledAppByPackageUseCase: GetInstalledAppByPackageUseCase,
     private val rescheduleAlarmOnAppsRuleChangeUseCase: RescheduleAlarmOnAppsRuleChangeUseCase,
 ) : ViewModel() {
 
@@ -144,5 +148,10 @@ class AddManagedAppsViewModel @Inject constructor(
      */
     private suspend fun addManagedApp(app: ManagedApp) {
         addManagedAppUseCase(app)
+    }
+
+    fun loadAppToChangeRule(pkg: String) = viewModelScope.launch(IO) {
+        val app = getInstalledAppByPackageUseCase(pkg) ?: error("nao deveria ser nulo")
+        withContext(Main) { addNewlySelectedApps(listOf(app)) }
     }
 }

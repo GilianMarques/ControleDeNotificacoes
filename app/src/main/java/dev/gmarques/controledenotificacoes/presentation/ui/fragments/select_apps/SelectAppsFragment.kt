@@ -22,6 +22,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManage
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.hideKeyboard
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -112,7 +113,8 @@ class SelectAppsFragment : MyFragment() {
         adapter = AppsAdapter(getInstalledAppIconUseCase) { app, checked ->
 
             viewModel.onAppChecked(app, checked)
-
+            binding.tietSearch.setText("")
+            binding.root.hideKeyboard()
             isFabVisible = true
             toggleFabVisibility(true, binding.fabConclude)
         }

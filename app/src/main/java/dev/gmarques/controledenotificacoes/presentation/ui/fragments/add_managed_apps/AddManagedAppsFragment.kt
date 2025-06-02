@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
@@ -59,6 +61,7 @@ class AddManagedAppsFragment() : MyFragment() {
     lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
 
     private val viewModel: AddManagedAppsViewModel by viewModels()
+    private val args: AddManagedAppsFragmentArgs by navArgs()
     private lateinit var binding: FragmentAddManagedAppsBinding
 
     private val manageAppsViewsMutex = Mutex()
@@ -77,6 +80,7 @@ class AddManagedAppsFragment() : MyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupActionBar(binding.toolbar)
+        setupToChangeRule()
         setupSelectAppsListener()
         setupSelectRuleListener()
         setupSelectAppsButton()
@@ -85,6 +89,14 @@ class AddManagedAppsFragment() : MyFragment() {
         observeViewModel()
         loadLastUsedOrFirstRule()
         showHintDialog(PreferencesImpl.showHintHowRulesAndManagedAppsWork, getString(R.string.como_adicionar_o_primeiro_app))
+    }
+
+    private fun setupToChangeRule() {
+        args.selectedApp?.let {
+            binding.tvAddApp.isGone = true
+            binding.toolbar.tvTitle.text = getString(R.string.Alterar_regra)
+            viewModel.loadAppToChangeRule(it)
+        }
     }
 
 
