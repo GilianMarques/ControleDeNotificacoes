@@ -32,5 +32,12 @@ object AppNotificationExtensionFun {
         }
     }
 
+    fun AppNotification.pendingIntentId(): String {
+        return "${this.packageId}_${this.timestamp}"
+    }
+
+    fun AppNotification.bitmapId(): String {
+        return "${pendingIntentId()}.png"
+    }
 
 }

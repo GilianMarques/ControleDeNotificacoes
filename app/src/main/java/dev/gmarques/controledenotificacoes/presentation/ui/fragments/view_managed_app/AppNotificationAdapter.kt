@@ -1,30 +1,75 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
 
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.databinding.ItemAppNotificationBinding
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.timeFormatted
+import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
+import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
+import java.io.File
 
 /**
  * Criado por Gilian Marques
  * Em terça-feira, 13 de maio de 2025 as 16:06.
  */
-class AppNotificationAdapter(private val appIcon: Drawable) :
+class AppNotificationAdapter(private val appIcon: Drawable, val onNotificationClick: (AppNotification) -> Unit) :
     ListAdapter<AppNotification, AppNotificationAdapter.ViewHolder>(DiffCallback) {
 
     inner class ViewHolder(private val binding: ItemAppNotificationBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(notification: AppNotification) = with(binding) {
+
             tvTitle.text = notification.title
-            tvContent.text = notification.content
             tvTime.text = notification.timeFormatted()
             ivAppIcon.setImageDrawable(appIcon)
+
+            tvContent.text = notification.content
+
+            val file = File(App.context.cacheDir, notification.bitmapId())
+
+            Glide.with(App.context)
+                .asBitmap()
+                .load(file)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        ivLargeIcon.setImageBitmap(resource)
+                        ivLargeIcon.isVisible = true
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+
+                    }
+
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        ivLargeIcon.isGone = true
+                        super.onLoadFailed(errorDrawable)
+                    }
+                })
+
+            tvOpenNotification.setOnClickListener(
+                AnimatedClickListener
+                {
+                    onNotificationClick(notification)
+                })
+
+            tvOpenNotification.isVisible = PendingIntentCache.cache[notification.pendingIntentId()] != null
+            tvContent.isGone = tvContent.text.isEmpty()
+
         }
     }
 

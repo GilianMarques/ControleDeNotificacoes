@@ -69,8 +69,13 @@ class ViewManagedAppViewModel @Inject constructor(
         _managedAppFlow.tryEmit(app)
 
         observeAppNotificationsByPkgIdUseCase(app.packageId).collect {
-                _appNotificationHistoryFlow.tryEmit(it.toMutableList().apply { reverse() })
-            }
+
+            val notifications = it.toMutableList().apply {
+                reverse() // notificações mais recentes por cima
+            }.distinctBy { it.title to it.content } // remove duplicatas (Impedir duplicatas de entrar no DB nao é viavel).
+
+            _appNotificationHistoryFlow.tryEmit(notifications)
+        }
 
         observeRuleChanges(app.rule)
         initialized = true

@@ -11,4 +11,6 @@ data class AppNotification(
     val title: String,
     val content: String,
     val timestamp: Long = System.currentTimeMillis(),
-) : Serializable
+) : Serializable {
+    companion object
+}

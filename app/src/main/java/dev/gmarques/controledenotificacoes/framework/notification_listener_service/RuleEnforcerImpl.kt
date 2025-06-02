@@ -3,12 +3,15 @@ package dev.gmarques.controledenotificacoes.framework.notification_listener_serv
 import android.app.Notification
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.service.notification.StatusBarNotification
-import com.bumptech.glide.Glide
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
@@ -16,6 +19,7 @@ import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextApp
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
+import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -37,16 +41,18 @@ class RuleEnforcerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : RuleEnforcer, CoroutineScope by CoroutineScope(IO) {
 
+    private lateinit var notification: AppNotification
+
     override suspend fun enforceOnNotification(
         sbn: StatusBarNotification,
         removeNotificationCallback: (AppNotification, Rule, ManagedApp) -> Any,
     ) = withContext(IO) {
 
-        val pkg = sbn.packageName
+
         val title = sbn.notification.extras.getString(Notification.EXTRA_TITLE).orEmpty()
         val content = sbn.notification.extras.getString(Notification.EXTRA_TEXT).orEmpty()
 
-        val notification = AppNotification(pkg, title, content, System.currentTimeMillis())
+        notification = AppNotification(sbn.packageName, title, content, sbn.postTime)
 
         val managedApp = getManagedAppByPackageIdUseCase(notification.packageId)
 
@@ -74,41 +80,34 @@ class RuleEnforcerImpl @Inject constructor(
 
         if (notification.title.isEmpty() && notification.content.isEmpty()) return
 
-        saveLargeIcon(sbn)
-// TODO: salvar a intent https://chatgpt.com/c/683b7135-46b4-8001-a2e5-6f1668739493 
-        insertAppNotificationUseCase(
-            AppNotification(
-                notification.packageId,
-                notification.title,
-                notification.content,
-                sbn.postTime
-            )
-        )
+        insertAppNotificationUseCase(notification)
 
+        PendingIntentCache.cache[notification.pendingIntentId()] = sbn.notification.contentIntent
+        saveLargeIcon(sbn)
     }
 
     suspend fun saveLargeIcon(sbn: StatusBarNotification) = withContext(IO) {
-// TODO: Quando a notificação for removida o ícone também deve ser movido de cachê
+// TODO: Quando a notificação for removida o ícone também deve ser movido de cachê e apagar a intent
 
-        val icon = sbn.notification.getLargeIcon() ?: return@withContext
-        val drawable = icon.loadDrawable(context) ?: return@withContext
+        try {
+            val icon = sbn.notification.getLargeIcon() ?: return@withContext
+            val drawable = icon.loadDrawable(context) ?: return@withContext
 
-        val bitmap = Glide.with(context)
-            .asBitmap()
-            .load(drawable)
-            .submit()
-            .get()
+            val bitmap = (drawable as BitmapDrawable).bitmap
 
+            val file = File(context.cacheDir, notification.bitmapId())
 
-        val filename = "${sbn.packageName}_${sbn.postTime}.png"
-
-        val file = File(context.cacheDir, filename)
-
-        FileOutputStream(file).use { out ->
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+            FileOutputStream(file).use { out ->
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+            }
+            Log.d("USUK", "RuleEnforcerImpl.saveLargeIcon: largeIcon for ${sbn.packageName} saved")
+        } catch (e: Exception) {
+            Log.e("USUK", "RuleEnforcerImpl.saveLargeIcon: error while saving notification's large icon from ${sbn.packageName}")
+            e.stackTrace
         }
 
     }
 
 
 }
+

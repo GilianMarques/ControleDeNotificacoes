@@ -30,7 +30,7 @@
 
     <fragment
         android:id="@+id/viewManagedAppFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app.FragmentViewManagedApp"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app.ViewManagedAppFragment"
         android:label="fragment_view_managed_app"
         tools:layout="@layout/fragment_view_managed_app">
 

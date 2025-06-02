@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_managed_app
 
+import android.app.PendingIntent
 import android.content.DialogInterface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -19,7 +20,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentViewManagedAppBinding
+import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
+import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRemovalDialog
@@ -29,11 +33,11 @@ import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setSta
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FragmentViewManagedApp() : MyFragment() {
+class ViewManagedAppFragment() : MyFragment() {
 
     companion object {
-        fun newInstance(): FragmentViewManagedApp {
-            return FragmentViewManagedApp()
+        fun newInstance(): ViewManagedAppFragment {
+            return ViewManagedAppFragment()
         }
     }
 
@@ -41,7 +45,7 @@ class FragmentViewManagedApp() : MyFragment() {
 
     private val viewModel: ViewManagedAppViewModel by viewModels()
     private lateinit var binding: FragmentViewManagedAppBinding
-    private val args: FragmentViewManagedAppArgs by navArgs()
+    private val args: ViewManagedAppFragmentArgs by navArgs()
     private lateinit var appIcon: Drawable
 
     override fun onCreateView(
@@ -102,11 +106,8 @@ class FragmentViewManagedApp() : MyFragment() {
         tvRuleName.setStartDrawable(drawable)
 
         lifecycleScope.launch {
-            Glide.with(binding.ivAppIcon.context)
-                .load(appIcon)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .error(R.drawable.vec_app)
-                .into(binding.ivAppIcon)
+            Glide.with(binding.ivAppIcon.context).load(appIcon).transition(DrawableTransitionOptions.withCrossFade())
+                .error(R.drawable.vec_app).into(binding.ivAppIcon)
         }
 
         ivGoBack.setOnClickListener(AnimatedClickListener {
@@ -120,12 +121,17 @@ class FragmentViewManagedApp() : MyFragment() {
     }
 
     private fun setupRecyclerView() = with(binding) {
-        adapter = AppNotificationAdapter(appIcon)
+        adapter = AppNotificationAdapter(appIcon, ::onNotificationClick)
         rvHistory.adapter = adapter
         rvHistory.layoutManager = LinearLayoutManager(requireContext())
         rvHistory.setHasFixedSize(true)
         hideViewOnRVScroll(binding.rvHistory, binding.fabOpenApp)
 
+    }
+
+    private fun onNotificationClick(notification: AppNotification) {
+        val originalPendingIntent: PendingIntent? = PendingIntentCache.cache[notification.pendingIntentId()]
+        originalPendingIntent?.send()
     }
 
     private fun showMenu() {
@@ -174,52 +180,40 @@ class FragmentViewManagedApp() : MyFragment() {
             }
 
         }
-        popupMenu.show(this@FragmentViewManagedApp.requireContext(), binding.ivMenu)
+        popupMenu.show(this@ViewManagedAppFragment.requireContext(), binding.ivMenu)
     }
 
     private fun confirmClearHistory() {
-        MaterialAlertDialogBuilder(requireActivity())
-            .setTitle(getString(R.string.Por_favor_confirme))
+        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Por_favor_confirme))
             .setMessage(getString(R.string.Deseja_mesmo_apagar_o_hist_rico_de_notifica_es_deste_app_essa_acao_nao))
             .setPositiveButton(getString(R.string.Apagar)) { dialog, _ ->
                 viewModel.clearHistory()
             }.setNegativeButton(getString(R.string.Cancelar)) { dialog, _ ->
-            }.setCancelable(false)
-            .setIcon(R.drawable.vec_alert)
-            .show()
+            }.setCancelable(false).setIcon(R.drawable.vec_alert).show()
     }
 
     private fun confirmRemoveApp() {
         viewModel.managedAppFlow.value
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(getString(R.string.Por_favor_confirme))
-            .setMessage(
-                getString(R.string.Deseja_mesmo_remover_este_aplicativo_da_lista_de_gerenciamento)
-            )
-            .setPositiveButton(
-                getString(R.string.Remover),
-                object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                        viewModel.deleteApp()
-                    }
-                })
-            .setNegativeButton(
-                getString(R.string.Cancelar),
-                object : DialogInterface.OnClickListener {
-                    override fun onClick(dialog: DialogInterface?, which: Int) {
-                    }
-                })
-            .setCancelable(false)
-            .setIcon(R.drawable.vec_alert)
-            .show()
+        MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.Por_favor_confirme)).setMessage(
+            getString(R.string.Deseja_mesmo_remover_este_aplicativo_da_lista_de_gerenciamento)
+        ).setPositiveButton(
+            getString(R.string.Remover), object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                    viewModel.deleteApp()
+                }
+            }).setNegativeButton(
+            getString(R.string.Cancelar), object : DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface?, which: Int) {
+                }
+            }).setCancelable(false).setIcon(R.drawable.vec_alert).show()
     }
 
     private fun navigateToEditRule() {
-        findNavController().navigate(FragmentViewManagedAppDirections.toAddRuleFragment(viewModel.managedAppFlow.value!!.rule))
+        findNavController().navigate(ViewManagedAppFragmentDirections.toAddRuleFragment(viewModel.managedAppFlow.value!!.rule))
     }
 
     private fun confirmRemoveRule() {
-        ConfirmRuleRemovalDialog(this@FragmentViewManagedApp, viewModel.managedAppFlow.value!!.rule) {
+        ConfirmRuleRemovalDialog(this@ViewManagedAppFragment, viewModel.managedAppFlow.value!!.rule) {
             viewModel.deleteRule()
         }
     }

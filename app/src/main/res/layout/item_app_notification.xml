@@ -7,7 +7,6 @@
     android:padding="4dp"
     android:transitionGroup="true">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/parent"
         android:layout_width="match_parent"
@@ -34,6 +33,20 @@
             app:layout_constraintTop_toTopOf="@id/tv_title"
             app:srcCompat="@drawable/vec_app" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_large_icon"
+            android:layout_width="56dp"
+            android:layout_height="64dp"
+            android:paddingStart="4dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="12dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            tools:srcCompat="@drawable/vec_open_app"
+            tools:visibility="visible" />
+
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
@@ -51,38 +64,75 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Whatsapp" />
 
-
         <TextView
             android:id="@+id/tv_content"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:drawablePadding="8dp"
             android:gravity="center_vertical"
             android:maxLines="20"
-            android:padding="4dp"
+            android:paddingStart="4dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="4dp"
+            android:paddingBottom="16dp"
             android:textAlignment="gravity"
             android:textSize="14sp"
             android:transitionName="not_content"
-            app:layout_constraintEnd_toEndOf="@id/tv_title"
-            app:layout_constraintStart_toStartOf="@id/tv_title"
+            android:visibility="gone"
+            app:layout_constraintEnd_toStartOf="@id/iv_large_icon"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_title"
-            tools:text="Conteudo da notificação\nbla bla bla bla..." />
+            tools:text="Conteudo da notificação\nbla bla bla bla..."
+            tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/bottomBarrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierAllowsGoneWidgets="true"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="tv_content,iv_large_icon" />
+
 
         <TextView
             android:id="@+id/tv_time"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp"
+            android:gravity="end"
             android:maxLines="2"
             android:paddingEnd="4dp"
             android:textAlignment="gravity"
             android:textSize="12sp"
             android:transitionName="not_time"
-            app:layout_constraintEnd_toEndOf="@id/parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tv_open_notification"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bottomBarrier"
             tools:ignore="RtlSymmetry"
             tools:text="Hoje as 13:56" />
 
+
+        <TextView
+            android:id="@+id/tv_open_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="?colorSecondaryContainer"
+            android:drawablePadding="4dp"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:text="@string/Abrir_notificacao"
+            android:textColor="?colorOnSecondaryContainer"
+            app:drawableStartCompat="@drawable/vec_open_notification_small"
+            app:drawableTint="?colorPrimary"
+            app:layout_constraintBottom_toBottomOf="@id/tv_time"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_time" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
