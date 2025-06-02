@@ -42,7 +42,9 @@ class AppNotificationAdapter(private val appIcon: Drawable, val onNotificationCl
 
             val file = File(App.context.cacheDir, notification.bitmapId())
 
-            Glide.with(App.context)
+            if (!file.exists()) ivLargeIcon.isGone =
+                true // evita poluir o logcat com os avisos de erro ao carregar imagens que nao existem no cache
+            else Glide.with(App.context)
                 .asBitmap()
                 .load(file)
                 .into(object : CustomTarget<Bitmap>() {
@@ -55,10 +57,6 @@ class AppNotificationAdapter(private val appIcon: Drawable, val onNotificationCl
 
                     }
 
-                    override fun onLoadFailed(errorDrawable: Drawable?) {
-                        ivLargeIcon.isGone = true
-                        super.onLoadFailed(errorDrawable)
-                    }
                 })
 
             tvOpenNotification.setOnClickListener(
