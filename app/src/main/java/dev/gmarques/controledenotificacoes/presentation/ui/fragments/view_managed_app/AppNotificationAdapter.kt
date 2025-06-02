@@ -42,8 +42,8 @@ class AppNotificationAdapter(private val appIcon: Drawable, val onNotificationCl
 
             val file = File(App.context.cacheDir, notification.bitmapId())
 
-            if (!file.exists()) ivLargeIcon.isGone =
-                true // evita poluir o logcat com os avisos de erro ao carregar imagens que nao existem no cache
+            // evita poluir o logcat com os avisos de erro ao carregar imagens que nao existem no cache
+            if (!file.exists()) ivLargeIcon.isGone = true
             else Glide.with(App.context)
                 .asBitmap()
                 .load(file)
