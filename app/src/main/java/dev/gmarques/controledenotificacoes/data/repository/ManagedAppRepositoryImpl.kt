@@ -55,4 +55,8 @@ class ManagedAppRepositoryImpl @Inject constructor(private val managedAppDao: Ma
             apps.map { ManagedAppMapper.mapToModel(it) }
         }
     }
+
+    override fun observeManagedApp(pkg: String): Flow<ManagedApp> {
+        return managedAppDao.observeManagedApp(pkg).map { ManagedAppMapper.mapToModel(it) }
+    }
 }

@@ -15,10 +15,14 @@ class DeleteAllAppNotificationsUseCase @Inject constructor(
     private val repository: AppNotificationRepository,
     @ApplicationContext private val context: Context,
 ) {
+    /**
+     * Limpa o cache de intents e de bitmaps relacionado ao app e por fim apaga as notificaçoes do db
+     * de forma que o cache bao fique orfao se houver algum erro entre as operações
+     */
     suspend operator fun invoke(packageId: String) {
-        repository.deleteAll(packageId)
-        removePendingIntentsFromCache(packageId)
         removeBitmapsFromCache(packageId)
+        removePendingIntentsFromCache(packageId)
+        repository.deleteAll(packageId)
     }
 
     private fun removeBitmapsFromCache(packageId: String) {

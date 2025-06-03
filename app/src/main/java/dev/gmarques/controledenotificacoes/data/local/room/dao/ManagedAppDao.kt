@@ -36,4 +36,8 @@ interface ManagedAppDao {
     @Query("SELECT * FROM managed_apps WHERE ruleId = :ruleId")
     suspend fun getManagedAppByRuleId(ruleId: String): List<ManagedAppEntity>
 
+
+    @Query("SELECT * FROM managed_apps WHERE packageId = :pkg")
+    fun observeManagedApp(pkg: String): Flow<ManagedAppEntity>
+
 }

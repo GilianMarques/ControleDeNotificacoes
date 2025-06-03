@@ -5,25 +5,25 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import android.util.Log
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
-import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.DeleteRuleWithAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.DeleteAllAppNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.ObserveAppNotificationsByPkgIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.DeleteManagedAppAndItsNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveManagedApp
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -44,11 +44,11 @@ class ViewManagedAppViewModel @Inject constructor(
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
     private val updateManagedAppUseCase: UpdateManagedAppUseCase,
     private val getInstalledAppIconUseCase: GetInstalledAppIconUseCase,
+    private val observeManagedApp: ObserveManagedApp,
     @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     private var initialized = false
-
     private val _managedAppFlow = MutableStateFlow<ManagedAppWithRule?>(null)
     val managedAppFlow: StateFlow<ManagedAppWithRule?> get() = _managedAppFlow
 
@@ -58,51 +58,89 @@ class ViewManagedAppViewModel @Inject constructor(
     private val _eventsFlow = MutableSharedFlow<Event>(replay = 1)
     val eventsFlow: SharedFlow<Event> get() = _eventsFlow
 
+    private var ruleObserverJob: Job? = null
+
+    fun setup(pkg: String) = viewModelScope.launch(IO) {
+
+        val managedApp = getManagedAppByPackageIdUseCase(pkg)
+
+        val ruleId = managedApp?.ruleId
+        if (ruleId == null) return@launch
+
+        val rule = getRuleByIdUseCase(ruleId)
+        if (rule == null) return@launch
+
+        val packageManager: PackageManager = context.packageManager
+        val appInfo = packageManager.getApplicationInfo(pkg, PackageManager.GET_META_DATA)
+        val appName = packageManager.getApplicationLabel(appInfo).toString()
+
+        setup(ManagedAppWithRule(appName, pkg, rule, managedApp.hasPendingNotifications))
+    }
+
     fun setup(app: ManagedAppWithRule) = viewModelScope.launch(IO) {
 
-        if (initialized) error("Não chame essa função mais que 1 vez")
-
-        Log.d("USUK", "ViewManagedAppViewModel.setup: $app")
-
         removeNotificationIndicator(app.packageId)
-
         _managedAppFlow.tryEmit(app)
 
+        if (initialized == false) {
+            initialized = true
+
+            observeAppChanges(app.packageId)
+            observeAppNotifications(app)
+        }
+
+    }
+
+    /**
+     * Necessário observar alterações  no app vindas do DB porque o usuario pode alterar a regra de um app
+     * e se acontecer é necessário redefinir o listener que observa a regra para observar a nova regra do app
+     */
+    private fun observeAppChanges(pkg: String) = viewModelScope.launch(IO) {
+        observeManagedApp(pkg).collect {
+            // TODO: sendo chamado duas vezes ao abrir o frag
+            Log.d("USUK", "ViewManagedAppViewModel.observeAppChanges: ${it.packageId} rule: ${it.ruleId}")
+            observeRuleChanges(it.ruleId)
+        }
+    }
+
+    /**
+     * Quando o usuário usa o menu para editar ou alterar uma regra,este listener é disparado para
+     * atualizar a interface deste fragmento com a nova regra.
+     *
+     * Pode ser chamado multiplas vezes pois ecerra a corrotina anterior e cria uma nova.
+     */
+    private fun observeRuleChanges(ruleId: String) = {
+        ruleObserverJob?.cancel()
+        ruleObserverJob = viewModelScope.launch(IO) {
+            observeRuleUseCase(ruleId).collect {
+                Log.d(
+                    "USUK",
+                    "ViewManagedAppViewModel.observeRuleChanges: nova: ${it?.id} atual: ${_managedAppFlow.value?.rule?.id}"
+                )
+                // a regra sera nula se o usuario a remover, nesse caso o fragmento será fechado
+                it?.let { _managedAppFlow.emit(_managedAppFlow.value!!.copy(rule = it)) }
+            }
+        }
+    }
+
+    private fun observeAppNotifications(app: ManagedAppWithRule) = viewModelScope.launch(IO) {
         observeAppNotificationsByPkgIdUseCase(app.packageId).collect {
 
-            val notifications = it.toMutableList().apply {
-                reverse() // notificações mais recentes por cima
-            }.distinctBy { it.title to it.content } // remove duplicatas (Impedir duplicatas de entrar no DB nao é viavel).
+            val notifications = it.toMutableList()
+                .apply {
+                    reverse() // notificações mais recentes por cima
+                }.distinctBy { it.title to it.content } // remove duplicatas (Impedir duplicatas de entrar no DB nao é viavel).
 
             _appNotificationHistoryFlow.tryEmit(notifications)
         }
-
-        observeRuleChanges(app.rule)
-        initialized = true
     }
 
+    /** Escreve no DB que o app ja nao tem notificações para serem vistas que que o fragmento desse viewmodel exibe as notificações.
+     * Deve ser chamado sempre que o fragmento for aberto e recriad opelo sistema
+     */
     private fun removeNotificationIndicator(packageId: String) = viewModelScope.launch(IO) {
         getManagedAppByPackageIdUseCase(packageId)?.let { app ->
             updateManagedAppUseCase(app.copy(hasPendingNotifications = false))
-        }
-    }
-
-
-    /**
-     * Quando o usuário usa o menu para editar uma regra o fragmento que adiciona e edita regras salva a modificação
-     * no DB e este listener é disparado para atualizar a interface deste fragmento com a nova regra
-     */
-    private fun observeRuleChanges(rule: Rule) = viewModelScope.launch {
-        observeRuleUseCase(rule.id).collect {
-
-            if (it == null) return@collect.also {
-                Log.w(
-                    "USUK",
-                    "ViewManagedAppViewModel.".plus("observeRuleChanges() regra recebida é nula. Se a última operação feita foi uma remoção isso está certo senão pode ser resultado de um bug ")
-                )
-            }
-
-            _managedAppFlow.tryEmit(_managedAppFlow.value!!.copy(rule = it))
         }
     }
 
@@ -120,25 +158,7 @@ class ViewManagedAppViewModel @Inject constructor(
         deleteAllAppNotificationsUseCase(managedAppFlow.value!!.packageId)
     }
 
-    fun setup(pkg: String) = viewModelScope.launch {
-        Log.d("USUK", "ViewManagedAppViewModel.setup: $pkg")
-
-        val managedApp = getManagedAppByPackageIdUseCase(pkg)
-
-        val ruleId = managedApp?.ruleId
-        if (ruleId == null) return@launch
-
-        val rule = getRuleByIdUseCase(ruleId)
-        if (rule == null) return@launch
-
-        val packageManager: PackageManager = context.packageManager
-        val appInfo = packageManager.getApplicationInfo(pkg, PackageManager.GET_META_DATA)
-        val appName = packageManager.getApplicationLabel(appInfo).toString()
-
-        setup(ManagedAppWithRule(appName, pkg, rule, managedApp.hasPendingNotifications))
-    }
-
-    fun loadAppIcon(pkg: String, context: FragmentActivity): Drawable = runBlocking {
+    fun loadAppIcon(pkg: String, context: Context): Drawable = runBlocking {
         return@runBlocking getInstalledAppIconUseCase(pkg) ?: ContextCompat.getDrawable(context, R.drawable.vec_app)
     }
 

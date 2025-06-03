@@ -15,4 +15,5 @@ interface ManagedAppRepository {
     suspend fun getManagedAppByPackageId(id: String): ManagedApp?
     suspend fun getManagedAppByRuleId(ruleId: String): List<ManagedApp>
     fun observeAllManagedApps(): Flow<List<ManagedApp>>
+    fun observeManagedApp(pkg: String): Flow<ManagedApp>
 }

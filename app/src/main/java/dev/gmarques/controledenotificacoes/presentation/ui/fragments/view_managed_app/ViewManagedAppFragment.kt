@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.DialogInterface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -72,15 +73,13 @@ class ViewManagedAppFragment() : MyFragment() {
             null
         }
 
-
-        pkg?.let { appIcon = viewModel.loadAppIcon(pkg, requireActivity()) }
+        pkg?.let { appIcon = viewModel.loadAppIcon(pkg, requireContext()) }
 
         observeRuleChanges()
         observeNotificationHistory()
         observeEvents()
         setupRecyclerView()
         setupFabOpenApp()
-
 
     }
 
@@ -167,7 +166,7 @@ class ViewManagedAppFragment() : MyFragment() {
                     label = getString(R.string.Alterar_regra)
                     icon = R.drawable.vec_change_rule
                     callback = {
-                        navigateToSelectRule()
+                        navigateToChangetRule()
                     }
                 }
 
@@ -223,7 +222,7 @@ class ViewManagedAppFragment() : MyFragment() {
         findNavController().navigate(ViewManagedAppFragmentDirections.toAddRuleFragment(viewModel.managedAppFlow.value!!.rule))
     }
 
-    private fun navigateToSelectRule() {
+    private fun navigateToChangetRule() {
         findNavController().navigate(ViewManagedAppFragmentDirections.toAddManagedAppsFragment(viewModel.managedAppFlow.value?.packageId))
     }
 
@@ -235,6 +234,8 @@ class ViewManagedAppFragment() : MyFragment() {
 
     private fun observeRuleChanges() {
         collectFlow(viewModel.managedAppFlow) { app ->
+
+            Log.d("USUK", "ViewManagedAppFragment.observeRuleChanges:  ${app?.rule?.nameOrDescription()} - ${app?.rule?.id}")
             app?.let {
                 setupActionBar(app)
             }
@@ -262,4 +263,13 @@ class ViewManagedAppFragment() : MyFragment() {
         }
     }
 
+    override fun onDestroyView() {
+        Log.d("USUK", "ViewManagedAppFragment.onDestroyView: ")
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        Log.d("USUK", "ViewManagedAppFragment.onDestroy: ")
+        super.onDestroy()
+    }
 }

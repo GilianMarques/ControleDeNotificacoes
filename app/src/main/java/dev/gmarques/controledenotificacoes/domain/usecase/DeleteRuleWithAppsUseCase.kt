@@ -3,14 +3,10 @@ package dev.gmarques.controledenotificacoes.domain.usecase
 import android.util.Log
 import androidx.room.withTransaction
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
-import dev.gmarques.controledenotificacoes.domain.data.repository.ManagedAppRepository
 import dev.gmarques.controledenotificacoes.domain.data.repository.RuleRepository
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.DeleteAllAppNotificationsUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.DeleteManagedAppAndItsNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppsByRuleIdUseCase
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 /**
@@ -23,17 +19,19 @@ import javax.inject.Inject
 class DeleteRuleWithAppsUseCase @Inject constructor(
     private val roomDb: RoomDatabase,
     private val ruleRepository: RuleRepository,
-    private val managedAppRepository: ManagedAppRepository,
-    private val deleteAllAppNotificationsUseCase: DeleteAllAppNotificationsUseCase,
+    private val deleteManagedAppAndItsNotificationsUseCase: DeleteManagedAppAndItsNotificationsUseCase,
     private val getManagedAppsByRuleIdUseCase: GetManagedAppsByRuleIdUseCase,
 ) {
     suspend operator fun invoke(rule: Rule): Boolean {
         return try {
-
-            removeAppsNotifications(rule)
-
+            // se outras corrotinas forem iniciadas dentro do withTransaction ou de codigo dentro dos usecases chamdos aqui
+            // as operaçoes feitas no DB ja nao estarao garantidas pela transação. use funções suspensas em serie para garantir atomicidade
             roomDb.withTransaction {
-                managedAppRepository.deleteManagedAppsByRuleId(rule.id)
+// TODO: melhor nao chamar usecases dentro de transaçoes,
+                getManagedAppsByRuleIdUseCase(rule.id).forEach { app ->
+                    deleteManagedAppAndItsNotificationsUseCase(app.packageId)
+                }
+
                 ruleRepository.deleteRule(rule)
             }
             true
@@ -43,12 +41,5 @@ class DeleteRuleWithAppsUseCase @Inject constructor(
         }
     }
 
-    /**Usa o usecase adequado para remover as notificações (com pendingIntents
-     * e Bitmaps em cache) de cada app gerenciado pela regra
-     */
-    private suspend fun removeAppsNotifications(rule: Rule) = coroutineScope {
-        getManagedAppsByRuleIdUseCase(rule.id).map { app ->
-            async { deleteAllAppNotificationsUseCase(app.packageId) }
-        }.awaitAll()
-    }
+
 }

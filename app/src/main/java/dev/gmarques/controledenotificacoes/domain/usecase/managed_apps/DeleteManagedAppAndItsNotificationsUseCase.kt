@@ -3,8 +3,8 @@ package dev.gmarques.controledenotificacoes.domain.usecase.managed_apps
 import android.util.Log
 import androidx.room.withTransaction
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
-import dev.gmarques.controledenotificacoes.domain.data.repository.AppNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.data.repository.ManagedAppRepository
+import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.DeleteAllAppNotificationsUseCase
 import javax.inject.Inject
 
 /**
@@ -14,15 +14,22 @@ import javax.inject.Inject
 class DeleteManagedAppAndItsNotificationsUseCase @Inject constructor(
     private val roomDb: RoomDatabase,
     private val repository: ManagedAppRepository,
-    private val notificationRepository: AppNotificationRepository,
+
+    private val deleteAllAppNotificationsUseCase: DeleteAllAppNotificationsUseCase,
 ) {
 
     suspend operator fun invoke(packageId: String) {
         try {
-
             roomDb.withTransaction {
+                /*
+                * Esta ordem limpa o cache de pendingIntents e bitmaps e depois apaga as notificaçoes do banco (com [DeleteAllAppNotificationsUseCase])
+                * por fim apaga o app, isso garante que os dados em cache nao fiquem orfaos caso as notificações
+                * sejam apagadas primeiro e um erro impeça que eles sejam removidos, permanecendo em cache por tempo indefinido.
+                * Por fim se algo der errado, o cache foi limpo mas os dados do banco sao restaurados pela transação e aí é só tentar apagar de novo.
+                */
+                deleteAllAppNotificationsUseCase(packageId)
                 repository.deleteManagedAppByPackageId(packageId)
-                notificationRepository.deleteAll(packageId)
+
             }
         } catch (e: Exception) {
             Log.e("USUK", "DeleteManagedAppAndItsNotificationsUseCase.invoke: Falha na transação: ${e.message}")
