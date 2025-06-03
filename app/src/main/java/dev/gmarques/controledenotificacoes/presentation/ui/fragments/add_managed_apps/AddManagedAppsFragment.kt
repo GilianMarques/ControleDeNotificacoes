@@ -92,13 +92,22 @@ class AddManagedAppsFragment() : MyFragment() {
     }
 
     private fun setupToChangeRule() {
-        args.selectedApp?.let {
+        args.selectedAppPkg?.let {
+            if (it == InstalledApp.NOT_FOUND_APP_PKG) {
+                findNavController().popBackStack()
+                return@let
+            }
+
             binding.tvAddApp.isGone = true
             binding.toolbar.tvTitle.text = getString(R.string.Alterar_regra)
             viewModel.loadAppToChangeRule(it)
+
+            if (viewModel.autoOpenSelectionRuleFragment) {
+                viewModel.autoOpenSelectionRuleFragment = false
+                navigateToAddOrSelectRule()
+            }
         }
     }
-
 
     /**
      * Esta função tenta carregar a última regra selecionada pelo usuário a partir das preferências.
@@ -199,34 +208,37 @@ class AddManagedAppsFragment() : MyFragment() {
     private fun setupSelectRuleButton() = with(binding) {
 
         tvAddRule.setOnClickListener(AnimatedClickListener {
-            lifecycleScope.launch {
-                if (getAllRulesUseCase().isEmpty()) {
-                    findNavController().navigate(
-                        AddManagedAppsFragmentDirections.toAddRuleFragment(),
-                        FragmentNavigatorExtras(
-                            tvRuleTittle to tvRuleTittle.transitionName,
-                            tvTargetApp to tvTargetApp.transitionName,
-                            appsContainer to appsContainer.transitionName,
-                            llRule to llRule.transitionName,
-                            tvTargetApp to tvTargetApp.transitionName,
-                            fabConclude to fabConclude.transitionName,
-                        )
-                    )
-                } else {
-                    findNavController().navigate(
-                        AddManagedAppsFragmentDirections.toSelectRuleFragment(),
-                        FragmentNavigatorExtras(
-                            fabConclude to fabConclude.transitionName,
-                            llRule to llRule.transitionName,
-                            tvRuleTittle to tvRuleTittle.transitionName,
-                        )
-                    )
-                }
+            navigateToAddOrSelectRule()
+        })
+    }
 
-
+    private fun navigateToAddOrSelectRule() = with(binding) {
+        lifecycleScope.launch {
+            if (getAllRulesUseCase().isEmpty()) {
+                findNavController().navigate(
+                    AddManagedAppsFragmentDirections.toAddRuleFragment(),
+                    FragmentNavigatorExtras(
+                        tvRuleTittle to tvRuleTittle.transitionName,
+                        tvTargetApp to tvTargetApp.transitionName,
+                        appsContainer to appsContainer.transitionName,
+                        llRule to llRule.transitionName,
+                        tvTargetApp to tvTargetApp.transitionName,
+                        fabConclude to fabConclude.transitionName,
+                    )
+                )
+            } else {
+                findNavController().navigate(
+                    AddManagedAppsFragmentDirections.toSelectRuleFragment(),
+                    FragmentNavigatorExtras(
+                        fabConclude to fabConclude.transitionName,
+                        llRule to llRule.transitionName,
+                        tvRuleTittle to tvRuleTittle.transitionName,
+                    )
+                )
             }
 
-        })
+
+        }
     }
 
     private fun setupSelectRuleListener() {
@@ -319,7 +331,8 @@ class AddManagedAppsFragment() : MyFragment() {
                     name.text = app.name
                     ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
                     root.tag = app.packageId
-                    ivRemove.setOnClickListener(AnimatedClickListener {
+                    if (viewModel.changingRule) ivRemove.isGone = true
+                    else ivRemove.setOnClickListener(AnimatedClickListener {
                         viewModel.deleteApp(app)
                     })
                     parent.addView(root, min(index, parent.childCount))

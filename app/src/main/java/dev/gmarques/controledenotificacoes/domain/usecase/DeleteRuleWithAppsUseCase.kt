@@ -29,7 +29,7 @@ class DeleteRuleWithAppsUseCase @Inject constructor(
             roomDb.withTransaction {
 // TODO: melhor nao chamar usecases dentro de transaçoes,
                 getManagedAppsByRuleIdUseCase(rule.id).forEach { app ->
-                    deleteManagedAppAndItsNotificationsUseCase(app.packageId)
+                    app?.let { deleteManagedAppAndItsNotificationsUseCase(app.packageId) }
                 }
 
                 ruleRepository.deleteRule(rule)

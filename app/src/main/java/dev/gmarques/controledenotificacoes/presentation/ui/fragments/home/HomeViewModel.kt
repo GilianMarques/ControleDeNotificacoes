@@ -46,7 +46,7 @@ class HomeViewModel @Inject constructor(
     private val defaultAppIfNotFound by lazy {
         InstalledApp(
             name = context.getString(R.string.App_nao_encontrado),
-            packageId = "not.found.app",
+            packageId = InstalledApp.NOT_FOUND_APP_PKG,
             isBeingManaged = false
         )
     }

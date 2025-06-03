@@ -58,7 +58,7 @@
             android:layout_marginBottom="8dp"
             android:background="@drawable/back_circle"
             android:backgroundTint="?colorSecondaryContainer"
-            android:contentDescription="@string/Bot_o_para_remover_o_intervalo_de_tempo"
+            android:contentDescription="@string/Bot_o_para_remover_o_app_da_lista_de_sele_o"
             android:padding="6dp"
             android:src="@drawable/vec_remove"
             app:layout_constraintBottom_toBottomOf="parent"

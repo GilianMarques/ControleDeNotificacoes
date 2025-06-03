@@ -13,4 +13,8 @@ data class InstalledApp(
     val name: String,
     val packageId: String,
     val isBeingManaged: Boolean,
-) : Serializable
+) : Serializable {
+    companion object {
+        const val NOT_FOUND_APP_PKG = "not.found.app"
+    }
+}

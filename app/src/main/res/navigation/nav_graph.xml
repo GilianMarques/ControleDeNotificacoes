@@ -103,7 +103,7 @@
             app:destination="@id/addRuleFragment" />
 
         <argument
-            android:name="selectedApp"
+            android:name="selectedAppPkg"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />

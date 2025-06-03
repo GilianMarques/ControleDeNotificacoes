@@ -91,15 +91,16 @@
                         android:paddingTop="8dp"
                         android:paddingEnd="12dp"
                         android:paddingBottom="8dp"
-                        android:text="@string/Selecionar"
+                        android:text="@string/Alterar_regra"
                         android:textColor="?colorOnSecondaryContainer"
-                        app:drawableStartCompat="@drawable/vec_add"
+                        app:drawableStartCompat="@drawable/vec_change_rule_small"
                         app:drawableTint="?colorOnSecondaryContainer"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
 
                 <TextView
                     android:id="@+id/tv_selected_rule"
@@ -163,7 +164,7 @@
                         android:paddingTop="8dp"
                         android:paddingEnd="12dp"
                         android:paddingBottom="8dp"
-                        android:text="@string/Selecionar"
+                        android:text="@string/Adicionar"
                         android:textColor="?colorOnSecondaryContainer"
                         app:drawableStartCompat="@drawable/vec_add"
                         app:drawableTint="?colorOnSecondaryContainer"

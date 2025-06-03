@@ -35,6 +35,11 @@ class AddManagedAppsViewModel @Inject constructor(
     private val rescheduleAlarmOnAppsRuleChangeUseCase: RescheduleAlarmOnAppsRuleChangeUseCase,
 ) : ViewModel() {
 
+    var autoOpenSelectionRuleFragment = true
+
+    var changingRule = false
+        private set
+
     private val _selectedApps = MutableLiveData<Map<String, InstalledApp>>(emptyMap())
     val selectedApps: LiveData<Map<String, InstalledApp>> = _selectedApps
 
@@ -89,6 +94,7 @@ class AddManagedAppsViewModel @Inject constructor(
      * que as atualizações da UI ocorram na thread principal.
      */
     fun validateSelection() = viewModelScope.launch(Main) {
+// TODO: delay enorme pra salvar os dados msms quando é só um app
 
         val rule = _selectedRule.value
         val apps = _selectedApps.value!!.values.toList()
@@ -152,6 +158,8 @@ class AddManagedAppsViewModel @Inject constructor(
 
     fun loadAppToChangeRule(pkg: String) = viewModelScope.launch(IO) {
         val app = getInstalledAppByPackageUseCase(pkg) ?: error("nao deveria ser nulo")
+        changingRule = true
         withContext(Main) { addNewlySelectedApps(listOf(app)) }
+
     }
 }

@@ -37,12 +37,14 @@ class ManagedAppRepositoryImpl @Inject constructor(private val managedAppDao: Ma
     }
 
     override suspend fun getManagedAppByPackageId(id: String): ManagedApp? {
-        return managedAppDao.getManagedAppByPackageId(id)?.let { ManagedAppMapper.mapToModel(it) }
+        return managedAppDao.getManagedAppByPackageId(id)?.let {
+            ManagedAppMapper.mapToModel(it)
+        }
     }
 
-    override suspend fun getManagedAppByRuleId(ruleId: String): List<ManagedApp> {
+    override suspend fun getManagedAppByRuleId(ruleId: String): List<ManagedApp?> {
         return managedAppDao.getManagedAppByRuleId(ruleId).let {
-            it.map { ManagedAppMapper.mapToModel(it) }
+            it.map { it?.let { ManagedAppMapper.mapToModel(it) } }
         }
     }
 
@@ -56,7 +58,7 @@ class ManagedAppRepositoryImpl @Inject constructor(private val managedAppDao: Ma
         }
     }
 
-    override fun observeManagedApp(pkg: String): Flow<ManagedApp> {
-        return managedAppDao.observeManagedApp(pkg).map { ManagedAppMapper.mapToModel(it) }
+    override fun observeManagedApp(pkg: String): Flow<ManagedApp?> {
+        return managedAppDao.observeManagedApp(pkg).map { it?.let { ManagedAppMapper.mapToModel(it) } }
     }
 }

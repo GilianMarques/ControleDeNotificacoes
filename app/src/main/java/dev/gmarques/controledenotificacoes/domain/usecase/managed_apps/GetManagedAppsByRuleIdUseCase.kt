@@ -9,7 +9,7 @@ import javax.inject.Inject
  * Em segunda-feira, 19 de maio de 2025 as 13:18.
  */
 class GetManagedAppsByRuleIdUseCase @Inject constructor(private val repository: ManagedAppRepository) {
-    suspend operator fun invoke(ruleId: String): List<ManagedApp> {
+    suspend operator fun invoke(ruleId: String): List<ManagedApp?> {
         return repository.getManagedAppByRuleId(ruleId)
     }
 }

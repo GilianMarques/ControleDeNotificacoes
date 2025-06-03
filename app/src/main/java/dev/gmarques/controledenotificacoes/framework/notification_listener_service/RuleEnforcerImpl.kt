@@ -87,7 +87,6 @@ class RuleEnforcerImpl @Inject constructor(
     }
 
     suspend fun saveLargeIcon(sbn: StatusBarNotification) = withContext(IO) {
-// TODO: Quando a notificação for removida o ícone também deve ser movido de cachê e apagar a intent
 
         try {
             val icon = sbn.notification.getLargeIcon() ?: return@withContext

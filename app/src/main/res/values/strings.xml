@@ -206,6 +206,8 @@
     <string name="O_aviso_de_otimiza_o_de_bateria_ser_reexibido_se_as_restri_es_estiverem_ativas">O aviso de otimização de bateria será reexibido se as restrições estiverem ativas</string>
     <string name="Abrir_notificacao">Abrir notificação</string>
     <string name="Alterar_regra">Alterar regra</string>
+    <string name="Bot_o_para_remover_o_app_da_lista_de_sele_o">Botão para remover o app da lista de seleção</string>
+    <string name="Alterar">Alterar</string>
 
 
 </resources>

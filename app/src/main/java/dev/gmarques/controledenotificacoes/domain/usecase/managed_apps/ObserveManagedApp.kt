@@ -12,7 +12,7 @@ import javax.inject.Inject
 class ObserveManagedApp @Inject constructor(
     private val repository: ManagedAppRepository,
 ) {
-    operator fun invoke(pkg: String): Flow<ManagedApp> {
+    operator fun invoke(pkg: String): Flow<ManagedApp?> {
         return repository.observeManagedApp(pkg)
     }
 }

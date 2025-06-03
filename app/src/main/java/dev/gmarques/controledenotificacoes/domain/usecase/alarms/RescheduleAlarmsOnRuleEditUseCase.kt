@@ -28,7 +28,7 @@ class RescheduleAlarmsOnRuleEditUseCase @Inject constructor(
         getManagedAppsByRuleIdUseCase(rule.id)
             .map { app ->
                 async {
-                    reschedule(app, rule)
+                    app?.let { reschedule(app, rule) }
                 }
             }.awaitAll()
     }
