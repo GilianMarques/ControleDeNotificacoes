@@ -13,7 +13,7 @@ interface ManagedAppRepository {
     suspend fun deleteManagedAppByPackageId(packageId: String)
     suspend fun deleteManagedAppsByRuleId(ruleId: String): Int
     suspend fun getManagedAppByPackageId(id: String): ManagedApp?
-    suspend fun getManagedAppByRuleId(ruleId: String): List<ManagedApp?> // TODO: pq ta retornando uma lista???
+    suspend fun getManagedAppsByRuleId(ruleId: String): List<ManagedApp?>
     fun observeAllManagedApps(): Flow<List<ManagedApp>>
     fun observeManagedApp(pkg: String): Flow<ManagedApp?>
 }

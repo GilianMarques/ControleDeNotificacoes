@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -313,6 +314,7 @@ class AddManagedAppsFragment() : MyFragment() {
      */
     private fun manageAppsViews(apps: Map<String, InstalledApp>) = lifecycleScope.launch {
         manageAppsViewsMutex.withLock {
+            Log.d("USUK", "AddManagedAppsFragment.manageAppsViews: ${binding.llConteinerApps.childCount} apps: ${apps.size}")
             binding.tvExtraApps.text = ""
             val parent = binding.llConteinerApps
 
@@ -320,17 +322,20 @@ class AddManagedAppsFragment() : MyFragment() {
             uma lista de views a remover primeiro e só depois remova-las pra evitar inconsistencias na ui */
             parent.children
                 .filter { it.tag !in apps.keys }
-                .toList()
+                .toList().also { Log.d("USUK", "AddManagedAppsFragment.manageAppsViews: removing ${it.size} views from screen") }
                 .forEach {
                     parent.removeView(it)
                 }
+            // TODO: nem sempre as views sao removidas
 
-            apps.values.sortedBy { it.name }.forEachIndexed { index, app ->
+            apps.values.sortedBy { it.name }
+                .forEachIndexed { index, app ->
                 if (index >= maxAppsViews) {
                     binding.tvExtraApps.text = getString(R.string.Mais_x_apps, apps.size - maxAppsViews)
                     return@forEachIndexed
                 }
                 if (!parent.children.none { it.tag == app.packageId }) return@forEachIndexed
+
                 with(ItemAppSmallBinding.inflate(layoutInflater)) {
                     name.text = app.name
                     ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
@@ -340,6 +345,7 @@ class AddManagedAppsFragment() : MyFragment() {
                         viewModel.deleteApp(app)
                     })
                     parent.addView(root, min(index, parent.childCount))
+                    Log.d("USUK", "AddManagedAppsFragment.manageAppsViews: adding index $index pkg ${app.name}")
                 }
             }
         }

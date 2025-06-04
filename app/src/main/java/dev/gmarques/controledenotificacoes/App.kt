@@ -29,6 +29,7 @@ class App() : Application(), CoroutineScope by MainScope() {
         lateinit var context: App
     }
 
+    // TODO: preciso manter o pkg de um app desinstalado pra remover as notificaoes e cache - use uma flag 'uninstalled
     private val _remoteConfigValues = MutableStateFlow<RemoteConfigValues?>(null)
     val remoteConfigValues get() = _remoteConfigValues
 

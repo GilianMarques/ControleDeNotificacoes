@@ -10,6 +10,6 @@ import javax.inject.Inject
  */
 class GetManagedAppsByRuleIdUseCase @Inject constructor(private val repository: ManagedAppRepository) {
     suspend operator fun invoke(ruleId: String): List<ManagedApp?> {
-        return repository.getManagedAppByRuleId(ruleId)
+        return repository.getManagedAppsByRuleId(ruleId)
     }
 }
