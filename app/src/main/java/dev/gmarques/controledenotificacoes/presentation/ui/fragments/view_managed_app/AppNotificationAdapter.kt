@@ -65,7 +65,7 @@ class AppNotificationAdapter(private val appIcon: Drawable, val onNotificationCl
                     onNotificationClick(notification)
                 })
 
-            tvOpenNotification.isVisible = PendingIntentCache.cache[notification.pendingIntentId()] != null
+            tvOpenNotification.isVisible = PendingIntentCache(notification.pendingIntentId()) != null
             tvContent.isGone = tvContent.text.isEmpty()
 
         }

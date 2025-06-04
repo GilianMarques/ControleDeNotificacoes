@@ -15,6 +15,7 @@ import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
 import java.util.Timer
 import java.util.TimerTask
 
@@ -31,9 +32,7 @@ class NotificationServiceManager : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_ID, buildNotification())
         keepCheckingNotificationListenerIsAlive()
-        return START_STICKY.also {
-            Log.d("USUK", "NotificationServiceManager.onStartCommand: Gestor de serviço conectado")
-        }
+        return START_STICKY
     }
 
     override fun onDestroy() {
@@ -78,6 +77,7 @@ class NotificationServiceManager : Service() {
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(true)
             .setContentIntent(getPendingIntentForNotificationSettings())
+            .addAction(R.drawable.vec_open_app, getString(R.string.Abrir_app), getPendingIntentForOpenTheApp())
             .build()
     }
 
@@ -154,6 +154,21 @@ class NotificationServiceManager : Service() {
         return PendingIntent.getActivity(
             baseContext, 220462, intent, PendingIntent.FLAG_IMMUTABLE
         )
+    }
+
+    fun getPendingIntentForOpenTheApp(): PendingIntent {
+
+        val intent = Intent(baseContext, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        return PendingIntent.getActivity(
+            baseContext,
+            462025, // requestCode, use diferentes se tiver múltiplas notificações com intents distintas
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
     }
 
     companion object {
