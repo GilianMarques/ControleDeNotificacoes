@@ -112,7 +112,7 @@
                     android:gravity="center_vertical"
                     android:padding="16dp"
                     android:textAlignment="gravity"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     app:drawableTint="?colorPrimary"
                     tools:drawableStartCompat="@drawable/vec_rule_restrictive"
                     tools:text="Regra X"

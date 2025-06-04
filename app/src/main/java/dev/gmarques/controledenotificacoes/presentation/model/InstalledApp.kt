@@ -15,6 +15,10 @@ data class InstalledApp(
     val isBeingManaged: Boolean,
 ) : Serializable {
     companion object {
+        /**
+         * Tag usada para indicar que um app gerenciado nao foi encootrado na lista de apps instalados.
+         * O motivo esperado para isso é que o app foi desinstalado do aparelho pelo ususario
+         */
         const val NOT_FOUND_APP_PKG = "not.found.app"
     }
 }

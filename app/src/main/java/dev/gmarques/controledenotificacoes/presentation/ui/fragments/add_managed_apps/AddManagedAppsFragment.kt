@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.isGone
@@ -87,8 +88,8 @@ class AddManagedAppsFragment() : MyFragment() {
         setupSelectRuleButton()
         setupConcludeFab()
         observeViewModel()
-        loadLastUsedOrFirstRule()
         showHintDialog(PreferencesImpl.showHintHowRulesAndManagedAppsWork, getString(R.string.como_adicionar_o_primeiro_app))
+        loadLastUsedOrFirstRule()
     }
 
     private fun setupToChangeRule() {
@@ -133,8 +134,11 @@ class AddManagedAppsFragment() : MyFragment() {
         }
 
         val rules = getAllRulesUseCase()
-        if (rules.isEmpty()) binding.tvAddRule.text = getString(R.string.Adicionar)
-        if (rules.size == 1) viewModel.setRule(rules.first())
+        if (rules.isEmpty()) {
+            binding.tvAddRule.text = getString(R.string.Adicionar)
+            binding.tvAddRule.setStartDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.vec_add)!!)
+
+        } else viewModel.setRule(rules.first())
     }
 
     private fun setupConcludeFab() = with(binding) {
