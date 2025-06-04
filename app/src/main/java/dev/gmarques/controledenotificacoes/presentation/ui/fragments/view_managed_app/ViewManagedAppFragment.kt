@@ -48,8 +48,6 @@ class ViewManagedAppFragment() : MyFragment() {
     private val args: ViewManagedAppFragmentArgs by navArgs()
     private lateinit var appIcon: Drawable
 
-    // TODO: nao ta atualizando depos que muda a regra. esta sendo recriado o frag e o viewmodel?
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -137,8 +135,8 @@ class ViewManagedAppFragment() : MyFragment() {
 
     private fun showMenu() {
         val popupMenu = popupMenu {
-
-            section {
+            if (!viewModel.notFoundApp) section {
+                title = getString(R.string.Notificacoes)
                 item {
                     label = getString(R.string.Limpar_historico)
                     icon = R.drawable.vec_try_again
@@ -149,6 +147,7 @@ class ViewManagedAppFragment() : MyFragment() {
             }
 
             section {
+                title = getString(R.string.App)
                 item {
                     label = getString(R.string.Remover_app)
                     icon = R.drawable.vec_remove
@@ -158,7 +157,7 @@ class ViewManagedAppFragment() : MyFragment() {
                 }
             }
 
-            section {
+            if (!viewModel.notFoundApp) section {
                 title = getString(R.string.Regras)
 
                 item {
@@ -189,6 +188,7 @@ class ViewManagedAppFragment() : MyFragment() {
             }
 
         }
+
         popupMenu.show(this@ViewManagedAppFragment.requireContext(), binding.ivMenu)
     }
 

@@ -75,8 +75,7 @@ class RuleEnforcerImpl @Inject constructor(
 
     }
 
-
-    private suspend fun saveNotificationOnHistory(sbn: StatusBarNotification, notification: AppNotification) {
+    override suspend fun saveNotificationOnHistory(sbn: StatusBarNotification, notification: AppNotification) {
 
         if (notification.title.isEmpty() && notification.content.isEmpty()) return
 
@@ -86,7 +85,7 @@ class RuleEnforcerImpl @Inject constructor(
         saveLargeIcon(sbn)
     }
 
-    suspend fun saveLargeIcon(sbn: StatusBarNotification) = withContext(IO) {
+    override suspend fun saveLargeIcon(sbn: StatusBarNotification) = withContext(IO) {
 
         try {
             val icon = sbn.notification.getLargeIcon() ?: return@withContext

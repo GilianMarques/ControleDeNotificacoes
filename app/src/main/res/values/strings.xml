@@ -208,6 +208,8 @@
     <string name="Alterar_regra">Alterar regra</string>
     <string name="Bot_o_para_remover_o_app_da_lista_de_sele_o">Botão para remover o app da lista de seleção</string>
     <string name="Alterar">Alterar</string>
+    <string name="Notificacoes">Notificações</string>
+    <string name="App">App</string>
 
 
 </resources>

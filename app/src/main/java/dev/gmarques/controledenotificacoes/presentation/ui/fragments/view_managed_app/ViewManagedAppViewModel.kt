@@ -21,6 +21,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveMa
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
+import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -50,6 +51,11 @@ class ViewManagedAppViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var initialized = false
+
+    /**indica que o app gerenciado recebido não existe na lista de apps instalados. Veja [InstalledApp.NOT_FOUND_APP_PKG]*/
+    var notFoundApp = false
+        private set
+
     private val _managedAppFlow = MutableStateFlow<ManagedAppWithRule?>(null)
     val managedAppFlow: StateFlow<ManagedAppWithRule?> get() = _managedAppFlow
 
@@ -86,7 +92,7 @@ class ViewManagedAppViewModel @Inject constructor(
             observeAppChanges(app.packageId)
             observeAppNotifications(app)
         }
-
+        notFoundApp = app.packageId == InstalledApp.NOT_FOUND_APP_PKG
         removeNotificationIndicator(app.packageId)
         _managedAppFlow.tryEmit(app)
 
