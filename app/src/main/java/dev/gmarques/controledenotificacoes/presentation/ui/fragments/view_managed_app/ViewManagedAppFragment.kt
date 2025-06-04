@@ -129,7 +129,7 @@ class ViewManagedAppFragment() : MyFragment() {
     }
 
     private fun onNotificationClick(notification: AppNotification) {
-        val originalPendingIntent: PendingIntent? = PendingIntentCache.cache[notification.pendingIntentId()]
+        val originalPendingIntent: PendingIntent? = PendingIntentCache(notification.pendingIntentId())
         originalPendingIntent?.send()
     }
 

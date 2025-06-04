@@ -35,15 +35,6 @@ class DeleteAllAppNotificationsUseCase @Inject constructor(
     }
 
     private fun removePendingIntentsFromCache(packageId: String) {
-        PendingIntentCache.cache.keys
-            .filter { it.contains(packageId) }
-            .forEach {
-                PendingIntentCache.cache.remove(it)
-                Log.d(
-                    "USUK",
-                    "DeleteAllAppNotificationsUseCase.removePendingIntentsFromCache: removing pendingIntent with key: ${it}"
-                )
-            }
-
+        PendingIntentCache.removeAllFrom(packageId)
     }
 }
