@@ -19,8 +19,8 @@ android {
         applicationId = "dev.gmarques.controledenotificacoes"
         minSdk = 24
         targetSdk = 35
-        versionCode = 7
-        versionName = "0.0.7-beta"
+        versionCode = 8
+        versionName = "0.0.8-beta"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -108,6 +108,9 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
+    implementation("com.google.android.play:app-update:2.1.0")
+
 
     implementation("androidx.room:room-runtime:2.7.1")
     implementation("androidx.room:room-ktx:2.7.1")

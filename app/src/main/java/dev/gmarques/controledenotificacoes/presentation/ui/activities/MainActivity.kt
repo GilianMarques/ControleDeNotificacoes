@@ -21,6 +21,9 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
@@ -74,6 +77,29 @@ class MainActivity() : AppCompatActivity() {
 
         observeNavigationChanges()
         startNotificationListenerServiceManager()
+
+        checkUpdate()
+    }
+
+    private fun checkUpdate() {
+        val appUpdateManager = AppUpdateManagerFactory.create(this)
+
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
+                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            ) {
+
+                // Há uma atualização disponível e é permitida a atualização imediata
+                appUpdateManager.startUpdateFlowForResult(
+                    appUpdateInfo,
+                    AppUpdateType.FLEXIBLE,
+                    this,
+                    46251749 // requestCode
+                )
+            }
+        }
     }
 
     override fun onStop() {
