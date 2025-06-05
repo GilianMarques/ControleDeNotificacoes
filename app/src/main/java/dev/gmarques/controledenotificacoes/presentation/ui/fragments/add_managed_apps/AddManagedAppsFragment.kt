@@ -281,6 +281,7 @@ class AddManagedAppsFragment() : MyFragment() {
             NotificationListener.sendBroadcastToReadActiveNotifications()
             vibrator.success()
             goBack()
+            NotificationListener.sendBroadcastToReadActiveNotifications()
         }
 
     }
