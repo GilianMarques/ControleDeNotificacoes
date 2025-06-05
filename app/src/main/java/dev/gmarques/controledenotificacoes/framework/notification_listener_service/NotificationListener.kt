@@ -1,9 +1,15 @@
 package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +31,45 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     private var cancelingNotificationKey = ""
     private var errorJob: Job? = null
 
+    companion object {
+        private const val ACTION_KEY = "ACTION"
+        private const val ACTION_READ_ACTIVE_NOTIFICATIONS = "READ_ACTIVE_NOTIFICATIONS"
+        private const val INTENT_FILTER_FOR_BROADCAST = "NotificationListener.BroadcastReceiver"
+
+        /**
+         * Envia um broadcast para a instancia desse seviço em execução para re-executar a validação das notificações ativas.
+         */
+        fun sendBroadcastToReadActiveNotifications() {
+            val intent = Intent(INTENT_FILTER_FOR_BROADCAST).apply {
+                setPackage(App.context.packageName)
+                putExtra(ACTION_KEY, ACTION_READ_ACTIVE_NOTIFICATIONS)
+            }
+            App.context.sendBroadcast(intent)
+        }
+
+
+    }
+
+    private val commandReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.getStringExtra(ACTION_KEY)) {
+                ACTION_READ_ACTIVE_NOTIFICATIONS -> readActiveNotifications()
+            }
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(commandReceiver, IntentFilter(INTENT_FILTER_FOR_BROADCAST), RECEIVER_NOT_EXPORTED)
+        } else {
+            @Suppress("DEPRECATION")
+            @SuppressLint("UnspecifiedRegisterReceiverFlag")
+            registerReceiver(commandReceiver, IntentFilter(INTENT_FILTER_FOR_BROADCAST))
+        }
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
     }
@@ -44,6 +89,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * Processa cada notificação ativa usando o mét.odo [manageNotification].
      */
     private fun readActiveNotifications() {
+        Log.d("USUK", "NotificationListener.readActiveNotifications: ")
         val active = activeNotifications ?: return
         active.forEach { sbn ->
             manageNotification(sbn)
@@ -111,6 +157,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         super.onListenerDisconnected()
         Log.d("USUK", "NotificationListener.".plus("onListenerDisconnected() "))
     }
+
 
 }
 

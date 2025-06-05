@@ -26,6 +26,7 @@ import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrD
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetAllRulesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
@@ -277,6 +278,7 @@ class AddManagedAppsFragment() : MyFragment() {
         }
 
         viewModel.successCloseFragment.observe(viewLifecycleOwner) {
+            NotificationListener.sendBroadcastToReadActiveNotifications()
             vibrator.success()
             goBack()
         }
