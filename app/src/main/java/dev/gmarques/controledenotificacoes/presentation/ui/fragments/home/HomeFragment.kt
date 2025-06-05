@@ -360,10 +360,10 @@ class HomeFragment : MyFragment() {
     private fun showHowToFeedbackDialog() {
         MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Enviar_feedback)).setIcon(R.drawable.vec_info)
             .setMessage(getString(R.string.Como_voc_gostaria_de_enviar_seu_feedback))
-            .setPositiveButton(getString(R.string.enviar_um_e_mail_ao_desenvolvedor)) { _, _ ->
-                openMailToSendFeedback()
-            }.setNegativeButton(getString(R.string.Comentar_na_play_store)) { _, _ ->
+            .setPositiveButton(getString(R.string.Comentar_na_play_store)) { _, _ ->
                 openPlayStore()
+            }.setNegativeButton(getString(R.string.enviar_um_e_mail_ao_desenvolvedor)) { _, _ ->
+                openMailToSendFeedback()
             }.show()
     }
 

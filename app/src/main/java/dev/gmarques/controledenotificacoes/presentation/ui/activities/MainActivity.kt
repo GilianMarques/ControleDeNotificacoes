@@ -21,8 +21,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.install.InstallStateUpdatedListener
 import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
@@ -48,8 +52,23 @@ class MainActivity() : AppCompatActivity() {
     private var currentFragmentLabel = ""
     private var requestIgnoreBatteryOptimizationsJob: Job? = null
 
+    private lateinit var appUpdateManager: AppUpdateManager
+
+    private val installStateUpdatedListener = InstallStateUpdatedListener { state ->
+        if (state.installStatus() == InstallStatus.DOWNLOADED) {
+            Snackbar.make(
+                binding.root,
+                getString(R.string.Atualizacao_disponivel_para_instalacao),
+                Snackbar.LENGTH_INDEFINITE
+            ).setAction(getString(R.string.Instalar)) {
+                appUpdateManager.completeUpdate()
+            }.show()
+        }
+    }
+
     companion object {
         private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 22041961
+        private const val UPDATE_REQUEST_CODE = 46251749
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -78,25 +97,25 @@ class MainActivity() : AppCompatActivity() {
         observeNavigationChanges()
         startNotificationListenerServiceManager()
 
-        checkUpdate()
+
+        checkForAppUpdate()
     }
 
-    private fun checkUpdate() {
-        val appUpdateManager = AppUpdateManagerFactory.create(this)
+    private fun checkForAppUpdate() {
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+        appUpdateManager.registerListener(installStateUpdatedListener)
 
         val appUpdateInfoTask = appUpdateManager.appUpdateInfo
 
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE &&
-                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+                appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)
             ) {
-
-                // Há uma atualização disponível e é permitida a atualização imediata
                 appUpdateManager.startUpdateFlowForResult(
                     appUpdateInfo,
                     AppUpdateType.FLEXIBLE,
                     this,
-                    46251749 // requestCode
+                    UPDATE_REQUEST_CODE
                 )
             }
         }
@@ -222,13 +241,13 @@ class MainActivity() : AppCompatActivity() {
             try {
                 startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
             } catch (_: Exception) {
-                showRequestIgnorebatteryOptimizationErrorDialog()
+                showRequestIgnoreBatteryOptimizationErrorDialog()
             }
         }
 
     }
 
-    private fun showRequestIgnorebatteryOptimizationErrorDialog() {
+    private fun showRequestIgnoreBatteryOptimizationErrorDialog() {
         MaterialAlertDialogBuilder(this@MainActivity).setTitle(getString(R.string.Erro))
             .setMessage(getString(R.string.Nao_foi_poss_vel_abrir_a_tela_de_configuracoes))
             .setPositiveButton(R.string.Entendi) { _, _ -> }.setIcon(R.drawable.vec_alert).show()
@@ -248,6 +267,10 @@ class MainActivity() : AppCompatActivity() {
 
     }
 
+    override fun onDestroy() {
+        appUpdateManager.unregisterListener(installStateUpdatedListener)
+        super.onDestroy()
+    }
 }
 
 

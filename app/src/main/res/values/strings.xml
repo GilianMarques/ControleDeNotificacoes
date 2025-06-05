@@ -210,6 +210,8 @@
     <string name="Alterar">Alterar</string>
     <string name="Notificacoes">Notificações</string>
     <string name="App">App</string>
+    <string name="Atualizacao_disponivel_para_instalacao">A atualização está pronta para ser instalada</string>
+    <string name="Instalar">Instalar</string>
 
 
 </resources>
