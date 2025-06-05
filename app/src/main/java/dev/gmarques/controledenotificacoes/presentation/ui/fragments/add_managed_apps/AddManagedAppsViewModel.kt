@@ -156,10 +156,20 @@ class AddManagedAppsViewModel @Inject constructor(
         addManagedAppUseCase(app)
     }
 
+    /**
+     * Carrega do DB o app que tera sua regra alterada pelo fragmento
+     */
     fun loadAppToChangeRule(pkg: String) = viewModelScope.launch(IO) {
         val app = getInstalledAppByPackageUseCase(pkg) ?: error("nao deveria ser nulo")
         changingRule = true
         withContext(Main) { addNewlySelectedApps(listOf(app)) }
 
+    }
+
+    /**
+     * Remove a seleçao feita pelo usuario definindo o valor do livedata para null
+     */
+    fun resetRule() {
+        _selectedRule.value = null
     }
 }

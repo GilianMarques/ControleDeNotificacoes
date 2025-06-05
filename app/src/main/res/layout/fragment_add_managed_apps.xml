@@ -40,7 +40,6 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <LinearLayout
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:animateLayoutChanges="true"
@@ -85,15 +84,14 @@
                         android:layout_marginStart="16dp"
                         android:background="@drawable/back_round"
                         android:backgroundTint="?colorSecondaryContainer"
-                        android:contentDescription="@string/Bot_o_para_remover_o_intervalo_de_tempo"
                         android:drawablePadding="4dp"
                         android:paddingStart="8dp"
                         android:paddingTop="8dp"
                         android:paddingEnd="12dp"
                         android:paddingBottom="8dp"
-                        android:text="@string/Trocar_regra"
+                        android:text="@string/Adicionar_regra"
                         android:textColor="?colorOnSecondaryContainer"
-                        app:drawableStartCompat="@drawable/vec_change_rule_small"
+                        app:drawableStartCompat="@drawable/vec_add"
                         app:drawableTint="?colorOnSecondaryContainer"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -101,22 +99,13 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-                <TextView
-                    android:id="@+id/tv_selected_rule"
+                <LinearLayout
+                    android:id="@+id/ll_rule_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:background="@drawable/back_edittext"
-                    android:drawablePadding="16dp"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:textAlignment="gravity"
-                    android:visibility="invisible"
-                    app:drawableTint="?colorPrimary"
-                    tools:drawableStartCompat="@drawable/vec_rule_restrictive"
-                    tools:text="Regra X"
-                    tools:visibility="visible" />
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical"
+                    android:transitionName="rule_parent" />
 
             </LinearLayout>
 
@@ -164,7 +153,7 @@
                         android:paddingTop="8dp"
                         android:paddingEnd="12dp"
                         android:paddingBottom="8dp"
-                        android:text="@string/Adicionar"
+                        android:text="@string/Adicionar_app"
                         android:textColor="?colorOnSecondaryContainer"
                         app:drawableStartCompat="@drawable/vec_add"
                         app:drawableTint="?colorOnSecondaryContainer"

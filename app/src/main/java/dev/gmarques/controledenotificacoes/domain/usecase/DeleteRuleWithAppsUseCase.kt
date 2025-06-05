@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.domain.usecase
 
 import android.util.Log
 import androidx.room.withTransaction
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.data.local.room.RoomDatabase
 import dev.gmarques.controledenotificacoes.domain.data.repository.RuleRepository
 import dev.gmarques.controledenotificacoes.domain.model.Rule
@@ -33,6 +34,9 @@ class DeleteRuleWithAppsUseCase @Inject constructor(
                 }
 
                 ruleRepository.deleteRule(rule)
+                with(PreferencesImpl.lastSelectedRule) {
+                    if (value == rule.id) reset()// estou removendo a ultima regra selecionada? Devo limpar a preferencia
+                }
             }
             true
         } catch (e: Exception) {

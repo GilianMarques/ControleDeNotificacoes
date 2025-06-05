@@ -79,7 +79,6 @@ class SelectRuleFragment : MyFragment() {
 
     }
 
-
     private fun rvOnRuleSelected(rule: Rule) {
         val result = Bundle().apply {
             putSerializable(

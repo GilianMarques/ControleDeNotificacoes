@@ -5,11 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.children
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -21,6 +18,7 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddManagedAppsBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemAppSmallBinding
+import dev.gmarques.controledenotificacoes.databinding.ItemRuleSmallBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppIconUseCase
@@ -36,9 +34,9 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
-import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
@@ -83,26 +81,43 @@ class AddManagedAppsFragment() : MyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupActionBar(binding.toolbar)
-        setupToChangeRule()
+        setupFlowToChangeRule()
         setupSelectAppsListener()
         setupSelectRuleListener()
         setupSelectAppsButton()
-        setupSelectRuleButton()
+        setupAddRuleButton()
         setupConcludeFab()
         observeViewModel()
         showHintDialog(PreferencesImpl.showHintHowRulesAndManagedAppsWork, getString(R.string.como_adicionar_o_primeiro_app))
-        loadLastUsedOrFirstRule()
+        loadLastUsedOrAddedRule()
     }
 
-    private fun setupToChangeRule() {
+    /**
+     * O usuario pode apagar a regra que esta atualmente selecionada, se acontecer, esse função remove a seleçao
+     * feita para impedir que o app salve uma regra que ja nao existe em um app, causando um problema gigantesco.
+     */
+    private fun removeSelectedRulIfItWasDeletedByUser() {
+        viewModel.selectedRule.value?.id?.let {
+            runBlocking {
+                if (getRuleByIdUseCase(it) == null) viewModel.resetRule()
+            }
+        }
+    }
+
+    /**
+     * Prepara o fluxo que é executado quando o usuário abre este fragmento para alterar a regra de um aplicativo específico.
+     *
+     * Esta função é chamada quando o fragmento é iniciado com um argumento `selectedAppPkg` (ID do pacote do aplicativo).
+     * Se um aplicativo válido for fornecido, ele carrega o aplicativo no `viewModel` e, opcionalmente, navega automaticamente
+     * para a tela de seleção ou adição de regra.
+     */
+    private fun setupFlowToChangeRule() {
         args.selectedAppPkg?.let {
             if (it == InstalledApp.NOT_FOUND_APP_PKG) {
                 findNavController().popBackStack()
                 return@let
             }
 
-            binding.tvAddApp.isGone = true
-            binding.toolbar.tvTitle.text = getString(R.string.Trocar_regra)
             viewModel.loadAppToChangeRule(it)
 
             if (viewModel.autoOpenSelectionRuleFragment) {
@@ -116,31 +131,27 @@ class AddManagedAppsFragment() : MyFragment() {
      * Esta função tenta carregar a última regra selecionada pelo usuário a partir das preferências.
      * Se uma regra válida for encontrada, ela é definida no `viewModel`.
      *
-     * Caso nenhuma regra tenha sido selecionada anteriormente, a função verifica se existe apenas
-     * uma regra disponível. Se houver, essa única regra é automaticamente selecionada e definida
-     * no `viewModel`.
+     * Caso nenhuma regra tenha sido selecionada anteriormente, a função carrega a ultima regra adicionada pelo usuario.
      *
      * O carregamento é realizado de forma assíncrona dentro do escopo do ciclo de vida do fragmento.
      */
-    private fun loadLastUsedOrFirstRule() = lifecycleScope.launch {
+    private fun loadLastUsedOrAddedRule() = lifecycleScope.launch {
+
+        removeSelectedRulIfItWasDeletedByUser()
 
         if (viewModel.selectedRule.value != null) return@launch
 
         val pref = PreferencesImpl.lastSelectedRule
         if (!pref.isDefault()) {
-            getRuleByIdUseCase(pref.value)
-                ?.let { rule ->
-                    viewModel.setRule(rule)
-                    return@launch
-                }
+            getRuleByIdUseCase(pref.value).let { rule ->
+                if (rule == null) pref.reset()
+                else viewModel.setRule(rule)
+                return@launch
+            }
         }
 
         val rules = getAllRulesUseCase()
-        if (rules.isEmpty()) {
-            binding.tvAddRule.text = getString(R.string.Adicionar)
-            binding.tvAddRule.setStartDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.vec_add)!!)
-
-        } else viewModel.setRule(rules.first())
+        if (!rules.isEmpty()) viewModel.setRule(rules.last())
     }
 
     private fun setupConcludeFab() = with(binding) {
@@ -211,40 +222,43 @@ class AddManagedAppsFragment() : MyFragment() {
         }
     }
 
-    private fun setupSelectRuleButton() = with(binding) {
+    private fun setupAddRuleButton() = with(binding) {
 
         tvAddRule.setOnClickListener(AnimatedClickListener {
-            navigateToAddOrSelectRule()
+            navigateToAddRule()
         })
     }
 
     private fun navigateToAddOrSelectRule() = with(binding) {
         lifecycleScope.launch {
-            if (getAllRulesUseCase().isEmpty()) {
-                findNavController().navigate(
-                    AddManagedAppsFragmentDirections.toAddRuleFragment(),
-                    FragmentNavigatorExtras(
-                        tvRuleTittle to tvRuleTittle.transitionName,
-                        tvTargetApp to tvTargetApp.transitionName,
-                        appsContainer to appsContainer.transitionName,
-                        llRule to llRule.transitionName,
-                        tvTargetApp to tvTargetApp.transitionName,
-                        fabConclude to fabConclude.transitionName,
-                    )
-                )
-            } else {
-                findNavController().navigate(
-                    AddManagedAppsFragmentDirections.toSelectRuleFragment(),
-                    FragmentNavigatorExtras(
-                        fabConclude to fabConclude.transitionName,
-                        llRule to llRule.transitionName,
-                        tvRuleTittle to tvRuleTittle.transitionName,
-                    )
-                )
-            }
-
-
+            if (getAllRulesUseCase().isEmpty()) navigateToAddRule()
+            else navigateToSelectRule()
         }
+    }
+
+    private fun navigateToSelectRule() = with(binding) {
+        findNavController().navigate(
+            AddManagedAppsFragmentDirections.toSelectRuleFragment(),
+            FragmentNavigatorExtras(
+                fabConclude to fabConclude.transitionName,
+                llRule to llRule.transitionName,
+                tvRuleTittle to tvRuleTittle.transitionName,
+            )
+        )
+    }
+
+    private fun navigateToAddRule() = with(binding) {
+        findNavController().navigate(
+            AddManagedAppsFragmentDirections.toAddRuleFragment(),
+            FragmentNavigatorExtras(
+                tvRuleTittle to tvRuleTittle.transitionName,
+                tvTargetApp to tvTargetApp.transitionName,
+                appsContainer to appsContainer.transitionName,
+                llRule to llRule.transitionName,
+                tvTargetApp to tvTargetApp.transitionName,
+                fabConclude to fabConclude.transitionName,
+            )
+        )
     }
 
     private fun setupSelectRuleListener() {
@@ -356,11 +370,17 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private fun manageRuleView(rule: Rule) = with(binding) {
         lifecycleScope.launch {
-            tvSelectedRule.text = rule.nameOrDescription()
-            val drawable = ResourcesCompat.getDrawable(resources, rule.getAdequateIconReference(), requireActivity().theme)!!
-            tvSelectedRule.setStartDrawable(drawable)
-            tvSelectedRule.isVisible = true
 
+            llRuleContainer.removeAllViews()
+
+            with(ItemRuleSmallBinding.inflate(layoutInflater)) {
+                name.text = rule.nameOrDescription()
+                ivAppIcon.setImageResource(rule.getAdequateIconReference())
+                ivChange.setOnClickListener(AnimatedClickListener {
+                    navigateToSelectRule()
+                })
+                llRuleContainer.addView(root)
+            }
         }
     }
 }
