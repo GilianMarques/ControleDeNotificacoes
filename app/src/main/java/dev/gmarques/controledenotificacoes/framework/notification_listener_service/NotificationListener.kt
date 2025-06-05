@@ -158,6 +158,5 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         Log.d("USUK", "NotificationListener.".plus("onListenerDisconnected() "))
     }
 
-
 }
 

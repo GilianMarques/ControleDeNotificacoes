@@ -161,7 +161,7 @@ class ViewManagedAppFragment() : MyFragment() {
                 title = getString(R.string.Regras)
 
                 item {
-                    label = getString(R.string.Alterar_regra)
+                    label = getString(R.string.Trocar_regra)
                     icon = R.drawable.vec_change_rule
                     callback = {
                         navigateToChangeRule()

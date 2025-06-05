@@ -102,7 +102,7 @@ class AddManagedAppsFragment() : MyFragment() {
             }
 
             binding.tvAddApp.isGone = true
-            binding.toolbar.tvTitle.text = getString(R.string.Alterar_regra)
+            binding.toolbar.tvTitle.text = getString(R.string.Trocar_regra)
             viewModel.loadAppToChangeRule(it)
 
             if (viewModel.autoOpenSelectionRuleFragment) {
@@ -278,6 +278,7 @@ class AddManagedAppsFragment() : MyFragment() {
         }
 
         viewModel.successCloseFragment.observe(viewLifecycleOwner) {
+            /**Garante que a regra será imediatamenta aplicada ao pp recem adicionado*/
             NotificationListener.sendBroadcastToReadActiveNotifications()
             vibrator.success()
             goBack()
@@ -332,24 +333,24 @@ class AddManagedAppsFragment() : MyFragment() {
 
             apps.values.sortedBy { it.name }
                 .forEachIndexed { index, app ->
-                if (index >= maxAppsViews) {
-                    binding.tvExtraApps.text = getString(R.string.Mais_x_apps, apps.size - maxAppsViews)
-                    return@forEachIndexed
-                }
-                if (!parent.children.none { it.tag == app.packageId }) return@forEachIndexed
+                    if (index >= maxAppsViews) {
+                        binding.tvExtraApps.text = getString(R.string.Mais_x_apps, apps.size - maxAppsViews)
+                        return@forEachIndexed
+                    }
+                    if (!parent.children.none { it.tag == app.packageId }) return@forEachIndexed
 
-                with(ItemAppSmallBinding.inflate(layoutInflater)) {
-                    name.text = app.name
-                    ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
-                    root.tag = app.packageId
-                    if (viewModel.changingRule) ivRemove.isGone = true
-                    else ivRemove.setOnClickListener(AnimatedClickListener {
-                        viewModel.deleteApp(app)
-                    })
-                    parent.addView(root, min(index, parent.childCount))
-                    Log.d("USUK", "AddManagedAppsFragment.manageAppsViews: adding index $index pkg ${app.name}")
+                    with(ItemAppSmallBinding.inflate(layoutInflater)) {
+                        name.text = app.name
+                        ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
+                        root.tag = app.packageId
+                        if (viewModel.changingRule) ivRemove.isGone = true
+                        else ivRemove.setOnClickListener(AnimatedClickListener {
+                            viewModel.deleteApp(app)
+                        })
+                        parent.addView(root, min(index, parent.childCount))
+                        Log.d("USUK", "AddManagedAppsFragment.manageAppsViews: adding index $index pkg ${app.name}")
+                    }
                 }
-            }
         }
     }
 

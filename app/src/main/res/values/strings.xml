@@ -205,13 +205,14 @@
     <string name="Resetar_aviso_de_otimiza_o_de_bateria">Resetar aviso de otimização de bateria</string>
     <string name="O_aviso_de_otimiza_o_de_bateria_ser_reexibido_se_as_restri_es_estiverem_ativas">O aviso de otimização de bateria será reexibido se as restrições estiverem ativas</string>
     <string name="Abrir_notificacao">Abrir notificação</string>
-    <string name="Alterar_regra">Alterar regra</string>
     <string name="Bot_o_para_remover_o_app_da_lista_de_sele_o">Botão para remover o app da lista de seleção</string>
     <string name="Alterar">Alterar</string>
     <string name="Notificacoes">Notificações</string>
     <string name="App">App</string>
     <string name="Atualizacao_disponivel_para_instalacao">A atualização está pronta para ser instalada</string>
     <string name="Instalar">Instalar</string>
+    <string name="Trocar_regra">Trocar regra</string>
+    <string name="Bot_o_para_trocar_a_regra_selecionada">Botão para trocar a regra selecionada</string>
 
 
 </resources>

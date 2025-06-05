@@ -91,7 +91,7 @@
                         android:paddingTop="8dp"
                         android:paddingEnd="12dp"
                         android:paddingBottom="8dp"
-                        android:text="@string/Alterar_regra"
+                        android:text="@string/Trocar_regra"
                         android:textColor="?colorOnSecondaryContainer"
                         app:drawableStartCompat="@drawable/vec_change_rule_small"
                         app:drawableTint="?colorOnSecondaryContainer"
