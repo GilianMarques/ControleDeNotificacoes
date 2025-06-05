@@ -81,7 +81,12 @@ class RuleEnforcerImpl @Inject constructor(
 
         insertAppNotificationUseCase(notification)
 
-        PendingIntentCache.add(notification.pendingIntentId(), sbn.notification.contentIntent)
+        sbn.notification.contentIntent?.let {
+            PendingIntentCache.add(
+                notification.pendingIntentId(),
+                sbn.notification.contentIntent
+            )
+        }
         saveLargeIcon(sbn)
     }
 
