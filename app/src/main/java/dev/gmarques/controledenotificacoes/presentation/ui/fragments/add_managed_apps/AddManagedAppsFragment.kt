@@ -34,7 +34,6 @@ import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFu
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
@@ -43,12 +42,6 @@ import kotlin.math.min
 @AndroidEntryPoint
 class AddManagedAppsFragment() : MyFragment() {
     private val maxAppsViews = 5
-
-    companion object {
-        fun newInstance(): AddManagedAppsFragment {
-            return AddManagedAppsFragment()
-        }
-    }
 
     @Inject
     lateinit var getAllRulesUseCase: GetAllRulesUseCase
@@ -88,18 +81,6 @@ class AddManagedAppsFragment() : MyFragment() {
         loadLastUsedOrAddedRule()
     }
 
-    /**
-     * O usuario pode apagar a regra que esta atualmente selecionada, se acontecer, esse função remove a seleçao
-     * feita para impedir que o app salve uma regra que ja nao existe em um app, causando um problema gigantesco.
-     */
-    private fun removeSelectedRulIfItWasDeletedByUser() {
-        viewModel.selectedRule.value?.id?.let {
-            runBlocking {
-                if (getRuleByIdUseCase(it) == null) viewModel.resetRule()
-            }
-        }
-    }
-
 
     /**
      * Esta função tenta carregar a última regra selecionada pelo usuário a partir das preferências.
@@ -111,7 +92,7 @@ class AddManagedAppsFragment() : MyFragment() {
      */
     private fun loadLastUsedOrAddedRule() = lifecycleScope.launch {
 
-        removeSelectedRulIfItWasDeletedByUser()
+        removeSelectedRuleIfItWasDeletedByUser()
 
         if (viewModel.selectedRule.value != null) return@launch
 
@@ -126,6 +107,16 @@ class AddManagedAppsFragment() : MyFragment() {
 
         val rules = getAllRulesUseCase()
         if (!rules.isEmpty()) viewModel.setRule(rules.last())
+    }
+
+    /**
+     * O usuario pode apagar a regra que esta atualmente selecionada, se acontecer, esse função remove a seleçao
+     * feita para impedir que o app salve uma regra que ja nao existe em um app, causando um problema gigantesco.
+     */
+    private suspend fun removeSelectedRuleIfItWasDeletedByUser() {
+        viewModel.selectedRule.value?.id?.let {
+            if (getRuleByIdUseCase(it) == null) viewModel.setRule(null)
+        }
     }
 
     private fun setupConcludeFab() = with(binding) {

@@ -34,7 +34,6 @@ class AddManagedAppsViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-
     private val _selectedApps = MutableLiveData<Map<String, InstalledApp>>(emptyMap())
     val selectedApps: LiveData<Map<String, InstalledApp>> = _selectedApps
 
@@ -53,17 +52,11 @@ class AddManagedAppsViewModel @Inject constructor(
         }.associate { it.packageId to it }
     }
 
-    fun setRule(rule: Rule) = viewModelScope.launch(Main) {
+    fun setRule(rule: Rule?) = viewModelScope.launch(Main) {
         _selectedRule.value = rule
-        PreferencesImpl.lastSelectedRule(rule.id)
+        rule?.let { PreferencesImpl.lastSelectedRule(rule.id) }
     }
 
-    /**
-     * Remove a seleçao feita pelo usuario definindo o valor do livedata para null
-     */
-    fun resetRule() {
-        _selectedRule.value = null
-    }
 
     fun getSelectedPackages(): Array<String> {
         return selectedApps.value!!.values.map { it.packageId }.toTypedArray()

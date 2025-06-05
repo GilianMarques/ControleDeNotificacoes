@@ -30,7 +30,7 @@ class ManagedAppRepositoryImplTest {
 
     @Test
     fun `ao adicionar app valido deve salvar com sucesso`() = runTest {
-        val app = ManagedApp("com.app1", "rule1")
+        val app = ManagedApp("com.app1", "rule1", hasPendingNotifications = false)
         val appEntity = ManagedAppMapper.mapToEntity(app)
 
         `when`(dao.insertOrUpdateManagedApp(appEntity)).thenAnswer { }
@@ -42,20 +42,20 @@ class ManagedAppRepositoryImplTest {
 
     @Test(expected = BlankStringException::class)
     fun `ao adicionar app com package id em branco deve lancar excecao`() = runTest {
-        val app = ManagedApp("", "rule1")
+        val app = ManagedApp("", "rule1", hasPendingNotifications = false)
         repository.addOrUpdateManagedAppOrThrow(app)
     }
 
 
     @Test(expected = BlankStringException::class)
     fun `ao adicionar app com rule id em branco deve lancar excecao`() = runTest {
-        val app = ManagedApp("dev.gmarques.app", "")
+        val app = ManagedApp("dev.gmarques.app", "", hasPendingNotifications = false)
         repository.addOrUpdateManagedAppOrThrow(app)
     }
 
     @Test
     fun `ao atualizar app valido deve salvar alteracao`() = runTest {
-        val app = ManagedApp("com.app2", "rule1")
+        val app = ManagedApp("com.app2", "rule1", hasPendingNotifications = false)
         val appEntity = ManagedAppMapper.mapToEntity(app)
 
         val updatedApp = app.copy(ruleId = "rule2")
@@ -72,13 +72,13 @@ class ManagedAppRepositoryImplTest {
 
     @Test(expected = BlankStringException::class)
     fun `ao atualizar app com package id em branco deve lancar excecao`() = runTest {
-        val app = ManagedApp("", "ruleX")
+        val app = ManagedApp("", "ruleX", hasPendingNotifications = false)
         repository.updateManagedAppOrThrow(app)
     }
 
     @Test
     fun `ao remover app deve retornar nulo na busca por id`() = runTest {
-        val app = ManagedApp("com.app3", "rule3")
+        val app = ManagedApp("com.app3", "rule3", hasPendingNotifications = false)
         val appEntity = ManagedAppMapper.mapToEntity(app)
 
         `when`(dao.insertOrUpdateManagedApp(appEntity)).thenAnswer { }
@@ -96,7 +96,7 @@ class ManagedAppRepositoryImplTest {
 
     @Test
     fun `ao buscar app por id existente deve retornar objeto correspondente`() = runTest {
-        val app = ManagedApp("com.app4", "rule4")
+        val app = ManagedApp("com.app4", "rule4", hasPendingNotifications = false)
         val appEntity = ManagedAppMapper.mapToEntity(app)
 
         `when`(dao.getManagedAppByPackageId("com.app4")).thenReturn(appEntity)

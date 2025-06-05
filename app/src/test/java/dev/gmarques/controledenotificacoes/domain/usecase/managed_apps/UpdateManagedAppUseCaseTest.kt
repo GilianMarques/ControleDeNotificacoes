@@ -22,7 +22,7 @@ class UpdateManagedAppUseCaseTest {
     @Test
     fun `deve chamar update do repositorio com o managed app correto`() = runTest {
 
-        val managedApp = ManagedApp(packageId = "com.whatsapp", ruleId = "regra-123")
+        val managedApp = ManagedApp(packageId = "com.whatsapp", ruleId = "regra-123", hasPendingNotifications = false)
         useCase(managedApp)
         coVerify(exactly = 1) { repository.updateManagedAppOrThrow(managedApp) }
     }
