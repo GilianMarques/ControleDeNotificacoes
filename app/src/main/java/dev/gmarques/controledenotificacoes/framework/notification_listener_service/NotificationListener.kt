@@ -71,7 +71,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
                 )
 
                 crashIfNotificationWasntRemovedInDebugBuild(sbn)
-                cancelNotification(cancelingNotificationKey)
+                cancelNotification(sbn.key)
             }
         }
     }
