@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -22,11 +23,14 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentViewManagedAppBinding
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
+import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRemovalDialog
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment.Companion.BUNDLED_RULE_KEY
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReferenceSmall
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
@@ -77,6 +81,7 @@ class ViewManagedAppFragment() : MyFragment() {
         observeEvents()
         setupRecyclerView()
         setupFabOpenApp()
+        setupSelectRuleListener()
 
     }
 
@@ -164,7 +169,7 @@ class ViewManagedAppFragment() : MyFragment() {
                     label = getString(R.string.Trocar_regra)
                     icon = R.drawable.vec_change_rule
                     callback = {
-                        navigateToChangeRule()
+                        navigateToSelectRule()
                     }
                 }
 
@@ -221,8 +226,17 @@ class ViewManagedAppFragment() : MyFragment() {
         findNavController().navigate(ViewManagedAppFragmentDirections.toAddRuleFragment(viewModel.managedAppFlow.value!!.rule))
     }
 
-    private fun navigateToChangeRule() {
-        findNavController().navigate(ViewManagedAppFragmentDirections.toAddManagedAppsFragment(viewModel.managedAppFlow.value?.packageId))
+    private fun setupSelectRuleListener() {
+
+        setFragmentResultListener(SelectRuleFragment.RESULT_LISTENER_KEY) { _, bundle ->
+            val rule = requireSerializableOf(bundle, BUNDLED_RULE_KEY, Rule::class.java)
+            viewModel.updateAppsRule(rule!!)
+        }
+
+    }
+
+    private fun navigateToSelectRule() {
+        findNavController().navigate(ViewManagedAppFragmentDirections.toSelectRuleFragment())
     }
 
     private fun confirmRemoveRule() {

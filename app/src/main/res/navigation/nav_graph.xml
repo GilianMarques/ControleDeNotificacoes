@@ -51,10 +51,9 @@
         <action
             android:id="@+id/to_addRuleFragment"
             app:destination="@id/addRuleFragment" />
-
         <action
-            android:id="@+id/to_addManagedAppsFragment"
-            app:destination="@id/addManagedAppsFragment" />
+            android:id="@+id/to_selectRuleFragment"
+            app:destination="@id/selectRuleFragment" />
 
     </fragment>
 
@@ -102,11 +101,6 @@
             android:id="@+id/to_addRuleFragment"
             app:destination="@id/addRuleFragment" />
 
-        <argument
-            android:name="selectedAppPkg"
-            android:defaultValue="@null"
-            app:argType="string"
-            app:nullable="true" />
     </fragment>
 
     <fragment

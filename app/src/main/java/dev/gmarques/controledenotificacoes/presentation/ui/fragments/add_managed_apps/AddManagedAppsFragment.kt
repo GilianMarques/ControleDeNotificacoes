@@ -6,13 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
-import androidx.core.view.isGone
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
@@ -62,7 +60,6 @@ class AddManagedAppsFragment() : MyFragment() {
     lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
 
     private val viewModel: AddManagedAppsViewModel by viewModels()
-    private val args: AddManagedAppsFragmentArgs by navArgs()
     private lateinit var binding: FragmentAddManagedAppsBinding
 
     private val manageAppsViewsMutex = Mutex()
@@ -81,7 +78,6 @@ class AddManagedAppsFragment() : MyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupActionBar(binding.toolbar)
-        setupFlowToChangeRule()
         setupSelectAppsListener()
         setupSelectRuleListener()
         setupSelectAppsButton()
@@ -104,28 +100,6 @@ class AddManagedAppsFragment() : MyFragment() {
         }
     }
 
-    /**
-     * Prepara o fluxo que é executado quando o usuário abre este fragmento para alterar a regra de um aplicativo específico.
-     *
-     * Esta função é chamada quando o fragmento é iniciado com um argumento `selectedAppPkg` (ID do pacote do aplicativo).
-     * Se um aplicativo válido for fornecido, ele carrega o aplicativo no `viewModel` e, opcionalmente, navega automaticamente
-     * para a tela de seleção ou adição de regra.
-     */
-    private fun setupFlowToChangeRule() {
-        args.selectedAppPkg?.let {
-            if (it == InstalledApp.NOT_FOUND_APP_PKG) {
-                findNavController().popBackStack()
-                return@let
-            }
-
-            viewModel.loadAppToChangeRule(it)
-
-            if (viewModel.autoOpenSelectionRuleFragment) {
-                viewModel.autoOpenSelectionRuleFragment = false
-                navigateToAddOrSelectRule()
-            }
-        }
-    }
 
     /**
      * Esta função tenta carregar a última regra selecionada pelo usuário a partir das preferências.
@@ -357,8 +331,7 @@ class AddManagedAppsFragment() : MyFragment() {
                         name.text = app.name
                         ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
                         root.tag = app.packageId
-                        if (viewModel.changingRule) ivRemove.isGone = true
-                        else ivRemove.setOnClickListener(AnimatedClickListener {
+                        ivRemove.setOnClickListener(AnimatedClickListener {
                             viewModel.deleteApp(app)
                         })
                         parent.addView(root, min(index, parent.childCount))

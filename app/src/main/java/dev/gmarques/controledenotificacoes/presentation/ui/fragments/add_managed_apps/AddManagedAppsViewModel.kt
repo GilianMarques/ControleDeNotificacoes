@@ -17,12 +17,10 @@ import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInst
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.time.measureTime
 
@@ -35,10 +33,7 @@ class AddManagedAppsViewModel @Inject constructor(
     private val rescheduleAlarmOnAppsRuleChangeUseCase: RescheduleAlarmOnAppsRuleChangeUseCase,
 ) : ViewModel() {
 
-    var autoOpenSelectionRuleFragment = true
 
-    var changingRule = false
-        private set
 
     private val _selectedApps = MutableLiveData<Map<String, InstalledApp>>(emptyMap())
     val selectedApps: LiveData<Map<String, InstalledApp>> = _selectedApps
@@ -61,6 +56,13 @@ class AddManagedAppsViewModel @Inject constructor(
     fun setRule(rule: Rule) = viewModelScope.launch(Main) {
         _selectedRule.value = rule
         PreferencesImpl.lastSelectedRule(rule.id)
+    }
+
+    /**
+     * Remove a seleçao feita pelo usuario definindo o valor do livedata para null
+     */
+    fun resetRule() {
+        _selectedRule.value = null
     }
 
     fun getSelectedPackages(): Array<String> {
@@ -156,20 +158,4 @@ class AddManagedAppsViewModel @Inject constructor(
         addManagedAppUseCase(app)
     }
 
-    /**
-     * Carrega do DB o app que tera sua regra alterada pelo fragmento
-     */
-    fun loadAppToChangeRule(pkg: String) = viewModelScope.launch(IO) {
-        val app = getInstalledAppByPackageUseCase(pkg) ?: error("nao deveria ser nulo")
-        changingRule = true
-        withContext(Main) { addNewlySelectedApps(listOf(app)) }
-
-    }
-
-    /**
-     * Remove a seleçao feita pelo usuario definindo o valor do livedata para null
-     */
-    fun resetRule() {
-        _selectedRule.value = null
-    }
 }

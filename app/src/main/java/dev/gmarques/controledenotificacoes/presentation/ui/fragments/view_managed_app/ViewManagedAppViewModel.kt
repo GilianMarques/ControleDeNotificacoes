@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.DeleteRuleWithAppsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.DeleteAllAppNotificationsUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.ObserveAppNotificationsByPkgIdUseCase
@@ -92,6 +93,7 @@ class ViewManagedAppViewModel @Inject constructor(
             observeAppChanges(app.packageId)
             observeAppNotifications(app)
         }
+
         notFoundApp = app.packageId == InstalledApp.NOT_FOUND_APP_PKG
         removeNotificationIndicator(app.packageId)
         _managedAppFlow.tryEmit(app)
@@ -143,6 +145,7 @@ class ViewManagedAppViewModel @Inject constructor(
      */
     private fun removeNotificationIndicator(packageId: String) = viewModelScope.launch(IO) {
         delay(2000)// serve apenas pra nao me fazer pensar que tem um bug que faz os observadores do app e regra no DB dispararem duas vezes seguidas
+        Log.d("USUK", "ViewManagedAppViewModel.removeNotificationIndicator: DB lsiteners will run, its not a bug!")
         getManagedAppByPackageIdUseCase(packageId)?.let { app ->
             updateManagedAppUseCase(app.copy(hasPendingNotifications = false))
         }
@@ -164,6 +167,18 @@ class ViewManagedAppViewModel @Inject constructor(
 
     fun loadAppIcon(pkg: String, context: Context): Drawable = runBlocking {
         return@runBlocking getInstalledAppIconUseCase(pkg) ?: ContextCompat.getDrawable(context, R.drawable.vec_app)
+    }
+
+    /**
+     * Atualiza a regra do app no DB.
+     */
+    fun updateAppsRule(newRule: Rule) = viewModelScope.launch {
+        // TODO: criar ou atualizar o mapper para converter ManagedApp em MAnagedAppWithRule e fazer isso pra todos os objetos, entao usar extfuns pra conversao afim de evitar fazer leituras no db atoa
+        _managedAppFlow.value?.let {
+            getManagedAppByPackageIdUseCase(it.packageId)?.let { app ->
+                updateManagedAppUseCase(app.copy(ruleId = newRule.id))
+            }
+        }
     }
 
 }
