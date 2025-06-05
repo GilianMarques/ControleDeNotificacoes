@@ -9,9 +9,11 @@ import java.io.Serializable
  * Em sábado, 26 de abril de 2025 as 17:41.
  */
 @Keep
+// TODO: ajustar isso ou criar um mapper ta bem bagunçado
 data class ManagedAppWithRule(
     val name: String,
     val packageId: String,
     val rule: Rule,
     val hasPendingNotifications: Boolean,
+    val uninstalled: Boolean,
 ) : Serializable

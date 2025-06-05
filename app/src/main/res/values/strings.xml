@@ -214,6 +214,7 @@
     <string name="Trocar_regra">Trocar regra</string>
     <string name="Bot_o_para_trocar_a_regra_selecionada">Botão para trocar a regra selecionada</string>
     <string name="Adicionar_app">Adicionar Apps</string>
+    <string name="Desinstalado">Desinstalado</string>
 
 
 </resources>

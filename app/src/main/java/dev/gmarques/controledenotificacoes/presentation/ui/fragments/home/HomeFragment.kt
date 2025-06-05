@@ -27,7 +27,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.github.zawadz88.materialpopupmenu.popupMenu
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
@@ -102,28 +101,10 @@ class HomeFragment : MyFragment() {
             observeViewModel()
             setupFabAddManagedApp()
             setupSearch()
-            notifyAboutUpdateVersionIfNeed()
         }
     }
 
-    private fun notifyAboutUpdateVersionIfNeed() = lifecycleScope.launch {
 
-        if (viewModel.hasUpdateAvailableShown) return@launch
-
-        val pref = PreferencesImpl.showUpdateDialogAtDate
-        if (pref.isDefault() || pref.value > System.currentTimeMillis()) return@launch
-
-        viewModel.hasUpdateAvailableShown = true
-
-        vibrator.success()
-        Snackbar.make(requireView(), getString(R.string.Uma_nova_vers_o_est_dispon_vel), Snackbar.LENGTH_LONG).setDuration(10_000)
-            .setAnchorView(binding.fabAdd).setAction(getString(R.string.Ir_a_loja)) {
-                PreferencesImpl.showUpdateDialogAtDate.reset()
-                openPlayStore()
-            }.show()
-
-
-    }
 
     private fun setupPopUpMenu() {
         val popupMenu = popupMenu {

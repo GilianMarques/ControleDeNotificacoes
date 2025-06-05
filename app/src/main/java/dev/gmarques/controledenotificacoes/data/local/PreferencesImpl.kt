@@ -85,15 +85,6 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
         )
     }
 
-    override val showUpdateDialogAtDate: PreferenceProperty<Long> by lazy {
-        PreferenceProperty(
-            key = "show_update_dialog_at_date",
-            defaultValue = -1L,
-            preferenceReader = reader::invoke,
-            preferenceSaver = saver::invoke
-        )
-    }
-
     override val showDialogNotPermissionDenied: PreferenceProperty<Boolean> by lazy {
         PreferenceProperty(
             key = "show_dialog_not_permission_denied",

@@ -10,7 +10,6 @@ interface Preferences {
 
     val scheduledAlarms: PreferenceProperty<String>
     val lastSelectedRule: PreferenceProperty<String>
-    val showUpdateDialogAtDate: PreferenceProperty<Long>
 
     val showDialogNotPermissionDenied: PreferenceProperty<Boolean>
     val showWarningCardPostNotification: PreferenceProperty<Boolean>

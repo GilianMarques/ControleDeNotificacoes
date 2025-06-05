@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.home
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -68,6 +69,7 @@ class ManagedAppsAdapter(
             onItemClick: (ManagedAppWithRule) -> Unit,
         ) {
             binding.tvAppName.removeDrawables()
+            binding.tvUninstalled.isVisible = app.uninstalled
             binding.tvAppName.text = app.name
             if (app.hasPendingNotifications) binding.tvAppName.setStartDrawable(iconNotificationIndicator)
 

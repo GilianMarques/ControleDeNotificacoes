@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:transitionGroup="true"
-    android:padding="4dp">
+    android:padding="4dp"
+    android:transitionGroup="true">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,9 +28,9 @@
 
             android:id="@+id/iv_app_icon"
             android:layout_width="48dp"
-            android:transitionName="app_icon"
             android:layout_height="0dp"
             android:contentDescription="@string/Icone_do_aplicativo"
+            android:transitionName="app_icon"
             app:layout_constraintBottom_toBottomOf="@id/tv_rule_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_app_name"
@@ -41,17 +41,36 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:drawablePadding="8dp"
             android:fontFamily="@font/urbanist_semibold"
-            android:transitionName="app_name"
             android:maxLines="1"
             android:padding="4dp"
             android:textAlignment="viewStart"
             android:textSize="16sp"
-            android:drawablePadding="8dp"
-            app:layout_constraintEnd_toStartOf="@id/iv_open"
+            android:transitionName="app_name"
+            app:layout_constraintEnd_toStartOf="@id/tv_uninstalled"
             app:layout_constraintStart_toEndOf="@id/iv_app_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Whatsapp" />
+
+        <TextView
+            android:id="@+id/tv_uninstalled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/back_round"
+            android:backgroundTint="@color/md_theme_error"
+            android:fontFamily="@font/urbanist_semibold"
+            android:maxLines="1"
+            android:padding="4dp"
+            android:text="@string/Desinstalado"
+            android:textAlignment="viewStart"
+            android:textColor="@color/md_theme_onError"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/tv_app_name"
+            app:layout_constraintEnd_toStartOf="@id/iv_open"
+            app:layout_constraintTop_toTopOf="@id/tv_app_name"
+            tools:visibility="visible" />
 
 
         <TextView
@@ -60,11 +79,11 @@
             android:layout_height="wrap_content"
             android:drawablePadding="8dp"
             android:gravity="center_vertical"
-            android:transitionName="rule_name"
             android:maxLines="2"
             android:textAlignment="gravity"
             android:textSize="12sp"
-            app:drawableStartCompat="@drawable/vec_rule_permissive"
+            android:transitionName="rule_name"
+            app:drawableStartCompat="@drawable/vec_rule_permissive_small"
             app:drawableTint="?colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/tv_app_name"

@@ -11,10 +11,9 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetAllInstalledAppsUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageOrDefaultUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveAllManagedApps
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
-import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,24 +31,10 @@ class HomeViewModel @Inject constructor(
     observeAllRulesUseCase: ObserveAllRulesUseCase,
     observeAllManagedApps: ObserveAllManagedApps,
     private val getAllInstalledAppsUseCase: GetAllInstalledAppsUseCase,
-    private val getInstalledAppByPackageUseCase: GetInstalledAppByPackageUseCase,
+    private val getInstalledAppByPackageOrDefaultUseCase: GetInstalledAppByPackageOrDefaultUseCase,
     @ApplicationContext context: Context,
 ) : ViewModel() {
 
-    var hasUpdateAvailableShown = false
-
-    /**
-     * Um aplicativo gerenciado pode ser desinstalado pelo usuário do dispositivo.
-     * Caso isso aconteça, essa instância padrão é usada no lugar até que o usuário remova o aplicativo da lista de gerenciados
-     * ou reinstale o app no dispositivo
-     */
-    private val defaultAppIfNotFound by lazy {
-        InstalledApp(
-            name = context.getString(R.string.App_nao_encontrado),
-            packageId = InstalledApp.NOT_FOUND_APP_PKG,
-            isBeingManaged = false
-        )
-    }
 
     /**
      * A função que combina os  dados ([combineFlows]) é atualizada sempre que qualquer um dos 3 [Flow]s é atualizado.
@@ -110,13 +95,16 @@ class HomeViewModel @Inject constructor(
 
         return managedApps.map { managedApp ->
 
-            val installedApp = runBlocking { getInstalledAppByPackageUseCase(managedApp.packageId) ?: defaultAppIfNotFound }
+            val installedApp = runBlocking {
+                getInstalledAppByPackageOrDefaultUseCase(managedApp.packageId)
+            }
 
             ManagedAppWithRule(
                 name = installedApp.name,
                 packageId = installedApp.packageId,
                 rule = rulesMap[managedApp.ruleId] ?: defaultRuleIfNotFound,
                 hasPendingNotifications = managedApp.hasPendingNotifications,
+                installedApp.uninstalled,
             )
 
         }.sortedWith(compareByDescending<ManagedAppWithRule> { it.hasPendingNotifications }.thenBy { it.name.lowercase() })

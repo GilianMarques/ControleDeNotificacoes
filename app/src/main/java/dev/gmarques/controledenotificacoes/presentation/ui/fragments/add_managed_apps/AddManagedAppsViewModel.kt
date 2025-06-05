@@ -13,7 +13,6 @@ import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmOnAppsRuleChangeUseCase
-import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -29,7 +28,6 @@ import kotlin.time.measureTime
 class AddManagedAppsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addManagedAppUseCase: AddManagedAppUseCase,
-    private val getInstalledAppByPackageUseCase: GetInstalledAppByPackageUseCase,
     private val rescheduleAlarmOnAppsRuleChangeUseCase: RescheduleAlarmOnAppsRuleChangeUseCase,
 ) : ViewModel() {
 
