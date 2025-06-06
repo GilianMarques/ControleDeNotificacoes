@@ -330,10 +330,8 @@ open class MyFragment() : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (dy > 0 && isFabVisible) {
-                    isFabVisible = false
                     toggleFabVisibility(false, targetView)
                 } else if (dy < 0 && !isFabVisible) {
-                    isFabVisible = true
                     toggleFabVisibility(true, targetView)
                 }
             }
@@ -353,7 +351,7 @@ open class MyFragment() : Fragment() {
     protected fun toggleFabVisibility(show: Boolean, targetView: View) {
 
         if (animatingFab) return
-
+        else isFabVisible = show
         val translationY = if (show) 0f else (targetView.height * 2f)
 
         targetView.animate().translationY(translationY).setDuration(400L)
