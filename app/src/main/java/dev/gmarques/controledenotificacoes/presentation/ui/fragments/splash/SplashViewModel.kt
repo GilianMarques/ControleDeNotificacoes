@@ -73,7 +73,7 @@ data class NavigationRequirements(
         satisfiedRequirements.add(requirement)
     }
 
-    fun canNavigateHome() = satisfiedRequirements.containsAll(Requirement.values().toSet())
+    fun canNavigateHome() = satisfiedRequirements.containsAll(Requirement.entries.toSet())
 
     enum class Requirement {
         NONE,

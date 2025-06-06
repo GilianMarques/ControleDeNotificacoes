@@ -15,6 +15,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeoutOrNull
 
 /**
  * Criado por Gilian Marques
@@ -50,7 +51,8 @@ class App() : Application(), CoroutineScope by MainScope() {
         }
     }
 
-    private fun setupRemoteConfig() = launch(IO) {
+
+    private fun setupRemoteConfig() = CoroutineScope(IO).launch {
 
         val remoteConfig = Firebase.remoteConfig
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
@@ -60,17 +62,31 @@ class App() : Application(), CoroutineScope by MainScope() {
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
 
-        remoteConfig.fetchAndActivate().await()
+        val fetchResult = withTimeoutOrNull(5000) { // 5 segundos
+            try {
+                remoteConfig.fetchAndActivate().await()
+                _remoteConfigValues.tryEmit(
+                    RemoteConfigValues(
+                        remoteConfig.getLong("blockBelow").toInt() > BuildConfig.VERSION_CODE,
+                        remoteConfig.getString("contactEmail"),
+                        remoteConfig.getString("playStoreAppLink")
+                    )
+                )
+            } catch (e: Exception) {
+                if (BuildConfig.DEBUG) e.printStackTrace()
+                null
+            }
+        }
 
-        _remoteConfigValues.tryEmit(
-            RemoteConfigValues(
-                remoteConfig.getLong("blockBelow").toInt() > BuildConfig.VERSION_CODE,
-                remoteConfig.getString("contactEmail"),
-                remoteConfig.getString("playStoreAppLink")
+        if (fetchResult == null) {
+            _remoteConfigValues.tryEmit(
+                RemoteConfigValues(blockApp = false)
             )
-        )
+        }
+
 
     }
+
 
 }
 
