@@ -1,11 +1,9 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.children
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -31,7 +29,6 @@ import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment.Companion.BUNDLED_RULE_KEY
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReference
-import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -57,6 +54,8 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private val manageAppsViewsMutex = Mutex()
 
+    private lateinit var containerController: ContainerController
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -70,6 +69,9 @@ class AddManagedAppsFragment() : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        containerController = ContainerController(viewLifecycleOwner, binding.llConteinerApps, maxAppsViews)
+
         setupActionBar(binding.toolbar)
         setupSelectAppsListener()
         setupSelectRuleListener()
@@ -133,8 +135,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
 
             findNavController().navigate(
-                AddManagedAppsFragmentDirections.toSelectAppsFragment(viewModel.getSelectedPackages()),
-                FragmentNavigatorExtras(
+                AddManagedAppsFragmentDirections.toSelectAppsFragment(viewModel.getSelectedPackages()), FragmentNavigatorExtras(
                     fabConclude to fabConclude.transitionName
                 )
             )
@@ -166,20 +167,16 @@ class AddManagedAppsFragment() : MyFragment() {
         setFragmentResultListener(SelectAppsFragment.RESULT_KEY) { _, bundle ->
 
             @Suppress("UNCHECKED_CAST") val selectedApps = requireSerializableOf(
-                bundle,
-                SelectAppsFragment.BUNDLED_PACKAGES_KEY,
-                ArrayList::class.java
+                bundle, SelectAppsFragment.BUNDLED_PACKAGES_KEY, ArrayList::class.java
             ) as ArrayList<InstalledApp>
-
             lifecycleScope.launch {
 
-                val preselection = viewModel.selectedApps.value?.size ?: 0
-                var awaitUntilAllPreSelectedAppsAreLoadedOnUi = preselection > 0
+                val preSelectedApps = viewModel.selectedApps.value?.size ?: 0
+                var awaitUntilAppsAreLoadedOnUi = preSelectedApps > 0
 
-                while (awaitUntilAllPreSelectedAppsAreLoadedOnUi) {
-                    delay(10)
-                    awaitUntilAllPreSelectedAppsAreLoadedOnUi = binding.llConteinerApps.childCount < preselection
-                }
+                if (awaitUntilAppsAreLoadedOnUi) do {
+                    delay(100)
+                } while (binding.llConteinerApps.childCount < min(maxAppsViews, preSelectedApps))
 
                 viewModel.addNewlySelectedApps(selectedApps)
             }
@@ -194,17 +191,9 @@ class AddManagedAppsFragment() : MyFragment() {
         })
     }
 
-    private fun navigateToAddOrSelectRule() = with(binding) {
-        lifecycleScope.launch {
-            if (getAllRulesUseCase().isEmpty()) navigateToAddRule()
-            else navigateToSelectRule()
-        }
-    }
-
     private fun navigateToSelectRule() = with(binding) {
         findNavController().navigate(
-            AddManagedAppsFragmentDirections.toSelectRuleFragment(),
-            FragmentNavigatorExtras(
+            AddManagedAppsFragmentDirections.toSelectRuleFragment(), FragmentNavigatorExtras(
                 fabConclude to fabConclude.transitionName,
                 llRule to llRule.transitionName,
                 tvRuleTittle to tvRuleTittle.transitionName,
@@ -214,8 +203,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
     private fun navigateToAddRule() = with(binding) {
         findNavController().navigate(
-            AddManagedAppsFragmentDirections.toAddRuleFragment(),
-            FragmentNavigatorExtras(
+            AddManagedAppsFragmentDirections.toAddRuleFragment(), FragmentNavigatorExtras(
                 tvRuleTittle to tvRuleTittle.transitionName,
                 tvTargetApp to tvTargetApp.transitionName,
                 appsContainer to appsContainer.transitionName,
@@ -272,63 +260,28 @@ class AddManagedAppsFragment() : MyFragment() {
      * de aplicativos instalados. Ela remove as views de aplicativos que não estão mais presentes e adiciona
      * novas views para aplicativos recém-instalados. As novas views são animadas ao serem adicionadas para
      * proporcionar uma experiência mais agradável.
-     *
-     * @param apps Um mapa onde a chave é o ID do pacote do aplicativo instalado (String) e o valor é um
-     *             objeto [InstalledApp] contendo os detalhes do aplicativo (nome, ícone, etc.).
-     * @see InstalledApp
-     * @see addViewWithTwoStepsAnimation
-     *
-     * **Fluxo da Função:**
-     *
-     * 1. **Remoção de Views Desatualizadas:**
-     *    - Itera sobre as views filhas existentes dentro do layout `parent` (binding.llConteinerApps).
-     *    - Identifica as views cujo `tag` (que representa o ID do pacote do aplicativo) *não* está presente nas chaves do mapa `apps`.
-     *    - Remove essas views do layout `parent`, pois os aplicativos correspondentes não estão mais instalados.
-     *
-     * 2. **Adição de Novas Views:**
-     *    - Itera sobre os valores do mapa `apps` (que representam os aplicativos instalados atualmente).
-     *    - Para cada aplicativo, verifica se uma view correspondente já existe no layout `parent`, comparando o `tag` das views existentes com o ID do pacote do aplicativo.
-     *    - Se uma view com o `tag` correspondente *não* for encontrada (o que significa que o aplicativo é novo ou foi removido anteriormente), uma nova view é criada.
-     *    - Infla um layout `ItemAppSmallBinding`.
-     *    - Define o nome e o ícone do aplicativo na nova view usando `app.name` e `app.icon`.
-     *    - Define o ID do pacote do aplicativo como o `tag` da view para referência futura.
-     *    - Adiciona a nova view ao layout `parent` usando a função de extensão `addViewWithTwoStepsAnimation` para uma adição visualmente atraente.
      */
     private fun manageAppsViews(apps: Map<String, InstalledApp>) = lifecycleScope.launch {
         manageAppsViewsMutex.withLock {
-            Log.d("USUK", "AddManagedAppsFragment.manageAppsViews: ${binding.llConteinerApps.childCount} apps: ${apps.size}")
-            binding.tvExtraApps.text = ""
-            val parent = binding.llConteinerApps
 
-            /* remova o `toList()` e veja sua vida se transformar em um inferno! Brincadeiras a parte, deve-se criar
-            uma lista de views a remover primeiro e só depois remova-las pra evitar inconsistencias na ui */
-            parent.children
-                .filter { it.tag !in apps.keys }
-                .toList().also { Log.d("USUK", "AddManagedAppsFragment.manageAppsViews: removing ${it.size} views from screen") }
-                .forEach {
-                    parent.removeView(it)
+            if (apps.size > maxAppsViews) {
+                binding.tvExtraApps.text = getString(R.string.Mais_x_apps, apps.size - maxAppsViews)
+            } else binding.tvExtraApps.text = ""
+
+            val children = apps.values.map { app ->
+
+                val itemBinding = ItemAppSmallBinding.inflate(layoutInflater).apply {
+                    name.text = app.name
+                    ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
+                    ivRemove.setOnClickListener(AnimatedClickListener {
+                        viewModel.deleteApp(app)
+                    })
                 }
-            // TODO: nem sempre as views sao removidas
 
-            apps.values.sortedBy { it.name }
-                .forEachIndexed { index, app ->
-                    if (index >= maxAppsViews) {
-                        binding.tvExtraApps.text = getString(R.string.Mais_x_apps, apps.size - maxAppsViews)
-                        return@forEachIndexed
-                    }
-                    if (!parent.children.none { it.tag == app.packageId }) return@forEachIndexed
+                ContainerController.Child(app.packageId, app.name, itemBinding)
+            }
 
-                    with(ItemAppSmallBinding.inflate(layoutInflater)) {
-                        name.text = app.name
-                        ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
-                        root.tag = app.packageId
-                        ivRemove.setOnClickListener(AnimatedClickListener {
-                            viewModel.deleteApp(app)
-                        })
-                        parent.addView(root, min(index, parent.childCount))
-                        Log.d("USUK", "AddManagedAppsFragment.manageAppsViews: adding index $index pkg ${app.name}")
-                    }
-                }
+            containerController.submitList(children)
         }
     }
 
@@ -347,4 +300,5 @@ class AddManagedAppsFragment() : MyFragment() {
             }
         }
     }
+
 }

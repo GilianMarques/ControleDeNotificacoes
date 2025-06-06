@@ -38,8 +38,6 @@ class SelectAppsFragment : MyFragment() {
         const val BUNDLED_PACKAGES_KEY = "bundled_packages"
     }
 
-    private var animatingFab = false
-    private var isFabVisible = true
 
     @Inject
     lateinit var getInstalledAppIconUseCase: GetInstalledAppIconUseCase
@@ -115,7 +113,6 @@ class SelectAppsFragment : MyFragment() {
             viewModel.onAppChecked(app, checked)
             binding.tietSearch.setText("")
             binding.root.hideKeyboard()
-            isFabVisible = true
             toggleFabVisibility(true, binding.fabConclude)
         }
 
@@ -128,7 +125,6 @@ class SelectAppsFragment : MyFragment() {
         }
 
     }
-
 
     /**
      * Observa os estados da UI disparados pelo viewmodel chamando a função adequada para cada estado.
@@ -233,7 +229,7 @@ class SelectAppsFragment : MyFragment() {
             section {
 
                 item {
-                    label = if (viewModel.includeSystemApps) getString(R.string.Excluir_apps_do_sistema)
+                    label = if (PreferencesImpl.prefIncludeSystemApps.value) getString(R.string.Excluir_apps_do_sistema)
                     else getString(R.string.Incluir_apps_do_sistema)
                     icon = R.drawable.vec_app
                     callback = {
@@ -242,7 +238,7 @@ class SelectAppsFragment : MyFragment() {
                 }
 
                 item {
-                    label = if (viewModel.includeManagedApps)
+                    label = if (PreferencesImpl.prefIncludeManagedApps.value)
                         getString(R.string.Excluir_apps_gerenciados)
                     else getString(R.string.Incluir_apps_gerenciados)
                     icon = R.drawable.vec_app

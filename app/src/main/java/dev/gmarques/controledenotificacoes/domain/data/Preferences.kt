@@ -5,7 +5,10 @@ import androidx.annotation.Keep
 @Keep
 interface Preferences {
 
+    /**Se deve incluir apps do sistema na lista de seleçao de apps instalados*/
     val prefIncludeSystemApps: PreferenceProperty<Boolean>
+
+    /**Se deve incluir apps que ja estao sendo gerenciados na lista de seleçao de apps instalados*/
     val prefIncludeManagedApps: PreferenceProperty<Boolean>
 
     val scheduledAlarms: PreferenceProperty<String>

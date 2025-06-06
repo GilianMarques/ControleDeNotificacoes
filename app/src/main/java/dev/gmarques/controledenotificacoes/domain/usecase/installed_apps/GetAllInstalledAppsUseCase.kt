@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.usecase.installed_apps
 
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.data.repository.InstalledAppRepository
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import javax.inject.Inject
@@ -12,10 +13,13 @@ class GetAllInstalledAppsUseCase @Inject constructor(private val repository: Ins
 
     suspend operator fun invoke(
         targetName: String = "",
-        includeSystemApps: Boolean,
-        includeManagedApps: Boolean,
         excludePackages: HashSet<String> = hashSetOf<String>(),
     ): List<InstalledApp> {
-        return repository.getInstalledApps(targetName, includeSystemApps,includeManagedApps,excludePackages)
+        return repository.getInstalledApps(
+            targetName,
+            PreferencesImpl.prefIncludeSystemApps.value,
+            PreferencesImpl.prefIncludeManagedApps.value,
+            excludePackages
+        )
     }
 }

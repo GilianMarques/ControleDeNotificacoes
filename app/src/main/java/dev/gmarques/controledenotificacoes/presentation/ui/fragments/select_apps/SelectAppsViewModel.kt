@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
@@ -54,17 +53,9 @@ class SelectAppsViewModel @Inject constructor(
     private var selectedApps = HashSet<InstalledApp>()
     var preSelectedAppsToHide: HashSet<String> = hashSetOf()
 
-    var includeSystemApps = false
-        private set
-
-    var includeManagedApps = false
-        private set
 
     val onAppCheckedMutex = Mutex()
 
-    init {
-        loadPreferences()
-    }
 
     fun searchApps() = viewModelScope.launch(IO) {
 
@@ -72,8 +63,6 @@ class SelectAppsViewModel @Inject constructor(
         _installedApps.tryEmit(emptyList())
 
         val installedApps = getAllInstalledAppsUseCase(
-            includeSystemApps = includeSystemApps,
-            includeManagedApps = includeManagedApps,
             excludePackages = preSelectedAppsToHide,
         ).map { installedApp ->
             SelectableApp(installedApp, selectedApps.any { it.packageId == installedApp.packageId })
@@ -88,10 +77,6 @@ class SelectAppsViewModel @Inject constructor(
 
     }
 
-    private fun loadPreferences() = runBlocking {
-        includeSystemApps = PreferencesImpl.prefIncludeSystemApps.value
-        includeManagedApps = PreferencesImpl.prefIncludeManagedApps.value
-    }
 
     /**
      * Atualiza o estado de seleção de um aplicativo e notifica a UI sobre a mudança
@@ -171,14 +156,19 @@ class SelectAppsViewModel @Inject constructor(
     }
 
     fun toggleIncludeSystemApps() = viewModelScope.launch {
-        includeSystemApps = !includeSystemApps
-        PreferencesImpl.prefIncludeSystemApps(includeManagedApps)
+
+        with(PreferencesImpl.prefIncludeSystemApps) {
+            invoke(value.not())
+        }
+
         searchApps()
     }
 
     fun toggleIncludeManagedApps() = viewModelScope.launch {
-        includeManagedApps = !includeManagedApps
-        PreferencesImpl.prefIncludeManagedApps(includeManagedApps)
+
+        with(PreferencesImpl.prefIncludeManagedApps) {
+            invoke(value.not())
+        }
         searchApps()
     }
 

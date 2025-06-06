@@ -105,7 +105,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     private fun manageNotification(sbn: StatusBarNotification) {
 
         if (sbn.isOngoing) {
-            Log.d("USUK", "NotificationListener.manageNotification: can't dismiss on going notifications from ${sbn.packageName}")
+            //  Log.d("USUK", "NotificationListener.manageNotification: can't dismiss on going notifications from ${sbn.packageName}")
             return
         }
 
