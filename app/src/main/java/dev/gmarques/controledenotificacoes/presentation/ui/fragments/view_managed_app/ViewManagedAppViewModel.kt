@@ -22,6 +22,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.ObserveMa
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveRuleUseCase
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import kotlinx.coroutines.Dispatchers.IO
@@ -184,6 +185,7 @@ class ViewManagedAppViewModel @Inject constructor(
         _managedAppFlow.value?.let {
             getManagedAppByPackageIdUseCase(it.packageId)?.let { app ->
                 updateManagedAppUseCase(app.copy(ruleId = newRule.id))
+                NotificationListener.sendBroadcastToReadActiveNotifications()
             }
         }
     }
