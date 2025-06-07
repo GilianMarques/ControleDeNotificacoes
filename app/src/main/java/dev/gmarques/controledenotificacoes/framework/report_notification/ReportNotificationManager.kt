@@ -58,6 +58,9 @@ class ReportNotificationManager @Inject constructor(
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(false)
             .setAutoCancel(true)
+            /*Impede o sistema de agrupar notficações*/
+            .setGroup("${System.currentTimeMillis()}")
+            .setGroupSummary(false)
             .addAction(createOpenTargetAppAction(packageName))
             .addAction(createOpenNotificationHistoryAction(packageName))
             .build()

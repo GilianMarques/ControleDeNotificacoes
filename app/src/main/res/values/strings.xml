@@ -128,7 +128,7 @@
     <string name="Sua_privacidade_esta_protegida">Este app não coleta dados e nem salva qualquer informação do usuário fora do dispositivo. Os dados das notificações são usados apenas para controle e histórico de notificações bloqueadas.</string>
     <string name="Permitir">Permitir</string>
     <string name="Permita_que_x_acesse_as_notificacoes">Permita que %1$s acesse as notificações</string>
-    <string name="Monitoramento_de_notificacoes">Monitoramento de notificações</string>
+    <string name="Monitoramento_de_notificacoes">Serviço de monitoramento de notificações</string>
     <string name="Toque_aqui_para_desativar_esta_notifica_o">Toque aqui para desativar esta notificação</string>
     <string name="Desativar">Desativar</string>
     <string name="Fazer_login">Fazer login</string>
@@ -215,6 +215,7 @@
     <string name="Bot_o_para_trocar_a_regra_selecionada">Botão para trocar a regra selecionada</string>
     <string name="Adicionar_app">Adicionar Apps</string>
     <string name="Desinstalado">Desinstalado</string>
+    <string name="Nao_foi_possivel_abrir_a_notifica_o">Não foi possível abrir a notificação</string>
 
 
 </resources>

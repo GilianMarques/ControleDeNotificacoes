@@ -134,8 +134,12 @@ class ViewManagedAppFragment() : MyFragment() {
     }
 
     private fun onNotificationClick(notification: AppNotification) {
-        val originalPendingIntent: PendingIntent? = PendingIntentCache(notification.pendingIntentId())
-        originalPendingIntent?.send()
+        try {
+            val originalPendingIntent: PendingIntent? = PendingIntentCache(notification.pendingIntentId())
+            originalPendingIntent?.send()
+        } catch (_: Exception) {
+            showErrorSnackBar(getString(R.string.Nao_foi_possivel_abrir_a_notifica_o))
+        }
     }
 
     private fun showMenu() {
