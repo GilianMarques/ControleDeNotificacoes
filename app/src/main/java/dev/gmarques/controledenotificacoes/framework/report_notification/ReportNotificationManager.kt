@@ -32,7 +32,6 @@ class ReportNotificationManager @Inject constructor(
 
     private val channelId = "notification_report"
 
-
     fun showReportNotification(packageName: String) {
         createNotificationChannelIfNeeded()
 
@@ -53,6 +52,7 @@ class ReportNotificationManager @Inject constructor(
     }
 
     private fun buildNotification(packageName: String, notificationId: Int): Notification {
+
         val appName = getAppNameFromPackage(packageName)
         val appIcon = getAppIconFromPackage(packageName)
 
@@ -63,7 +63,6 @@ class ReportNotificationManager @Inject constructor(
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(false)
             .setAutoCancel(true)
-            /*Impede o sistema de agrupar notficações*/
             .setGroup("${System.currentTimeMillis()}")
             .setGroupSummary(false)
             .addAction(createOpenTargetAppAction(packageName, notificationId))
@@ -75,7 +74,10 @@ class ReportNotificationManager @Inject constructor(
         val drawable = context.packageManager.getApplicationIcon(packageName)
         if (drawable is BitmapDrawable) drawable.bitmap
         else {
-            val bitmap = createBitmap(drawable.intrinsicWidth.coerceAtLeast(1), drawable.intrinsicHeight.coerceAtLeast(1))
+            val bitmap = createBitmap(
+                drawable.intrinsicWidth.coerceAtLeast(1),
+                drawable.intrinsicHeight.coerceAtLeast(1)
+            )
             val canvas = Canvas(bitmap)
             drawable.setBounds(0, 0, canvas.width, canvas.height)
             drawable.draw(canvas)
@@ -92,16 +94,28 @@ class ReportNotificationManager @Inject constructor(
         packageName
     }
 
-
     private fun createOpenTargetAppAction(packageName: String, notificationId: Int): NotificationCompat.Action {
-        val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
-            ?: return createFallbackAction(context.getString(R.string.App_indispon_vel), notificationId)
+        val intent = Intent(context, ReportNotificationReceiver::class.java).apply {
+            putExtra(ReportNotificationReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+            putExtra(ReportNotificationReceiver.EXTRA_TARGET_PACKAGE, packageName)
+        }
 
-        return createBroadcastIntentAction(context.getString(R.string.Abrir_app), launchIntent, notificationId)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            notificationId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        return NotificationCompat.Action.Builder(
+            R.drawable.ic_launcher_foreground,
+            context.getString(R.string.Abrir_app),
+            pendingIntent
+        ).build()
     }
 
     private fun createOpenNotificationHistoryAction(packageName: String, notificationId: Int): NotificationCompat.Action {
-        val pendingIntent = NavDeepLinkBuilder(context)
+        val targetIntent = NavDeepLinkBuilder(context)
             .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.viewManagedAppFragment)
             .setArguments(bundleOf("packageId" to packageName))
@@ -109,7 +123,7 @@ class ReportNotificationManager @Inject constructor(
             .intents
             .first()
 
-        return createBroadcastIntentAction(context.getString(R.string.Ver_hist_rico), pendingIntent, notificationId)
+        return createBroadcastIntentAction(context.getString(R.string.Ver_hist_rico), targetIntent, notificationId)
     }
 
     private fun createBroadcastIntentAction(label: String, targetIntent: Intent, notificationId: Int): NotificationCompat.Action {
@@ -120,7 +134,7 @@ class ReportNotificationManager @Inject constructor(
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            notificationId, // único por notificação
+            notificationId,
             broadcastIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -130,10 +144,5 @@ class ReportNotificationManager @Inject constructor(
             label,
             pendingIntent
         ).build()
-    }
-
-    private fun createFallbackAction(label: String, notificationId: Int): NotificationCompat.Action {
-        val fallbackIntent = Intent()
-        return createBroadcastIntentAction(label, fallbackIntent, notificationId)
     }
 }
