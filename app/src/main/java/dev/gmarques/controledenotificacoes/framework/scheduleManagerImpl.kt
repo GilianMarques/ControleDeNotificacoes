@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
-import android.util.Log
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -14,7 +13,6 @@ import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver
-import org.joda.time.LocalDateTime
 import javax.inject.Inject
 
 /**
@@ -38,14 +36,12 @@ class ScheduleManagerImpl @Inject constructor(
      * @param millis O horário em milissegundos em que o alarme deve disparar.
      */
     override fun scheduleAlarm(packageId: String, millis: Long) {
-        if (millis == NextAppUnlockTimeUseCase.INFINITE) {
-            Log.d("USUK", "ScheduleManagerImpl.scheduleAlarm: not schedule alarm for $packageId 'cause it always blocked")
-            return
-        }
-
-        Log.d("USUK", "ScheduleManagerImpl.scheduleAlarm: $packageId scheduled at ${LocalDateTime(millis)}")
 
         cancelAlarm(packageId) // avoid multiple schedules for the same package
+
+        if (millis == NextAppUnlockTimeUseCase.INFINITE) return
+
+        //    Log.d("USUK", "ScheduleManagerImpl.scheduleAlarm: $packageId scheduled at ${LocalDateTime(millis)}")
 
         val pIntent = createPendingIntent(packageId)
 
@@ -60,7 +56,7 @@ class ScheduleManagerImpl @Inject constructor(
      * @param packageId O ID do pacote para o qual o alarme será cancelado.
      */
     override fun cancelAlarm(packageId: String) {
-        Log.d("USUK", "ScheduleManagerImpl.cancelAlarm: $packageId cancelled (this does not mean the alarm was set)")
+
         val pIntent = createPendingIntent(packageId)
 
         alarmManager.cancel(pIntent)
@@ -149,14 +145,6 @@ class ScheduleManagerImpl @Inject constructor(
 
         val updateJson = MoshiListConverter.toJson(list)
 
-        Log.d(
-            "USUK",
-            "ScheduleManagerImpl.".plus(
-                "deleteScheduleData() packageId = $packageId deleted from preferences:\n${
-                    list.joinToString(",")
-                }"
-            )
-        )
         PreferencesImpl.scheduledAlarms(updateJson)
 
     }

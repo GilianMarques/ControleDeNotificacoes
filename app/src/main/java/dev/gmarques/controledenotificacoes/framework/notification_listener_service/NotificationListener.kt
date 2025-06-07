@@ -13,6 +13,7 @@ import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -47,7 +48,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             App.context.sendBroadcast(intent)
         }
 
-
     }
 
     private val commandReceiver = object : BroadcastReceiver() {
@@ -77,7 +77,19 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     override fun onListenerConnected() {
         super.onListenerConnected()
         Log.d("USUK", "NotificationListener.onListenerConnected: ")
-        readActiveNotifications()
+        observeRulesChanges()
+    }
+
+    /**
+     * Observa mudanças nas regras de notificação.
+     * Quando uma mudança é detectada (uma regra é adicionada, removida ou atualizada),
+     * o mét.odo [readActiveNotifications] é chamado para reavaliar todas as notificações ativas
+     * com base nas regras atualizadas. Isso garante que as regras sejam aplicadas dinamicamente.
+     */
+    private fun observeRulesChanges() = launch(IO) {
+        HiltEntryPoints.observeAllRulesUseCase().invoke().collect { rules ->
+            readActiveNotifications()
+        }
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
@@ -116,7 +128,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
                     "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.packageId} isOngoing ${sbn.isOngoing}"
                 )
 
-                crashIfNotificationWasntRemovedInDebugBuild(sbn)
+                crashIfNotificationWasNotRemovedInDebugBuild(sbn)
                 cancelNotification(sbn.key)
             }
         }
@@ -127,7 +139,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * Caso alguma alteraçao que impeça o bloqueio das notificações seja feita (como ja foi feita antes...)
      * essa função vai crashar o app para que o jumento do desenvolvedor (eu :-] ) possa ajeitar a cagada que ele fez
      */
-    private fun crashIfNotificationWasntRemovedInDebugBuild(sbn: StatusBarNotification) {
+    private fun crashIfNotificationWasNotRemovedInDebugBuild(sbn: StatusBarNotification) {
         if (BuildConfig.DEBUG) {
             if (sbn.isOngoing) return // nao da pra cancelar notificaçoes ongoing
 
@@ -141,7 +153,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     }
 
     /**
-     * Ajuda  a  [crashIfNotificationWasntRemovedInDebugBuild] a determinar se a notificação foi de fato cancelada
+     * Ajuda  a  [crashIfNotificationWasNotRemovedInDebugBuild] a determinar se a notificação foi de fato cancelada
      */
     override fun onNotificationRemoved(sbn: StatusBarNotification?, rankingMap: RankingMap?) {
 

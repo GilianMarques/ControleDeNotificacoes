@@ -11,6 +11,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateMan
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 import dev.gmarques.controledenotificacoes.framework.ScheduleManagerImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
@@ -87,6 +88,10 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     override fun insertAppNotificationUseCase(): InsertAppNotificationUseCase {
         return entryPoint<UseCasesEntryPoint>().insertAppNotificationUseCase()
+    }
+
+    override fun observeAllRulesUseCase(): ObserveAllRulesUseCase {
+        return entryPoint<UseCasesEntryPoint>().observeAllRulesUseCase()
     }
 
 }

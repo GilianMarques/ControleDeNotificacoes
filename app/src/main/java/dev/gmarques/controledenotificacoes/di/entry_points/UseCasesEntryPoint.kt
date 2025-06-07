@@ -9,6 +9,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.IsAppInBl
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
 
 @EntryPoint
@@ -21,4 +22,5 @@ interface UseCasesEntryPoint {
     fun generateRuleNameUseCase(): GenerateRuleDescriptionUseCase
     fun updateManagedAppUseCase(): UpdateManagedAppUseCase
     fun insertAppNotificationUseCase(): InsertAppNotificationUseCase
+    fun observeAllRulesUseCase(): ObserveAllRulesUseCase
 }
