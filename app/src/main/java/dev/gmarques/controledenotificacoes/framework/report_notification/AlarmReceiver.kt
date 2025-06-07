@@ -22,7 +22,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
         getReportNotificationManager().showReportNotification(pkg)
 
-        clearPreferenceForPackage(context, pkg)
+        clearPreferenceForPackage(pkg)
     }
 
     private fun getReportNotificationManager(): ReportNotificationManager {
@@ -34,10 +34,9 @@ class AlarmReceiver : BroadcastReceiver() {
      * que os registros nas preferências  estejam sempre atualizados em relação aos alarmes agendados no sistema e prevenindo que
      * um alarme que já foi disparado seja reagendado por acidente causando inconsistências.
      *
-     * @param context O contexto da aplicação, usado para acessar o `ScheduleManager`.
      * @param pkg O nome do pacote do aplicativo cujos dados de agendamento devem ser limpos.
      */
-    private fun clearPreferenceForPackage(context: Context, pkg: String) {
+    private fun clearPreferenceForPackage(pkg: String) {
 
         val scheduleManager = HiltEntryPoints.scheduleManager()
 

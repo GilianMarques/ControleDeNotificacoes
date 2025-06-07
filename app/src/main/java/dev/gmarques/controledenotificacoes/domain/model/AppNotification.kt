@@ -5,6 +5,8 @@ import java.io.Serializable
 /**
  * Criado por Gilian Marques
  * Em domingo, 04 de maio de 2025 as 14:21.
+ *
+ * Representa a notificação bloqueada de um app
  */
 data class AppNotification(
     val packageId: String,

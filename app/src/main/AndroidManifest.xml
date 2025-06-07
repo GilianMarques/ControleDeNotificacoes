@@ -38,6 +38,10 @@
             </intent-filter>
         </activity>
 
+        <receiver
+            android:name=".framework.report_notification.ReportNotificationReceiver"
+            android:exported="false" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

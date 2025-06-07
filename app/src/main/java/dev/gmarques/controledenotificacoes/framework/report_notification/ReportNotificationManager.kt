@@ -16,6 +16,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.NavDeepLinkBuilder
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.GetAppNotificationByPkgUseCase
 import javax.inject.Inject
 
 /**
@@ -26,16 +27,20 @@ import javax.inject.Inject
  */
 class ReportNotificationManager @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val getAppNotificationByPkgUseCase: GetAppNotificationByPkgUseCase,
 ) {
 
     private val channelId = "notification_report"
 
+
     fun showReportNotification(packageName: String) {
         createNotificationChannelIfNeeded()
 
-        val notification = buildNotification(packageName)
+        val id = packageName.hashCode()
+        val notification = buildNotification(packageName, id)
         val notificationManager = context.getSystemService(NotificationManager::class.java)
-        notificationManager.notify(packageName.hashCode(), notification)
+
+        notificationManager.notify(id, notification)
     }
 
     private fun createNotificationChannelIfNeeded() {
@@ -47,7 +52,7 @@ class ReportNotificationManager @Inject constructor(
         }
     }
 
-    private fun buildNotification(packageName: String): Notification {
+    private fun buildNotification(packageName: String, notificationId: Int): Notification {
         val appName = getAppNameFromPackage(packageName)
         val appIcon = getAppIconFromPackage(packageName)
 
@@ -61,8 +66,8 @@ class ReportNotificationManager @Inject constructor(
             /*Impede o sistema de agrupar notficações*/
             .setGroup("${System.currentTimeMillis()}")
             .setGroupSummary(false)
-            .addAction(createOpenTargetAppAction(packageName))
-            .addAction(createOpenNotificationHistoryAction(packageName))
+            .addAction(createOpenTargetAppAction(packageName, notificationId))
+            .addAction(createOpenNotificationHistoryAction(packageName, notificationId))
             .build()
     }
 
@@ -87,48 +92,48 @@ class ReportNotificationManager @Inject constructor(
         packageName
     }
 
-    private fun createOpenTargetAppAction(packageName: String): NotificationCompat.Action {
-        val intent = context.packageManager.getLaunchIntentForPackage(packageName)
-            ?: return createFallbackAction(context.getString(R.string.App_indispon_vel))
 
-        val pendingIntent = PendingIntent.getActivity(
-            context, 0, intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
+    private fun createOpenTargetAppAction(packageName: String, notificationId: Int): NotificationCompat.Action {
+        val launchIntent = context.packageManager.getLaunchIntentForPackage(packageName)
+            ?: return createFallbackAction(context.getString(R.string.App_indispon_vel), notificationId)
 
-        return NotificationCompat.Action.Builder(
-            R.drawable.ic_launcher_foreground,
-            context.getString(R.string.Abrir_app),
-            pendingIntent
-        ).build()
+        return createBroadcastIntentAction(context.getString(R.string.Abrir_app), launchIntent, notificationId)
     }
 
-    private fun createOpenNotificationHistoryAction(packageName: String): NotificationCompat.Action {
-
+    private fun createOpenNotificationHistoryAction(packageName: String, notificationId: Int): NotificationCompat.Action {
         val pendingIntent = NavDeepLinkBuilder(context)
             .setGraph(R.navigation.nav_graph)
             .setDestination(R.id.viewManagedAppFragment)
             .setArguments(bundleOf("packageId" to packageName))
-            .createPendingIntent()
+            .createTaskStackBuilder()
+            .intents
+            .first()
 
-        return NotificationCompat.Action.Builder(
-            R.drawable.ic_launcher_foreground,
-            context.getString(R.string.Ver_hist_rico),
-            pendingIntent
-        ).build()
+        return createBroadcastIntentAction(context.getString(R.string.Ver_hist_rico), pendingIntent, notificationId)
     }
 
+    private fun createBroadcastIntentAction(label: String, targetIntent: Intent, notificationId: Int): NotificationCompat.Action {
+        val broadcastIntent = Intent(context, ReportNotificationReceiver::class.java).apply {
+            putExtra(ReportNotificationReceiver.EXTRA_NOTIFICATION_ID, notificationId)
+            putExtra(ReportNotificationReceiver.EXTRA_ORIGINAL_INTENT, targetIntent)
+        }
 
-    private fun createFallbackAction(label: String): NotificationCompat.Action {
-        val emptyIntent = PendingIntent.getActivity(
-            context, 2, Intent(),
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            notificationId, // único por notificação
+            broadcastIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         return NotificationCompat.Action.Builder(
             R.drawable.ic_launcher_foreground,
             label,
-            emptyIntent
+            pendingIntent
         ).build()
+    }
+
+    private fun createFallbackAction(label: String, notificationId: Int): NotificationCompat.Action {
+        val fallbackIntent = Intent()
+        return createBroadcastIntentAction(label, fallbackIntent, notificationId)
     }
 }
