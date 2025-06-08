@@ -82,15 +82,7 @@ class ViewManagedAppViewModel @Inject constructor(
 
         val installedApp = getInstalledAppByPackageOrDefaultUseCase(pkg)
 
-        setup(
-            ManagedAppWithRule(
-                installedApp.name,
-                pkg,
-                rule,
-                managedApp.hasPendingNotifications,
-                installedApp.uninstalled
-            )
-        )
+        setup(ManagedAppWithRule.from(installedApp, managedApp, rule))
     }
 
     fun setup(app: ManagedAppWithRule) = viewModelScope.launch(IO) {
