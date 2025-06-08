@@ -107,7 +107,9 @@ class ViewManagedAppViewModel @Inject constructor(
     private fun observeAppChanges(pkg: String) = viewModelScope.launch(IO) {
         observeManagedApp(pkg).collect {
             Log.d("USUK", "ViewManagedAppViewModel.observeAppChanges: $it")
-            it?.let { observeRuleChanges(it.ruleId) }
+
+            if (it == null) _eventsFlow.tryEmit(Event.AppRemoved)
+            else observeRuleChanges(it.ruleId)
         }
     }
 
@@ -174,7 +176,7 @@ class ViewManagedAppViewModel @Inject constructor(
      */
     fun updateAppsRule(newRule: Rule) = viewModelScope.launch {
 
-    _managedAppFlow.value?.let {
+        _managedAppFlow.value?.let {
             getManagedAppByPackageIdUseCase(it.packageId)?.let { app ->
                 updateManagedAppUseCase(app.copy(ruleId = newRule.id))
                 NotificationListener.sendBroadcastToReadActiveNotifications()
@@ -189,4 +191,5 @@ class ViewManagedAppViewModel @Inject constructor(
  */
 sealed class Event {
     object FinishWithSuccess : Event()
+    object AppRemoved : Event()
 }

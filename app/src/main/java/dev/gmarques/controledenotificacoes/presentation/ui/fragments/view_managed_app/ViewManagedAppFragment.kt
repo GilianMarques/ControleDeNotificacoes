@@ -274,6 +274,9 @@ class ViewManagedAppFragment() : MyFragment() {
                     vibrator.success()
                     goBack()
                 }
+
+                Event.AppRemoved -> goBack()
+
             }
         }
     }
