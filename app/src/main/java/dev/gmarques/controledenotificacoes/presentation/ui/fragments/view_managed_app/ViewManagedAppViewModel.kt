@@ -173,8 +173,8 @@ class ViewManagedAppViewModel @Inject constructor(
      * Atualiza a regra do app no DB.
      */
     fun updateAppsRule(newRule: Rule) = viewModelScope.launch {
-        // TODO: criar ou atualizar o mapper para converter ManagedApp em MAnagedAppWithRule e fazer isso pra todos os objetos, entao usar extfuns pra conversao afim de evitar fazer leituras no db atoa
-        _managedAppFlow.value?.let {
+
+    _managedAppFlow.value?.let {
             getManagedAppByPackageIdUseCase(it.packageId)?.let { app ->
                 updateManagedAppUseCase(app.copy(ruleId = newRule.id))
                 NotificationListener.sendBroadcastToReadActiveNotifications()

@@ -28,9 +28,9 @@ class DeleteRuleWithAppsUseCase @Inject constructor(
             // se outras corrotinas forem iniciadas dentro do withTransaction ou de codigo dentro dos usecases chamdos aqui
             // as operaçoes feitas no DB ja nao estarao garantidas pela transação. use funções suspensas em serie para garantir atomicidade
             roomDb.withTransaction {
-// TODO: melhor nao chamar usecases dentro de transaçoes,
+
                 getManagedAppsByRuleIdUseCase(rule.id).forEach { app ->
-                    app?.let { deleteManagedAppAndItsNotificationsUseCase(app.packageId) }
+                    app?.let { deleteManagedAppAndItsNotificationsUseCase(app.packageId, false) }
                 }
 
                 ruleRepository.deleteRule(rule)

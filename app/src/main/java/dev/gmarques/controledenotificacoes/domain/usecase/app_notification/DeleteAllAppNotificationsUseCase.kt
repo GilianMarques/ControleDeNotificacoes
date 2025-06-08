@@ -10,6 +10,9 @@ import javax.inject.Inject
 /**
  * Remove todas as notificações de um determinado aplicativo  assim como as PendingIntents e Imagens em cache referentes à essas
  * notificações
+ *
+ * Este usecase é usando em uma Transação do Room. Não crie corrotinas ou mude o escopo do contexto para que a
+ * transação não perca o efeito.
  * */
 class DeleteAllAppNotificationsUseCase @Inject constructor(
     private val repository: AppNotificationRepository,
