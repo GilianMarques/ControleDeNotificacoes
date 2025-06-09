@@ -70,6 +70,16 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
+                <TextView
+                    android:id="@+id/tv_give_read_notification_permission"
+                    style="@style/SettingsMenuItem"
+                    android:text="Permita ler as notificações"
+                    app:drawableStartCompat="@drawable/vec_listen_notification"
+                    app:drawableTint="?attr/colorPrimaryVariant"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
 
             </LinearLayout>
 

@@ -1,7 +1,9 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.settings
 
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -63,6 +65,7 @@ class SettingsFragment : MyFragment() {
         setupActionBar(binding.toolbar)
         setupResetHintsButton()
         setupResetBatteryOptimizationButton()
+        setupRequestNotificationAccessPermission()
         observeEvents()
         setupVersion()
     }
@@ -77,6 +80,16 @@ class SettingsFragment : MyFragment() {
         tvResetHints.setOnClickListener(AnimatedClickListener {
             viewModel.resetHints()
         })
+    }
+
+
+    private fun setupRequestNotificationAccessPermission() = with(binding) {
+
+        tvGiveReadNotificationPermission.setOnClickListener(AnimatedClickListener {
+            val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+            startActivity(intent)
+        })
+
     }
 
     private fun setupVersion() {
@@ -109,4 +122,6 @@ class SettingsFragment : MyFragment() {
             }
         }
     }
+
+
 }
