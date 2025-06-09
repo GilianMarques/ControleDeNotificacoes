@@ -82,7 +82,6 @@ class AddManagedAppsFragment() : MyFragment() {
         loadLastUsedOrAddedRule()
     }
 
-
     /**
      * Esta função tenta carregar a última regra selecionada pelo usuário a partir das preferências.
      * Se uma regra válida for encontrada, ela é definida no `viewModel`.
@@ -244,10 +243,8 @@ class AddManagedAppsFragment() : MyFragment() {
         }
 
         viewModel.successCloseFragment.observe(viewLifecycleOwner) {
-            /**Garante que a regra será imediatamenta aplicada ao pp recem adicionado*/
-            //  NotificationListener.sendBroadcastToReadActiveNotifications()
-            vibrator.success()
             goBack()
+            vibrator.success()
         }
 
     }

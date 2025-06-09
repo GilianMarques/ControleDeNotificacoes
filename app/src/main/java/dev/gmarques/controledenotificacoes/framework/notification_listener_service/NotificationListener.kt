@@ -123,10 +123,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
         runBlocking {
             ruleEnforcer.enforceOnNotification(sbn) { not, rule, managedApp ->
-                Log.d(
-                    "USUK",
-                    "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.packageId} isOngoing ${sbn.isOngoing}"
-                )
+                // Log.d(   "USUK", "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.packageId} isOngoing ${sbn.isOngoing}"  )
 
                 crashIfNotificationWasNotRemovedInDebugBuild(sbn)
                 cancelNotification(sbn.key)

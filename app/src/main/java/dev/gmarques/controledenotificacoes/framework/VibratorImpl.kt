@@ -8,20 +8,25 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
  * Classe responsável por fornecer feedback de interface, como vibração.
  * Suporta APIs abaixo de 26 utilizando o méto_do `vibrate` legada para compatibilidade.
  */
-class VibratorImpl @Inject constructor(@ApplicationContext private val context: Context) : VibratorInterface {
+class VibratorImpl @Inject constructor(@ApplicationContext private val context: Context) : VibratorInterface,
+    CoroutineScope by MainScope() {
 
     /**
      * Vibra o dispositivo para fornecer feedback tátil ao usuário em caso de sucesso.
      * Realiza uma vibração de duração moderada.
      */
     override fun error() {
-        vibrate(300)
+        launch { vibrate(300) }
     }
 
     /**
@@ -29,9 +34,11 @@ class VibratorImpl @Inject constructor(@ApplicationContext private val context: 
      * Realiza cinco vibrações rápidas.
      */
     override fun success() {
-        repeat(5) {
-            vibrate(35)
-            Thread.sleep(85)
+        launch {
+            repeat(5) {
+                vibrate(35)
+                delay(85)
+            }
         }
     }
 
@@ -40,7 +47,7 @@ class VibratorImpl @Inject constructor(@ApplicationContext private val context: 
      * Realiza uma vibração curta.
      */
     override fun interaction() {
-        vibrate(25) // Duração curta
+        launch { vibrate(25) }// Duração curta
     }
 
     /**

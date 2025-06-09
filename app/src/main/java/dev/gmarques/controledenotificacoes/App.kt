@@ -37,7 +37,6 @@ class App() : Application(), CoroutineScope by MainScope() {
         setupCrashLytics()
         super.onCreate()
     }
-    // TODO: no viewmanagedApp Preciso definir mista para fechar o fragmento caso o aplicativo ou regra seja removidos
 
     private fun setupCrashLytics() {
 
