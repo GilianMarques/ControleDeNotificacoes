@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps
 
-import android.util.Log
 import android.view.ViewGroup
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -20,7 +19,7 @@ import kotlin.math.min
  * ##### Deve ser uma instancia global Activity ou Fragmento em que será usado afim de evitar MemoryLeaks
  *
  * @property lifecycleOwner O LifecycleOwner cujo ciclo de vida este controlador observará.
- * @property container O ViewGroup onde as views filhas serão adicionadas ou removidas.
+ * @property container O ViewGroup onde as views filhas serão adicionadas ou removidas, defina 'animateLayoutChanges = true' no layout do container.
  * @property maxViews O número máximo de views que podem ser mantidas no container. O padrão é 99.
  */
 class ContainerController(
@@ -33,6 +32,7 @@ class ContainerController(
      * Um HashMap para manter os objetos presentes na UI e seus respectivos holders, usando o id da Child como chave.
      */
     private val children = LinkedHashMap<String, Child>()
+    private var lastObjectsList = emptyList<Child>()
 
     /**
      * Atualiza a lista de views no container.
@@ -40,7 +40,7 @@ class ContainerController(
      * @param objects A nova lista de objetos Child a serem exibidos.
      */
     fun submitList(objs: List<Child>) {
-
+        //   Log.d("USUK", "ContainerController.submitList: ${lastObjectsList.joinToString("\n") { it.sortableProp }}")
         val sortedObjects = objs.sortedBy { it.sortableProp }
             .subList(0, min(maxViews, objs.size))
 
@@ -57,9 +57,13 @@ class ContainerController(
             // removo a view antiga se existir (serva para "atualizar" a view)
             children[obj.id]?.let { removeView(it) }
 
-            addView(obj, min(index, container.childCount))
+            addView(
+                obj,
+                min(index, container.childCount),
+                (lastObjectsList.isNotEmpty() && !lastObjectsList.any { obj.id == it.id })
+            )
         }
-
+        lastObjectsList = objs
     }
 
     /**
@@ -67,7 +71,7 @@ class ContainerController(
      * @param obj O objeto Child cuja view correspondente deve ser removida.
      */
     private fun removeView(obj: Child) {
-        Log.d("USUK", "ContainerController.".plus("removeView() obj = ${obj.sortableProp}"))
+        //  Log.d("USUK", "ContainerController.".plus("removeView() obj = ${obj.sortableProp}"))
         container.removeView(obj.binding.root)
         children.remove(obj.id)
     }
@@ -77,8 +81,13 @@ class ContainerController(
      * @param obj O objeto Child cuja view correspondente deve ser adicionada.
      * @param index O índice no qual a view deve ser adicionada no container.
      */
-    private fun addView(obj: Child, index: Int) {
-        container.addView(obj.binding.root, index)
+    private fun addView(obj: Child, index: Int, delayedAnimation: Boolean = false) {
+        // Log.d(    "USUK",   "ContainerController.".plus("addView() obj = ${obj.sortableProp}, index = $index, delayedAnimation = $delayedAnimation")   )
+        if (delayedAnimation) {
+            container.postDelayed({ container.addView(obj.binding.root, index) }, 350)
+
+        } else container.addView(obj.binding.root, index)
+
         children[obj.id] = obj
     }
 
