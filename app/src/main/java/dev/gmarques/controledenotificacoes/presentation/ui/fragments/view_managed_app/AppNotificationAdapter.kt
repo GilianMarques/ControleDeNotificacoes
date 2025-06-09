@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes.presentation.ui.fragments.view_manag
 
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isGone
@@ -65,7 +66,9 @@ class AppNotificationAdapter(private val appIcon: Drawable, val onNotificationCl
                     onNotificationClick(notification)
                 })
 
-            tvOpenNotification.isVisible = PendingIntentCache(notification.pendingIntentId()) != null
+            tvOpenNotification.isVisible = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) false
+            else PendingIntentCache(notification.pendingIntentId()) != null
+
             tvContent.isGone = tvContent.text.isEmpty()
 
         }
