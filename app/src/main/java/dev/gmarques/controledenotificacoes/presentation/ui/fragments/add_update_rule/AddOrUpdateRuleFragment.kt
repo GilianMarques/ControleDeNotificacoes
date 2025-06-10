@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.children
+import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
@@ -41,7 +42,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
     private lateinit var binding: FragmentAddOrUpdateRuleBinding
 
-
     companion object {
         const val RESULT_LISTENER_KEY = "add_update_rule_result"
         const val RULE_KEY = "rule"
@@ -59,10 +59,11 @@ class AddOrUpdateRuleFragment : MyFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            delay(500)
+            delay(100)
             setupNameInput()
             setupButtonTypeRule()
             setupChipDays()
+            setupChipDaysShortcuts()
             setupBtnAddTimeRange()
             setupFabAddRule()
             setupEditingModeIfNeeded()
@@ -73,6 +74,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
             observeEvents()
         }
     }
+
 
     /**
      * Configura o modo de edição para a regra, caso uma regra para edição seja fornecida nos argumentos.
@@ -120,43 +122,44 @@ class AddOrUpdateRuleFragment : MyFragment() {
     }
 
     /**
-     * Configura o comportamento dos chips dentro do `chipGroup` para habilitar uma animação visual quando seu estado de seleção é alterado.
+     * Configura o comportamento dos chips dentro do chipGroupDays` para habilitar uma animação visual quando seu estado de seleção é alterado.
      *
-     * Quando o estado de seleção de um chip é modificado, ele é brevemente removido e, em seguida, readicionado ao `chipGroup` na sua posição original.
+     * Quando o estado de seleção de um chip é modificado, ele é brevemente removido e, em seguida, readicionado ao chipGroupDays` na sua posição original.
      * Esse processo dispara uma animação, fornecendo feedback visual ao usuário.
      *
-     * Este méto.do itera sobre cada `Chip` do `chipGroup` e associa um `setOnCheckedChangeListener` a ele. O listener executa as seguintes ações:
+     * Este méto.do itera sobre cada `Chip` do chipGroupDays` e associa um `setOnCheckedChangeListener` a ele. O listener executa as seguintes ações:
      *
-     * 1. **Obter Índice Original:** Determina o índice atual do chip dentro do `chipGroup`.
-     * 2. **Remover Chip:** Remove temporariamente o chip do `chipGroup`.
-     * 3. **Readicionar Chip:** Adiciona o chip de volta ao `chipGroup` no índice previamente determinado.
+     * 1. **Obter Índice Original:** Determina o índice atual do chip dentro do chipGroupDays`.
+     * 2. **Remover Chip:** Remove temporariamente o chip do chipGroupDays`.
+     * 3. **Readicionar Chip:** Adiciona o chip de volta ao chipGroupDays` no índice previamente determinado.
      *
      * Essa operação de remover e readicionar, no mesmo índice, força o layout a ser redesenhado, criando um efeito de animação visual sutil.
      *
      * Pressupostos:
      * - `binding` é um objeto `ViewBinding` válido.
-     * - Todas as filhas do `chipGroup` são instâncias de `Chip`.
+     * - Todas as filhas do chipGroupDays` são instâncias de `Chip`.
      */
     private fun setupChipDays() = with(binding) {
 
         val animateChipCheck = { chip: View, index: Int ->
-            chipGroup.removeView(chip)
-            chipGroup.addView(chip, index)
+            chipGroupDays.removeView(chip)
+            chipGroupDays.addView(chip, index)
 
         }
 
         val weekDayByNumber = WeekDay.entries.associateBy { it.dayNumber }
 
-        for (view in chipGroup.children) {
+        for (view in chipGroupDays.children) {
             val chip = view as Chip
 
             chip.setOnCheckedChangeListener { buttonView, _ ->
-                animateChipCheck(buttonView, chipGroup.indexOfChild(buttonView))
+                animateChipCheck(buttonView, chipGroupDays.indexOfChild(buttonView))
 
-                val selectedDays = chipGroup.children.filter { (it as Chip).isChecked }.map {
-                    val dayNum = it.tag.toString().toInt()
-                    weekDayByNumber[dayNum]!!
-                }.toList()
+                val selectedDays = chipGroupDays.children.filter { (it as Chip).isChecked }
+                    .map {
+                        val dayNum = it.tag.toString().toInt()
+                        weekDayByNumber[dayNum]!!
+                    }.toList()
 
                 viewModel.updateSelectedDays(selectedDays)
 
@@ -165,6 +168,47 @@ class AddOrUpdateRuleFragment : MyFragment() {
         }
 
         edtName.clearFocus()
+    }
+
+    private fun setupChipDaysShortcuts() = with(binding) {
+
+        fun toggleChips(range: IntRange, check: Boolean) {
+            val normalizedRange = if (range.first <= range.last) {
+                range.toList()
+            } else listOf(range.first, range.last)
+
+
+            chipGroupDays.forEach {
+                val chip = it as Chip
+                val tagValue = it.tag.toString().toIntOrNull()
+                if (tagValue in normalizedRange) {
+                    chip.isChecked = check
+                } else chip.isChecked = false
+            }
+        }
+
+
+        chipWeekdays.setOnCheckedChangeListener { buttonView, isChecked ->
+            toggleChips(2..6, isChecked)
+        }
+
+        chipWeekend.setOnCheckedChangeListener { buttonView, isChecked ->
+            toggleChips(7..1, isChecked)
+        }
+
+        chipEveryDay.setOnCheckedChangeListener { buttonView, isChecked ->
+            toggleChips(1..7, isChecked)
+        }
+
+        lifecycleScope.launch {
+
+            chipGroupShortcuts.forEach { it.isVisible = false }
+            scrollViewShortcuts.isVisible = true
+            divider.isVisible = true
+
+            chipGroupShortcuts.forEach { delay(200); it.isVisible = true }
+
+        }
     }
 
     private fun setupButtonTypeRule() = with(binding) {
@@ -245,7 +289,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
     }
 
     /**
-     * Atualiza o estado de seleção dos chips no `chipGroup` com base na lista de `WeekDay`.
+     * Atualiza o estado de seleção dos chips no chipGroupDays` com base na lista de `WeekDay`.
      *
      * Cada chip é identificado pelo número do dia (0 a 6) definido em sua tag.
      *
@@ -254,7 +298,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
     private fun updateSelectedDaysChips(days: List<WeekDay>) = with(binding) {
         val numberDaysSet = days.map { it.dayNumber }.toSet()
 
-        chipGroup.children.forEach { chip ->
+        chipGroupDays.children.forEach { chip ->
             val dayNumber = chip.tag.toString().toInt()
             (chip as Chip).isChecked = dayNumber in numberDaysSet
         }

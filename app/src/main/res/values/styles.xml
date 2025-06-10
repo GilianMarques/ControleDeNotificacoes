@@ -7,10 +7,23 @@
         <item name="android:layout_marginStart">12dp</item>
         <item name="android:layout_marginEnd">12dp</item>
         <item name="android:padding">8dp</item>
-
     </style>
 
-    <style name="filter_chip_margins" parent="Widget.Material3.Chip.Filter">
+    <style name="containers_margins_no_padding" parent="containers_margins">
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:paddingStart">0dp</item>
+    </style>
+
+    <style name="filter_chip_margins_filter" parent="Widget.Material3.Chip.Filter">
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:layout_marginEnd">2dp</item>
+    </style>
+
+    <style name="filter_chip_margins_suggestion" parent="Widget.Material3.Chip.Input">
         <item name="android:layout_marginBottom">4dp</item>
         <item name="android:layout_marginTop">4dp</item>
         <item name="android:layout_marginStart">2dp</item>

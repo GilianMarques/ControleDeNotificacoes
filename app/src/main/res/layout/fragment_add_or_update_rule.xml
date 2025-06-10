@@ -148,19 +148,23 @@
             </LinearLayout>
 
             <LinearLayout
-                style="@style/containers_margins"
+                style="@style/containers_margins_no_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:animateLayoutChanges="true"
                 android:background="@drawable/back_container"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingStart="0dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="0dp"
+                android:paddingBottom="8dp">
 
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
                     android:fontFamily="@font/urbanist_extrabold"
                     android:text="@string/Dias_da_semana"
@@ -168,15 +172,17 @@
 
                 <!--https://github.com/material-components/material-components-android/blob/master/docs/components/Chip.md#filter-chip-->
                 <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chipGroup"
+                    android:id="@+id/chip_group_days"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:animateLayoutChanges="true"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
                     android:paddingBottom="8dp">
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_monday"
-                        style="@style/filter_chip_margins"
+                        style="@style/filter_chip_margins_filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="2"
@@ -185,7 +191,7 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_tuesday"
-                        style="@style/filter_chip_margins"
+                        style="@style/filter_chip_margins_filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="3"
@@ -194,7 +200,7 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_wednesday"
-                        style="@style/filter_chip_margins"
+                        style="@style/filter_chip_margins_filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="4"
@@ -203,7 +209,7 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_thursday"
-                        style="@style/filter_chip_margins"
+                        style="@style/filter_chip_margins_filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="5"
@@ -212,7 +218,7 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_friday"
-                        style="@style/filter_chip_margins"
+                        style="@style/filter_chip_margins_filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="6"
@@ -221,7 +227,7 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_saturday"
-                        style="@style/filter_chip_margins"
+                        style="@style/filter_chip_margins_filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="7"
@@ -230,7 +236,7 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_sunday"
-                        style="@style/filter_chip_margins"
+                        style="@style/filter_chip_margins_filter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:tag="1"
@@ -240,6 +246,64 @@
 
                 </com.google.android.material.chip.ChipGroup>
 
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="?android:attr/listDivider"
+                    android:transitionName="divider"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <HorizontalScrollView
+                    android:id="@+id/scroll_view_shortcuts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbarSize="0dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chip_group_shortcuts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:animateLayoutChanges="true"
+                        android:padding="8dp"
+                        app:singleLine="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_weekdays"
+                            style="@style/filter_chip_margins_suggestion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/Seg_a_sex"
+                            app:closeIcon="@null"
+                            app:ensureMinTouchTargetSize="false" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_weekend"
+                            style="@style/filter_chip_margins_suggestion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/Sab_e_dom"
+                            app:closeIcon="@null"
+                            app:ensureMinTouchTargetSize="false" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/chip_every_day"
+                            style="@style/filter_chip_margins_suggestion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/Dom_a_dom"
+                            app:closeIcon="@null"
+                            app:ensureMinTouchTargetSize="false" />
+
+                    </com.google.android.material.chip.ChipGroup>
+                </HorizontalScrollView>
 
             </LinearLayout>
 

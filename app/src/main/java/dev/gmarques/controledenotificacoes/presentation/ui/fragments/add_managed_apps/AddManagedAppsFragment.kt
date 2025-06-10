@@ -37,6 +37,7 @@ import kotlin.math.min
 
 @AndroidEntryPoint
 class AddManagedAppsFragment() : MyFragment() {
+
     private val maxAppsViews = 5
 
     @Inject

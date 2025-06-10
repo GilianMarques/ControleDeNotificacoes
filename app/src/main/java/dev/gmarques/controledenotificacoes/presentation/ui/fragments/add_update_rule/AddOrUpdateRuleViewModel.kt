@@ -22,6 +22,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarm
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -328,7 +329,10 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             when (result.getOrNull()) {
 
                 else -> {
-                    _eventsFlow.tryEmit(Event.SimpleErrorMessage(context.getString(R.string.Selecione_pelo_menos_um_dia_da_semana)))
+                    viewModelScope.launch {
+                        delay(200)
+                        if (_selectedDays.value.isEmpty()) _eventsFlow.tryEmit(Event.SimpleErrorMessage(context.getString(R.string.Selecione_pelo_menos_um_dia_da_semana)))
+                    }
                 }
             }
         }

@@ -26,7 +26,7 @@
     <string name="Selecione_o_fim_do_intervalo_de_tempo">Selecione o fim do intervalo de tempo</string>
     <string name="Selecione_o_in_cio_do_intervalo_de_tempo">Selecione o início do intervalo de tempo</string>
     <string name="format_time">%1$s:%2$s</string>
-    <string name="O_intervalo_selecionado_era_inv_lido">O  intervalo selecionado era inválido</string>
+    <string name="O_intervalo_selecionado_era_inv_lido">O intervalo selecionado era inválido</string>
     <string name="O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido">O limite máximo de intervalos de tempo (%1$d) foi atingido.</string>
     <string name="Nome_da_regra_opcional">Nome da regra (opcional)</string>
     <string name="Bot_o_de_adicionar_regra">Adicionar regra</string>
@@ -70,7 +70,6 @@
     <string name="Desselecionar_todos">Desselecionar todos</string>
     <string name="Icone_do_aplicativo">Ícone do aplicativo</string>
     <string name="Icone_do_intervalo_de_tempo">Ícone do intervalo de tempo</string>
-    <string name="Bot_o_de_voltar">Voltar</string>
     <string name="Bot_o_de_menu">Menu</string>
     <string name="Selecionar_regra">Selecionar regra</string>
     <string name="Icone_da_regra">Icone da regra</string>
@@ -92,7 +91,7 @@
     <string name="Houveumerroaoautenticarsuacontatente">Houve um erro ao autenticar sua conta, tente novamente. Causa: {0}</string>
     <string name="BemvindoX">Bem-vindo(a) %1$s</string>
     <string name="Ologinfalhou">O login falhou. Código: %1$d \nMensagem: %2$s</string>
-    <string name="Houveumerroaocontactaraapidogoole">Houve um erro ao contactar a API do Google, verifique sua conexão e tente reiniciar o app.  Código: {%1$d}</string>
+    <string name="Houveumerroaocontactaraapidogoole">Houve um erro ao contactar a API do Google, verifique sua conexão e tente reiniciar o app. Código: {%1$d}</string>
     <string name="O_login_falhou_por_um_erro_de_desenvolvimento_da_aplica_o_contate_o_desenvolvedor_c_digo_de_erro_1_mensagem_2">O login falhou por um erro de desenvolvimento da aplicação, contate o desenvolvedor. Código de erro:%1$d \nMensagem: %2$s</string>
     <string name="O_login_falhou_por_um_erro_no_provedor_de_login">O login falhou por um erro no provedor de login, tente novamente mais tarde. Código de erro: %1$d \nMensagem: %2$s</string>
     <string name="Vocenaoestaconectadoainternetouadata">Você não está conectado à internet ou a data do dispositivo está incorreta</string>
@@ -221,6 +220,9 @@
     <string name="Lista_de_regras_criadas_pelo_usu_rio">Lista de regras criadas pelo usuário</string>
     <string name="Dar_permiss_o_para_ler_as_notifica_es">Dar permissão para ler as notificações</string>
     <string name="Historico_de_notifica_es_do_aplicativo">Histórico de notificações do aplicativo</string>
+    <string name="Seg_a_sex">Seg. a Sex.</string>
+    <string name="Sab_e_dom">Sáb. e Dom.</string>
+    <string name="Dom_a_dom">Dom.a Dom.</string>
 
 
 </resources>

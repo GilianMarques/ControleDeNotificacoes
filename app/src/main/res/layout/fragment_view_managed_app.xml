@@ -15,7 +15,7 @@
         android:layout_gravity="center"
         android:layout_margin="16dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/Bot_o_de_voltar"
+        android:contentDescription="@string/Botao_de_voltar"
         android:padding="14dp"
         android:src="@drawable/vec_go_back"
         android:tint="?colorOnBackground"
