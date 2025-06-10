@@ -147,7 +147,6 @@
                         android:layout_marginStart="16dp"
                         android:background="@drawable/back_round"
                         android:backgroundTint="?colorSecondaryContainer"
-                        android:contentDescription="@string/Bot_o_para_remover_o_intervalo_de_tempo"
                         android:drawablePadding="4dp"
                         android:paddingStart="8dp"
                         android:paddingTop="8dp"

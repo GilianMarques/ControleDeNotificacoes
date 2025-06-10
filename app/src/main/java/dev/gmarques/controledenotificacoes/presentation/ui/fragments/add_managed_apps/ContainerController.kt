@@ -107,6 +107,7 @@ class ContainerController(
             container.removeView(it.binding.root)
         }
         children.clear()
+        lastObjectsList = emptyList()
     }
 
     /**

@@ -28,7 +28,6 @@
             android:id="@+id/iv_app_icon"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:contentDescription="@string/Icone_do_aplicativo"
             android:padding="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

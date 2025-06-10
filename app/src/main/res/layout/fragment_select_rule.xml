@@ -21,7 +21,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:contentDescription="@string/Adicionar_regra"
         android:text="@string/Adicionar_regra"
         android:transitionName="fab"
         app:icon="@drawable/vec_add"
@@ -45,7 +44,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="88dp"
         android:clipToPadding="false"
-        android:contentDescription="@string/Lista_de_aplicativos_instalados_no_dispositivo"
+        android:contentDescription="@string/Lista_de_regras_criadas_pelo_usu_rio"
         android:overScrollMode="always"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
@@ -53,6 +52,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:listitem="@layout/item_app_selectable" />
+        tools:listitem="@layout/item_rule" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

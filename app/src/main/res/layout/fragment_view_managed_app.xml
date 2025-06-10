@@ -119,7 +119,7 @@
         android:id="@+id/rvHistory"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:contentDescription="@string/Lista_de_aplicativos_instalados_no_dispositivo"
+        android:contentDescription="@string/Historico_de_notifica_es_do_aplicativo"
         android:paddingStart="4dp"
         android:paddingTop="4dp"
         android:paddingEnd="4dp"

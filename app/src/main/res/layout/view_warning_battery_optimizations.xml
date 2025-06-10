@@ -59,6 +59,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:visibility="gone"
+                tools:visibility="visible"
                 android:text="@string/Esta_feito"
                 android:textColor="?attr/colorOnPrimaryFixed"
                 app:chipBackgroundColor="?attr/colorPrimaryFixed"

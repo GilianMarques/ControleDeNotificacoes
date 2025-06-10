@@ -21,7 +21,7 @@
     <string name="_08_30">08:30</string>
     <string name="_11_30">11:30</string>
     <string name="as">às</string>
-    <string name="Bot_o_para_remover_o_intervalo_de_tempo">Botão para remover o intervalo de tempo</string>
+    <string name="Bot_o_para_remover_o_intervalo_de_tempo">Remover o intervalo de tempo</string>
     <string name="As_notifica_es_ser_o_bloqueadas_nos_dias_e_hor_rios_selecionados">Notificações serão bloqueadas nos dias e horários selecionados.</string>
     <string name="Selecione_o_fim_do_intervalo_de_tempo">Selecione o fim do intervalo de tempo</string>
     <string name="Selecione_o_in_cio_do_intervalo_de_tempo">Selecione o início do intervalo de tempo</string>
@@ -29,7 +29,7 @@
     <string name="O_intervalo_selecionado_era_inv_lido">O  intervalo selecionado era inválido</string>
     <string name="O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido">O limite máximo de intervalos de tempo (%1$d) foi atingido.</string>
     <string name="Nome_da_regra_opcional">Nome da regra (opcional)</string>
-    <string name="Bot_o_de_adicionar_regra">Botão de adicionar regra</string>
+    <string name="Bot_o_de_adicionar_regra">Adicionar regra</string>
     <string name="Adicionar">Adicionar</string>
     <string name="Intervalos_de_tempo">Intervalos de tempo</string>
 
@@ -64,17 +64,18 @@
     <string name="O_final_do_intervalo_deve_ser_maior_que_o_inicio">O final do intervalo deve ser maior que o inicio</string>
     <string name="Nao_possivel_selecionar_mais_que_x_aplicativos">Não é possível selecionar mais que %1$d aplicativos</string>
     <string name="Lista_de_aplicativos_instalados_no_dispositivo">Lista de aplicativos instalados no dispositivo.</string>
+    <string name="Lista_de_aplicativos_sendo_gerenciados">Lista de aplicativos sendo gerenciados.</string>
     <string name="Selecionar_todos">Selecionar todos</string>
     <string name="Inverter_sele_o">Inverter seleção</string>
     <string name="Desselecionar_todos">Desselecionar todos</string>
     <string name="Icone_do_aplicativo">Ícone do aplicativo</string>
     <string name="Icone_do_intervalo_de_tempo">Ícone do intervalo de tempo</string>
-    <string name="Bot_o_de_voltar">Botão de voltar</string>
-    <string name="Bot_o_de_menu">Botão de menu</string>
+    <string name="Bot_o_de_voltar">Voltar</string>
+    <string name="Bot_o_de_menu">Menu</string>
     <string name="Selecionar_regra">Selecionar regra</string>
     <string name="Icone_da_regra">Icone da regra</string>
-    <string name="Botao_para_editar_a_regra">Botão para editar a regra</string>
-    <string name="Botao_de_menu_da_regra">Botão de menu da regra</string>
+    <string name="Botao_para_editar_a_regra">Editar a regra</string>
+    <string name="Botao_de_menu_da_regra">Menu da regra</string>
     <string name="Editar_regra">Editar regra</string>
     <string name="Remover_regra">Remover regra</string>
     <string name="Por_favor_confirme">Por favor, confirme:</string>
@@ -82,9 +83,9 @@
     <string name="Hhouve_um_erro_ao_remover_a_regra_tente_novamente">Houve um erro ao remover a regra, tente novamente</string>
     <string name="Selecione_uma_regra">Selecione uma regra</string>
     <string name="Caixa_de_sele_o_para_o_aplicativo">Caixa de seleção para o aplicativo</string>
-    <string name="Bot_o_para_abrir_a_tela_de_visualizacao">Botão para abrir a tela de visualização</string>
+    <string name="Bot_o_para_abrir_a_tela_de_visualizacao">Abrir a tela de visualização</string>
     <string name="App_nao_encontrado">App não encontrado</string>
-    <string name="Botao_de_adicionar_novo_app_gerenciado">Botão de adicionar novo app gerenciado</string>
+    <string name="Botao_de_adicionar_novo_app_gerenciado">Adicionar novo app gerenciado</string>
     <string name="Foto_de_perfil_do_usuario">Foto de perfil do usuário\n</string>
     <string name="Tentar_novamente">Tentar novamente</string>
     <string name="Hamaisdeumprocessodeloginemandamentoquantas">Há mais de um processo de login em andamento. Quantas vezes você apertou esse botão?</string>
@@ -114,7 +115,7 @@
     <string name="Entendi">Entendi</string>
     <string name="Lembre_me_da_proxima_vez">Lembre-me da próxima vez</string>
     <string name="Editar_uma_regra_faz_com_que_as_altera_es_feitas_se_apliquem_a_todos_os_aplicativos">Editar uma regra faz com que as alterações feitas se apliquem a todos os aplicativos gerenciados por ela. Se você quiser alterar as restrições de um único aplicativo, crie uma regra específica apenas para ele.</string>
-    <string name="Botao_de_voltar">Botão de voltar</string>
+    <string name="Botao_de_voltar">Voltar</string>
     <string name="Remover_app">Remover app</string>
     <string name="Limpar_historico">Limpar histórico</string>
     <string name="Regras">Regras</string>
@@ -205,17 +206,21 @@
     <string name="Resetar_aviso_de_otimiza_o_de_bateria">Resetar aviso de otimização de bateria</string>
     <string name="O_aviso_de_otimiza_o_de_bateria_ser_reexibido_se_as_restri_es_estiverem_ativas">O aviso de otimização de bateria será reexibido se as restrições estiverem ativas</string>
     <string name="Abrir_notificacao">Abrir notificação</string>
-    <string name="Bot_o_para_remover_o_app_da_lista_de_sele_o">Botão para remover o app da lista de seleção</string>
+    <string name="Bot_o_para_remover_o_app_da_lista_de_sele_o">Remover o app da lista de seleção</string>
     <string name="Alterar">Alterar</string>
     <string name="Notificacoes">Notificações</string>
     <string name="App">App</string>
     <string name="Atualizacao_disponivel_para_instalacao">A atualização está pronta para ser instalada</string>
     <string name="Instalar">Instalar</string>
     <string name="Trocar_regra">Trocar regra</string>
-    <string name="Bot_o_para_trocar_a_regra_selecionada">Botão para trocar a regra selecionada</string>
+    <string name="Bot_o_para_trocar_a_regra_selecionada">Trocar a regra selecionada</string>
     <string name="Adicionar_app">Adicionar Apps</string>
     <string name="Desinstalado">Desinstalado</string>
     <string name="Nao_foi_possivel_abrir_a_notifica_o">Não foi possível abrir a notificação</string>
+    <string name="Botao_para_concluir_a_opera_o">Concluir a operação</string>
+    <string name="Lista_de_regras_criadas_pelo_usu_rio">Lista de regras criadas pelo usuário</string>
+    <string name="Dar_permiss_o_para_ler_as_notifica_es">Dar permissão para ler as notificações</string>
+    <string name="Historico_de_notifica_es_do_aplicativo">Histórico de notificações do aplicativo</string>
 
 
 </resources>

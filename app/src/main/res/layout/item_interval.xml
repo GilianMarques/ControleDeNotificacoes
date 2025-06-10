@@ -25,7 +25,6 @@
             android:id="@+id/iv_clock"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:contentDescription="@string/Icone_do_intervalo_de_tempo"
             android:padding="4dp"
             android:src="@drawable/vec_clock"
             app:layout_constraintBottom_toBottomOf="parent"
