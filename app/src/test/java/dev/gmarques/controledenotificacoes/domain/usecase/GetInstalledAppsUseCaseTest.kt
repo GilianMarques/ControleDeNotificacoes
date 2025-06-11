@@ -37,7 +37,7 @@ class GetInstalledAppsUseCaseTest {
 
             whenever(repository.getInstalledApps(targetName, true, true, excludedPackages)).thenReturn(expectedApps)
 
-            val result = useCase(targetName, true, true, excludedPackages)
+            val result = useCase(targetName, excludedPackages, true, true)
 
             assertEquals(expectedApps, result)
             verify(repository).getInstalledApps(targetName, true, true, excludedPackages)
@@ -56,7 +56,7 @@ class GetInstalledAppsUseCaseTest {
 
             whenever(repository.getInstalledApps(targetName, true, true, excludedPackages)).thenReturn(expectedApps)
 
-            val result = useCase(targetName, true, true, excludedPackages)
+            val result = useCase(targetName, excludedPackages, true, true)
 
             assertEquals(expectedApps, result)
             verify(repository).getInstalledApps(targetName, true, true, excludedPackages)
