@@ -10,6 +10,8 @@ import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.LottieOnCompositionLoadedListener
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import dev.gmarques.controledenotificacoes.R
@@ -31,19 +33,27 @@ class LoginFragment : MyFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ):View {
+    ): View {
         return FragmentLoginBinding.inflate(inflater, container, false).also {
             binding = it
         }.root
     }
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        awaitLottieAnim()
         setupFabTryAgain()
         setupFabLogin()
         observeViewModelEvents()
+    }
+
+    private fun awaitLottieAnim() {
+        binding.lottieView.addLottieOnCompositionLoadedListener(object : LottieOnCompositionLoadedListener {
+            override fun onCompositionLoaded(composition: LottieComposition?) {
+                binding.clContent.isVisible = true
+            }
+        })
     }
 
     /**

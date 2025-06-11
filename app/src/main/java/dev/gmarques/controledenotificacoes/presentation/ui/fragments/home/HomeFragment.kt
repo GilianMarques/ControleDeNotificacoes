@@ -104,8 +104,6 @@ class HomeFragment : MyFragment() {
         }
     }
 
-
-
     private fun setupPopUpMenu() {
         val popupMenu = popupMenu {
 

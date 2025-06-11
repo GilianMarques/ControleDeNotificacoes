@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.util.Log
 import android.util.TypedValue
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -49,7 +50,6 @@ class MainActivity() : AppCompatActivity() {
     private var backgroundChanged = false
     private lateinit var splashLabel: String
     private lateinit var homeLabel: String
-    private var currentFragmentLabel = ""
     private var requestIgnoreBatteryOptimizationsJob: Job? = null
 
     private lateinit var appUpdateManager: AppUpdateManager
@@ -138,9 +138,10 @@ class MainActivity() : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         navController.addOnDestinationChangedListener { navController, destination, bundle ->
-            currentFragmentLabel = destination.label.toString()
 
-            if (currentFragmentLabel != getString(R.string.Splash_fragment)) applyDefaultBackgroundColor()
+            if (destination.id != R.id.splashFragment &&
+                destination.id != R.id.loginFragment
+            ) applyDefaultBackgroundColor()
 
         }
     }
@@ -152,7 +153,7 @@ class MainActivity() : AppCompatActivity() {
     private fun applyDefaultBackgroundColor() {
 
         if (backgroundChanged) return
-
+        Log.d("USUK", "MainActivity.applyDefaultBackgroundColor: ")
         val typedValue = TypedValue()
         theme.resolveAttribute(R.attr.AppColorBackground, typedValue, true)
         window.decorView.setBackgroundColor(typedValue.data)
