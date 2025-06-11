@@ -155,16 +155,19 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_art"
-                    android:layout_width="180dp"
-                    android:layout_height="180dp"
-                    android:elevation="10dp"
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lottie_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="350dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/art_empty" />
+                    app:lottie_autoPlay="true"
+                    app:lottie_fileName="empty_list.json"
+                    app:lottie_repeatCount="-1"
+                    app:lottie_repeatMode="reverse" />
+
 
                 <TextView
                     android:id="@+id/tv_hint"
@@ -176,9 +179,10 @@
                     android:text="@string/Clique_no_bot_o_para_configurar_o_primeiro_app"
                     android:textAlignment="center"
                     android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="@id/iv_art"
-                    app:layout_constraintStart_toStartOf="@id/iv_art"
-                    app:layout_constraintTop_toBottomOf="@id/iv_art" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+
+                    app:layout_constraintTop_toBottomOf="@id/lottie_view" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
