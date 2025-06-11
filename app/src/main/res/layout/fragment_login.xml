@@ -9,25 +9,30 @@
     tools:background="?AppColorBackground">
 
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guide"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/art_login"
-        app:layout_constraintBottom_toTopOf="@id/tv_introduction"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_view"
+        android:layout_width="wrap_content"
+        android:layout_height="280dp"
+        app:layout_constraintBottom_toTopOf="@id/guide"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="login_anim.json"
+        app:lottie_repeatCount="-1"
+        app:lottie_repeatMode="reverse" />
 
 
     <TextView
         android:id="@+id/tv_introduction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
         android:elevation="2dp"
         android:maxWidth="500dp"
         android:paddingStart="16dp"
@@ -35,10 +40,9 @@
         android:text="@string/Defina_os_dias_e_horarios_em_que_cada_aplicativo_pode_exibir_notificacoes"
         android:textAlignment="center"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/lottie_view" />
 
 
     <TextView

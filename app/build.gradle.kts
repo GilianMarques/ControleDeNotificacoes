@@ -126,6 +126,8 @@ dependencies {
     // https://mvnrepository.com/artifact/com.github.zawadz88.materialpopupmenu/material-popup-menu
     implementation("com.github.zawadz88:MaterialPopupMenu:4.1.0")
 
+    implementation("com.airbnb.android:lottie:6.4.0")
+
     //moshi pra uso com json
     implementation("com.squareup.moshi:moshi:1.15.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.13.0") // Para suporte a Kotlin
