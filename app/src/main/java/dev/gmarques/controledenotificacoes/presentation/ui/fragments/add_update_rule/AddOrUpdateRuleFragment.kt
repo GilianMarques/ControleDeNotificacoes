@@ -172,16 +172,12 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
     private fun setupChipDaysShortcuts() = with(binding) {
 
-        fun toggleChips(range: IntRange, check: Boolean) {
-            val normalizedRange = if (range.first <= range.last) {
-                range.toList()
-            } else listOf(range.first, range.last)
-
+        fun toggleChips(range: List<Int>, check: Boolean) {
 
             chipGroupDays.forEach {
                 val chip = it as Chip
                 val tagValue = it.tag.toString().toIntOrNull()
-                if (tagValue in normalizedRange) {
+                if (tagValue in range) {
                     chip.isChecked = check
                 } else chip.isChecked = false
             }
@@ -189,26 +185,17 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
 
         chipWeekdays.setOnCheckedChangeListener { buttonView, isChecked ->
-            toggleChips(2..6, isChecked)
+            toggleChips((2..6).toList(), isChecked)
         }
 
         chipWeekend.setOnCheckedChangeListener { buttonView, isChecked ->
-            toggleChips(7..1, isChecked)
+            toggleChips(listOf(1, 7), isChecked)
         }
 
         chipEveryDay.setOnCheckedChangeListener { buttonView, isChecked ->
-            toggleChips(1..7, isChecked)
+            toggleChips((1..7).toList(), isChecked)
         }
 
-        lifecycleScope.launch {
-
-            chipGroupShortcuts.forEach { it.isVisible = false }
-            scrollViewShortcuts.isVisible = true
-            divider.isVisible = true
-
-            chipGroupShortcuts.forEach { delay(200); it.isVisible = true }
-
-        }
     }
 
     private fun setupButtonTypeRule() = with(binding) {

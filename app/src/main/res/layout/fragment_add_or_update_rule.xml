@@ -254,7 +254,7 @@
                     android:layout_marginBottom="4dp"
                     android:background="?android:attr/listDivider"
                     android:transitionName="divider"
-                    android:visibility="gone"
+
                     tools:visibility="visible" />
 
                 <HorizontalScrollView
@@ -262,13 +262,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scrollbarSize="0dp"
-                    android:visibility="gone"
+
                     tools:visibility="visible">
 
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/chip_group_shortcuts"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_gravity="center_horizontal"
                         android:animateLayoutChanges="true"
                         android:padding="8dp"
