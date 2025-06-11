@@ -10,7 +10,7 @@ import dev.gmarques.controledenotificacoes.domain.data.Preferences.ResettableDia
  * Em quarta-feira, 28 de maio de 2025 as 20:43.
  *
  * Implementa [Preferences] e [Preferences.ResettableDialogHints] que definem quais sao as preferencias disponiveis no app e faz a implementação
- * dessas preferenias usando instancias de [PreferenceProperty] inicializadas sob demanda para  facilitar o acesso, leitura e escrita
+ * dessas preferencias usando instancias de [PreferenceProperty] inicializadas sob demanda para  facilitar o acesso, leitura e escrita
  * das preferências através dos usecases
  * [dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase] e [dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase]
  * Isso permite acessar e modificar as preferencias de maneira simples, funcional e escalavel

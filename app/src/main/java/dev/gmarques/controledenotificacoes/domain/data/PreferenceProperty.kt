@@ -1,7 +1,5 @@
 package dev.gmarques.controledenotificacoes.domain.data
 
-import android.util.Log
-
 /**
  * Criado por Gilian Marques
  * Em quarta-feira, 28 de maio de 2025 as 21:19.
@@ -28,7 +26,6 @@ class PreferenceProperty<T>(
 
     /**Salva o valor padrao da preferencia no armazenamento*/
     fun reset() {
-        Log.d("USUK", "PreferenceProperty.reset: key: $key setting: $defaultValue")
         preferenceSaver(key, defaultValue)
     }
 
