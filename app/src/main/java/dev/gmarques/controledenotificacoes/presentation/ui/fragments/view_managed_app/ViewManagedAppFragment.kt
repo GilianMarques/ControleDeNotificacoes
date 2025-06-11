@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -251,6 +252,7 @@ class ViewManagedAppFragment() : MyFragment() {
 
     private fun observeRuleChanges() {
         collectFlow(viewModel.managedAppFlow) { app ->
+
             app?.let {
                 setupActionBar(app)
             }
@@ -260,6 +262,8 @@ class ViewManagedAppFragment() : MyFragment() {
     private fun observeNotificationHistory() {
         collectFlow(viewModel.appNotificationHistoryFlow) { history ->
             adapter.submitList(history)
+            binding.lottieView.isVisible = history.isEmpty()
+            binding.tvHint.isVisible = history.isEmpty()
         }
     }
 

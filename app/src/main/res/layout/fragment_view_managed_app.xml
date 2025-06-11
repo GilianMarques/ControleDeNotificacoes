@@ -8,6 +8,37 @@
     tools:background="?attr/AppColorBackground">
 
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_view"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="empty_notification_list.json"
+        app:lottie_repeatCount="0"
+        app:lottie_repeatMode="restart" />
+
+
+    <TextView
+        android:id="@+id/tv_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="10dp"
+        android:fontFamily="@font/urbanist_extrabold"
+        android:maxWidth="350dp"
+        android:text="@string/As_notifica_es_bloqueadas_deste_app_aparecer_o_aqui"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@id/lottie_view" />
+
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_go_back"
         android:layout_width="48dp"
@@ -19,8 +50,8 @@
         android:padding="14dp"
         android:src="@drawable/vec_go_back"
         android:tint="?colorOnBackground"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="@id/iv_app_icon"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/iv_app_icon" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -84,9 +115,9 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/Bot_o_de_menu"
         android:elevation="5dp"
-        android:transitionName="view_menu"
         android:padding="12dp"
         android:src="@drawable/vec_menu"
+        android:transitionName="view_menu"
         app:layout_constraintBottom_toBottomOf="@id/iv_go_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/iv_go_back"
@@ -127,6 +158,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider"
-        tools:listitem="@layout/item_app_notification" />
+        tools:listitem="@layout/item_app_notification"
+        tools:visibility="invisible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
