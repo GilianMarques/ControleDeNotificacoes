@@ -27,6 +27,7 @@ import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtension
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nameOrDescription
 import dev.gmarques.controledenotificacoes.framework.PendingIntentCache
+import dev.gmarques.controledenotificacoes.framework.model.ShakeDetectorHelper
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.dialogs.ConfirmRuleRemovalDialog
@@ -36,6 +37,7 @@ import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListe
 import dev.gmarques.controledenotificacoes.presentation.utils.DomainRelatedExtFuns.getAdequateIconReferenceSmall
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ViewManagedAppFragment() : MyFragment() {
@@ -52,6 +54,9 @@ class ViewManagedAppFragment() : MyFragment() {
     private lateinit var binding: FragmentViewManagedAppBinding
     private val args: ViewManagedAppFragmentArgs by navArgs()
     private lateinit var appIcon: Drawable
+
+    @Inject
+    lateinit var shakeDetector: ShakeDetectorHelper
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,6 +88,22 @@ class ViewManagedAppFragment() : MyFragment() {
         setupRecyclerView()
         setupFabOpenApp()
         setupSelectRuleListener()
+
+    }
+
+    private fun toggleEmptyState(enabled: Boolean) {
+
+        binding.lottieView.isVisible = enabled
+        binding.tvHint.isVisible = enabled
+
+        if (enabled) shakeDetector.start {
+            with(binding) {
+                if (!lottieView.isAnimating) {
+                    lottieView.playAnimation()
+                    vibrator.success()
+                }
+            }
+        } else shakeDetector.stop()
 
     }
 
@@ -262,8 +283,7 @@ class ViewManagedAppFragment() : MyFragment() {
     private fun observeNotificationHistory() {
         collectFlow(viewModel.appNotificationHistoryFlow) { history ->
             adapter.submitList(history)
-            binding.lottieView.isVisible = history.isEmpty()
-            binding.tvHint.isVisible = history.isEmpty()
+            toggleEmptyState(history.isEmpty())
         }
     }
 
@@ -283,6 +303,11 @@ class ViewManagedAppFragment() : MyFragment() {
 
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        shakeDetector.stop()
     }
 
 }
