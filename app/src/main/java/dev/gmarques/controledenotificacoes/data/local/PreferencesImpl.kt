@@ -103,14 +103,5 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
         )
     }
 
-    override val showWarningCardBatteryRestriction: PreferenceProperty<Boolean> by lazy {
-        PreferenceProperty(
-            key = "show_warning_card_battery_restriction",
-            defaultValue = true,
-            preferenceReader = reader::invoke,
-            preferenceSaver = saver::invoke
-        )
-    }
-
 
 }

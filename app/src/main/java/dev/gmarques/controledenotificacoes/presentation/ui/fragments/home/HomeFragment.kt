@@ -129,12 +129,26 @@ class HomeFragment : MyFragment() {
                     }
                 }
             }
+            section {
+
+                item {
+                    label = getString(R.string.Echo)
+                    icon = R.drawable.vec_watch
+                    callback = {
+                        navigateToEchoFragment()
+                    }
+                }
+            }
 
         }
 
         binding.ivMenu.setOnClickListener(AnimatedClickListener {
             popupMenu.show(this@HomeFragment.requireContext(), binding.ivMenu)
         })
+    }
+
+    private fun navigateToEchoFragment() {
+
     }
 
     private fun navigateToSettingsFragment() {
@@ -255,29 +269,24 @@ class HomeFragment : MyFragment() {
         super.onResume()
 
         if (binding.containerWarnings.isEmpty()) lifecycleScope.launch {
-            delay(1000)
+            delay(500)
 
             if (!requireMainActivity().isNotificationListenerEnabled()) {
                 showListenNotificationWarning()
                 return@launch
             }
 
-            if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
-                lifecycleScope.launch {
-                    if (PreferencesImpl.showWarningCardPostNotification.isDefault()) {
-                        showPostNotificationRestrictionsWarning()
-                    }
-                    return@launch
-                }
-            }
-
             if (!requireMainActivity().isAppInsetFromBatterySaving()) {
-                if (PreferencesImpl.showWarningCardBatteryRestriction.isDefault()) {
-                    showBatteryRestrictionsWarning()
+                showBatteryRestrictionsWarning()
+                return@launch
+            }
+
+            if (!requireMainActivity().isPostNotificationsPermissionEnable()) {
+                if (PreferencesImpl.showWarningCardPostNotification.isDefault()) {
+                    showPostNotificationRestrictionsWarning()
                     return@launch
                 }
             }
-
         }
     }
 
@@ -311,7 +320,7 @@ class HomeFragment : MyFragment() {
 
         warningBinding.chipRestrictionRemoved.setOnClickListener(AnimatedClickListener {
             removerWarning(warningBinding.root)
-            showDialogBatteryRestrictionRemoved()
+            //showDialogBatteryRestrictionRemoved()
         })
 
         binding.containerWarnings.addViewWithTwoStepsAnimation(warningBinding.root)
@@ -343,16 +352,6 @@ class HomeFragment : MyFragment() {
                 openPlayStore()
             }.setNegativeButton(getString(R.string.enviar_um_e_mail_ao_desenvolvedor)) { _, _ ->
                 openMailToSendFeedback()
-            }.show()
-    }
-
-    private fun showDialogBatteryRestrictionRemoved() {
-        MaterialAlertDialogBuilder(requireActivity()).setTitle(getString(R.string.Restrcoes_de_bateria))
-            .setIcon(R.drawable.vec_alert)
-            .setMessage(getString(R.string.em_alguns_dispositivos_o_app_n_o_consegue_confirmar_se_foi_removido_da_restri_o_de_economia))
-            .setPositiveButton(getString(R.string.Eu_removi_a_restri_o)) { _, _ ->
-                PreferencesImpl.showWarningCardBatteryRestriction(false)
-            }.setNegativeButton(getString(R.string.Preciso_confirmar)) { _, _ ->
             }.show()
     }
 

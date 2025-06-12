@@ -48,7 +48,7 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
     }
 
     fun resetBatteryOptimization() {
-        PreferencesImpl.showWarningCardBatteryRestriction.reset()
+        //PreferencesImpl.showWarningCardBatteryRestriction.reset()
         _eventsFlow.tryEmit(SettingsEvent.BatteryOptimizationWarningResetted)
 
     }
