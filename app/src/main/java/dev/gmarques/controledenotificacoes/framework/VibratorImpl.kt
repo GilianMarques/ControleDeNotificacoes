@@ -50,6 +50,19 @@ class VibratorImpl @Inject constructor(@ApplicationContext private val context: 
         launch { vibrate(25) }// Duração curta
     }
 
+    override fun sineAnimation() {
+        launch {
+            val vib = 50L
+            val pause = 400L
+
+            delay(pause / 2)
+            repeat(3) {
+                vibrate(vib)
+                delay(pause)
+            }
+        }
+    }
+
     /**
      * Vibra o dispositivo para fornecer feedback tátil ao usuário.
      * Utiliza `VibrationEffect` para APIs >= 26 e o méto_do `vibrate` legado para versões anteriores.

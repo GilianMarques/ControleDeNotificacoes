@@ -42,21 +42,14 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class ViewManagedAppFragment() : MyFragment() {
 
-    companion object {
-        fun newInstance(): ViewManagedAppFragment {
-            return ViewManagedAppFragment()
-        }
-    }
-
-    private lateinit var adapter: AppNotificationAdapter
-
     private val viewModel: ViewManagedAppViewModel by viewModels()
     private lateinit var binding: FragmentViewManagedAppBinding
     private val args: ViewManagedAppFragmentArgs by navArgs()
-    private lateinit var appIcon: Drawable
 
     @Inject
     lateinit var shakeDetector: ShakeDetectorHelper
+    private lateinit var adapter: AppNotificationAdapter
+    private lateinit var appIcon: Drawable
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -90,6 +83,7 @@ class ViewManagedAppFragment() : MyFragment() {
         setupSelectRuleListener()
     }
 
+    /**atua nas animaçoes do lottie e vibração*/
     private fun toggleEmptyState(enabled: Boolean) {
 
         binding.lottieView.isVisible = enabled
@@ -99,7 +93,7 @@ class ViewManagedAppFragment() : MyFragment() {
             with(binding) {
                 if (!lottieView.isAnimating) {
                     lottieView.playAnimation()
-                    vibrator.interaction()
+                    vibrator.sineAnimation()
                 }
             }
         } else shakeDetector.stop()
