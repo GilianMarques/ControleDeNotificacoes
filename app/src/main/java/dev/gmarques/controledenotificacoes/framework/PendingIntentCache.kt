@@ -29,4 +29,8 @@ object PendingIntentCache {
             }
     }
 
+    fun remove(pendingIntentId: String) {
+        cache.remove(pendingIntentId)
+    }
+
 }

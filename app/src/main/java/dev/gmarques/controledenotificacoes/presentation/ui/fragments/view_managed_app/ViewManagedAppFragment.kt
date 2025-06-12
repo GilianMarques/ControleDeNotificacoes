@@ -88,7 +88,6 @@ class ViewManagedAppFragment() : MyFragment() {
         setupRecyclerView()
         setupFabOpenApp()
         setupSelectRuleListener()
-
     }
 
     private fun toggleEmptyState(enabled: Boolean) {
@@ -100,7 +99,7 @@ class ViewManagedAppFragment() : MyFragment() {
             with(binding) {
                 if (!lottieView.isAnimating) {
                     lottieView.playAnimation()
-                    vibrator.success()
+                    vibrator.interaction()
                 }
             }
         } else shakeDetector.stop()
@@ -117,7 +116,7 @@ class ViewManagedAppFragment() : MyFragment() {
             if (launchIntent != null) {
                 startActivity(launchIntent)
             } else {
-                showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_app))
+                showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_app), fabOpenApp)
             }
         })
     }
@@ -160,7 +159,9 @@ class ViewManagedAppFragment() : MyFragment() {
             val originalPendingIntent: PendingIntent? = PendingIntentCache(notification.pendingIntentId())
             originalPendingIntent?.send()
         } catch (_: Exception) {
-            showErrorSnackBar(getString(R.string.Nao_foi_possivel_abrir_a_notifica_o))
+            PendingIntentCache.remove(notification.pendingIntentId())
+            showErrorSnackBar(getString(R.string.Nao_foi_possivel_abrir_a_notifica_o), binding.fabOpenApp)
+            viewModel.refreshNotificationHistory()
         }
     }
 
@@ -305,9 +306,14 @@ class ViewManagedAppFragment() : MyFragment() {
         }
     }
 
+    override fun onPause() {
+        toggleEmptyState(false)
+        super.onPause()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        shakeDetector.stop()
+        toggleEmptyState(false)
     }
 
 }
