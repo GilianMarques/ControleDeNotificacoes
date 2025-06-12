@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.splash
 
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -82,6 +83,12 @@ class SplashFragment : MyFragment() {
      */
     private fun animateAndNavigateHomeIfUserJustLoggedIn(user: User) {
         lifecycleScope.launch {
+
+            val typedValue = TypedValue()
+            requireActivity().theme.resolveAttribute(R.attr.AppColorBackground, typedValue, true)
+            val color = typedValue.data
+            binding.root.setBackgroundColor(color)
+
             setupUiWithUserData(user)
             delay(2000)
             viewModel.addNavigationRequirement(NavigationRequirements.Requirement.USER_LOGGED_IN)
@@ -136,7 +143,7 @@ class SplashFragment : MyFragment() {
          */
         with(binding) {
 
-            user.name.split(" ").firstOrNull().orEmpty().ifBlank { "?" }
+            user.name.split(" ").firstOrNull().orEmpty().ifBlank { "ué?" }
 
             vibrator.success()
 

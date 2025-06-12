@@ -136,7 +136,7 @@
     <string name="Seus_dados_s_o_usados_apenas_para_personalizar_a_interface_e_nunca_saem_do_seu_dispositivo">Não coletamos seus dados. Eles serão usados apenas para personalizar a interface.</string>
     <string name="Entre_com_sua_conta_google">Entre com sua conta Google.</string>
     <string name="Defina_os_dias_e_horarios_em_que_cada_aplicativo_pode_exibir_notificacoes">Defina os dias e horários em que cada aplicativo pode exibir notificações e tenha mais foco no trabalho e tranquilidade no dia a dia!</string>
-    <string name="Clique_no_bot_o_para_configurar_o_primeiro_app">Clique no botão + para configurar o primeiro app</string>
+    <string name="Clique_no_bot_o_para_configurar_o_primeiro_app">Clique no botão + para configurar o primeiro aplicativo</string>
     <string name="Atribuicoes">Atribuições</string>
     <string name="Incluir_apps_do_sistema">Incluir apps do sistema</string>
     <string name="Excluir_apps_do_sistema">Excluir apps do sistema</string>
@@ -147,7 +147,7 @@
     <string name="Esta_versao_do_app_foi_bloqueada_verifique_atualiza_es_na_play_store">Esta versão do app %1$s foi bloqueada, verifique atualizações na play store</string>
     <string name="Ir_a_loja">Ir a loja</string>
 
-    <string name="Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados">Um ou mais dos apps selecionados já estão sendo gerenciados. Aplicar uma nova regra a estes apps substituirá a regra existente.</string>
+    <string name="Um_ou_mais_dos_apps_selecionados_ja_estao_sendo_gerenciados">Um ou mais dos aplicativos selecionados já estão sendo gerenciados. Aplicar uma nova regra a estes apps substituirá a regra existente.</string>
     <string name="Mais_x_apps">+%1$d apps</string>
     <string name="Preferencias">Preferências</string>
     <string name="Resetar_exibi_o_de_dicas">Resetar exibição de dicas</string>
@@ -166,12 +166,12 @@
     <string name="Fragment_home">Fragment_home</string>
     <string name="Remover_restricoes">Remover restrições</string>
     <string name="Esta_feito">Está feito!</string>
-    <string name="remova_as_restricoes_de_bateria_para_que_o_sistema">Remova as restrições de bateria para que o sistema não interrompa o funcionamento do app, impedindo o gerenciamento das notificações.</string>
+    <string name="remova_as_restricoes_de_bateria_para_que_o_sistema">Remova as restrições de bateria para que o sistema não interrompa o funcionamento do aplicativo, impedindo o gerenciamento das notificações.</string>
     <string name="Permitir_envio_de_notifica_es">Permitir envio de notificações</string>
     <string name="Permita_o_envio_de_notifica_es_para_ser_avisado_a_sobre_as_notifica_es_recebidas_durante_o_per_odo_de_bloqueio_dos_apps">Permita o envio de notificações para ser avisado(a) sobre as notificações recebidas durante o período de bloqueio dos apps.</string>
     <string name="Sem_t_tulo">(Sem título)</string>
     <string name="Sem_conte_do">(Sem conteúdo)</string>
-    <string name="Deseja_mesmo_apagar_o_hist_rico_de_notifica_es_deste_app_essa_acao_nao">Deseja mesmo apagar o histórico de notificações deste app? Essa ação não pode ser desfeita</string>
+    <string name="Deseja_mesmo_apagar_o_hist_rico_de_notifica_es_deste_app_essa_acao_nao">Deseja mesmo apagar o histórico de notificações deste aplicativo? Essa ação não pode ser desfeita</string>
     <string name="Apagar">Apagar</string>
     <string name="Abrir_app">Abrir app</string>
     <string name="Nao_foi_poss_vel_abrir_o_app">Não foi possível abrir o app</string>
@@ -188,7 +188,7 @@
     <string name="enviar_um_e_mail_ao_desenvolvedor">Enviar um e-mail ao desenvolvedor</string>
     <string name="Comentar_na_play_store">Comentar na Play Store</string>
     <string name="Enviar_feedback">Enviar feedback</string>
-    <string name="Insira_aqui_suas_duvidas_sugestoes_de_melhorias_e_funcionalidades_ou_problemas_que_ocorreram_durante_o_uso">Insira aqui suas dúvidas, sugestões de melhorias e funcionalidades ou problemas que ocorreram durante o uso.\n\nEm caso de erros no app, forneça as instruções de como recriar o problema, explique o passo-a-passo do que você fez quando o app falhou. Essas instruções ajudam a recriar a situação para poder corrigi-la.</string>
+    <string name="Insira_aqui_suas_duvidas_sugestoes_de_melhorias_e_funcionalidades_ou_problemas_que_ocorreram_durante_o_uso">Em caso de erros no app, forneça as instruções de como recriar o problema, explique o passo-a-passo do que você fez quando o app falhou. Essas instruções ajudam a recriar a situação para poder corrigi-la.</string>
     <string name="Feedback_do_app">Feedback do App</string>
     <string name="Nenhum_app_de_e_mail_encontrado">Nenhum app de e-mail encontrado</string>
     <string name="como_adicionar_o_primeiro_app">

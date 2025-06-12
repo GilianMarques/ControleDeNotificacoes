@@ -20,7 +20,7 @@ class UserRepositoryImpl @Inject constructor(@ApplicationContext private val con
         User(
             "Test user",
             "in.test@gmail.com",
-            "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+            "https://picsum.photos/200"
         )
     }
 
@@ -30,7 +30,8 @@ class UserRepositoryImpl @Inject constructor(@ApplicationContext private val con
      */
     override fun getUser(): User? {
 
-        //   if (BuildConfig.DEBUG) return defaultForTestsOnlyUser
+        // remova as barras  abaixo para usar o usuário padrão para testes
+        //  return defaultForTestsOnlyUser
 
         val fUser = FirebaseAuth.getInstance().currentUser
         if (fUser == null) return null
