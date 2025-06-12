@@ -133,7 +133,7 @@ class HomeFragment : MyFragment() {
 
                 item {
                     label = getString(R.string.Echo)
-                    icon = R.drawable.vec_watch
+                    icon = R.drawable.vec_echo
                     callback = {
                         navigateToEchoFragment()
                     }

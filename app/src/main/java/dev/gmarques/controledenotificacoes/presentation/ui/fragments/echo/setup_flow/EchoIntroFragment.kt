@@ -1,0 +1,50 @@
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
+import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.databinding.FragmentEchoIntroBinding
+import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.setup_flow.EchoFlowSharedViewModel
+
+/**
+ *Criado por Gilian Marques
+ * Em 12/06/2025 as 14:29
+ */
+class EchoIntroFragment : MyFragment() {
+
+    private val viewModel: EchoFlowSharedViewModel by navGraphViewModels(R.id.nav_graph_echo_xml)
+    private lateinit var binding: FragmentEchoIntroBinding
+
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        return FragmentEchoIntroBinding.inflate(inflater, container, false).also {
+            binding = it
+        }.root
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupFabEcho()
+    }
+
+
+    /**
+     * Configura o listener para o botão de echo.
+     */
+    private fun setupFabEcho() {
+        binding.fab.setOnClickListener {
+            findNavController().navigate(EchoIntroFragmentDirections.toEchoStepOneFragment())
+        }
+    }
+
+
+}

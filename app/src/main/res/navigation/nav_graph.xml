@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph.xml"
-    app:startDestination="@id/splashFragment">
-
+    app:startDestination="@id/echoFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -23,9 +22,14 @@
         <action
             android:id="@+id/to_viewManagedAppFragment"
             app:destination="@id/viewManagedAppFragment" />
+
         <action
             android:id="@+id/to_settingsFragment"
             app:destination="@id/settingsFragment" />
+
+        <action
+            android:id="@+id/to_echoFragment"
+            app:destination="@id/echoFragment" />
     </fragment>
 
     <fragment
@@ -163,6 +167,12 @@
         android:id="@+id/settingsFragment"
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.settings.SettingsFragment"
         android:label="SettingsFragment"
-        android:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/echoFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.EchoFragment"
+        android:label="EchoFragment"
+        tools:layout="@layout/fragment_echo" />
 
 </navigation>

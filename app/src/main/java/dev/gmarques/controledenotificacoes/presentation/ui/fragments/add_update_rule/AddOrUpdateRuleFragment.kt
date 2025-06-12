@@ -59,7 +59,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            delay(100)
             setupNameInput()
             setupButtonTypeRule()
             setupChipDays()

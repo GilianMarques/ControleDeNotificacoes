@@ -24,7 +24,7 @@ class InstalledInstalledAppRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
 ) : InstalledAppRepository {
-
+    // TODO: nao to usando o cache ao ler todos os apps?
     private val packageManager: PackageManager = context.packageManager
     private val iconCache = object : LruCache<String, Drawable>(100) {}
     private val appCache = object : LruCache<String, InstalledApp>(100) {}

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_echo.xml"
+    app:startDestination="@id/echoStepOneFragment">
+
+    <fragment
+        android:id="@+id/echoIntroFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.EchoIntroFragment"
+        android:label="EchoIntroFragment"
+        tools:layout="@layout/fragment_echo_intro">
+        <action
+            android:id="@+id/to_echoStepOneFragment"
+            app:destination="@id/echoStepOneFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/echoStepOneFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.EchoStepOneFragment"
+        android:label="EchoStepOneFragment"
+        tools:layout="@layout/fragment_echo_step_one">
+        <action
+            android:id="@+id/to_echoStepTwoFragment"
+            app:destination="@id/echoStepTwoFragment" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/echoStepTwoFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.EchoStepTwoFragment"
+        android:label="EchoStepTwoFragment"
+        tools:layout="@layout/fragment_echo_step_two">
+        <action
+            android:id="@+id/to_echoIsEnabled"
+            app:destination="@id/echoIsEnabled"
+            app:popUpTo="@id/echoIsEnabled"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/echoIsEnabled"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.EchoIsEnabled"
+        android:label="EchoIsEnabled"
+        tools:layout="@layout/fragment_echo_is_enabled" />
+
+</navigation>
