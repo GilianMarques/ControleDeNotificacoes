@@ -26,7 +26,6 @@ import dev.gmarques.controledenotificacoes.framework.notification_listener_servi
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.model.ManagedAppWithRule
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -183,13 +182,6 @@ class ViewManagedAppViewModel @Inject constructor(
                 NotificationListener.sendBroadcastToReadActiveNotifications()
             }
         }
-    }
-
-    fun refreshNotificationHistory() = viewModelScope.launch(Main) {
-        val actualValue = _appNotificationHistoryFlow.value.toList()
-        _appNotificationHistoryFlow.emit(emptyList())
-        delay(100)
-        _appNotificationHistoryFlow.emit(actualValue)
     }
 
 }

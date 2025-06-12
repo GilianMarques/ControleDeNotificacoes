@@ -161,7 +161,6 @@ class ViewManagedAppFragment() : MyFragment() {
         } catch (_: Exception) {
             PendingIntentCache.remove(notification.pendingIntentId())
             showErrorSnackBar(getString(R.string.Nao_foi_possivel_abrir_a_notifica_o), binding.fabOpenApp)
-            viewModel.refreshNotificationHistory()
         }
     }
 
