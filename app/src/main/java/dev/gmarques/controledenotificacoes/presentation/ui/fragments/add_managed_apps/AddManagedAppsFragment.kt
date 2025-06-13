@@ -53,7 +53,6 @@ class AddManagedAppsFragment() : MyFragment() {
     private lateinit var binding: FragmentAddManagedAppsBinding
 
     private val manageAppsViewsMutex = Mutex()
-
     private lateinit var containerController: ContainerController
 
     override fun onCreateView(
@@ -70,9 +69,9 @@ class AddManagedAppsFragment() : MyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupActionBar(binding.toolbar)
         containerController = ContainerController(viewLifecycleOwner, binding.llConteinerApps, maxAppsViews)
 
-        setupActionBar(binding.toolbar)
         setupSelectAppsListener()
         setupSelectRuleListener()
         setupSelectAppsButton()

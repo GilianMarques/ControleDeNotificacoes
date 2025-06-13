@@ -39,37 +39,86 @@
         android:maxWidth="500dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:text="Configure o app do seu SmartWatch para emitir notificações apenas de Controle de notificações. "
         android:textAlignment="center"
         android:textColor="?colorSecondary"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv" />
+        app:layout_constraintTop_toBottomOf="@id/iv"
+        tools:text="Configure o app do seu SmartWatch para emitir notificações apenas de %1$s." />
 
-    <LinearLayout
-        android:id="@+id/app_container"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tv_introduction_2"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/fab"
+        android:layout_marginTop="8dp"
+        android:elevation="2dp"
+        android:fontFamily="@font/urbanist_semibold"
+        android:maxWidth="500dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="@string/Isso_vai_impedir_o_dispositivo_de_mostrar_notifica_es_de_apps_bloqueados"
+        android:textAlignment="center"
+        android:textColor="?colorSecondary"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_introduction" />
 
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:foregroundGravity="center"
+        android:orientation="vertical"
+        android:scrollbarSize="0dp"
+        app:layout_constraintBottom_toTopOf="@id/fab"
+        app:layout_constraintTop_toBottomOf="@id/tv_introduction_2">
+
+        <LinearLayout
+            android:id="@+id/ll_conteiner_apps"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp" />
+    </androidx.core.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/tv_app_not_found"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:elevation="2dp"
+        android:fontFamily="@font/urbanist_semibold"
+        android:maxWidth="500dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:text="@string/O_app_do_seu_smartwatch_n_o_est_na_lista"
+        android:textAlignment="center"
+        android:textColor="?colorSecondary"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@id/fab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="16dp"
         android:drawablePadding="16dp"
         android:elevation="2dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:text="@string/iniciar_configura_o"
+        android:text="@string/Esta_feito"
         android:textSize="16sp"
-        app:icon="@drawable/vec_settings"
+        android:visibility="invisible"
+        app:icon="@drawable/vec_check"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

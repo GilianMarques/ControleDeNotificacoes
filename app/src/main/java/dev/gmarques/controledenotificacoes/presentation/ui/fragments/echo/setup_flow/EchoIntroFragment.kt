@@ -1,4 +1,4 @@
-package dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo
+package dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.setup_flow
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,6 @@ import androidx.navigation.navGraphViewModels
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentEchoIntroBinding
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
-import dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.setup_flow.EchoFlowSharedViewModel
 
 /**
  *Criado por Gilian Marques

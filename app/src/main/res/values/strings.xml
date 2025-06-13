@@ -226,7 +226,12 @@
     <string name="As_notifica_es_bloqueadas_deste_app_aparecer_o_aqui">As notificações bloqueadas deste aplicativo aparecerão aqui</string>
     <string name="Echo">Echo</string>
     <string name="iniciar_configura_o">Iniciar configuração</string>
-    <string name="Ative_o_echo_para_silenciar_notifica_es_de_aplicativos_bloqueados_no_seu_smartwatch">Ative o Echo para silenciar notificações de aplicativos bloqueados no seu smartwatch.</string>
+    <string name="Ative_o_echo_para_silenciar_notifica_es_de_aplicativos_bloqueados_no_seu_smartwatch">Ative o Echo para filtrar as notificações de aplicativos bloqueados no seu smartwatch.</string>
+    <string name="Abrir_X_app">Abrir %1$s</string>
+    <string name="Configure_o_app_do_seu_smartwatch_para_emitir_notifica_es_apenas_de">Configure o app do seu SmartWatch para emitir notificações apenas de %1$s.</string>
+    <string name="Ligar_Echo">Ligar Echo</string>
+    <string name="Isso_vai_impedir_o_dispositivo_de_mostrar_notifica_es_de_apps_bloqueados">Isso vai impedir o dispositivo de mostrar notificações de aplicativos bloqueados.</string>
+    <string name="O_app_do_seu_smartwatch_n_o_est_na_lista">O app do seu smartwatch não está na lista?</string>
 
 
 </resources>

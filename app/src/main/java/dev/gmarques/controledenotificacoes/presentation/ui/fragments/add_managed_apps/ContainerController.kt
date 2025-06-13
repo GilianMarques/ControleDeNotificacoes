@@ -37,7 +37,7 @@ class ContainerController(
     /**
      * Atualiza a lista de views no container.
      * Remove views que não estão na nova lista, adiciona novas views e garante que o número máximo de views não seja excedido.
-     * @param objects A nova lista de objetos Child a serem exibidos.
+     * @param objs A nova lista de objetos Child a serem exibidos.
      */
     fun submitList(objs: List<Child>) {
         //   Log.d("USUK", "ContainerController.submitList: ${lastObjectsList.joinToString("\n") { it.sortableProp }}")

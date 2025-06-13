@@ -14,7 +14,10 @@ import javax.inject.Inject
  *
  * @property getInstalledAppByPackageOrDefaultUseCase Use case para obter um aplicativo instalado pelo nome do pacote ou um valor padrão.
  */
-class GetSmartWatchInstalledAppsUseCase @Inject constructor(private val getInstalledAppByPackageOrDefaultUseCase: GetInstalledAppByPackageOrDefaultUseCase) {
+class GetSmartWatchInstalledAppsUseCase @Inject constructor(
+    private val getInstalledAppByPackageOrDefaultUseCase: GetInstalledAppByPackageOrDefaultUseCase,
+    private val a: GetAllInstalledAppsUseCase,
+) {
 
     private val smartwatchAppPackages = listOf(
         "com.samsung.android.app.watchmanager",
@@ -35,6 +38,8 @@ class GetSmartWatchInstalledAppsUseCase @Inject constructor(private val getInsta
     suspend operator fun invoke(): List<InstalledApp> {
 
         val apps = mutableListOf<InstalledApp>()
+
+        //  apps.addAll(a.invoke())
 
         smartwatchAppPackages.forEach {
             val app = getInstalledAppByPackageOrDefaultUseCase(it)

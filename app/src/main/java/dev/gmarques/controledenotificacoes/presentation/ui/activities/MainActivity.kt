@@ -277,6 +277,22 @@ class MainActivity() : AppCompatActivity() {
         appUpdateManager.unregisterListener(installStateUpdatedListener)
         super.onDestroy()
     }
+
+    /**
+     * Tenta abrir um app com base no id do pacote
+     * @param packageId id do pacote do app a ser aberto ex: com.google.android.youtube
+     * @return true se o app foi aberto com sucesso, false caso contrario
+     */
+    fun launchApp(packageId: String): Boolean {
+        val launchIntent = packageManager.getLaunchIntentForPackage(packageId)
+
+        if (launchIntent != null) {
+            startActivity(launchIntent)
+            return true
+        } else {
+            return false
+        }
+    }
 }
 
 

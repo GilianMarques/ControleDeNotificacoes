@@ -104,14 +104,11 @@ class ViewManagedAppFragment() : MyFragment() {
 
         hideViewOnRVScroll(rvHistory, fabOpenApp)
         fabOpenApp.setOnClickListener(AnimatedClickListener {
-            val packageId = viewModel.managedAppFlow.value!!.packageId
-            val launchIntent = requireContext().packageManager.getLaunchIntentForPackage(packageId)
 
-            if (launchIntent != null) {
-                startActivity(launchIntent)
-            } else {
-                showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_app), fabOpenApp)
-            }
+            val packageId = viewModel.managedAppFlow.value!!.packageId
+            val launched = requireMainActivity().launchApp(packageId)
+            if (!launched) showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_app), fabOpenApp)
+
         })
     }
 

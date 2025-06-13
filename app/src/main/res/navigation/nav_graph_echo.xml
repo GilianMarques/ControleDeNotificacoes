@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph_echo.xml"
-    app:startDestination="@id/echoStepOneFragment">
+    app:startDestination="@id/echoIntroFragment">
 
     <fragment
         android:id="@+id/echoIntroFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.EchoIntroFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.setup_flow.EchoIntroFragment"
         android:label="EchoIntroFragment"
         tools:layout="@layout/fragment_echo_intro">
         <action
@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/echoStepOneFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.EchoStepOneFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.setup_flow.EchoStepOneFragment"
         android:label="EchoStepOneFragment"
         tools:layout="@layout/fragment_echo_step_one">
         <action
@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/echoStepTwoFragment"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.EchoStepTwoFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.setup_flow.EchoStepTwoFragment"
         android:label="EchoStepTwoFragment"
         tools:layout="@layout/fragment_echo_step_two">
         <action
