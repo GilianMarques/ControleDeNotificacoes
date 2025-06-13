@@ -39,7 +39,7 @@ class UserRepositoryImpl @Inject constructor(@ApplicationContext private val con
         /*Não vejo como pode ser possível uma pessoa logar com sua conta do Google sem ter um nome e email definidos,
         acredito que nem a foto terá URL nulo, mas por via das dúvidas é melhor mostrar informações nulas na tela do que fechar o app
         na cara do usuário, uma vez que a autenticação serve apenas para personalizar a interface */
-        return User(fUser.displayName ?: "null", fUser.email ?: "null", fUser.photoUrl?.toString() ?: "null")
+        return User(fUser!!.displayName ?: "null", fUser!!.email ?: "null", fUser.photoUrl?.toString() ?: "null")
     }
 
     override suspend fun logOff() {
