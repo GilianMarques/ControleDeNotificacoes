@@ -44,7 +44,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="Ligue o Echo para que as notificações dos demais apps sejam emitidas para o seu SmartWatch."
+        android:text="@string/Ligue_o_echo_para_que_as_notifica_es_dos_demais_apps_sejam_emitidas_para_o_seu_smartwatch"
         app:layout_constraintTop_toBottomOf="@id/iv" />
 
     <TextView
@@ -57,7 +57,7 @@
         android:maxWidth="500dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:text="O Echo vai emitir as notificações dos aplicativos permitidos que serão exibidas para você no seu dispositivo. Aplicativos em periodo de bloqueio terão suas notificações omitidas."
+        android:text="@string/O_echo_vai_emitir_as_notifica_es_dos_aplicativos_permitidos_que_ser_o_exibidas_para_voc_no_seu_smartwatch_aplicativos_em_periodo_de_bloqueio_ter_o_suas_notifica_es_omitidas"
         android:textAlignment="center"
         android:textColor="?colorSecondary"
         android:textSize="14sp"
@@ -72,7 +72,7 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="36dp"
+        android:layout_marginBottom="16dp"
         android:drawablePadding="16dp"
         android:elevation="2dp"
         android:paddingStart="16dp"

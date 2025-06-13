@@ -228,10 +228,16 @@
     <string name="iniciar_configura_o">Iniciar configuração</string>
     <string name="Ative_o_echo_para_silenciar_notifica_es_de_aplicativos_bloqueados_no_seu_smartwatch">Ative o Echo para filtrar as notificações de aplicativos bloqueados no seu smartwatch.</string>
     <string name="Abrir_X_app">Abrir %1$s</string>
-    <string name="Configure_o_app_do_seu_smartwatch_para_emitir_notifica_es_apenas_de">Configure o app do seu SmartWatch para emitir notificações apenas de %1$s.</string>
+    <string name="Configure_o_app_do_seu_smartwatch_para_emitir_notifica_es_apenas_de">Configure o aplicativo do seu smartwatch para emitir apenas as notificações de %1$s.</string>
     <string name="Ligar_Echo">Ligar Echo</string>
     <string name="Isso_vai_impedir_o_dispositivo_de_mostrar_notifica_es_de_apps_bloqueados">Isso vai impedir o dispositivo de mostrar notificações de aplicativos bloqueados.</string>
     <string name="O_app_do_seu_smartwatch_n_o_est_na_lista">O app do seu smartwatch não está na lista?</string>
+    <string name="Abra_o_aplicativo_do_seu_rel_gio_manualmente_para_fazer_a_configura_o_e_volte">Abra o aplicativo do seu smartwatch manualmente para fazer a configuração e volte para seguir com a ativação do Echo.\n\nConsidere usar o menu Feedback para solicitar que o desenvolvedor inclua o aplicativo do seu smartwatch na lista.</string>
+    <string name="Nenhum_aplicativo_de_smartwatch_foi_encontrado_n_nclique_aqui_para_continuar">Nenhum aplicativo de smartwatch foi encontrado.\n\nClique aqui para saber como continuar.</string>
+    <string name="Ligue_o_echo_para_que_as_notifica_es_dos_demais_apps_sejam_emitidas_para_o_seu_smartwatch">Ligue o Echo para que as notificações dos demais apps sejam emitidas para o seu smartwatch.</string>
+    <string name="O_echo_vai_emitir_as_notifica_es_dos_aplicativos_permitidos_que_ser_o_exibidas_para_voc_no_seu_smartwatch_aplicativos_em_periodo_de_bloqueio_ter_o_suas_notifica_es_omitidas">O Echo vai emitir as notificações dos aplicativos permitidos que serão exibidas para você no seu smartwatch. Aplicativos em periodo de bloqueio terão suas notificações omitidas.</string>
+    <string name="Finalizar">Finalizar</string>
+    <string name="Desligar_echo">Desligar Echo</string>
 
 
 </resources>

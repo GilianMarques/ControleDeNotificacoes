@@ -103,5 +103,14 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
         )
     }
 
+    override val echoEnabled: PreferenceProperty<Boolean> by lazy {
+        PreferenceProperty(
+            key = "echo_enabled",
+            defaultValue = false,
+            preferenceReader = reader::invoke,
+            preferenceSaver = saver::invoke
+        )
+    }
+
 
 }

@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph_echo.xml"
+    android:id="@+id/nav_graph_echo"
     app:startDestination="@id/echoIntroFragment">
 
     <fragment
@@ -13,6 +13,13 @@
         <action
             android:id="@+id/to_echoStepOneFragment"
             app:destination="@id/echoStepOneFragment" />
+
+        <action
+            android:id="@+id/to_echoIsEnabled"
+            app:destination="@id/EchoIsEnabledFragment"
+            app:popUpTo="@id/EchoIsEnabledFragment"
+            app:popUpToInclusive="true" />
+
     </fragment>
 
 
@@ -32,17 +39,19 @@
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.setup_flow.EchoStepTwoFragment"
         android:label="EchoStepTwoFragment"
         tools:layout="@layout/fragment_echo_step_two">
+
         <action
             android:id="@+id/to_echoIsEnabled"
-            app:destination="@id/echoIsEnabled"
-            app:popUpTo="@id/echoIsEnabled"
+            app:destination="@id/EchoIsEnabledFragment"
+            app:popUpTo="@id/EchoIsEnabledFragment"
             app:popUpToInclusive="true" />
+
     </fragment>
 
     <fragment
-        android:id="@+id/echoIsEnabled"
-        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.EchoIsEnabled"
-        android:label="EchoIsEnabled"
+        android:id="@+id/EchoIsEnabledFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.EchoIsEnabledFragment"
+        android:label="EchoIsEnabledFragment"
         tools:layout="@layout/fragment_echo_is_enabled" />
 
 </navigation>

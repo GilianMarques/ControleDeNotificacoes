@@ -39,6 +39,7 @@ class GetSmartWatchInstalledAppsUseCase @Inject constructor(
 
         val apps = mutableListOf<InstalledApp>()
 
+        // return apps
         //  apps.addAll(a.invoke())
 
         smartwatchAppPackages.forEach {

@@ -5,9 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentEchoStepOneBinding
@@ -30,7 +31,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class EchoStepOneFragment : MyFragment() {
 
-    private val viewModel: EchoFlowSharedViewModel by viewModels()
+    private val viewModel: EchoFlowSharedViewModel by navGraphViewModels(R.id.nav_graph_echo) {
+        defaultViewModelProviderFactory
+    }
     private lateinit var binding: FragmentEchoStepOneBinding
     private val manageAppsViewsMutex = Mutex()
     private lateinit var containerController: ContainerController
@@ -55,6 +58,32 @@ class EchoStepOneFragment : MyFragment() {
         setupFabEcho()
         loadSmartWatchApps()
         observeStates()
+        setupNotFoundAppTextView()
+        setupEmptyView()
+        if (viewModel.makeStepOnFabVisible) makeFabVisible()
+    }
+
+    private fun setupEmptyView() {
+        binding.emptyView.setOnClickListener(AnimatedClickListener {
+            showAppNotFoundDialog()
+        })
+    }
+
+    private fun setupNotFoundAppTextView() {
+        binding.tvAppNotInList.setOnClickListener(AnimatedClickListener {
+            showAppNotFoundDialog()
+        })
+    }
+
+    private fun showAppNotFoundDialog() {
+        MaterialAlertDialogBuilder(requireActivity())
+            .setTitle(getString(R.string.Ligar_Echo))
+            .setMessage(getString(R.string.Abra_o_aplicativo_do_seu_rel_gio_manualmente_para_fazer_a_configura_o_e_volte))
+            .setPositiveButton(getString(R.string.Entendi)) { dialog, _ ->
+                makeFabVisible()
+            }.setCancelable(false)
+            .setIcon(R.drawable.vec_echo)
+            .show()
     }
 
     private fun loadSmartWatchApps() {
@@ -76,28 +105,33 @@ class EchoStepOneFragment : MyFragment() {
             when (state) {
                 EchoState.Idle -> {}
                 is EchoState.StepOne.SmartWatchApps -> loadAppsViews(state.apps)
+
             }
         }
     }
 
     private fun loadAppsViews(apps: List<InstalledApp>) = lifecycleScope.launch {
-        manageAppsViewsMutex.withLock {
+
+        if (apps.isEmpty()) {
+            binding.emptyView.isVisible = true
+            binding.tvAppNotInList.isVisible = false
+        } else manageAppsViewsMutex.withLock {
 
             val children = apps.map { app ->
 
-                val itemBinding = ItemAppSmartWatchBinding.inflate(layoutInflater).apply {
-                    tvName.text = getString(R.string.Abrir_X_app, app.name)
-                    ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
-                    tvName.setOnClickListener(AnimatedClickListener {
-                        val launched = requireMainActivity().launchApp(app.packageId)
-                        if (!launched) showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_app), binding.fab)
-                        else lifecycleScope.launch {
-                            delay(500)
-                            binding.fab.isVisible = true
-                            binding.tvAppNotFound.isVisible = false
-                        }
-                    })
-                }
+                val itemBinding = ItemAppSmartWatchBinding.inflate(layoutInflater)
+                    .apply {
+                        tvName.text = getString(R.string.Abrir_X_app, app.name)
+                        ivAppIcon.setImageDrawable(getInstalledAppIconUseCase(app.packageId))
+                        tvName.setOnClickListener(AnimatedClickListener {
+                            val launched = requireMainActivity().launchApp(app.packageId)
+                            if (!launched) showErrorSnackBar(getString(R.string.Nao_foi_poss_vel_abrir_o_app), binding.fab)
+                            else lifecycleScope.launch {
+                                delay(500)
+                                makeFabVisible()
+                            }
+                        })
+                    }
 
                 ContainerController.Child(app.packageId, app.name, itemBinding)
             }
@@ -106,5 +140,10 @@ class EchoStepOneFragment : MyFragment() {
         }
     }
 
+    private fun makeFabVisible() {
+        binding.fab.isVisible = true
+        binding.tvAppNotInList.isVisible = false
+        viewModel.makeStepOnFabVisible = true
+    }
 
 }

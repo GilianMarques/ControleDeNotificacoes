@@ -44,16 +44,6 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
-                    android:id="@+id/tv_reset_battery_opt_warning"
-                    style="@style/SettingsMenuItem"
-                    android:text="@string/Resetar_aviso_de_otimiza_o_de_bateria"
-                    app:drawableStartCompat="@drawable/vec_battery"
-                    app:drawableTint="?attr/colorPrimaryVariant"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <TextView
                     android:id="@+id/tv_give_read_notification_permission"
                     style="@style/SettingsMenuItem"
                     android:text="@string/Dar_permiss_o_para_ler_as_notifica_es"

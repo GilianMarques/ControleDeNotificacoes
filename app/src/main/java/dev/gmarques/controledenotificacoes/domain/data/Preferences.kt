@@ -17,6 +17,8 @@ interface Preferences {
     val showDialogNotPermissionDenied: PreferenceProperty<Boolean>
     val showWarningCardPostNotification: PreferenceProperty<Boolean>
 
+    val echoEnabled: PreferenceProperty<Boolean>
+
     @Keep
     /**Todas as preferencias dentro dessa interface podem ser resetadas pelo usuario*/
     interface ResettableDialogHints {

@@ -148,7 +148,7 @@ class HomeFragment : MyFragment() {
     }
 
     private fun navigateToEchoFragment() {
-
+        findNavController().navigate(HomeFragmentDirections.toEchoFragment())
     }
 
     private fun navigateToSettingsFragment() {

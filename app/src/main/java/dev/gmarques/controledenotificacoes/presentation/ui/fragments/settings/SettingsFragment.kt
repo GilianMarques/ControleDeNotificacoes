@@ -62,17 +62,11 @@ class SettingsFragment : MyFragment() {
 
         setupActionBar(binding.toolbar)
         setupResetHintsButton()
-        setupResetBatteryOptimizationButton()
         setupRequestNotificationAccessPermission()
         observeEvents()
         setupVersion()
     }
 
-    private fun setupResetBatteryOptimizationButton() = with(binding) {
-        tvResetBatteryOptWarning.setOnClickListener(AnimatedClickListener {
-            viewModel.resetBatteryOptimization()
-        })
-    }
 
     private fun setupResetHintsButton() = with(binding) {
         tvResetHints.setOnClickListener(AnimatedClickListener {

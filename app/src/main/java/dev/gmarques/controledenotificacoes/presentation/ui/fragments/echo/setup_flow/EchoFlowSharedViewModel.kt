@@ -1,10 +1,9 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.setup_flow
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetSmartWatchInstalledAppsUseCase
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import kotlinx.coroutines.Dispatchers.IO
@@ -24,7 +23,6 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class EchoFlowSharedViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val getSmartWatchInstalledAppsUseCase: GetSmartWatchInstalledAppsUseCase,
 ) : ViewModel() {
 
@@ -34,11 +32,29 @@ class EchoFlowSharedViewModel @Inject constructor(
     private val _statesFlow = MutableStateFlow<EchoState>(EchoState.Idle)
     val statesFlow: StateFlow<EchoState> get() = _statesFlow
 
+    var makeStepOnFabVisible = false
+
+    /**ajuda o [EchoIsEnabledFragment] a saber se deve ou não mostrar o botão de desativar o Echo*/
+    var setupConcluded = false
 
     fun loadSmartWatchApps() = viewModelScope.launch(IO) {
         val apps = getSmartWatchInstalledAppsUseCase()
         _statesFlow.tryEmit(EchoState.StepOne.SmartWatchApps(apps))
     }
+
+    fun enableEcho() {
+        PreferencesImpl.echoEnabled(true)
+    }
+
+    fun disableEcho() {
+        PreferencesImpl.echoEnabled(false)
+    }
+
+    fun isEchoEnabled(): Boolean {
+        return PreferencesImpl.echoEnabled.value
+    }
+
+
 }
 
 /**

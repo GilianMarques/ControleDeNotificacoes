@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
+import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.databinding.FragmentEchoStepTwoBinding
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
@@ -14,9 +15,12 @@ import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
  *Criado por Gilian Marques
  * Em 12/06/2025 as 14:29
  */
+@AndroidEntryPoint
 class EchoStepTwoFragment : MyFragment() {
 
-    private val viewModel: EchoFlowSharedViewModel by navGraphViewModels(R.id.nav_graph_echo_xml)
+    private val viewModel: EchoFlowSharedViewModel by navGraphViewModels(R.id.nav_graph_echo) {
+        defaultViewModelProviderFactory
+    }
     private lateinit var binding: FragmentEchoStepTwoBinding
 
 
@@ -38,9 +42,13 @@ class EchoStepTwoFragment : MyFragment() {
 
     private fun setupFabEcho() {
         binding.fab.setOnClickListener {
+            viewModel.enableEcho()
+            viewModel.setupConcluded = true
             findNavController().navigate(EchoStepTwoFragmentDirections.toEchoIsEnabled())
         }
     }
 
 
 }
+
+

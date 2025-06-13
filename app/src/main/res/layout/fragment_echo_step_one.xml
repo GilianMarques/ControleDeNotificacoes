@@ -86,7 +86,7 @@
     </androidx.core.widget.NestedScrollView>
 
     <TextView
-        android:id="@+id/tv_app_not_found"
+        android:id="@+id/tv_app_not_in_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -102,6 +102,58 @@
         app:layout_constraintBottom_toBottomOf="@id/fab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/empty_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:elevation="1dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/nested"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/nested"
+        tools:visibility="visible">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.1" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_view"
+            android:layout_width="300dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guide2"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="empty_list.json"
+            app:lottie_repeatCount="-1"
+            app:lottie_repeatMode="reverse" />
+
+
+        <TextView
+            android:id="@+id/tv_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="10dp"
+            android:fontFamily="@font/urbanist_extrabold"
+            android:maxWidth="250dp"
+            android:text="@string/Nenhum_aplicativo_de_smartwatch_foi_encontrado_n_nclique_aqui_para_continuar"
+            android:textAlignment="center"
+            android:textColor="?colorSecondary"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lottie_view" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab"
