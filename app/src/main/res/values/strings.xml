@@ -238,6 +238,7 @@
     <string name="O_echo_vai_emitir_as_notifica_es_dos_aplicativos_permitidos_que_ser_o_exibidas_para_voc_no_seu_smartwatch_aplicativos_em_periodo_de_bloqueio_ter_o_suas_notifica_es_omitidas">O Echo vai emitir as notificações dos aplicativos permitidos que serão exibidas para você no seu smartwatch. Aplicativos em periodo de bloqueio terão suas notificações omitidas.</string>
     <string name="Finalizar">Finalizar</string>
     <string name="Desligar_echo">Desligar Echo</string>
+    <string name="canal_echo">canal_echo</string>
 
 
 </resources>

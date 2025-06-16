@@ -1,16 +1,24 @@
 package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.BuildConfig
+import dev.gmarques.controledenotificacoes.R
+import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -64,9 +72,10 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(commandReceiver, IntentFilter(INTENT_FILTER_FOR_BROADCAST), RECEIVER_NOT_EXPORTED)
         } else {
-            @Suppress("DEPRECATION")
-            @SuppressLint("UnspecifiedRegisterReceiverFlag")
-            registerReceiver(commandReceiver, IntentFilter(INTENT_FILTER_FOR_BROADCAST))
+            @Suppress("DEPRECATION") @SuppressLint("UnspecifiedRegisterReceiverFlag") registerReceiver(
+                commandReceiver,
+                IntentFilter(INTENT_FILTER_FOR_BROADCAST)
+            )
         }
     }
 
@@ -122,14 +131,61 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         }
 
         runBlocking {
-            ruleEnforcer.enforceOnNotification(sbn) { not, rule, managedApp ->
+            ruleEnforcer.enforceOnNotification(sbn) { not, rule, managedApp, cancel: Boolean ->
                 // Log.d(   "USUK", "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.packageId} isOngoing ${sbn.isOngoing}"  )
-
-                crashIfNotificationWasNotRemovedInDebugBuild(sbn)
-                cancelNotification(sbn.key)
+                if (cancel) {
+                    crashIfNotificationWasNotRemovedInDebugBuild(sbn)
+                    cancelNotification(sbn.key)
+                } else if (PreferencesImpl.echoEnabled.value) {
+                    echoNotification(sbn)
+                }
             }
         }
     }
+
+    private fun echoNotification(sbn: StatusBarNotification) {
+
+        val original = sbn.notification
+        val notificationId = sbn.id + 10000
+        val notificationTag = sbn.tag
+
+        val notificationManager = baseContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+        val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            original.channelId ?: getString(R.string.canal_echo)
+        } else {
+            getString(R.string.canal_echo)
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                getString(R.string.Echo),
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val echoedNotification = NotificationCompat.Builder(baseContext, channelId)
+            .setSmallIcon(R.drawable.vec_echo)
+            .setContentTitle(original.extras.getCharSequence(Notification.EXTRA_TITLE))
+            .setContentText(original.extras.getCharSequence(Notification.EXTRA_TEXT))
+            .setSubText(original.extras.getCharSequence(Notification.EXTRA_SUB_TEXT))
+            .setStyle(NotificationCompat.BigTextStyle().bigText(original.extras.getCharSequence(Notification.EXTRA_TEXT)))
+            .setWhen(System.currentTimeMillis())
+            .setAutoCancel(true)
+            .setGroup("${System.currentTimeMillis()}")
+            .setGroupSummary(false)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+
+        notificationManager.notify(notificationTag, notificationId, echoedNotification)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            notificationManager.cancel(notificationTag, notificationId)
+        }, 1000)
+    }
+
 
     /**
      * Essa função serve pra testes apenas e nao sera usada em produção.

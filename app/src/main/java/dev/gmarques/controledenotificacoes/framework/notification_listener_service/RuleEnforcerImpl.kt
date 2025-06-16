@@ -45,7 +45,7 @@ class RuleEnforcerImpl @Inject constructor(
 
     override suspend fun enforceOnNotification(
         sbn: StatusBarNotification,
-        removeNotificationCallback: (AppNotification, Rule, ManagedApp) -> Any,
+        removeNotificationCallback: (AppNotification, Rule, ManagedApp, Boolean) -> Any,
     ) = withContext(IO) {
 
 
@@ -62,10 +62,11 @@ class RuleEnforcerImpl @Inject constructor(
         val rule = getRuleByIdUseCase(managedApp.ruleId)
             ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
 
+        val appBLocked = rule.isAppInBlockPeriod()
 
-        if (rule.isAppInBlockPeriod()) {
-            removeNotificationCallback(notification, rule, managedApp)
+        removeNotificationCallback(notification, rule, managedApp, appBLocked)
 
+        if (appBLocked) {
             launch {
                 scheduleManager.scheduleAlarm(notification.packageId, rule.nextAppUnlockPeriodFromNow())
                 updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true))

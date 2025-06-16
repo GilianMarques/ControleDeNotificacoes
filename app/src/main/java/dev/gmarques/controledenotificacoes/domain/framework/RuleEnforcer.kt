@@ -14,7 +14,11 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
  * deve ou não ser bloqueada assim como manter histórico das notificações de apps gerenciados, Através dos usecases.
  */
 interface RuleEnforcer {
-    suspend fun enforceOnNotification(notification: StatusBarNotification, callback: (AppNotification, Rule, ManagedApp) -> Any)
+    suspend fun enforceOnNotification(
+        notification: StatusBarNotification,
+        callback: (AppNotification, Rule, ManagedApp, cancel: Boolean) -> Any,
+    )
+
     suspend fun saveLargeIcon(sbn: StatusBarNotification)
     suspend fun saveNotificationOnHistory(sbn: StatusBarNotification, notification: AppNotification)
 }
