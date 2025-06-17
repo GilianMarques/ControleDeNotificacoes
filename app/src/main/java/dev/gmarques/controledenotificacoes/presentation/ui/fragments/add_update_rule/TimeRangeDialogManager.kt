@@ -117,6 +117,7 @@ class TimeRangeDialogManager(
                 val text = field.text.toString()
                 if (text.length == 1) field.setText("0${text}:00")
                 if (text.length == 3) field.setText("${text}00")
+                if (text.length == 4) field.setText("${text}0")
             }
         }
     }

@@ -250,6 +250,8 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             timeRanges = timeRanges.values.toList()
         )
 
+        // updateRuleSe
+
         if (editingRule == null) saveRule(rule)
         else updateRule(rule)
     }

@@ -72,6 +72,7 @@ class ScheduleManagerImpl @Inject constructor(
      * @return `true` se houver um alarme agendado para o pacote, `false` caso contrário.
      */
     override fun isThereAnyAlarmSetForPackage(packageId: String): Boolean {
+
         val json = PreferencesImpl.scheduledAlarms.value
         return (MoshiListConverter.fromJson(json) ?: mutableListOf()).contains(packageId)
     }
