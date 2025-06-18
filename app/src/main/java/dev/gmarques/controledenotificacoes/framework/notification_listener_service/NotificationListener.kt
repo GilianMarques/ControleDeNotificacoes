@@ -77,8 +77,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             registerReceiver(commandReceiver, IntentFilter(INTENT_FILTER_FOR_BROADCAST), RECEIVER_NOT_EXPORTED)
         } else {
             @Suppress("DEPRECATION") @SuppressLint("UnspecifiedRegisterReceiverFlag") registerReceiver(
-                commandReceiver,
-                IntentFilter(INTENT_FILTER_FOR_BROADCAST)
+                commandReceiver, IntentFilter(INTENT_FILTER_FOR_BROADCAST)
             )
         }
     }
@@ -146,53 +145,46 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
                 }
 
                 override fun appNotManaged() {
-                    echoNotificationIfEnabled(sbn)
+                    validateAndEchoNotification(sbn)
                 }
 
                 override fun allowNotification() {
-                    echoNotificationIfEnabled(sbn)
+                    validateAndEchoNotification(sbn)
                 }
             })
         }
     }
 
-    private fun echoNotificationIfEnabled(sbn: StatusBarNotification) {
-
+    private fun validateAndEchoNotification(sbn: StatusBarNotification) {
         if (PreferencesImpl.echoEnabled.isDefault()) return
+        if (isMediaPlaybackNotification(sbn)) return
+
+        repostNotificationIfEnabled(sbn)
+    }
+
+    private fun repostNotificationIfEnabled(sbn: StatusBarNotification) {
 
         val original = sbn.notification
         val notificationId = sbn.id + 10000
         val notificationTag = sbn.tag
 
         val notificationManager = baseContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
-        val channelId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            original.channelId ?: getString(R.string.canal_echo)
-        } else {
-            getString(R.string.canal_echo)
-        }
+        val echoChannel = "echo_channel_id"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                channelId,
-                getString(R.string.Echo),
-                NotificationManager.IMPORTANCE_DEFAULT
+                echoChannel, getString(R.string.Canal_echo), NotificationManager.IMPORTANCE_DEFAULT
             )
             notificationManager.createNotificationChannel(channel)
         }
 
-        val echoedNotification = NotificationCompat.Builder(baseContext, channelId)
-            .setSmallIcon(R.drawable.vec_echo)
+        val echoedNotification = NotificationCompat.Builder(baseContext, echoChannel).setSmallIcon(R.drawable.vec_echo)
             .setContentTitle(original.extras.getCharSequence(Notification.EXTRA_TITLE))
             .setContentText(original.extras.getCharSequence(Notification.EXTRA_TEXT))
             .setSubText(original.extras.getCharSequence(Notification.EXTRA_SUB_TEXT))
             .setStyle(NotificationCompat.BigTextStyle().bigText(original.extras.getCharSequence(Notification.EXTRA_TEXT)))
-            .setWhen(System.currentTimeMillis())
-            .setAutoCancel(true)
-            .setGroup("${System.currentTimeMillis()}")
-            .setGroupSummary(false)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .build()
+            .setWhen(System.currentTimeMillis()).setAutoCancel(true).setGroup("${System.currentTimeMillis()}")
+            .setGroupSummary(false).setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
 
         notificationManager.notify(notificationTag, notificationId, echoedNotification)
 
@@ -204,6 +196,11 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         Handler(Looper.getMainLooper()).postDelayed({
             notificationManager.cancel(notificationTag, notificationId)
         }, 1000)
+    }
+
+    private fun isMediaPlaybackNotification(sbn: StatusBarNotification): Boolean {
+        // Verifica se há estilo de media (MediaStyle)
+        return sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE)?.contains("MediaStyle") == true
     }
 
 
