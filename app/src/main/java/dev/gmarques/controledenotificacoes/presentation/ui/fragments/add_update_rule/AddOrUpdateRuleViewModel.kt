@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule
 
-import TimeRangeValidator
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,11 +21,12 @@ import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarm
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,7 +40,6 @@ class AddOrUpdateRuleViewModel @Inject constructor(
 
     private var editingRule: Rule? = null
 
-
     private val _ruleType = MutableStateFlow(RuleType.RESTRICTIVE)
     val ruleType: StateFlow<RuleType> = _ruleType
 
@@ -53,9 +52,8 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     private val _timeRanges = MutableStateFlow(LinkedHashMap<String, TimeRange>())
     val timeRanges: StateFlow<LinkedHashMap<String, TimeRange>> = _timeRanges
 
-    private val _eventsFlow = MutableSharedFlow<Event>(replay = 1)
-    val eventsFlow: SharedFlow<Event> get() = _eventsFlow
-
+    private val _eventsChannel = Channel<Event>(Channel.BUFFERED)
+    val eventsFlow: Flow<Event> get() = _eventsChannel.receiveAsFlow()
 
     /**
      * Atualiza o tipo de regra atual e notifica os observadores do LiveData.
@@ -127,29 +125,6 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     }
 
     /**
-     * Valida um [TimeRange] individualmente e caso seja um objeto válido
-     * chama a funçao responsavel por validar to_do o conjunto de TimeRanges do objeto regra
-     * para só entao, caso o objeto seja valido por si só e como parte de uma lista de outros objetos
-     * ser adicionao efetivamente a lista de TimeRanges do objeto regra.*/
-    fun validateRange(range: TimeRange): Result<TimeRange> {
-
-        val validationResult = TimeRangeValidator.validate(range)
-
-        if (validationResult.isFailure) {
-
-            val errorMessage = when (validationResult.exceptionOrNull()) {
-                is OutOfRangeException -> context.getString(R.string.O_intervalo_selecionado_era_inv_lido)
-                is InversedRangeException -> context.getString(R.string.O_final_do_intervalo_deve_ser_maior_que_o_inicio)
-                else -> throw IllegalStateException("Exceção não prevista. Isso é um bug!")
-            }
-
-            _eventsFlow.tryEmit(Event.SimpleErrorMessage(errorMessage))
-        }
-
-        return validationResult
-    }
-
-    /**
      *Essa função serve para validar se um range recém inserido é compatível com os demais ranges da lista antes de
      * adicionar de fato. Esse funçao deve ser chamada pela camada de UI sempre que um novo range for adicionado.
      *
@@ -161,15 +136,13 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         val ranges = _timeRanges.value.values + range
         val result = RuleValidator.validateTimeRanges(ranges)
 
-        if (result.isSuccess) {
-            addTimeRange(range)
-            return result
-        }
-        notifyErrorValidatingRanges(result)
+        if (result.isSuccess) addTimeRange(range)
+        else notifyErrorValidatingRanges(result)
+
         return result
     }
 
-    /**Caso as validaçoes de [validateRangesWithSequenceAndAdd] e [validateRangesWithSequenceAndAdd] falhem
+    /**Caso as validaçoes de [validateRangesWithSequenceAndAdd] e [validateRanges] falhem
      * essa função etrata o erro e envia uma mensagem pra ui
      * @param result O resultado da validação dos ranges.
      */
@@ -187,8 +160,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             }
 
             is InvalidTimeRangeValueException -> context.getString(
-                R.string.Voc_definiu_um_valor_inv_lido_para_o_intervalo_de_tempo,
-                exception.actual
+                R.string.Voc_definiu_um_valor_inv_lido_para_o_intervalo_de_tempo, exception.actual
             )
 
             is DuplicateTimeRangeException -> context.getString(R.string.Nao_e_possivel_adicionar_um_intervalo_de_tempo_duplicado)
@@ -197,7 +169,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             else -> throw exception
         }
 
-        _eventsFlow.tryEmit(Event.SimpleErrorMessage(message))
+        _eventsChannel.trySend(Event.SimpleErrorMessage(message))
 
     }
 
@@ -244,10 +216,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         if (validateRanges(timeRanges.map { it.value }).isFailure) return
 
         val rule = Rule(
-            name = ruleName,
-            ruleType = ruleType,
-            days = selectedDays,
-            timeRanges = timeRanges.values.toList()
+            name = ruleName, ruleType = ruleType, days = selectedDays, timeRanges = timeRanges.values.toList()
         )
 
         // updateRuleSe
@@ -269,7 +238,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      */
     private fun saveRule(validatedRule: Rule) = viewModelScope.launch(IO) {
         addRuleUseCase(validatedRule)
-        _eventsFlow.tryEmit(Event.SetResultAndClose(validatedRule))
+        _eventsChannel.trySend(Event.SetResultAndClose(validatedRule))
     }
 
     /**
@@ -289,7 +258,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         val rule = validatedRule.copy(id = editingRule!!.id)
         updateRuleUseCase(rule)
         rescheduleAlarmsOnRuleEditUseCase(rule)
-        _eventsFlow.tryEmit(Event.SetResultAndClose(rule))
+        _eventsChannel.trySend(Event.SetResultAndClose(rule))
     }
 
     /**
@@ -333,7 +302,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
                 else -> {
                     viewModelScope.launch {
                         delay(200)
-                        if (_selectedDays.value.isEmpty()) _eventsFlow.tryEmit(Event.SimpleErrorMessage(context.getString(R.string.Selecione_pelo_menos_um_dia_da_semana)))
+                        if (_selectedDays.value.isEmpty()) _eventsChannel.trySend(Event.SimpleErrorMessage(context.getString(R.string.Selecione_pelo_menos_um_dia_da_semana)))
                     }
                 }
             }
@@ -369,7 +338,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             when (val exception = result.exceptionOrNull()) {
 
                 is BlankNameException -> {
-                    _eventsFlow.tryEmit(
+                    _eventsChannel.trySend(
                         Event.NameErrorMessage(
                             context.getString(R.string.O_nome_n_o_pode_ficar_em_branco)
                         )
@@ -377,7 +346,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
                 }
 
                 is OutOfRangeException -> {
-                    _eventsFlow.tryEmit(
+                    _eventsChannel.trySend(
                         Event.NameErrorMessage(
                             context.getString(
                                 R.string.O_nome_deve_ter_entre_e_caracteres, exception.minLength, exception.maxLength

@@ -124,7 +124,7 @@ class ViewManagedAppViewModel @Inject constructor(
         ruleObserverJob = viewModelScope.launch(IO) {
             observeRuleUseCase(ruleId).collect {
                 // a regra sera nula se o usuario a remover, nesse caso o fragmento será fechado
-                Log.d("USUK", "ViewManagedAppViewModel.observeRuleChanges: $it")
+                // Log.d("USUK", "ViewManagedAppViewModel.observeRuleChanges: $it")
                 it?.let { _managedAppFlow.emit(_managedAppFlow.value!!.copy(rule = it)) }
             }
         }
@@ -146,7 +146,7 @@ class ViewManagedAppViewModel @Inject constructor(
      * Deve ser chamado sempre que o fragmento for aberto e recriado pelo sistema
      */
     private fun removeNotificationIndicator(packageId: String) = viewModelScope.launch(IO) {
-        delay(2000)// serve apenas pra nao me fazer pensar que tem um bug que faz os observadores do app e regra no DB dispararem duas vezes seguidas
+        delay(1000)// serve apenas pra nao me fazer pensar que tem um bug que faz os observadores do app e regra no DB dispararem duas vezes seguidas
         Log.d("USUK", "ViewManagedAppViewModel.removeNotificationIndicator: DB listeners will run, its not a bug!")
         getManagedAppByPackageIdUseCase(packageId)?.let { app ->
             updateManagedAppUseCase(app.copy(hasPendingNotifications = false))

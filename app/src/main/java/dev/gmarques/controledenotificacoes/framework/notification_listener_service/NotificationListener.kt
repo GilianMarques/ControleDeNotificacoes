@@ -20,6 +20,10 @@ import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
+import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
+import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
+import dev.gmarques.controledenotificacoes.domain.model.Rule
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -125,25 +129,36 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      */
     private fun manageNotification(sbn: StatusBarNotification) {
 
-        if (sbn.isOngoing) {
-            //  Log.d("USUK", "NotificationListener.manageNotification: can't dismiss on going notifications from ${sbn.packageName}")
-            return
-        }
+        if (sbn.isOngoing) return
+        if (sbn.packageName == BuildConfig.APPLICATION_ID) return
+
 
         runBlocking {
-            ruleEnforcer.enforceOnNotification(sbn) { not, rule, managedApp, cancel: Boolean ->
-                // Log.d(   "USUK", "NotificationListener.manageNotification: cancelling: ${not.title} - ${not.packageId} isOngoing ${sbn.isOngoing}"  )
-                if (cancel) {
+            ruleEnforcer.enforceOnNotification(sbn, object : RuleEnforcer.Callback {
+
+                override fun cancelNotification(
+                    appNotification: AppNotification,
+                    rule: Rule,
+                    managedApp: ManagedApp,
+                ) {
                     crashIfNotificationWasNotRemovedInDebugBuild(sbn)
                     cancelNotification(sbn.key)
-                } else if (PreferencesImpl.echoEnabled.value) {
-                    echoNotification(sbn)
                 }
-            }
+
+                override fun appNotManaged() {
+                    echoNotificationIfEnabled(sbn)
+                }
+
+                override fun allowNotification() {
+                    echoNotificationIfEnabled(sbn)
+                }
+            })
         }
     }
 
-    private fun echoNotification(sbn: StatusBarNotification) {
+    private fun echoNotificationIfEnabled(sbn: StatusBarNotification) {
+
+        if (PreferencesImpl.echoEnabled.isDefault()) return
 
         val original = sbn.notification
         val notificationId = sbn.id + 10000
@@ -180,6 +195,11 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             .build()
 
         notificationManager.notify(notificationTag, notificationId, echoedNotification)
+
+        Log.d(
+            "USUK",
+            "NotificationListener.echoNotification: reposting ${original.extras.getCharSequence(Notification.EXTRA_TITLE)}"
+        )
 
         Handler(Looper.getMainLooper()).postDelayed({
             notificationManager.cancel(notificationTag, notificationId)

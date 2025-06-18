@@ -5,15 +5,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.service.notification.StatusBarNotification
-import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
-import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
-import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
@@ -45,9 +42,8 @@ class RuleEnforcerImpl @Inject constructor(
 
     override suspend fun enforceOnNotification(
         sbn: StatusBarNotification,
-        removeNotificationCallback: (AppNotification, Rule, ManagedApp, Boolean) -> Any,
+        callback: RuleEnforcer.Callback,
     ) = withContext(IO) {
-
 
         val title = sbn.notification.extras.getString(Notification.EXTRA_TITLE).orEmpty()
         val content = sbn.notification.extras.getString(Notification.EXTRA_TEXT).orEmpty()
@@ -57,22 +53,21 @@ class RuleEnforcerImpl @Inject constructor(
         val managedApp = getManagedAppByPackageIdUseCase(notification.packageId)
 
         if (managedApp == null) {
+            callback.appNotManaged()
             return@withContext
         }
+
         val rule = getRuleByIdUseCase(managedApp.ruleId)
             ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
 
-        val appBLocked = rule.isAppInBlockPeriod()
-
-        removeNotificationCallback(notification, rule, managedApp, appBLocked)
-
-        if (appBLocked) {
+        if (rule.isAppInBlockPeriod()) {
+            callback.cancelNotification(notification, rule, managedApp)
             launch {
                 scheduleManager.scheduleAlarm(notification.packageId, rule.nextAppUnlockPeriodFromNow())
                 updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true))
                 saveNotificationOnHistory(sbn, notification)
             }
-        }
+        } else callback.allowNotification()
 
     }
 
@@ -104,9 +99,9 @@ class RuleEnforcerImpl @Inject constructor(
             FileOutputStream(file).use { out ->
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
             }
-            Log.d("USUK", "RuleEnforcerImpl.saveLargeIcon: largeIcon for ${sbn.packageName} saved")
+            // Log.d("USUK", "RuleEnforcerImpl.saveLargeIcon: largeIcon for ${sbn.packageName} saved")
         } catch (e: Exception) {
-            Log.e("USUK", "RuleEnforcerImpl.saveLargeIcon: error while saving notification's large icon from ${sbn.packageName}")
+            // Log.e("USUK", "RuleEnforcerImpl.saveLargeIcon: error while saving notification's large icon from ${sbn.packageName}")
             e.stackTrace
         }
 

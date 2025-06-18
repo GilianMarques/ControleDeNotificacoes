@@ -16,9 +16,16 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
 interface RuleEnforcer {
     suspend fun enforceOnNotification(
         notification: StatusBarNotification,
-        callback: (AppNotification, Rule, ManagedApp, cancel: Boolean) -> Any,
+        callback: Callback,
     )
 
     suspend fun saveLargeIcon(sbn: StatusBarNotification)
     suspend fun saveNotificationOnHistory(sbn: StatusBarNotification, notification: AppNotification)
+
+    interface Callback {
+        fun cancelNotification(appNotification: AppNotification, rule: Rule, managedApp: ManagedApp)
+        fun appNotManaged()
+        fun allowNotification()
+    }
+
 }
