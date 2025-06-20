@@ -12,13 +12,4 @@ data class Condition(
     val field: NotificationField,
     val values: List<String>,
     val caseSensitive: Boolean = false,
-) {
-
-    companion object {
-        const val MAX_VALUES = 50
-    }
-
-    init {
-        if (values.size > MAX_VALUES) error("O numero maximo de valores permitidos é $MAX_VALUES")
-    }
-}
+)
