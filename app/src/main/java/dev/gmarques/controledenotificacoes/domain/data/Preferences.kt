@@ -23,6 +23,7 @@ interface Preferences {
     /**Todas as preferencias dentro dessa interface podem ser resetadas pelo usuario*/
     interface ResettableDialogHints {
         val showHintEditFirstRule: PreferenceProperty<Boolean>
+        val showHintSelectFirstApp: PreferenceProperty<Boolean>
         val showHintHowRulesAndManagedAppsWork: PreferenceProperty<Boolean>
         val showHintSelectedAppsAlreadyManaged: PreferenceProperty<Boolean>
     }

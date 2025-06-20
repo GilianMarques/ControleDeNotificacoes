@@ -29,7 +29,14 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
             preferenceSaver = saver::invoke
         )
     }
-
+    override val showHintSelectFirstApp: PreferenceProperty<Boolean> by lazy {
+        PreferenceProperty(
+            key = "show_hint_select_first_app",
+            defaultValue = true,
+            preferenceReader = reader::invoke,
+            preferenceSaver = saver::invoke
+        )
+    }
 
     override val showHintHowRulesAndManagedAppsWork: PreferenceProperty<Boolean> by lazy {
         PreferenceProperty(
@@ -69,19 +76,13 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
 
     override val scheduledAlarms: PreferenceProperty<String> by lazy {
         PreferenceProperty(
-            key = "scheduled_alarms",
-            defaultValue = "",
-            preferenceReader = reader::invoke,
-            preferenceSaver = saver::invoke
+            key = "scheduled_alarms", defaultValue = "", preferenceReader = reader::invoke, preferenceSaver = saver::invoke
         )
     }
 
     override val lastSelectedRule: PreferenceProperty<String> by lazy {
         PreferenceProperty(
-            key = "last_selected_rule",
-            defaultValue = "null",
-            preferenceReader = reader::invoke,
-            preferenceSaver = saver::invoke
+            key = "last_selected_rule", defaultValue = "null", preferenceReader = reader::invoke, preferenceSaver = saver::invoke
         )
     }
 
@@ -105,10 +106,7 @@ object PreferencesImpl : Preferences, ResettableDialogHints {
 
     override val echoEnabled: PreferenceProperty<Boolean> by lazy {
         PreferenceProperty(
-            key = "echo_enabled",
-            defaultValue = false,
-            preferenceReader = reader::invoke,
-            preferenceSaver = saver::invoke
+            key = "echo_enabled", defaultValue = false, preferenceReader = reader::invoke, preferenceSaver = saver::invoke
         )
     }
 

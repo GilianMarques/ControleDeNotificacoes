@@ -198,6 +198,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         }, 1000)
     }
 
+    /**Não reposta notificações de apps de musica ou video*/
     private fun isMediaPlaybackNotification(sbn: StatusBarNotification): Boolean {
         // Verifica se há estilo de media (MediaStyle)
         return sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE)?.contains("MediaStyle") == true

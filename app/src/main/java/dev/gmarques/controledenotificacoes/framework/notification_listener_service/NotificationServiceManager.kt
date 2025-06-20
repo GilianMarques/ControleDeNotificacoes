@@ -73,11 +73,10 @@ class NotificationServiceManager : Service() {
 
         return NotificationCompat.Builder(this, channelId)
             .setContentTitle(getString(R.string.Monitoramento_de_notificacoes))
-            .setContentText(getString(R.string.Toque_aqui_para_desativar_esta_notifica_o))
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setOngoing(true)
-            .setContentIntent(getPendingIntentForNotificationSettings())
-            .addAction(R.drawable.vec_open_app, getString(R.string.Abrir_app), getPendingIntentForOpenTheApp())
+            .setContentIntent(getPendingIntentForOpenTheApp())
+            .addAction(R.drawable.vec_open_app, getString(R.string.Desativar), getPendingIntentForNotificationSettings())
             .build()
     }
 
