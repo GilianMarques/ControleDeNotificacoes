@@ -1,9 +1,8 @@
-package dev.gmarques.controledenotificacoes.domain.model.validators
+package dev.gmarques.controledenotificacoes.domain.model
 
 import dev.gmarques.controledenotificacoes.domain.exceptions.BlankStringException
-import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
-import dev.gmarques.controledenotificacoes.domain.model.validators.ManagedAppValidator.validatePackageId
-import dev.gmarques.controledenotificacoes.domain.model.validators.ManagedAppValidator.validateRuleId
+import dev.gmarques.controledenotificacoes.domain.model.ManagedAppValidator.validatePackageId
+import dev.gmarques.controledenotificacoes.domain.model.ManagedAppValidator.validateRuleId
 
 /**
  * Criado por Gilian Marques

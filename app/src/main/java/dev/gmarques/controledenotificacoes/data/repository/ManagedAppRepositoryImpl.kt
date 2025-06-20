@@ -4,7 +4,7 @@ import dev.gmarques.controledenotificacoes.data.local.room.dao.ManagedAppDao
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.ManagedAppMapper
 import dev.gmarques.controledenotificacoes.domain.data.repository.ManagedAppRepository
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
-import dev.gmarques.controledenotificacoes.domain.model.validators.ManagedAppValidator
+import dev.gmarques.controledenotificacoes.domain.model.ManagedAppValidator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

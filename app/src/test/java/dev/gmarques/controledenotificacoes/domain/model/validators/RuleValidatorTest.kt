@@ -1,6 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import org.junit.Assert.assertTrue

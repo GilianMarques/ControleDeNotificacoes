@@ -1,12 +1,10 @@
-package dev.gmarques.controledenotificacoes.domain.model.validators
+package dev.gmarques.controledenotificacoes.domain.model
 
 import dev.gmarques.controledenotificacoes.domain.exceptions.BlankStringException
-import dev.gmarques.controledenotificacoes.domain.model.AppNotification
-import dev.gmarques.controledenotificacoes.domain.model.validators.ManagedAppValidator.validatePackageId
 
 object AppNotificationValidator {
     fun validate(notification: AppNotification) {
-        validatePackageId(notification.packageId).getOrThrow()
+        ManagedAppValidator.validatePackageId(notification.packageId).getOrThrow()
     }
 
     /**

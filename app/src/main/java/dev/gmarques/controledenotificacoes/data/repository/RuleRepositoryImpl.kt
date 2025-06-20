@@ -4,7 +4,7 @@ import dev.gmarques.controledenotificacoes.data.local.room.dao.RuleDao
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.RuleMapper
 import dev.gmarques.controledenotificacoes.domain.data.repository.RuleRepository
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

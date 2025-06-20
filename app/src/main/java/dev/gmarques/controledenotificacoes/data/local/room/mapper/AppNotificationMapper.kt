@@ -2,7 +2,7 @@ package dev.gmarques.controledenotificacoes.data.local.room.mapper
 
 import dev.gmarques.controledenotificacoes.data.local.room.entities.AppNotificationEntity
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
-import dev.gmarques.controledenotificacoes.domain.model.validators.AppNotificationValidator
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationValidator
 
 object AppNotificationMapper {
 

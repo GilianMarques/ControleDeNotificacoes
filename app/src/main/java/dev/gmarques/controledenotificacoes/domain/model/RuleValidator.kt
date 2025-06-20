@@ -1,20 +1,18 @@
-package dev.gmarques.controledenotificacoes.domain.model.validators
+package dev.gmarques.controledenotificacoes.domain.model
 
 import TimeRangeValidator
 import dev.gmarques.controledenotificacoes.domain.exceptions.BlankStringException
 import dev.gmarques.controledenotificacoes.domain.exceptions.DuplicateTimeRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.IntersectedRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
-import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.TimeRange
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateDays
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateId
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateName
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateTimeRanges
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.asRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startInMinutes
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
-import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator.validateDays
-import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator.validateId
-import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator.validateName
-import dev.gmarques.controledenotificacoes.domain.model.validators.RuleValidator.validateTimeRanges
 import java.util.Locale
 
 /**
