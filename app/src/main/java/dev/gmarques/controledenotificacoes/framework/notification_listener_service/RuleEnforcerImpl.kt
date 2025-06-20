@@ -101,7 +101,7 @@ class RuleEnforcerImpl @Inject constructor(
             }
             // Log.d("USUK", "RuleEnforcerImpl.saveLargeIcon: largeIcon for ${sbn.packageName} saved")
         } catch (e: Exception) {
-            // Log.e("USUK", "RuleEnforcerImpl.saveLargeIcon: error while saving notification's large icon from ${sbn.packageName}")
+            // Log.e("USUK", "RuleEnforcerImpl.saveLargeIcon: failure while saving notification's large icon from ${sbn.packageName}")
             e.stackTrace
         }
 

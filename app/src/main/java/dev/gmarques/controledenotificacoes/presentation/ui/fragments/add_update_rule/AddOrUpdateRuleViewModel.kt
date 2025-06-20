@@ -1,19 +1,20 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule
 
+import TimeRangeValidator.MAX_RANGES
+import TimeRangeValidator.RangesOutOfRangeException
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.domain.exceptions.BlankNameException
 import dev.gmarques.controledenotificacoes.domain.exceptions.DuplicateTimeRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.IntersectedRangeException
 import dev.gmarques.controledenotificacoes.domain.exceptions.InvalidTimeRangeValueException
 import dev.gmarques.controledenotificacoes.domain.exceptions.InversedRangeException
-import dev.gmarques.controledenotificacoes.domain.exceptions.OutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.NameOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
@@ -121,7 +122,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @return `true` se o usuário pode adicionar mais intervalos, `false` caso contrário.
      */
     fun canAddMoreRanges(): Boolean {
-        return _timeRanges.value.size < RuleValidator.MAX_RANGES
+        return _timeRanges.value.size < MAX_RANGES
     }
 
     /**
@@ -152,10 +153,10 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             ?: throw IllegalStateException("Em caso de erro deve haver uma exceção para lançar. Isso é um bug!")
 
         val message = when (exception) {
-            is OutOfRangeException -> {
+            is RangesOutOfRangeException -> {
                 if (exception.actual == 0) context.getString(R.string.adicione_pelo_menos_um_intervalo_de_tempo)
                 else context.getString(
-                    R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido, RuleValidator.MAX_RANGES
+                    R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido, MAX_RANGES
                 )
             }
 
@@ -310,23 +311,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         return result
     }
 
-    /**
-     * Valida o nome fornecido usando [RuleValidator.validateName].
-     *
-     * Se o nome for válido, atualiza o nome da regra com [updateRuleName].
-     * Se inválido, envia uma mensagem de erro para [_uiEvents].
-     *
-     * @param name O nome a ser validado.
-     * @return Um [Result] contendo o nome validado (sucesso) ou uma exceção (falha).
-     *   - Sucesso: [Result.getOrThrow] retorna o nome (String).
-     *   - Falha: [Result.exceptionOrNull] retorna [BlankNameException] ou [OutOfRangeException].
-     * @throws IllegalStateException Se a validação falhar com uma exceção não tratada.
-     *
-     * Erros:
-     * - [BlankNameException]: Nome em branco. Envia "O nome não pode ficar em branco" para [_uiEvents].
-     * - [OutOfRangeException]: Tamanho do nome fora do intervalo. Envia "O nome deve ter entre {minLength} e {maxLength} caracteres" para [_uiEvents].
-     * - Outras Exceções: Lança [IllegalStateException] para exceções não previstas.
-     */
+    // TODO: documentar função em detalhes
     fun validateName(name: String): Result<String> {
 
         val result = RuleValidator.validateName(name)
@@ -335,27 +320,14 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             updateRuleName(result.getOrThrow())
         } else {
 
-            when (val exception = result.exceptionOrNull()) {
+            val exception = result.exceptionOrNull() as RuleValidator.RuleValidatorException
+            when (exception) {
 
-                is BlankNameException -> {
-                    _eventsChannel.trySend(
-                        Event.NameErrorMessage(
-                            context.getString(R.string.O_nome_n_o_pode_ficar_em_branco)
-                        )
-                    )
+                is NameOutOfRangeException -> {
+
                 }
 
-                is OutOfRangeException -> {
-                    _eventsChannel.trySend(
-                        Event.NameErrorMessage(
-                            context.getString(
-                                R.string.O_nome_deve_ter_entre_e_caracteres, exception.minLength, exception.maxLength
-                            )
-                        )
-                    )
-                }
-
-                else -> throw IllegalStateException("Exceção não tratada $exception")
+                is RuleValidator.RuleValidatorException.BlankIdException -> {}
             }
         }
 

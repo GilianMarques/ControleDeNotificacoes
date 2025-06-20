@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
-import dev.gmarques.controledenotificacoes.domain.exceptions.BlankStringException
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.ManagedAppValidator
 import org.junit.Assert.assertTrue

@@ -1,8 +1,10 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
-import dev.gmarques.controledenotificacoes.domain.exceptions.BlankStringException
+import dev.gmarques.controledenotificacoes.domain.model.ManagedAppValidator.ManagedAppValidatorException.BlankPackageIdException
+import dev.gmarques.controledenotificacoes.domain.model.ManagedAppValidator.ManagedAppValidatorException.BlankRuleIdException
 import dev.gmarques.controledenotificacoes.domain.model.ManagedAppValidator.validatePackageId
 import dev.gmarques.controledenotificacoes.domain.model.ManagedAppValidator.validateRuleId
+
 
 /**
  * Criado por Gilian Marques
@@ -36,10 +38,10 @@ object ManagedAppValidator {
      *
      * @param packageId O ID de pacote a ser validado.
      * @return Um objeto `Result`. Sucesso contém o `packageId`. Falha contém `BlankStringException`.
-     * @throws BlankStringException se o `packageId` for vazio.
+     * @throws BlankPackageIdException se o `packageId` for vazio.
      */
     fun validatePackageId(packageId: String): Result<String> {
-        return if (packageId.isEmpty()) Result.failure(BlankStringException("O nome de pacote nao pode ficar em branco"))
+        return if (packageId.isEmpty()) Result.failure(BlankPackageIdException())
         else Result.success(packageId)
     }
 
@@ -52,11 +54,23 @@ object ManagedAppValidator {
      * @return Um objeto `Result`.
      *         - `Result.success(ruleId)` se o `ruleId` for válido (não vazio), contendo o `ruleId`.
      *         - `Result.failure(BlankStringException)` se o `ruleId` estiver vazio, contendo a exceção `BlankStringException`.
-     * @throws BlankStringException se a string de entrada estiver vazia.
+     * @throws BlankRuleIdException se a string de entrada estiver vazia.
      */
     fun validateRuleId(ruleId: String): Result<String> {
-        return if (ruleId.isEmpty()) Result.failure(BlankStringException("A id de regra nao pode ficar em branco"))
+        return if (ruleId.isEmpty()) Result.failure(BlankRuleIdException())
         else Result.success(ruleId)
+    }
+
+    /**
+     * Criado por Gilian Marques
+     * Em 20/06/2025 as 17:13
+     */
+    sealed class ManagedAppValidatorException {
+        class BlankRuleIdException() :
+            Exception("Em hipótese alguma a id de um objeto pode ficar vazia. Ela é gerada automaticamente e imutavel, por tanto algo deu muito errado pra isso acontecer.")
+
+        class BlankPackageIdException() :
+            Exception("Em hipótese alguma a id de um objeto pode ficar vazia. Ela é gerada automaticamente e imutavel, por tanto algo deu muito errado pra isso acontecer.")
     }
 
 }

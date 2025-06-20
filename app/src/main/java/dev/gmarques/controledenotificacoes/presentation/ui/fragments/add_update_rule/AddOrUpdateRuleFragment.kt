@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule
 
+import TimeRangeValidator.MAX_RANGES
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,6 @@ import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddOrUpdateRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endIntervalFormatted
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.startIntervalFormatted
@@ -235,7 +235,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
             } else {
                 showErrorSnackBar(
                     getString(
-                        R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido, RuleValidator.MAX_RANGES
+                        R.string.O_limite_m_ximo_de_intervalos_de_tempo_foi_atingido, MAX_RANGES
                     )
                 )
             }
