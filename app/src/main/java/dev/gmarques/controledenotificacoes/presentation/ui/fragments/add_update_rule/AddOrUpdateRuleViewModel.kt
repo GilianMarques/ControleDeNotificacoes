@@ -1,19 +1,28 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule
 
+import TimeRangeValidator
 import TimeRangeValidator.MAX_RANGES
-import TimeRangeValidator.RangesOutOfRangeException
+import TimeRangeValidator.TimeRangeValidatorException.AllDayWithNoZeroedValuesException
+import TimeRangeValidator.TimeRangeValidatorException.DuplicateTimeRangeException
+import TimeRangeValidator.TimeRangeValidatorException.HourOutOfRangeException
+import TimeRangeValidator.TimeRangeValidatorException.IntersectedRangeException
+import TimeRangeValidator.TimeRangeValidatorException.InversedRangeException
+import TimeRangeValidator.TimeRangeValidatorException.MinuteOutOfRangeException
+import TimeRangeValidator.TimeRangeValidatorException.RangesOutOfRangeException
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.domain.exceptions.DuplicateTimeRangeException
-import dev.gmarques.controledenotificacoes.domain.exceptions.IntersectedRangeException
-import dev.gmarques.controledenotificacoes.domain.exceptions.InvalidTimeRangeValueException
-import dev.gmarques.controledenotificacoes.domain.exceptions.InversedRangeException
+import dev.gmarques.controledenotificacoes.domain.NullException
+import dev.gmarques.controledenotificacoes.domain.OperationResult
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.BlankIdException
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.DaysOutOfRangeException
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.EncapsulatedTimeRangeException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.NameOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
@@ -21,6 +30,8 @@ import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnRuleEditUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.AddRuleUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.UpdateRuleUseCase
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.Event.NameErrorMessage
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.Event.SimpleErrorMessage
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -107,7 +118,6 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      *
      * @param name O novo nome da regra.
      * @see ruleName
-     * @see _ruleNameLd
      */
     private fun updateRuleName(name: String) {
         _ruleName.tryEmit(name)
@@ -132,13 +142,14 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @param range O novo `TimeRange` a ser validado e potencialmente adicionado à sequência.
      * @throws IllegalStateException Se a validação falhar com uma exceção inesperada, ou se não houver exceção quando a validação falha.
      */
-    fun validateRangesWithSequenceAndAdd(range: TimeRange): Result<List<TimeRange>> {
+    fun validateRangesWithSequenceAndAdd(range: TimeRange): OperationResult<TimeRangeValidator.TimeRangeValidatorException, List<TimeRange>> {
 
         val ranges = _timeRanges.value.values + range
-        val result = RuleValidator.validateTimeRanges(ranges)
+        val result = TimeRangeValidator.validateTimeRanges(ranges)
 
         if (result.isSuccess) addTimeRange(range)
         else notifyErrorValidatingRanges(result)
+
 
         return result
     }
@@ -147,12 +158,18 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * essa função etrata o erro e envia uma mensagem pra ui
      * @param result O resultado da validação dos ranges.
      */
-    private fun notifyErrorValidatingRanges(result: Result<List<TimeRange>>) {
+    private fun notifyErrorValidatingRanges(result: OperationResult<TimeRangeValidator.TimeRangeValidatorException, List<TimeRange>>) {
 
         val exception = result.exceptionOrNull()
-            ?: throw IllegalStateException("Em caso de erro deve haver uma exceção para lançar. Isso é um bug!")
+
 
         val message = when (exception) {
+            is AllDayWithNoZeroedValuesException -> throw exception // só vai acontecer por erro de programaçao
+            is DuplicateTimeRangeException -> context.getString(R.string.Nao_e_possivel_adicionar_um_intervalo_de_tempo_duplicado)
+            is HourOutOfRangeException -> context.getString(R.string.Valor_da_hora_inv_lido, exception.actualHour)
+            is IntersectedRangeException -> context.getString(R.string.Nao_sao_permitidos_intervalos_de_tempo_que_se_interseccionam)
+            is InversedRangeException -> context.getString(R.string.O_final_do_intervalo_deve_ser_maior_que_o_inicio)
+            is MinuteOutOfRangeException -> context.getString(R.string.Valor_do_minuto_inv_lido, exception.actualMinute)
             is RangesOutOfRangeException -> {
                 if (exception.actual == 0) context.getString(R.string.adicione_pelo_menos_um_intervalo_de_tempo)
                 else context.getString(
@@ -160,17 +177,10 @@ class AddOrUpdateRuleViewModel @Inject constructor(
                 )
             }
 
-            is InvalidTimeRangeValueException -> context.getString(
-                R.string.Voc_definiu_um_valor_inv_lido_para_o_intervalo_de_tempo, exception.actual
-            )
-
-            is DuplicateTimeRangeException -> context.getString(R.string.Nao_e_possivel_adicionar_um_intervalo_de_tempo_duplicado)
-            is IntersectedRangeException -> context.getString(R.string.Nao_sao_permitidos_intervalos_de_tempo_que_se_interseccionam)
-            is InversedRangeException -> context.getString(R.string.O_final_do_intervalo_deve_ser_maior_que_o_inicio)
-            else -> throw exception
+            null -> throw NullException()
         }
 
-        _eventsChannel.trySend(Event.SimpleErrorMessage(message))
+        _eventsChannel.trySend(SimpleErrorMessage(message))
 
     }
 
@@ -220,8 +230,6 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             name = ruleName, ruleType = ruleType, days = selectedDays, timeRanges = timeRanges.values.toList()
         )
 
-        // updateRuleSe
-
         if (editingRule == null) saveRule(rule)
         else updateRule(rule)
     }
@@ -265,12 +273,10 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     /**
      * Valida todos os ranges antes de criar um [Rule]
      * */
-    private fun validateRanges(ranges: List<TimeRange>): Result<List<TimeRange>> {
-        val result = RuleValidator.validateTimeRanges(ranges)
+    private fun validateRanges(ranges: List<TimeRange>): OperationResult<TimeRangeValidator.TimeRangeValidatorException, List<TimeRange>> {
+        val result = TimeRangeValidator.validateTimeRanges(ranges)
 
-        if (result.isFailure) {
-            notifyErrorValidatingRanges(result)
-        }
+        if (result.isFailure) notifyErrorValidatingRanges(result)
 
         return result
 
@@ -293,43 +299,54 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @see WeekDay
      * @see Result
      */
-    fun validateDays(days: List<WeekDay>): Result<List<WeekDay>> {
+    fun validateDays(days: List<WeekDay>): OperationResult<RuleValidatorException, List<WeekDay>> {
 
         val result = RuleValidator.validateDays(days)
 
-        if (result.isFailure) {
-            when (result.getOrNull()) {
+        if (result.isFailure) when (val exception = result.exceptionOrNull()) {
 
-                else -> {
-                    viewModelScope.launch {
-                        delay(200)
-                        if (_selectedDays.value.isEmpty()) _eventsChannel.trySend(Event.SimpleErrorMessage(context.getString(R.string.Selecione_pelo_menos_um_dia_da_semana)))
-                    }
-                }
+            is DaysOutOfRangeException -> viewModelScope.launch {
+                delay(200)
+                if (_selectedDays.value.isEmpty()) _eventsChannel.trySend(SimpleErrorMessage(context.getString(R.string.Selecione_pelo_menos_um_dia_da_semana)))
             }
+
+            is BlankIdException -> throw exception
+            is EncapsulatedTimeRangeException -> throw exception
+            is NameOutOfRangeException -> throw exception
+            null -> throw NullException()
         }
+
         return result
     }
 
-    // TODO: documentar função em detalhes
-    fun validateName(name: String): Result<String> {
+    /**
+     * Valida o nome de uma regra.
+     *
+     * @param name O nome a ser validado.
+     * @return [OperationResult] indicando sucesso com o nome validado ou falha com [RuleValidator.RuleValidatorException].
+     * Em caso de sucesso, atualiza o nome da regra internamente.
+     * Em caso de falha do tipo [NameOutOfRangeException], envia um evento de erro para a UI.
+     */
+    fun validateName(name: String): OperationResult<RuleValidatorException, String> {
 
         val result = RuleValidator.validateName(name)
 
         if (result.isSuccess) {
             updateRuleName(result.getOrThrow())
-        } else {
-
-            val exception = result.exceptionOrNull() as RuleValidator.RuleValidatorException
-            when (exception) {
-
-                is NameOutOfRangeException -> {
-
-                }
-
-                is RuleValidator.RuleValidatorException.BlankIdException -> {}
+        } else when (val exception = result.exceptionOrNull()) {
+            is NameOutOfRangeException -> {
+                val errorMessage = context.getString(
+                    R.string.O_nome_deve_ter_entre_e_caracteres, exception.minLength, exception.maxLength
+                )
+                _eventsChannel.trySend(NameErrorMessage(errorMessage))
             }
+
+            null -> throw NullException()
+            is BlankIdException -> throw exception
+            is DaysOutOfRangeException -> throw exception
+            is EncapsulatedTimeRangeException -> throw exception
         }
+
 
         return result
     }

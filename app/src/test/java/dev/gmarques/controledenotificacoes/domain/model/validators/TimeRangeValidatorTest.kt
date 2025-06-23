@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
 import TimeRangeValidator
-import dev.gmarques.controledenotificacoes.domain.exceptions.InvalidTimeRangeValueException
 import dev.gmarques.controledenotificacoes.domain.exceptions.InversedRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import org.junit.Assert.assertEquals

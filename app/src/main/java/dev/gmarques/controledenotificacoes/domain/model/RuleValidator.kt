@@ -62,9 +62,7 @@ object RuleValidator {
      *         - Se o nome for válido, retorna [OperationResult.success] contendo o nome validado (sem espaços extras, corretamente espaçado e capitalizado).
      *         - Se o nome for inválido, retorna [OperationResult.failure] contendo uma exceção:
      *           - [BlankNameException] se o nome estiver em branco.
-     *           - [OutOfRangeException] se o comprimento do nome capitalizado estiver fora do intervalo permitido.
-     *
-     * @throws NameOutOfRangeException se o comprimento do nome capitalizado estiver fora do intervalo permitido.
+     *           - [NameOutOfRangeException] se o comprimento do nome capitalizado estiver fora do intervalo permitido.
      */
     fun validateName(name: String): OperationResult<RuleValidatorException, String> {
         if (name.isEmpty()) return OperationResult.success(name)
@@ -103,7 +101,7 @@ object RuleValidator {
         val minDays = 1
         val maxDays = 7
         return if (days.size !in minDays..maxDays) {
-            OperationResult.failure(NameOutOfRangeException(minDays, maxDays, days.size))
+            OperationResult.failure(RuleValidatorException.DaysOutOfRangeException(minDays, maxDays, days.size))
         } else OperationResult.success(days)
     }
 
@@ -127,7 +125,7 @@ object RuleValidator {
         return OperationResult.success(id)
     }
 
-    fun validateTimeRanges(ranges: List<TimeRange>): OperationResult<RuleValidatorException, List<TimeRange>> {
+    private fun validateTimeRanges(ranges: List<TimeRange>): OperationResult<TimeRangeValidator.TimeRangeValidatorException, List<TimeRange>> {
         return TimeRangeValidator.validateTimeRanges(ranges)
     }
 
@@ -136,6 +134,7 @@ object RuleValidator {
      * Em 20/06/2025 as 17:18
      */
     sealed class RuleValidatorException(msg: String) : Exception(msg) {
+
         /**
          * Criado por Gilian Marques
          * Em domingo, 30 de março de 2025 as 14:21.
@@ -148,9 +147,29 @@ object RuleValidator {
 
         /**
          * Criado por Gilian Marques
+         * Em 23/06/2025 as 17:31
+         */
+        class DaysOutOfRangeException(
+            val minDays: Int,
+            val maxDays: Int,
+            val actual: Int,
+        ) : RuleValidatorException("A quantidade de dias deve estar entre $minDays e $maxDays. Valor atual: $actual")
+
+        /**
+         * Criado por Gilian Marques
          * Em domingo, 30 de março de 2025 as 14:22.
          */
         class BlankIdException() :
             RuleValidatorException("Em hipótese alguma a id de um objeto pode ficar vazia. Ela é gerada automaticamente e imutavel, por tanto algo deu muito errado pra isso acontecer.")
+
+        /**
+         * Criado por Gilian Marques
+         * Em 23/06/2025 as 15:46
+         *
+         * Serve para encapsular as exceções retornadas pelo [TimeRangeValidator.TimeRangeValidatorException]
+         */
+        class EncapsulatedTimeRangeException(val exception: TimeRangeValidator.TimeRangeValidatorException) :
+            RuleValidatorException("O seguinte erro foi lançado durante a validação de timeranges: ${exception.message} ")
+
     }
 }
