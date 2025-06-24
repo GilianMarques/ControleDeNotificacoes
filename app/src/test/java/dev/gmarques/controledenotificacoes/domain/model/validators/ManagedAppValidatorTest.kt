@@ -18,7 +18,7 @@ class ManagedAppValidatorTest {
     fun `ao validar packageId vazio deve retornar falha com BlankStringException`() {
         val result = ManagedAppValidator.validatePackageId("")
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is BlankStringException)
+        assertTrue(result.exceptionOrNull() is ManagedAppValidator.ManagedAppValidatorException.BlankPackageIdException)
     }
 
     @Test
@@ -31,7 +31,7 @@ class ManagedAppValidatorTest {
     fun `ao validar ruleId vazio deve retornar falha com BlankStringException`() {
         val result = ManagedAppValidator.validateRuleId("")
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is BlankStringException)
+        assertTrue(result.exceptionOrNull() is ManagedAppValidator.ManagedAppValidatorException.BlankRuleIdException)
     }
 
     @Test
@@ -51,7 +51,7 @@ class ManagedAppValidatorTest {
             ManagedAppValidator.validate(managedApp)
             fail("Era esperada uma BlankStringException")
         } catch (e: Exception) {
-            assertTrue(e is BlankStringException)
+            assertTrue(e is ManagedAppValidator.ManagedAppValidatorException.BlankPackageIdException)
         }
     }
 
@@ -62,7 +62,7 @@ class ManagedAppValidatorTest {
             ManagedAppValidator.validate(managedApp)
             fail("Era esperada uma BlankStringException")
         } catch (e: Exception) {
-            assertTrue(e is BlankStringException)
+            assertTrue(e is ManagedAppValidator.ManagedAppValidatorException.BlankRuleIdException)
         }
     }
 }

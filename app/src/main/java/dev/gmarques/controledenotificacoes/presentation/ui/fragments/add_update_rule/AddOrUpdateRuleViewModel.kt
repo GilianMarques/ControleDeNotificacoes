@@ -15,7 +15,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.domain.NullException
+import dev.gmarques.controledenotificacoes.domain.CantBeNullException
 import dev.gmarques.controledenotificacoes.domain.OperationResult
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
@@ -177,7 +177,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
                 )
             }
 
-            null -> throw NullException()
+            null -> throw CantBeNullException()
         }
 
         _eventsChannel.trySend(SimpleErrorMessage(message))
@@ -313,7 +313,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
             is BlankIdException -> throw exception
             is EncapsulatedTimeRangeException -> throw exception
             is NameOutOfRangeException -> throw exception
-            null -> throw NullException()
+            null -> throw CantBeNullException()
         }
 
         return result
@@ -341,7 +341,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
                 _eventsChannel.trySend(NameErrorMessage(errorMessage))
             }
 
-            null -> throw NullException()
+            null -> throw CantBeNullException()
             is BlankIdException -> throw exception
             is DaysOutOfRangeException -> throw exception
             is EncapsulatedTimeRangeException -> throw exception

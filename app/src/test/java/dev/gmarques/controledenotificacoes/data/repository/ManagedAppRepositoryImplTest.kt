@@ -4,6 +4,8 @@ import dev.gmarques.controledenotificacoes.data.local.room.dao.ManagedAppDao
 import dev.gmarques.controledenotificacoes.data.local.room.mapper.ManagedAppMapper
 import dev.gmarques.controledenotificacoes.domain.data.repository.ManagedAppRepository
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
+import dev.gmarques.controledenotificacoes.domain.model.ManagedAppValidator
+import dev.gmarques.controledenotificacoes.domain.model.ManagedAppValidator.ManagedAppValidatorException.BlankRuleIdException
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -39,14 +41,14 @@ class ManagedAppRepositoryImplTest {
         verify(dao).insertOrUpdateManagedApp(appEntity)
     }
 
-    @Test(expected = BlankStringException::class)
+    @Test(expected = ManagedAppValidator.ManagedAppValidatorException.BlankPackageIdException::class)
     fun `ao adicionar app com package id em branco deve lancar excecao`() = runTest {
         val app = ManagedApp("", "rule1", hasPendingNotifications = false)
         repository.addOrUpdateManagedAppOrThrow(app)
     }
 
 
-    @Test(expected = BlankStringException::class)
+    @Test(expected = BlankRuleIdException::class)
     fun `ao adicionar app com rule id em branco deve lancar excecao`() = runTest {
         val app = ManagedApp("dev.gmarques.app", "", hasPendingNotifications = false)
         repository.addOrUpdateManagedAppOrThrow(app)
@@ -69,7 +71,7 @@ class ManagedAppRepositoryImplTest {
         verify(dao).updateManagedApp(updatedAppEntity)
     }
 
-    @Test(expected = BlankStringException::class)
+    @Test(expected = ManagedAppValidator.ManagedAppValidatorException.BlankPackageIdException::class)
     fun `ao atualizar app com package id em branco deve lancar excecao`() = runTest {
         val app = ManagedApp("", "ruleX", hasPendingNotifications = false)
         repository.updateManagedAppOrThrow(app)

@@ -1,7 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
 import TimeRangeValidator
-import dev.gmarques.controledenotificacoes.domain.exceptions.InversedRangeException
+import TimeRangeValidator.TimeRangeValidatorException.InversedRangeException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -22,7 +22,7 @@ class TimeRangeValidatorTest {
         val timeRange = TimeRange(-1, 0, 10, 0)
         val result = TimeRangeValidator.validate(timeRange)
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is InvalidTimeRangeValueException)
+        assertTrue(result.exceptionOrNull() is TimeRangeValidator.TimeRangeValidatorException.HourOutOfRangeException)
     }
 
     @Test
@@ -30,7 +30,7 @@ class TimeRangeValidatorTest {
         val timeRange = TimeRange(8, 0, 24, 0)
         val result = TimeRangeValidator.validate(timeRange)
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is InvalidTimeRangeValueException)
+        assertTrue(result.exceptionOrNull() is TimeRangeValidator.TimeRangeValidatorException.HourOutOfRangeException)
     }
 
     @Test
@@ -38,7 +38,7 @@ class TimeRangeValidatorTest {
         val timeRange = TimeRange(8, -5, 10, 0)
         val result = TimeRangeValidator.validate(timeRange)
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is InvalidTimeRangeValueException)
+        assertTrue(result.exceptionOrNull() is TimeRangeValidator.TimeRangeValidatorException.MinuteOutOfRangeException)
     }
 
     @Test
@@ -46,7 +46,7 @@ class TimeRangeValidatorTest {
         val timeRange = TimeRange(8, 0, 10, 60)
         val result = TimeRangeValidator.validate(timeRange)
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is InvalidTimeRangeValueException)
+        assertTrue(result.exceptionOrNull() is TimeRangeValidator.TimeRangeValidatorException.MinuteOutOfRangeException)
     }
 
     @Test

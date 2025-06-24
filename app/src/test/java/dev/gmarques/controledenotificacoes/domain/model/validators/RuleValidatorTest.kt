@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.domain.model.validators
 
+import TimeRangeValidator
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
@@ -70,7 +71,7 @@ class RuleValidatorTest {
             TimeRange(8, 0, 10, 0),
             TimeRange(8, 0, 10, 0)
         )
-        val result = RuleValidator.validateTimeRanges(intervalosDuplicados)
+        val result = TimeRangeValidator.validateTimeRanges(intervalosDuplicados)
         assertTrue(result.isFailure)
     }
 
@@ -94,7 +95,7 @@ class RuleValidatorTest {
         )
 
         casosDeTeste.forEach { (desc, list) ->
-            val result = RuleValidator.validateTimeRanges(list)
+            val result = TimeRangeValidator.validateTimeRanges(list)
             assertTrue("Falhou no caso '$desc': $list", result.isFailure)
         }
 
@@ -106,7 +107,7 @@ class RuleValidatorTest {
             TimeRange(8, 0, 10, 0),
             TimeRange(10, 1, 12, 0)
         )
-        val result = RuleValidator.validateTimeRanges(intervalosValidos)
+        val result = TimeRangeValidator.validateTimeRanges(intervalosValidos)
         assertTrue(result.isSuccess)
     }
 
