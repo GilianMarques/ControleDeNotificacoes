@@ -74,7 +74,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
         }
     }
 
-
     /**
      * Configura o modo de edição para a regra, caso uma regra para edição seja fornecida nos argumentos.
      *
@@ -228,7 +227,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
      * @see collectTimeRangeData A função chamada quando o botão é clicado.
      */
     private fun setupBtnAddTimeRange() = with(binding) {
-        ivAddRange.setOnClickListener(AnimatedClickListener {
+        tvAddRange.setOnClickListener(AnimatedClickListener {
 
             if (viewModel.canAddMoreRanges()) {
                 showTimeRangeDialog()

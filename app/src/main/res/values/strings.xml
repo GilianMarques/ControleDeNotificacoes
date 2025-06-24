@@ -241,6 +241,7 @@
     <string name="Canal_echo">Canal Echo</string>
     <string name="Valor_da_hora_inv_lido">Valor da hora é inválido: %1$d</string>
     <string name="Valor_do_minuto_inv_lido">Valor do minuto é inválido: %1$d</string>
+    <string name="Condicao">Condição</string>
 
 
 </resources>
