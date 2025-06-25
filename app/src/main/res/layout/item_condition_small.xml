@@ -37,6 +37,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:ellipsize="end"
+            android:maxLines="4"
             android:padding="4dp"
             android:textAlignment="viewStart"
             android:textSize="14sp"
@@ -44,7 +46,7 @@
             app:layout_constraintEnd_toStartOf="@id/iv_change"
             app:layout_constraintStart_toEndOf="@id/iv_app_icon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Lista de compras" />
+            tools:text="Exceto se Titulo Contiver: Match1, Match2, Match3, Match4, Match5, Match6, Match7, Match8, Match9, Match10, Match11, Match12, Match13, Match14, Match15, Match16, Match17 - aaaaaaaaaaaaaahhhhhhhhh!!!!" />
 
         <androidx.appcompat.widget.AppCompatImageView
 

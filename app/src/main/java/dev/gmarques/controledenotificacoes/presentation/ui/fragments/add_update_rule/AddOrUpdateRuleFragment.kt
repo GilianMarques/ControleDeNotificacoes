@@ -204,8 +204,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
                 return@addOnButtonCheckedListener
             }
 
-
-
             when (group.checkedButtonId) {
                 R.id.btn_permissive -> viewModel.updateRuleType(RuleType.PERMISSIVE)
                 R.id.btn_restritive -> viewModel.updateRuleType(RuleType.RESTRICTIVE)

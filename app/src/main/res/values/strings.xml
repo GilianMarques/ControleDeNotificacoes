@@ -242,6 +242,16 @@
     <string name="Valor_da_hora_inv_lido">Valor da hora é inválido: %1$d</string>
     <string name="Valor_do_minuto_inv_lido">Valor do minuto é inválido: %1$d</string>
     <string name="Condicao">Condição</string>
+    <string name="Apenas_se">Apenas se</string>
+    <string name="Exceto_se">Exceto se</string>
+    <string name="Tipo_de_condicao">Tipo de condição</string>
+    <string name="Titulo">Título</string>
+    <string name="conteudo">Conteúdo</string>
+    <string name="Ambos">Ambos</string>
+    <string name="Considerar_mai_sculas_e_min_sculas">Considerar maiúsculas e minúsculas</string>
+    <string name="Palavras_chave">Palavras-chave</string>
+    <string name="Separe_os_termos_com_v_rgula">Separe os termos com vírgula.</string>
+    <string name="Separe_os_termos_com_x">Separe os termos com \"%1$s\"</string>
 
 
 </resources>

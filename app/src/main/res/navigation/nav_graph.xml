@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph.xml"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/addOrUpdateConditionFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -118,6 +118,10 @@
             android:defaultValue="@null"
             app:argType="dev.gmarques.controledenotificacoes.domain.model.Rule"
             app:nullable="true" />
+        <action
+            android:id="@+id/to_addOrUpdateCondition"
+            app:destination="@id/addOrUpdateConditionFragment" />
+
     </fragment>
 
     <fragment
@@ -174,5 +178,25 @@
         android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.echo.EchoFragment"
         android:label="EchoFragment"
         tools:layout="@layout/fragment_echo" />
+
+    <fragment
+        android:id="@+id/addOrUpdateConditionFragment"
+        android:name="dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment"
+        android:label="fragment_add_or_update_condition"
+        tools:layout="@layout/fragment_add_or_update_condition">
+
+        <argument
+            android:name="condition"
+            android:defaultValue="@null"
+            app:argType="dev.gmarques.controledenotificacoes.domain.model.Condition"
+            app:nullable="true" />
+
+        <argument
+            android:name="ruleTypeRestrictive"
+            android:defaultValue="true"
+            app:argType="boolean"
+            app:nullable="false" />
+
+    </fragment>
 
 </navigation>

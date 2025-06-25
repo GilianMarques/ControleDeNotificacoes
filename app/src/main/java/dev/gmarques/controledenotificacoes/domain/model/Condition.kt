@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import dev.gmarques.controledenotificacoes.domain.model.enums.ConditionType
 import dev.gmarques.controledenotificacoes.domain.model.enums.NotificationField
+import java.io.Serializable
 
 /**
  * Criado por Gilian Marques
@@ -10,6 +11,11 @@ import dev.gmarques.controledenotificacoes.domain.model.enums.NotificationField
 data class Condition(
     val type: ConditionType,
     val field: NotificationField,
-    val values: List<String>,
+    val keywords: List<String>,
     val caseSensitive: Boolean = false,
-)
+) : Serializable {
+
+    companion object {
+        const val SEPARATOR = ","
+    }
+}
