@@ -1,12 +1,13 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
+import dev.gmarques.controledenotificacoes.domain.CantBeNullException
 import dev.gmarques.controledenotificacoes.domain.OperationResult
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidationException.BlankKeywordException
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidationException.EmptyKeywordsException
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidationException.EmptyValidKeywordsException
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidationException.InvalidKeywordLengthException
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidationException.MaxKeywordsExceededException
-import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.ConditionValidationException.PartialKeywordValidationException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.KEYWORD_MAX_LENGTH
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.KeywordsValidationException.EmptyKeywordsException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.KeywordsValidationException.MaxKeywordsExceededException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.SingleKeywordValidationException.BlankKeywordException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.SingleKeywordValidationException.InvalidKeywordLengthException
+import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.validateKeyword
 
 /**
  * Criado por Gilian Marques
@@ -20,69 +21,105 @@ import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.Condi
 object ConditionValidator {
 
     const val MAX_VALUES = 50
-    const val MAX_VALUE_LENGTH = 30
+    const val KEYWORD_MAX_LENGTH = 30
 
     fun validate(condition: Condition) {
         validateKeywords(condition.keywords).getOrThrow()
     }
 
-    fun validateKeywords(keywords: List<String>): OperationResult<ConditionValidationException, List<String>> {
+    /**
+     * Valida uma lista de palavras-chave.
+     *
+     * Esta função realiza as seguintes verificações:
+     * 1. **Lista Vazia:** Garante que a lista de palavras-chave não esteja vazia.
+     *    Se estiver vazia, retorna uma falha com [EmptyKeywordsException].
+     * 2. **Limite de Palavras-Chave:** Verifica se o número de palavras-chave na lista
+     *    não excede o máximo permitido ([MAX_VALUES]). Se exceder, retorna uma falha
+     *    com [MaxKeywordsExceededException].
+     * 3. **Validação Individual:** Itera sobre cada palavra-chave na lista e a valida
+     *    individualmente usando a função [validateKeyword].
+     *    - Se a validação de uma palavra-chave individual falhar (retornar `isFailure`),
+     *      a exceção correspondente ([SingleKeywordValidationException]) é lançada.
+     *      Isso interrompe o processo de validação da lista.
+     *      - É importante notar que, neste caso, a exceção lançada será uma
+     *        [SingleKeywordValidationException] e não uma [KeywordsValidationException]
+     *        diretamente, pois o objetivo é sinalizar o problema específico com a
+     *        palavra-chave individual. O chamador pode precisar tratar
+     *        [SingleKeywordValidationException] separadamente ou encapsulá-la, se necessário.
+     *
+     * @param keywords A lista de strings representando as palavras-chave a serem validadas.
+     * @return Um [OperationResult] que:
+     *   - Em caso de sucesso ([OperationResult.success]), contém a lista de palavras-chave original (se todas forem válidas).
+     *   - Em caso de falha ([OperationResult.failure]) devido à lista estar vazia ou exceder o limite,
+     *     contém a [KeywordsValidationException] apropriada ([EmptyKeywordsException] ou [MaxKeywordsExceededException]).
+     * @throws SingleKeywordValidationException Se a validação de uma palavra-chave individual falhar. Valide a palavra chave individualmente antes de adiciona-la a lista. use [validateKeyword].
+     * @throws CantBeNullException Se `keywordResult.exceptionOrNull()` retornar nulo inesperadamente (salvaguarda).
+     */
+    fun validateKeywords(keywords: List<String>): OperationResult<KeywordsValidationException, List<String>> {
 
         if (keywords.isEmpty()) {
             return OperationResult.failure(EmptyKeywordsException())
         }
 
-        if (keywords.size > MAX_VALUES) {
-            return OperationResult.failure(MaxKeywordsExceededException(MAX_VALUES, keywords.size))
+        if (keywords.size > MAX_VALUES) { // Verifica se o número de palavras-chave excede o máximo permitido.
+            return OperationResult.failure(MaxKeywordsExceededException(MAX_VALUES, keywords.size)) // Retorna falha se exceder.
         }
 
-        val validValues = mutableListOf<String>()
-        var firstException: ConditionValidationException? = null
-
-        for (keyword in keywords) when {
-
-            keyword.isBlank() && firstException == null -> {
-                firstException = BlankKeywordException(keyword)
-            }
-
-            keyword.length > MAX_VALUE_LENGTH && firstException == null -> {
-                firstException = InvalidKeywordLengthException(keyword.length, MAX_VALUE_LENGTH)
-            }
-
-            !keyword.isBlank() && keyword.length <= MAX_VALUE_LENGTH -> {
-                validValues.add(keyword)
-            }
+        for (keyword in keywords) { // Itera sobre cada palavra-chave na lista.
+            val keywordResult = validateKeyword(keyword) // Valida a palavra-chave individualmente.
+            if (keywordResult.isFailure) throw keywordResult.exceptionOrNull()
+                ?: CantBeNullException() // Se a validação individual falhar, lança a exceção correspondente.
         }
-
-
-        return when {
-            validValues.isEmpty() -> OperationResult.failure(firstException ?: EmptyValidKeywordsException(keywords.size))
-            firstException != null -> OperationResult.failure(PartialKeywordValidationException(validValues, firstException))
-            else -> OperationResult.success(validValues)
-        }
+        return OperationResult.success(keywords)
     }
 
 
-    sealed class ConditionValidationException(message: String) : Exception(message) {
+    /**
+     * Valida uma única palavra-chave (keyword).
+     *
+     * Esta função verifica se a palavra-chave fornecida não está vazia após a remoção de espaços em branco
+     * e se seu comprimento não excede o limite máximo permitido ([KEYWORD_MAX_LENGTH]).
+     *
+     * @param keyword A string da palavra-chave a ser validada.
+     * @return Um [OperationResult] que:
+     *   - Em caso de sucesso ([OperationResult.success]), contém a palavra-chave validada (após `trim()`).
+     *   - Em caso de falha ([OperationResult.failure]), contém uma [KeywordsValidationException] apropriada:
+     *     - [BlankKeywordException] se a palavra-chave estiver vazia após `trim()`.
+     *     - [InvalidKeywordLengthException] se o comprimento da palavra-chave exceder [KEYWORD_MAX_LENGTH].
+     */
+    fun validateKeyword(keyword: String): OperationResult<SingleKeywordValidationException, String> {
 
-        class PartialKeywordValidationException(
-            val validValues: MutableList<String>,
-            val firstException: ConditionValidationException,
-        ) :
-            ConditionValidationException("A lista contem alguns valores invalidos. Valores válidos foram: $validValues.\nPrimeira Exceção: ${firstException.message}")
 
-        class EmptyKeywordsException : ConditionValidationException("A lista de valores não pode estar vazia.")
+        val sanitizedKeyword = keyword.trim()
 
-        class EmptyValidKeywordsException(val size: Int) :
-            ConditionValidationException("Nenhuma palavra-chave válida foi encontrada na lista. Tamanho da lista: $size")
+        if (sanitizedKeyword.isEmpty()) {
+            return OperationResult.failure(BlankKeywordException(sanitizedKeyword))
+        }
+
+        if (sanitizedKeyword.length > KEYWORD_MAX_LENGTH) {
+            return OperationResult.failure(InvalidKeywordLengthException(sanitizedKeyword.length, MAX_VALUES))
+        }
+
+        return OperationResult.success(sanitizedKeyword)
+    }
+
+
+    sealed class KeywordsValidationException(message: String) : Exception(message) {
+
+        class EmptyKeywordsException : KeywordsValidationException("A lista de valores não pode estar vazia.")
 
         class MaxKeywordsExceededException(val max: Int, val found: Int) :
-            ConditionValidationException("Número máximo de valores excedido: $found/$max")
+            KeywordsValidationException("Número máximo de valores excedido: $found/$max")
+
+
+    }
+
+    sealed class SingleKeywordValidationException(message: String) : Exception(message) {
 
         class BlankKeywordException(val value: String) :
-            ConditionValidationException("A lista contém valor em branco ou inválido: \"$value\"")
+            SingleKeywordValidationException("A palavra-chave está em branco ou é inválida: \"$value\"")
 
         class InvalidKeywordLengthException(val length: Int, val max: Int) :
-            ConditionValidationException("A lista contém valor com comprimento inválido (máximo $max): \"$length\"")
+            SingleKeywordValidationException("A palavra-chave tem comprimento inválido (máximo $max): \"$length\"")
     }
 }

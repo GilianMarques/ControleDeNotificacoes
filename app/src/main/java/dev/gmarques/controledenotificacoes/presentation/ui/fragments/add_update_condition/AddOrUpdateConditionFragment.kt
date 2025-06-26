@@ -68,8 +68,8 @@ class AddOrUpdateConditionFragment : MyFragment() {
         edtKeywords.doOnTextChanged { text, _, _, _ ->
 
             if (text?.contains(Condition.SEPARATOR) == true) {
-                val keywords = text.split(Condition.SEPARATOR)
-                viewModel.addKeywords(keywords)
+                val keyword = text.split(Condition.SEPARATOR).first()
+                if (keyword.isNotBlank()) viewModel.addKeyword(keyword)
                 edtKeywords.setText("")
             }
         }
