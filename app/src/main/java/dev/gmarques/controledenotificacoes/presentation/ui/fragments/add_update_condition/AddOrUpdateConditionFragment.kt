@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.button.MaterialButtonToggleGroup
@@ -31,12 +32,17 @@ class AddOrUpdateConditionFragment : MyFragment() {
     private val viewModel: AddOrUpdateConditionViewModel by viewModels()
     private lateinit var binding: FragmentAddOrUpdateConditionBinding
     private val args: AddOrUpdateConditionFragmentArgs by navArgs()
+    private var ruleTypeRestrictive = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        return FragmentAddOrUpdateConditionBinding.inflate(inflater, container, false).also { binding = it }.root
+        return FragmentAddOrUpdateConditionBinding.inflate(inflater, container, false).also {
+            binding = it
+            setupActionBar(binding.toolbar)
+        }.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,6 +53,7 @@ class AddOrUpdateConditionFragment : MyFragment() {
         setupNotificationFields()
         setupKeywordsInput()
         setupCaseSensitive()
+        setupFab()
         observeViewModel()
         observeEvents()
     }
@@ -91,6 +98,13 @@ class AddOrUpdateConditionFragment : MyFragment() {
         }
     }
 
+    private fun setupFab() = with(binding) {
+
+        fabAdd.setOnClickListener(AnimatedClickListener {
+            viewModel.validateCondition()
+        })
+    }
+
     private fun observeViewModel() {
 
         collectFlow(viewModel.keywordsFlow) { keywords ->
@@ -108,13 +122,11 @@ class AddOrUpdateConditionFragment : MyFragment() {
         collectFlow(viewModel.caseSensitiveFlow) { checked ->
             binding.swCase.isChecked = checked == true
         }
-    }
 
-    private fun setupFab() = with(binding) {
-
-        fabAdd.setOnClickListener(AnimatedClickListener {
-            viewModel.validateAndSaveCondition()
-        })
+        collectFlow(viewModel.conditionDone) { condition ->
+            setFragmentResult(RESULT_LISTENER_KEY, Bundle().apply { putSerializable(CONDITION_KEY, condition) })
+            goBack()
+        }
     }
 
     /**
@@ -205,7 +217,7 @@ class AddOrUpdateConditionFragment : MyFragment() {
             viewModel.setEditingCondition(it)
         }
 
-        viewModel.ruleTypeRestrictive = args.ruleTypeRestrictive
+        ruleTypeRestrictive = args.ruleTypeRestrictive
 
     }
 }

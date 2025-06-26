@@ -38,6 +38,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePrefer
 import dev.gmarques.controledenotificacoes.framework.VibratorImpl
 import dev.gmarques.controledenotificacoes.presentation.ui.activities.MainActivity
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_managed_apps.AddManagedAppsFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.home.HomeFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.profile.ProfileFragment
@@ -186,6 +187,13 @@ open class MyFragment() : Fragment() {
 
                 setupGoBackButton(binding.ivGoBack)
                 binding.tvTitle.text = getString(R.string.Configuracoes)
+                binding.ivMenu.isGone = true
+            }
+
+            is AddOrUpdateConditionFragment -> {
+
+                setupGoBackButton(binding.ivGoBack)
+                binding.tvTitle.text = getString(R.string.Nova_condicao)
                 binding.ivMenu.isGone = true
             }
 

@@ -1,7 +1,11 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.CantBeNullException
 import dev.gmarques.controledenotificacoes.domain.model.Condition
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator
@@ -19,10 +23,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class AddOrUpdateConditionViewModel @Inject constructor() : ViewModel() {
+class AddOrUpdateConditionViewModel @Inject constructor(@ApplicationContext val context: Context) : ViewModel() {
 
-    var ruleTypeRestrictive = false
 
+    private var editingCondition: Condition? = null
 
     private val _eventsChannel = Channel<Event>(Channel.BUFFERED)
     val eventsFlow: Flow<Event> get() = _eventsChannel.receiveAsFlow()
@@ -36,11 +40,22 @@ class AddOrUpdateConditionViewModel @Inject constructor() : ViewModel() {
     private val _fieldFlow = MutableStateFlow<NotificationField?>(null)
     val fieldFlow: StateFlow<NotificationField?> get() = _fieldFlow
 
-    private val _caseSensitiveFlow = MutableStateFlow<Boolean?>(null)
-    val caseSensitiveFlow: StateFlow<Boolean?> get() = _caseSensitiveFlow
+    private val _conditionDone = MutableStateFlow<Condition?>(null)
+    val conditionDone: StateFlow<Condition?> get() = _conditionDone
+
+
+    private val _caseSensitiveFlow = MutableStateFlow(false)
+    val caseSensitiveFlow: StateFlow<Boolean> get() = _caseSensitiveFlow
+
 
     fun setEditingCondition(condition: Condition) {
 
+        editingCondition = condition
+
+        _keywordsFlow.tryEmit(condition.keywords)
+        _conditionTypeFlow.tryEmit(condition.type)
+        _fieldFlow.tryEmit(condition.field)
+        _caseSensitiveFlow.tryEmit(condition.caseSensitive)
     }
 
     fun addKeyword(keyword: String) {
@@ -58,8 +73,15 @@ class AddOrUpdateConditionViewModel @Inject constructor() : ViewModel() {
 
         if (keywordValidationResult.isFailure) {
             when (val baseException = keywordValidationResult.exceptionOrNull()) {
-                is BlankKeywordException -> notify("Não é possível adicionar uma palavra vazia")
-                is InvalidKeywordLengthException -> notify("Palavra-chave com comprimento inválido (${baseException.length}) máx. ${ConditionValidator.KEYWORD_MAX_LENGTH}")
+                is BlankKeywordException -> notify(context.getString(R.string.Nao_poss_vel_adicionar_uma_palavra_vazia))
+                is InvalidKeywordLengthException -> notify(
+                    context.getString(
+                        R.string.Palavra_chave_com_comprimento_inv_lido_m_x,
+                        baseException.length,
+                        ConditionValidator.KEYWORD_MAX_LENGTH
+                    )
+                )
+
                 null -> throw CantBeNullException()
             }
 
@@ -71,8 +93,15 @@ class AddOrUpdateConditionViewModel @Inject constructor() : ViewModel() {
 
         if (keywordsListValidationResult.isFailure) {
             when (val baseException = keywordsListValidationResult.exceptionOrNull()) {
-                is EmptyKeywordsException -> notify("A lista de palavras-chave não pode estar vazia")
-                is MaxKeywordsExceededException -> notify("Número máximo de palavras-chave aceito é ${baseException.max}, atual ${baseException.found}")
+                is EmptyKeywordsException -> notify(context.getString(R.string.A_lista_de_palavras_chave_n_o_pode_estar_vazia))
+                is MaxKeywordsExceededException -> notify(
+                    context.getString(
+                        R.string.Numero_m_ximo_de_palavras_chave_aceito_atual,
+                        baseException.max,
+                        baseException.found
+                    )
+                )
+
                 null -> throw CantBeNullException()
             }
             return null
@@ -97,7 +126,28 @@ class AddOrUpdateConditionViewModel @Inject constructor() : ViewModel() {
         _caseSensitiveFlow.tryEmit(checked)
     }
 
-    fun validateAndSaveCondition() {
+    fun validateCondition() {
+
+        val values = listOf(_keywordsFlow, _conditionTypeFlow, _fieldFlow, _caseSensitiveFlow).filter { it.value == null }
+        if (values.isNotEmpty()) return
+
+
+        val condition = Condition(
+            _conditionTypeFlow.value!!,
+            _fieldFlow.value!!,
+            _keywordsFlow.value,
+            _caseSensitiveFlow.value
+        )
+
+        try {
+            ConditionValidator.validate(condition)
+        } catch (ex: Exception) {
+            Log.e("USUK", "AddOrUpdateConditionViewModel.validateAndSaveCondition: $ex")
+            _eventsChannel.trySend(Event.Error(context.getString(R.string.Verifique_os_campos)))
+            return
+        }
+
+        _conditionDone.tryEmit(condition)
 
     }
 
