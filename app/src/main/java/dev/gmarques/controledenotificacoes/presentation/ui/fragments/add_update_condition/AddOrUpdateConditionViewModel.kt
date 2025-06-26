@@ -9,6 +9,8 @@ import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.Keywo
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.KeywordsValidationException.MaxKeywordsExceededException
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.SingleKeywordValidationException.BlankKeywordException
 import dev.gmarques.controledenotificacoes.domain.model.ConditionValidator.SingleKeywordValidationException.InvalidKeywordLengthException
+import dev.gmarques.controledenotificacoes.domain.model.enums.ConditionType
+import dev.gmarques.controledenotificacoes.domain.model.enums.NotificationField
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +29,15 @@ class AddOrUpdateConditionViewModel @Inject constructor() : ViewModel() {
 
     private val _keywordsFlow = MutableStateFlow<List<String>>(emptyList())
     val keywordsFlow: StateFlow<List<String>> get() = _keywordsFlow
+
+    private val _conditionTypeFlow = MutableStateFlow<ConditionType?>(null)
+    val conditionTypeFlow: StateFlow<ConditionType?> get() = _conditionTypeFlow
+
+    private val _fieldFlow = MutableStateFlow<NotificationField?>(null)
+    val fieldFlow: StateFlow<NotificationField?> get() = _fieldFlow
+
+    private val _caseSensitiveFlow = MutableStateFlow<Boolean?>(null)
+    val caseSensitiveFlow: StateFlow<Boolean?> get() = _caseSensitiveFlow
 
     fun setEditingCondition(condition: Condition) {
 
@@ -72,6 +83,22 @@ class AddOrUpdateConditionViewModel @Inject constructor() : ViewModel() {
 
     fun removeKeyword(keyword: String) {
         _keywordsFlow.tryEmit(_keywordsFlow.value - keyword)
+    }
+
+    fun setConditionType(type: ConditionType) {
+        _conditionTypeFlow.tryEmit(type)
+    }
+
+    fun setField(field: NotificationField) {
+        _fieldFlow.tryEmit(field)
+    }
+
+    fun setCaseSensitive(checked: Boolean) {
+        _caseSensitiveFlow.tryEmit(checked)
+    }
+
+    fun validateAndSaveCondition() {
+
     }
 
 }

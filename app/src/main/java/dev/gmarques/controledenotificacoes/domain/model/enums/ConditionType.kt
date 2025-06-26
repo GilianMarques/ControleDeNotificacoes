@@ -13,5 +13,5 @@ enum class ConditionType() {
  * Em sexta-feira, 20 de junho de 2025 as 15:03.
  */
 enum class NotificationField() {
-    TITLE, CONTENT
+    TITLE, CONTENT, BOTH
 }

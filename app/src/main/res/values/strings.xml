@@ -252,6 +252,12 @@
     <string name="Palavras_chave">Palavras-chave</string>
     <string name="Separe_os_termos_com_v_rgula">Separe os termos com vírgula.</string>
     <string name="Separe_os_termos_com_x">Separe os termos com \"%1$s\"</string>
+    <string name="A_regra_ser_aplicada_apenas_se_a_condi_o_for_satisfeita">A regra será aplicada se a condição for satisfeita</string>
+    <string name="A_regra_NAO_ser_aplicada_se_a_condi_o_for_satisfeita">A regra NÃO será aplicada se a condição for satisfeita</string>
+    <string name="Campos_da_notifica_o_que_ser_o_verificados">Campos da notificação que serão verificados</string>
+    <string name="Buscar_palavras_chave_apenas_no_t_tulo_da_notifica_o">Buscar palavras-chave apenas no título da notificação</string>
+    <string name="Buscar_palavras_chave_apenas_no_conte_do_da_notifica_o">Buscar palavras-chave apenas no conteúdo da notificação</string>
+    <string name="Buscar_palavras_chave_no_t_tulo_e_conte_do_da_notifica_o">Buscar palavras-chave no título e conteúdo da notificação</string>
 
 
 </resources>
