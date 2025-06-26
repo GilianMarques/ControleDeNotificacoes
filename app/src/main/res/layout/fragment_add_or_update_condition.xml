@@ -204,6 +204,7 @@
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/sw_case"
+                    style="@style/Widget.Material3.CompoundButton.Switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
