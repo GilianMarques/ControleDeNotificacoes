@@ -49,6 +49,7 @@
             app:layout_constraintTop_toBottomOf="@id/toolbar">
 
             <LinearLayout
+                android:id="@+id/ll_rule_name_parent"
                 style="@style/containers_margins"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,6 +87,7 @@
 
 
             <LinearLayout
+                android:id="@+id/ll_rule_type_parent"
                 style="@style/containers_margins"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -148,6 +150,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_weekdays_parent"
                 style="@style/containers_margins_no_padding"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -157,7 +160,8 @@
                 android:paddingStart="0dp"
                 android:paddingTop="8dp"
                 android:paddingEnd="0dp"
-                android:paddingBottom="8dp">
+                android:paddingBottom="8dp"
+                android:transitionName="ll_weekdays_parent">
 
 
                 <TextView
@@ -309,10 +313,12 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_timerange_parent"
                 style="@style/containers_margins"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:animateLayoutChanges="true"
+                android:transitionName="ll_timerange_parent"
                 android:background="@drawable/back_container"
                 android:orientation="vertical">
 
@@ -422,15 +428,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:animateLayoutChanges="true"
-                    android:orientation="vertical" />
-
-                <include
-                    android:id="@+id/item_condition"
-                    layout="@layout/item_condition_small"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:visibility="gone"
-                    tools:visibility="visible" />
+                    tools:visibility="visible">
+
+                    <include
+                        android:id="@+id/item_condition"
+                        layout="@layout/item_condition_small"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
 
 
             </LinearLayout>

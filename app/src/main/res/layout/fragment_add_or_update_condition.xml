@@ -55,7 +55,7 @@
                 android:animateLayoutChanges="true"
                 android:background="@drawable/back_container"
                 android:orientation="vertical"
-                android:transitionName="apps_container">
+                android:transitionName="ll_condition_type_parent">
 
 
                 <TextView
@@ -67,7 +67,7 @@
                     android:fontFamily="@font/urbanist_extrabold"
                     android:text="@string/Tipo_de_condicao"
                     android:textSize="20sp"
-                    android:transitionName="tv_target_app" />
+                    android:transitionName="tv_condition_type" />
 
                 <!--https://github.com/material-components/material-components-android/blob/master/docs/components/Button.md#toggle-button-->
                 <com.google.android.material.button.MaterialButtonToggleGroup
@@ -125,7 +125,7 @@
                 android:animateLayoutChanges="true"
                 android:background="@drawable/back_container"
                 android:orientation="vertical"
-                android:transitionName="apps_container">
+                android:transitionName="ll_field_parent">
 
 
                 <TextView
@@ -135,9 +135,9 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="16dp"
                     android:fontFamily="@font/urbanist_extrabold"
-                    android:text="Campo aplicável"
+                    android:text="@string/Campo_aplicavel"
                     android:textSize="20sp"
-                    android:transitionName="tv_target_app" />
+                    android:transitionName="tv_notification_field" />
 
                 <!--https://github.com/material-components/material-components-android/blob/master/docs/components/Button.md#toggle-button-->
                 <com.google.android.material.button.MaterialButtonToggleGroup
@@ -199,7 +199,7 @@
                 android:animateLayoutChanges="true"
                 android:background="@drawable/back_container"
                 android:orientation="vertical"
-                android:transitionName="apps_container">
+                android:transitionName="ll_ignore_case">
 
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
@@ -220,7 +220,7 @@
                 android:animateLayoutChanges="true"
                 android:background="@drawable/back_container"
                 android:orientation="vertical"
-                android:transitionName="rule_parent">
+                android:transitionName="ll_keywords_parent">
 
 
                 <TextView

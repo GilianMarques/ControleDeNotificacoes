@@ -27,45 +27,24 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="8dp"
+            android:src="@drawable/vec_condition"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/vec_condition" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/name"
+            android:id="@+id/tv_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:ellipsize="end"
-            android:maxLines="4"
+            android:layout_marginStart="4dp"
             android:padding="4dp"
-            android:textAlignment="viewStart"
+            android:textAlignment="textStart"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/iv_change"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_app_icon"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Exceto se Titulo Contiver: Match1, Match2, Match3, Match4, Match5, Match6, Match7, Match8, Match9, Match10, Match11, Match12, Match13, Match14, Match15, Match16, Match17 - aaaaaaaaaaaaaahhhhhhhhh!!!!" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-
-            android:id="@+id/iv_change"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/back_circle"
-            android:backgroundTint="?colorSecondaryContainer"
-            android:contentDescription="@string/Bot_o_para_trocar_a_regra_selecionada"
-            android:padding="8dp"
-            android:src="@drawable/vec_replace"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="?colorPrimary" />
+            tools:text="Exceto se Titulo Contiver: Match1, Match2, Match3, Match4, Match5, Match6, Match7, Match8, Match9, Match10, Match11, Match12, Match13, Match14, Match15, Match16, Match17 - aaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhh!!!!" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

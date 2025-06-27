@@ -5,12 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.forEach
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.chip.Chip
@@ -19,6 +24,8 @@ import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.FragmentAddOrUpdateRuleBinding
 import dev.gmarques.controledenotificacoes.databinding.ItemIntervalBinding
+import dev.gmarques.controledenotificacoes.domain.model.Condition
+import dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFun.description
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.endIntervalFormatted
@@ -26,8 +33,10 @@ import dev.gmarques.controledenotificacoes.domain.model.TimeRangeExtensionFun.st
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition.AddOrUpdateConditionFragment
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
 import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.addViewWithTwoStepsAnimation
+import dev.gmarques.controledenotificacoes.presentation.utils.ViewExtFuns.setStartDrawable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.min
@@ -64,12 +73,14 @@ class AddOrUpdateRuleFragment : MyFragment() {
             setupChipDays()
             setupChipDaysShortcuts()
             setupBtnAddTimeRange()
+            setupBtnAddCondition()
             setupFabAddRule()
             setupEditingModeIfNeeded()
             observeRuleType()
             observeTimeRanges()
             observeSelectedDays()
             observeRuleName()
+            observeCondition()
             observeEvents()
         }
     }
@@ -222,7 +233,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
      * O `AnimatedClickListener` fornece uma animação de escala padrão.
      *
      * @see AnimatedClickListener Para detalhes sobre a animação aplicada ao clique.
-     * @see collectTimeRangeData A função chamada quando o botão é clicado.
      */
     private fun setupBtnAddTimeRange() = with(binding) {
         tvAddRange.setOnClickListener(AnimatedClickListener {
@@ -237,6 +247,35 @@ class AddOrUpdateRuleFragment : MyFragment() {
                 )
             }
             edtName.clearFocus()
+        })
+    }
+
+
+    private fun setupBtnAddCondition() = with(binding) {
+
+        setFragmentResultListener(AddOrUpdateConditionFragment.RESULT_LISTENER_KEY) { _, bundle ->
+            val condition = requireSerializableOf(bundle, AddOrUpdateConditionFragment.CONDITION_KEY, Condition::class.java)
+                ?: error("nao pode ser nulo")
+            viewModel.setCondition(condition)
+        }
+
+
+        tvAddCondition.setOnClickListener(AnimatedClickListener {
+
+            val transitionExtras = FragmentNavigatorExtras(
+                binding.fabAdd to "fab",
+                binding.llRuleNameParent to "ll_condition_type_parent",
+                binding.llRuleTypeParent to "ll_field_parent",
+                binding.llWeekdaysParent to "ll_ignore_case",
+                binding.llTimerangeParent to "ll_keywords_parent",
+            )
+
+            findNavController().navigate(
+                AddOrUpdateRuleFragmentDirections.toAddOrUpdateCondition(
+                    null,
+                    viewModel.ruleType.value == RuleType.RESTRICTIVE
+                ), transitionExtras
+            )
         })
     }
 
@@ -355,6 +394,28 @@ class AddOrUpdateRuleFragment : MyFragment() {
     private fun observeRuleName() {
         collectFlow(viewModel.ruleName) { name ->
             binding.edtName.setText(name)
+        }
+    }
+
+    private fun observeCondition() {
+        collectFlow(viewModel.conditionFlow) { condition ->
+
+            if (condition == null) {
+                binding.llConteinerConditions.isGone = true
+                binding.tvAddCondition.text = getString(R.string.Adicionar)
+                binding.tvAddCondition.setStartDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.vec_add)!!)
+                return@collectFlow
+            }
+
+            binding.llConteinerConditions.isVisible = true
+            binding.tvAddCondition.text = getString(R.string.Editar)
+            binding.tvAddCondition.setStartDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.vec_edit_small)!!)
+
+            with(binding) {
+                itemCondition.tvName.text = condition.description(
+                    requireContext()
+                )
+            }
         }
     }
 

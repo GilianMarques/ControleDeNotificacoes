@@ -138,8 +138,10 @@ class AddOrUpdateConditionFragment : MyFragment() {
         }
 
         collectFlow(viewModel.conditionDone) { condition ->
-            setFragmentResult(RESULT_LISTENER_KEY, Bundle().apply { putSerializable(CONDITION_KEY, condition) })
-            goBack()
+            condition?.let {
+                setFragmentResult(RESULT_LISTENER_KEY, Bundle().apply { putSerializable(CONDITION_KEY, condition) })
+                goBack()
+            }
         }
     }
 
@@ -227,7 +229,7 @@ class AddOrUpdateConditionFragment : MyFragment() {
 
     @SuppressLint("SetTextI18n")
     private fun updateConditionBehaviourHint() {
-
+// TODO: passar pro viewmodel
         val maxKeywords = 3
         var hint = ""
 
@@ -252,7 +254,8 @@ class AddOrUpdateConditionFragment : MyFragment() {
             }
         }
 
-        hint += getString(R.string.as_seguintes_palavras_chave)
+        hint += if (viewModel.keywordsFlow.value.size == 1) getString(R.string.a_seguinte_palavra_chave)
+        else getString(R.string.as_seguintes_palavras_chave)
 
         if (viewModel.keywordsFlow.value.size > maxKeywords) viewModel.keywordsFlow.value.forEachIndexed { index, keyword ->
             if (index >= maxKeywords) return@forEachIndexed

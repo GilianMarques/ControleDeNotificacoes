@@ -271,10 +271,19 @@
     <string name="o_t_tulo_contiver">" o título contiver"</string>
     <string name="o_conte_do_contiver">" o conteúdo contiver"</string>
     <string name="o_t_tulo_ou_o_conte_do_contiverem">" o título ou o conteúdo contiverem"</string>
+    <string name="o_t_tulo_da_notificacao_contiver">" o título da notificação contiver"</string>
+    <string name="o_conte_do_da_notificacao_contiver">" o conteúdo da notificação contiver"</string>
+    <string name="o_t_tulo_ou_o_conte_do_da_notificacao_contiverem">" o título ou o conteúdo da notificação contiverem"</string>
     <string name="as_seguintes_palavras_chave">" as seguintes palavras-chave:"</string>
+    <string name="a_seguinte_palavra_chave">" a seguinte palavra-chave:"</string>
+    <string name="as_palavras_chave_selecionadas">" as palavras-chave selecionadas"</string>
     <string name="ou">" ou \"%1$s\""</string>
     <string name="considerando_letras_mai_sculas_e_min_sculas">" considerando letras maiúsculas e minúsculas."</string>
     <string name="independentemente_de_letras_mai_sculas_e_min_sculas">" independentemente de letras maiúsculas e minúsculas."</string>
+    <string name="Adicionar_condicao">Adicionar Condição</string>
+    <string name="Editar_condicao">Editar Condição</string>
+    <string name="Editar">Editar</string>
+    <string name="Campo_aplicavel">Campo aplicável</string>
 
 
 </resources>

@@ -17,6 +17,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.domain.CantBeNullException
 import dev.gmarques.controledenotificacoes.domain.OperationResult
+import dev.gmarques.controledenotificacoes.domain.model.Condition
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException
@@ -60,6 +61,9 @@ class AddOrUpdateRuleViewModel @Inject constructor(
 
     private val _selectedDays = MutableStateFlow<List<WeekDay>>(emptyList())
     val selectedDays: StateFlow<List<WeekDay>> = _selectedDays
+
+    private val _conditionFlow = MutableStateFlow<Condition?>(null)
+    val conditionFlow: StateFlow<Condition?> = _conditionFlow
 
     private val _timeRanges = MutableStateFlow(LinkedHashMap<String, TimeRange>())
     val timeRanges: StateFlow<LinkedHashMap<String, TimeRange>> = _timeRanges
@@ -349,6 +353,10 @@ class AddOrUpdateRuleViewModel @Inject constructor(
 
 
         return result
+    }
+
+    fun setCondition(condition: Condition) {
+        _conditionFlow.tryEmit(condition)
     }
 
 }
