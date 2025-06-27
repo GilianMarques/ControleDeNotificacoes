@@ -74,6 +74,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
             setupChipDaysShortcuts()
             setupBtnAddTimeRange()
             setupBtnAddCondition()
+            setupBtnRemoveCondition()
             setupFabAddRule()
             setupEditingModeIfNeeded()
             observeRuleType()
@@ -251,6 +252,12 @@ class AddOrUpdateRuleFragment : MyFragment() {
     }
 
 
+    private fun setupBtnRemoveCondition() = with(binding) {
+        ivRemoveCondition.setOnClickListener(AnimatedClickListener {
+            viewModel.removeCondition()
+        })
+    }
+
     private fun setupBtnAddCondition() = with(binding) {
 
         setFragmentResultListener(AddOrUpdateConditionFragment.RESULT_LISTENER_KEY) { _, bundle ->
@@ -403,11 +410,13 @@ class AddOrUpdateRuleFragment : MyFragment() {
 
             if (condition == null) {
                 binding.llConteinerConditions.isGone = true
+                binding.ivRemoveCondition.isGone = true
                 binding.tvAddCondition.text = getString(R.string.Adicionar)
                 binding.tvAddCondition.setStartDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.vec_add)!!)
                 return@collectFlow
             }
 
+            binding.ivRemoveCondition.isVisible = true
             binding.llConteinerConditions.isVisible = true
             binding.tvAddCondition.text = getString(R.string.Editar)
             binding.tvAddCondition.setStartDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.vec_edit_small)!!)
@@ -464,4 +473,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
         vibrator.success()
         goBack()
     }
+
 }
+
+

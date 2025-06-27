@@ -359,6 +359,9 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         _conditionFlow.tryEmit(condition)
     }
 
+    fun removeCondition() {
+        _conditionFlow.value = null
+    }
 }
 
 /**
