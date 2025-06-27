@@ -1,5 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -58,6 +59,15 @@ class AddOrUpdateConditionFragment : MyFragment() {
         observeEvents()
     }
 
+    private fun loadArgs() {
+
+        args.condition?.let {
+            viewModel.setEditingCondition(it)
+        }
+
+        ruleTypeRestrictive = args.ruleTypeRestrictive
+    }
+
     private fun setupConditionType() = with(binding) {
         mbtTypeCondition.addOnButtonCheckedListener { group: MaterialButtonToggleGroup, btnId: Int, checked: Boolean ->
             when (group.checkedButtonId) {
@@ -109,18 +119,22 @@ class AddOrUpdateConditionFragment : MyFragment() {
 
         collectFlow(viewModel.keywordsFlow) { keywords ->
             addKeywordsChips(keywords)
+            updateConditionBehaviourHint()
         }
 
         collectFlow(viewModel.conditionTypeFlow) { type ->
             updateConditionType(type)
+            updateConditionBehaviourHint()
         }
 
         collectFlow(viewModel.fieldFlow) { field ->
             updateNotificationField(field)
+            updateConditionBehaviourHint()
         }
 
         collectFlow(viewModel.caseSensitiveFlow) { checked ->
             binding.swCase.isChecked = checked == true
+            updateConditionBehaviourHint()
         }
 
         collectFlow(viewModel.conditionDone) { condition ->
@@ -211,13 +225,58 @@ class AddOrUpdateConditionFragment : MyFragment() {
         }
     }
 
-    private fun loadArgs() {
+    @SuppressLint("SetTextI18n")
+    private fun updateConditionBehaviourHint() {
 
-        args.condition?.let {
-            viewModel.setEditingCondition(it)
+        val maxKeywords = 3
+        var hint = ""
+
+        hint += if (ruleTypeRestrictive) getString(R.string.Bloquear_notifica_es) else getString(R.string.Permitir_notifica_es)
+
+        hint += when (viewModel.conditionTypeFlow.value) {
+            ConditionType.ONLY_IF -> getString(R.string.apenas_se)
+            ConditionType.EXCEPT -> getString(R.string.exceto_se)
+            null -> {
+                binding.tvSummary.text = "$hint..."
+                return
+            }
         }
 
-        ruleTypeRestrictive = args.ruleTypeRestrictive
+        hint += when (viewModel.fieldFlow.value) {
+            NotificationField.TITLE -> getString(R.string.o_t_tulo_contiver)
+            NotificationField.CONTENT -> getString(R.string.o_conte_do_contiver)
+            NotificationField.BOTH -> getString(R.string.o_t_tulo_ou_o_conte_do_contiverem)
+            null -> {
+                binding.tvSummary.text = "$hint..."
+                return
+            }
+        }
+
+        hint += getString(R.string.as_seguintes_palavras_chave)
+
+        if (viewModel.keywordsFlow.value.size > maxKeywords) viewModel.keywordsFlow.value.forEachIndexed { index, keyword ->
+            if (index >= maxKeywords) return@forEachIndexed
+            hint += if (index + 1 < maxKeywords) " \"$keyword\","
+            else " \"${keyword}\"..."
+        } else {
+
+            val maxKeywords = viewModel.keywordsFlow.value.size
+            viewModel.keywordsFlow.value.forEachIndexed { index, keyword ->
+                hint += if (index + 2 < maxKeywords) " \"$keyword\","
+                else if (index + 1 < maxKeywords) " \"$keyword\""
+                else if (maxKeywords > 1) getString(R.string.ou, keyword)
+                else " \"$keyword\""
+            }
+        }
+
+        hint += if (viewModel.keywordsFlow.value.isNotEmpty()) "," else " (*)"
+
+        hint += if (viewModel.caseSensitiveFlow.value == true) getString(R.string.considerando_letras_mai_sculas_e_min_sculas)
+        else getString(R.string.independentemente_de_letras_mai_sculas_e_min_sculas)
+
+        binding.tvSummary.text = hint
 
     }
+
+
 }

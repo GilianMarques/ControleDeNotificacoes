@@ -264,6 +264,17 @@
     <string name="Numero_m_ximo_de_palavras_chave_aceito_atual">Número máximo de palavras-chave aceito é %1$d, atual %2$d</string>
     <string name="Verifique_os_campos">Verifique os campos</string>
     <string name="Nova_condicao">Nova condição</string>
+    <string name="Bloquear_notifica_es">Bloquear notificações</string>
+    <string name="Permitir_notifica_es">Permitir notificações</string>
+    <string name="apenas_se">" apenas se"</string>
+    <string name="exceto_se">" exceto se"</string>
+    <string name="o_t_tulo_contiver">" o título contiver"</string>
+    <string name="o_conte_do_contiver">" o conteúdo contiver"</string>
+    <string name="o_t_tulo_ou_o_conte_do_contiverem">" o título ou o conteúdo contiverem"</string>
+    <string name="as_seguintes_palavras_chave">" as seguintes palavras-chave:"</string>
+    <string name="ou">" ou \"%1$s\""</string>
+    <string name="considerando_letras_mai_sculas_e_min_sculas">" considerando letras maiúsculas e minúsculas."</string>
+    <string name="independentemente_de_letras_mai_sculas_e_min_sculas">" independentemente de letras maiúsculas e minúsculas."</string>
 
 
 </resources>
