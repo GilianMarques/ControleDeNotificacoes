@@ -268,11 +268,12 @@ class AddOrUpdateRuleFragment : MyFragment() {
                 binding.llRuleTypeParent to "ll_field_parent",
                 binding.llWeekdaysParent to "ll_ignore_case",
                 binding.llTimerangeParent to "ll_keywords_parent",
+                binding.llConditionParent to "tv_summary",
             )
 
             findNavController().navigate(
                 AddOrUpdateRuleFragmentDirections.toAddOrUpdateCondition(
-                    null,
+                    viewModel.conditionFlow.value,
                     viewModel.ruleType.value == RuleType.RESTRICTIVE
                 ), transitionExtras
             )
@@ -412,7 +413,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
             binding.tvAddCondition.setStartDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.vec_edit_small)!!)
 
             with(binding) {
-                itemCondition.tvName.text = condition.description(
+                tvName.text = condition.description(
                     requireContext()
                 )
             }

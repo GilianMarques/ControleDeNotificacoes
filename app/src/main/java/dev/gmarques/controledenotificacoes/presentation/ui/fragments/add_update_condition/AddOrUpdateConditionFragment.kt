@@ -254,9 +254,6 @@ class AddOrUpdateConditionFragment : MyFragment() {
             }
         }
 
-        hint += if (viewModel.keywordsFlow.value.size == 1) getString(R.string.a_seguinte_palavra_chave)
-        else getString(R.string.as_seguintes_palavras_chave)
-
         if (viewModel.keywordsFlow.value.size > maxKeywords) viewModel.keywordsFlow.value.forEachIndexed { index, keyword ->
             if (index >= maxKeywords) return@forEachIndexed
             hint += if (index + 1 < maxKeywords) " \"$keyword\","

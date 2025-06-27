@@ -318,9 +318,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:animateLayoutChanges="true"
-                android:transitionName="ll_timerange_parent"
                 android:background="@drawable/back_container"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:transitionName="ll_timerange_parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -375,12 +375,14 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_condition_parent"
                 style="@style/containers_margins"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:animateLayoutChanges="true"
                 android:background="@drawable/back_container"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:transitionName="ll_condition_parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -429,14 +431,51 @@
                     android:layout_height="wrap_content"
                     android:animateLayoutChanges="true"
                     android:orientation="vertical"
+                    android:transitionName="ll_conteiner_conditions"
                     android:visibility="gone"
                     tools:visibility="visible">
 
-                    <include
-                        android:id="@+id/item_condition"
-                        layout="@layout/item_condition_small"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/parent"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/back_edittext"
+                        android:foreground="?selectableItemBackground"
+                        android:foregroundTint="?colorPrimary"
+                        android:padding="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+
+                        <androidx.appcompat.widget.AppCompatImageView
+
+                            android:id="@+id/iv_app_icon"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:padding="8dp"
+                            android:src="@drawable/vec_condition"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_name"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:padding="4dp"
+                            android:textAlignment="textStart"
+                            android:textSize="14sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/iv_app_icon"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Exceto se Titulo Contiver: Match1, Match2, Match3, Match4, Match5, Match6, Match7, Match8, Match9, Match10, Match11, Match12, Match13, Match14, Match15, Match16, Match17 - aaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhhaaaaaaaaaaaaaahhhhhhhhh!!!!" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </LinearLayout>
 
 

@@ -35,10 +35,7 @@ object ConditionExtensionFun {
                 NotificationField.BOTH -> context.getString(R.string.o_t_tulo_ou_o_conte_do_da_notificacao_contiverem)
             }
         )
-
-        if (keywords.size == 1) hintBuilder.append(context.getString(R.string.a_seguinte_palavra_chave))
-        else hintBuilder.append(context.getString(R.string.as_seguintes_palavras_chave))
-
+        
         if (keywords.size > maxKeywords) {
             keywords.take(maxKeywords).forEachIndexed { index, keyword ->
                 hintBuilder.append(
