@@ -52,7 +52,7 @@ class EchoStepOneFragment : MyFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        containerController = ContainerController(viewLifecycleOwner, binding.llConteinerApps)
+        containerController = ContainerController(viewLifecycleOwner, binding.llContainerApps)
         binding.tvIntroduction.text =
             getString(R.string.Configure_o_app_do_seu_smartwatch_para_emitir_notifica_es_apenas_de, getString(R.string.app_name))
         setupFabEcho()

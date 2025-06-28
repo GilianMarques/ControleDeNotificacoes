@@ -364,11 +364,10 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_conteiner_ranges"
+                    android:id="@+id/ll_container_ranges"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:animateLayoutChanges="true"
-
                     android:orientation="vertical">
 
                 </LinearLayout>
@@ -442,12 +441,13 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_conteiner_conditions"
+                    android:id="@+id/ll_container_conditions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:animateLayoutChanges="true"
                     android:orientation="vertical"
-                    android:transitionName="ll_conteiner_conditions"
+                    android:padding="6dp"
+                    android:transitionName="ll_container_conditions"
                     android:visibility="gone"
                     tools:visibility="visible">
 

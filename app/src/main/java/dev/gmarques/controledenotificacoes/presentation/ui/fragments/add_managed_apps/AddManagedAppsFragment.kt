@@ -70,7 +70,7 @@ class AddManagedAppsFragment() : MyFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupActionBar(binding.toolbar)
-        containerController = ContainerController(viewLifecycleOwner, binding.llConteinerApps, maxAppsViews)
+        containerController = ContainerController(viewLifecycleOwner, binding.llContainerApps, maxAppsViews)
 
         setupSelectAppsListener()
         setupSelectRuleListener()
@@ -174,7 +174,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
                 if (awaitUntilAppsAreLoadedOnUi) do {
                     delay(100)
-                } while (binding.llConteinerApps.childCount < min(maxAppsViews, preSelectedApps))
+                } while (binding.llContainerApps.childCount < min(maxAppsViews, preSelectedApps))
 
                 viewModel.addNewlySelectedApps(selectedApps)
             }

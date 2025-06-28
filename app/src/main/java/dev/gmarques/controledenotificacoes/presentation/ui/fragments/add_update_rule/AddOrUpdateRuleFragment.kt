@@ -353,7 +353,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
      */
     private fun manageTimeRangesViews(timeRanges: Map<String, TimeRange>) {
 
-        val parent = binding.llConteinerRanges
+        val parent = binding.llContainerRanges
         val sortedRanges = timeRanges.values.toList().sortedBy { it.startHour }
 
         /* remova o `toList()` e veja sua vida se transformar em um inferno! Brincadeiras a parte, deve-se criar
@@ -409,7 +409,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
         collectFlow(viewModel.conditionFlow) { condition ->
 
             if (condition == null) {
-                binding.llConteinerConditions.isGone = true
+                binding.llContainerConditions.isGone = true
                 binding.ivRemoveCondition.isGone = true
                 binding.tvAddCondition.text = getString(R.string.Adicionar)
                 binding.tvAddCondition.setStartDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.vec_add)!!)
@@ -417,7 +417,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
             }
 
             binding.ivRemoveCondition.isVisible = true
-            binding.llConteinerConditions.isVisible = true
+            binding.llContainerConditions.isVisible = true
             binding.tvAddCondition.text = getString(R.string.Editar)
             binding.tvAddCondition.setStartDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.vec_edit_small)!!)
 

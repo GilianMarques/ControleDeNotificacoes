@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
@@ -91,6 +91,14 @@ class AddOrUpdateConditionFragment : MyFragment() {
 
         edtKeywords.hint = getString(R.string.Separe_os_termos_com_x, Condition.SEPARATOR)
 
+        edtKeywords.setOnEditorActionListener { v, actionId, event ->
+
+            @SuppressLint("SetTextI18n") if (actionId == EditorInfo.IME_ACTION_DONE) edtKeywords.setText("${edtKeywords.text}${Condition.SEPARATOR}")
+
+            false
+        }
+
+
         edtKeywords.doOnTextChanged { text, _, _, _ ->
 
             if (text?.contains(Condition.SEPARATOR) == true) {
@@ -152,7 +160,16 @@ class AddOrUpdateConditionFragment : MyFragment() {
     private fun observeEvents() {
         collectFlow(viewModel.eventsFlow) { event ->
             when (event) {
-                is Event.Error -> showErrorSnackBar(event.msg, binding.fabAdd)
+                is Event.Error,
+                    -> showErrorSnackBar(event.msg, binding.fabAdd)
+
+                Event.NoFieldDefined -> showErrorSnackBar(getString(R.string.Selecione_um_campo_aplic_vel), binding.fabAdd)
+
+                Event.NoKeywordDefined -> showErrorSnackBar(
+                    getString(R.string.Defina_pelo_menos_uma_palavra_chave), binding.fabAdd
+                )
+
+                Event.NoTypeDefined -> showErrorSnackBar(getString(R.string.Selecione_um_tipo_de_condi_o), binding.fabAdd)
             }
         }
     }
@@ -176,106 +193,27 @@ class AddOrUpdateConditionFragment : MyFragment() {
     }
 
     private fun updateConditionType(type: ConditionType?) = with(binding) {
-
-        tvInfoConditionType.isVisible = true
-
         when (type) {
-            ConditionType.ONLY_IF -> {
-                mbtTypeCondition.check(R.id.btn_only_if)
-                tvInfoConditionType.text = getString(R.string.A_regra_ser_aplicada_apenas_se_a_condi_o_for_satisfeita)
-            }
-
-            ConditionType.EXCEPT -> {
-                mbtTypeCondition.check(R.id.btn_except_if)
-                tvInfoConditionType.text = getString(R.string.A_regra_NAO_ser_aplicada_se_a_condi_o_for_satisfeita)
-            }
-
-            null -> {
-
-                mbtTypeCondition.check(0)
-                tvInfoConditionType.isVisible = false
-            }
-
+            ConditionType.ONLY_IF -> mbtTypeCondition.check(R.id.btn_only_if)
+            ConditionType.EXCEPT -> mbtTypeCondition.check(R.id.btn_except_if)
+            null -> mbtTypeCondition.check(0)
         }
     }
 
     private fun updateNotificationField(field: NotificationField?) = with(binding) {
 
-        tvFieldInfo.isVisible = true
-
         when (field) {
-
-            NotificationField.TITLE -> {
-                mbtField.check(R.id.btn_title)
-                tvFieldInfo.text = getString(R.string.Buscar_palavras_chave_apenas_no_t_tulo_da_notifica_o)
-            }
-
-            NotificationField.CONTENT -> {
-                mbtField.check(R.id.btn_content)
-                tvFieldInfo.text = getString(R.string.Buscar_palavras_chave_apenas_no_conte_do_da_notifica_o)
-            }
-
-            NotificationField.BOTH -> {
-                mbtField.check(R.id.btn_both)
-                tvFieldInfo.text = getString(R.string.Buscar_palavras_chave_no_t_tulo_e_conte_do_da_notifica_o)
-            }
-
-            null -> {
-                mbtField.check(0)
-                tvFieldInfo.isVisible = false
-            }
+            NotificationField.TITLE -> mbtField.check(R.id.btn_title)
+            NotificationField.CONTENT -> mbtField.check(R.id.btn_content)
+            NotificationField.BOTH -> mbtField.check(R.id.btn_both)
+            null -> mbtField.check(0)
         }
     }
 
     @SuppressLint("SetTextI18n")
     private fun updateConditionBehaviourHint() {
-// TODO: passar pro viewmodel
-        val maxKeywords = 3
-        var hint = ""
-
-        hint += if (ruleTypeRestrictive) getString(R.string.Bloquear_notifica_es) else getString(R.string.Permitir_notifica_es)
-
-        hint += when (viewModel.conditionTypeFlow.value) {
-            ConditionType.ONLY_IF -> getString(R.string.apenas_se)
-            ConditionType.EXCEPT -> getString(R.string.exceto_se)
-            null -> {
-                binding.tvSummary.text = "$hint..."
-                return
-            }
-        }
-
-        hint += when (viewModel.fieldFlow.value) {
-            NotificationField.TITLE -> getString(R.string.o_t_tulo_contiver)
-            NotificationField.CONTENT -> getString(R.string.o_conte_do_contiver)
-            NotificationField.BOTH -> getString(R.string.o_t_tulo_ou_o_conte_do_contiverem)
-            null -> {
-                binding.tvSummary.text = "$hint..."
-                return
-            }
-        }
-
-        if (viewModel.keywordsFlow.value.size > maxKeywords) viewModel.keywordsFlow.value.forEachIndexed { index, keyword ->
-            if (index >= maxKeywords) return@forEachIndexed
-            hint += if (index + 1 < maxKeywords) " \"$keyword\","
-            else " \"${keyword}\"..."
-        } else {
-
-            val maxKeywords = viewModel.keywordsFlow.value.size
-            viewModel.keywordsFlow.value.forEachIndexed { index, keyword ->
-                hint += if (index + 2 < maxKeywords) " \"$keyword\","
-                else if (index + 1 < maxKeywords) " \"$keyword\""
-                else if (maxKeywords > 1) getString(R.string.ou, keyword)
-                else " \"$keyword\""
-            }
-        }
-
-        hint += if (viewModel.keywordsFlow.value.isNotEmpty()) "," else " (*)"
-
-        hint += if (viewModel.caseSensitiveFlow.value == true) getString(R.string.considerando_letras_mai_sculas_e_min_sculas)
-        else getString(R.string.independentemente_de_letras_mai_sculas_e_min_sculas)
-
+        val hint = viewModel.buildConditionBehaviourHint(ruleTypeRestrictive)
         binding.tvSummary.text = hint
-
     }
 
 

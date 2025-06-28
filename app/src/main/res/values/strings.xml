@@ -192,7 +192,7 @@
     <string name="Feedback_do_app">Feedback do App</string>
     <string name="Nenhum_app_de_e_mail_encontrado">Nenhum app de e-mail encontrado</string>
     <string name="como_adicionar_o_primeiro_app">
-    Como adicionar o primeiro app:\n\n1. Crie uma regra:\nRegras determinam os dias e horários em que um app pode ou não emitir notificações.\n\n2. Aplique a regra a um ou mais apps:\nVocê pode, por exemplo, criar uma regra para os seus apps pessoais e outra para apps de trabalho. Também é possível definir uma regra individual para cada aplicativo. A escolha é toda sua!
+    Como adicionar o primeiro app:\n\n1. Crie uma regra:\nRegras determinam os dias e horários em que um app pode ou não emitir notificações.\n\n2. Aplique a regra a um ou mais apps:\nVocê pode, por exemplo, criar uma regra para os seus apps pessoais e outra para apps de trabalho. Também é possível definir uma regra individual para cada aplicativo.
 </string>
     <string name="Erro">Erro</string>
     <string name="Nao_foi_poss_vel_abrir_a_tela_de_configuracoes">Não foi possível abrir a tela de configurações. Desative as restrições de bateria para o app nas configurações do seu dispositivo.</string>
@@ -278,12 +278,15 @@
     <string name="a_seguinte_palavra_chave">" a seguinte palavra-chave:"</string>
     <string name="as_palavras_chave_selecionadas">" as palavras-chave selecionadas"</string>
     <string name="ou">" ou \"%1$s\""</string>
-    <string name="considerando_letras_mai_sculas_e_min_sculas">" considerando letras maiúsculas e minúsculas."</string>
-    <string name="independentemente_de_letras_mai_sculas_e_min_sculas">" independentemente de letras maiúsculas e minúsculas."</string>
+    <string name="considerando_letras_mai_sculas_e_min_sculas">" considerando maiúsculas e minúsculas."</string>
+    <string name="independentemente_de_letras_mai_sculas_e_min_sculas">" ignorando letras maiúsculas e minúsculas."</string>
     <string name="Adicionar_condicao">Adicionar Condição</string>
     <string name="Editar_condicao">Editar Condição</string>
     <string name="Editar">Editar</string>
     <string name="Campo_aplicavel">Campo aplicável</string>
+    <string name="Selecione_um_tipo_de_condi_o">Selecione um tipo de condição</string>
+    <string name="Defina_pelo_menos_uma_palavra_chave">Defina pelo menos uma palavra chave</string>
+    <string name="Selecione_um_campo_aplic_vel">Selecione um campo aplicável</string>
 
 
 </resources>

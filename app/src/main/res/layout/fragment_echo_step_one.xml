@@ -76,7 +76,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_introduction_2">
 
         <LinearLayout
-            android:id="@+id/ll_conteiner_apps"
+            android:id="@+id/ll_container_apps"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"

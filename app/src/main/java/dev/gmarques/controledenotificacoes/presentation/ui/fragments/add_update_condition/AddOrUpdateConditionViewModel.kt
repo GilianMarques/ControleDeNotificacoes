@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_condition
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -128,9 +127,20 @@ class AddOrUpdateConditionViewModel @Inject constructor(@ApplicationContext val 
 
     fun validateCondition() {
 
-        val values = listOf(_keywordsFlow, _conditionTypeFlow, _fieldFlow, _caseSensitiveFlow).filter { it.value == null }
-        if (values.isNotEmpty()) return
 
+        if (_conditionTypeFlow.value == null) {
+            _eventsChannel.trySend(Event.NoTypeDefined)
+            return
+        }
+
+        if (_fieldFlow.value == null) {
+            _eventsChannel.trySend(Event.NoFieldDefined)
+            return
+        }
+        if (_keywordsFlow.value.isEmpty()) {
+            _eventsChannel.trySend(Event.NoKeywordDefined)
+            return
+        }
 
         val condition = Condition(
             _conditionTypeFlow.value!!,
@@ -139,17 +149,59 @@ class AddOrUpdateConditionViewModel @Inject constructor(@ApplicationContext val 
             _caseSensitiveFlow.value
         )
 
-        try {
-            ConditionValidator.validate(condition)
-        } catch (ex: Exception) {
-            Log.e("USUK", "AddOrUpdateConditionViewModel.validateAndSaveCondition: $ex")
-            _eventsChannel.trySend(Event.Error(context.getString(R.string.Verifique_os_campos)))
-            return
-        }
-
         _conditionDone.tryEmit(condition)
 
     }
+
+    fun buildConditionBehaviourHint(ruleTypeRestrictive: Boolean): String {
+        val maxKeywords = 3
+        var hint = ""
+
+        hint += if (ruleTypeRestrictive) context.getString(R.string.Bloquear_notifica_es)
+        else context.getString(R.string.Permitir_notifica_es)
+
+        hint += when (conditionTypeFlow.value) {
+            ConditionType.ONLY_IF -> context.getString(R.string.apenas_se)
+            ConditionType.EXCEPT -> context.getString(R.string.exceto_se)
+            null -> return "$hint..."
+        }
+
+        hint += when (fieldFlow.value) {
+            NotificationField.TITLE -> context.getString(R.string.o_t_tulo_contiver)
+            NotificationField.CONTENT -> context.getString(R.string.o_conte_do_contiver)
+            NotificationField.BOTH -> context.getString(R.string.o_t_tulo_ou_o_conte_do_contiverem)
+            null -> return "$hint..."
+        }
+
+        val keywords = keywordsFlow.value
+        if (keywords.size > maxKeywords) {
+            keywords.forEachIndexed { index, keyword ->
+                if (index >= maxKeywords) return@forEachIndexed
+                hint += if (index + 1 < maxKeywords) " \"$keyword\","
+                else " \"$keyword\"..."
+            }
+        } else {
+            val total = keywords.size
+            keywords.forEachIndexed { index, keyword ->
+                hint += when {
+                    index + 2 < total -> " \"$keyword\","
+                    index + 1 < total -> " \"$keyword\""
+                    total > 1 -> context.getString(R.string.ou, keyword)
+                    else -> " \"$keyword\""
+                }
+            }
+        }
+
+        hint += if (keywords.isNotEmpty()) "," else " (*)"
+
+        hint += if (caseSensitiveFlow.value == true)
+            context.getString(R.string.considerando_letras_mai_sculas_e_min_sculas)
+        else
+            context.getString(R.string.independentemente_de_letras_mai_sculas_e_min_sculas)
+
+        return hint
+    }
+
 
 }
 
@@ -162,4 +214,7 @@ class AddOrUpdateConditionViewModel @Inject constructor(@ApplicationContext val 
  */
 sealed class Event {
     data class Error(val msg: String) : Event()
+    object NoTypeDefined : Event()
+    object NoFieldDefined : Event()
+    object NoKeywordDefined : Event()
 }
