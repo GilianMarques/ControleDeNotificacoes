@@ -35,7 +35,7 @@ object ConditionExtensionFun {
                 NotificationField.BOTH -> context.getString(R.string.o_t_tulo_ou_o_conte_do_da_notificacao_contiverem)
             }
         )
-        
+
         if (keywords.size > maxKeywords) {
             keywords.take(maxKeywords).forEachIndexed { index, keyword ->
                 hintBuilder.append(
@@ -68,5 +68,35 @@ object ConditionExtensionFun {
         return hintBuilder.toString().trim()
     }
 
+    /**
+     * Verifica se uma [AppNotification] satisfaz uma [Condition].
+     *
+     * A satisfação ocorre se o campo especificado na condição ([Condition.field])
+     * da notificação contiver alguma das palavras-chave ([Condition.keywords]).
+     * A verificação pode ser sensível a maiúsculas e minúsculas ([Condition.caseSensitive]).
+     *
+     * @param notification A notificação a ser verificada.
+     * @return `true` se a notificação satisfizer a condição, `false` caso contrário.
+     *
+     * Criado por Gilian Marques
+     * Em 29/06/2025 as 14:04
+     */
+    fun Condition.isSatisfiedBy(notification: AppNotification): Boolean {
 
+        val textToCheck = when (field) {
+            NotificationField.TITLE -> notification.title
+            NotificationField.CONTENT -> notification.content
+            NotificationField.BOTH -> "${notification.title} ${notification.content}"
+        }
+
+        val normalizedNotificationText = if (caseSensitive) textToCheck else textToCheck.lowercase()
+
+        val keywords = if (caseSensitive) keywords
+        else keywords.map { it.lowercase() }
+
+        return keywords.any { keyword ->
+            normalizedNotificationText.contains(keyword)
+        }
+
+    }
 }

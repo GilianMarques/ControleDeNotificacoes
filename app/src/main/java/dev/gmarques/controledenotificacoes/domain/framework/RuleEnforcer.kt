@@ -19,7 +19,7 @@ interface RuleEnforcer {
         callback: Callback,
     )
 
-    suspend fun saveLargeIcon(sbn: StatusBarNotification)
+    suspend fun saveLargeIcon(sbn: StatusBarNotification, notification: AppNotification)
     suspend fun saveNotificationOnHistory(sbn: StatusBarNotification, notification: AppNotification)
 
     interface Callback {

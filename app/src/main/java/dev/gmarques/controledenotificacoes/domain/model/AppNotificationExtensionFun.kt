@@ -1,5 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.model
 
+import android.app.Notification
+import android.service.notification.StatusBarNotification
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -50,5 +52,38 @@ object AppNotificationExtensionFun {
                 ".png"
 
     }
+
+    /**
+     * Cria uma [AppNotification] a partir de uma [StatusBarNotification].
+     *
+     * Esta função deve ser chamada em [AppNotification] passando uma [StatusBarNotification] como argumento.
+     * Ela extrai corretamente múltiplas mensagens (usando EXTRA_TEXT_LINES quando existir).
+     *
+     * @param sbn A notificação do sistema (StatusBarNotification) a ser convertida.
+     * @return Uma instância de [AppNotification] com os dados extraídos.
+     */
+    fun createFromStatusBarNotification(sbn: StatusBarNotification): AppNotification {
+
+        val extras = sbn.notification.extras
+
+        val title = extras.getString(Notification.EXTRA_TITLE).orEmpty()
+        val content: String
+
+        val textLines = extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)
+        content = if (!textLines.isNullOrEmpty()) {
+            textLines.joinToString(separator = "\n") { it.toString() }
+        } else {
+            extras.getString(Notification.EXTRA_TEXT).orEmpty()
+        }
+
+        return AppNotification(
+            packageId = sbn.packageName,
+            title = title,
+            content = content,
+            timestamp = sbn.postTime
+        )
+    }
+
+
 
 }

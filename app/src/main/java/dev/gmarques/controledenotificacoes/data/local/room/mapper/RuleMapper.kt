@@ -69,8 +69,8 @@ object RuleMapper {
         return weekDayAdapter.toJson(days)
     }
 
-    private fun conditionToString(condition: Condition?): String {
-        return if (condition == null) "" else conditionAdapter.toJson(condition)
+    private fun conditionToString(condition: Condition?): String? {
+        return if (condition == null) null else conditionAdapter.toJson(condition)
     }
 
     /**

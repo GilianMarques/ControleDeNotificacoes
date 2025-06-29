@@ -187,7 +187,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      */
     private fun crashIfCallbackNotCalled() {
         validationCallbackErrorJob = CoroutineScope(Main).launch {
-            delay(1000)
+            delay(3000)
             error("O callback de validação passado para o RuleEnforcer não foi chamado.")
         }
     }

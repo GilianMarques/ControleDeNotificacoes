@@ -29,6 +29,7 @@ class RuleMapperTest {
             name = "Regra Teste",
             ruleType = RuleType.PERMISSIVE,
             days = listOf(WeekDay.MONDAY, WeekDay.FRIDAY),
+            condition = null,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
         )
 
@@ -51,6 +52,7 @@ class RuleMapperTest {
             name = "Entidade Teste",
             ruleType = RuleType.RESTRICTIVE,
             days = weekDayAdapter.toJson(listOf(WeekDay.TUESDAY, WeekDay.THURSDAY)),
+            condition = null,
             timeRanges = timeRangeAdapter.toJson(listOf(range))
         )
 

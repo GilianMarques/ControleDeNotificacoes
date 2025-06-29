@@ -126,6 +126,7 @@ class RuleValidatorTest {
         val rule = Rule(
             name = "a".repeat(RuleValidator.MAX_NAME_LENGTH + 1),
             days = listOf(WeekDay.MONDAY),
+            condition = null,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
         )
         RuleValidator.validate(rule)
@@ -136,6 +137,7 @@ class RuleValidatorTest {
         val rule = Rule(
             name = "Regra",
             days = emptyList(),
+            condition = null,
             timeRanges = listOf(TimeRange(8, 0, 12, 0))
         )
         RuleValidator.validate(rule)
@@ -146,6 +148,7 @@ class RuleValidatorTest {
         val rule = Rule(
             name = "Regra",
             days = listOf(WeekDay.MONDAY),
+            condition = null,
             timeRanges = listOf(
                 TimeRange(8, 0, 12, 0),
                 TimeRange(8, 0, 12, 0)
@@ -159,6 +162,7 @@ class RuleValidatorTest {
         val rule = Rule(
             name = "Regra",
             days = listOf(WeekDay.MONDAY),
+            condition = null,
             timeRanges = listOf(
                 TimeRange(8, 0, 12, 0),
                 TimeRange(11, 0, 13, 0)

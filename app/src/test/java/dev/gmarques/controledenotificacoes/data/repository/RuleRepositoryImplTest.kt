@@ -27,7 +27,7 @@ class RuleRepositoryImplTest {
 
     @Test
     fun `addRule deve chamar insertRule no dao`() = runBlocking {
-        val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)))
+        val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)), null)
 
         repository.addRuleOrThrow(rule)
 
@@ -37,9 +37,9 @@ class RuleRepositoryImplTest {
     @Test
     fun `addRuleOrThrow deve lancar excecao ao passar um regra invalida`() = runBlocking {
         val rules = listOf(
-            Rule("1", "Teste1", listOf(), listOf(TimeRange(8, 0, 12, 0))),
-            Rule("1", "Teste2", listOf(WeekDay.TUESDAY), listOf(TimeRange(8, 0, 8, 0))),
-            Rule("", "Teste3", listOf(WeekDay.TUESDAY), listOf(TimeRange(8, 0, 9, 0))),
+            Rule("1", "Teste1", listOf(), listOf(TimeRange(8, 0, 12, 0)), null),
+            Rule("1", "Teste2", listOf(WeekDay.TUESDAY), listOf(TimeRange(8, 0, 8, 0)), null),
+            Rule("", "Teste3", listOf(WeekDay.TUESDAY), listOf(TimeRange(8, 0, 9, 0)), null),
         )
 
         rules.forEach { rule ->
@@ -56,9 +56,9 @@ class RuleRepositoryImplTest {
     @Test
     fun `updateRuleOrThrow deve lancar excecao ao passar um regra invalida`() = runBlocking {
         val rules = listOf(
-            Rule("1", "Teste1", listOf(), listOf(TimeRange(8, 0, 12, 0))),
-            Rule("1", "Teste2", listOf(WeekDay.TUESDAY), listOf(TimeRange(8, 0, 8, 0))),
-            Rule("", "Teste3", listOf(WeekDay.TUESDAY), listOf(TimeRange(8, 0, 9, 0))),
+            Rule("1", "Teste1", listOf(), listOf(TimeRange(8, 0, 12, 0)), null),
+            Rule("1", "Teste2", listOf(WeekDay.TUESDAY), listOf(TimeRange(8, 0, 8, 0)), null),
+            Rule("", "Teste3", listOf(WeekDay.TUESDAY), listOf(TimeRange(8, 0, 9, 0)), null),
         )
 
         rules.forEach { rule ->
@@ -74,7 +74,7 @@ class RuleRepositoryImplTest {
 
     @Test
     fun `updateRule deve chamar updateRule no dao`() = runBlocking {
-        val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)))
+        val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)), null)
 
         repository.updateRuleOrThrow(rule)
 
@@ -83,7 +83,7 @@ class RuleRepositoryImplTest {
 
     @Test
     fun `removeRule deve chamar deleteRule no dao`() = runBlocking {
-        val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)))
+        val rule = Rule("1", "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)), null)
 
         repository.deleteRule(rule)
 
@@ -93,7 +93,8 @@ class RuleRepositoryImplTest {
     @Test
     fun `getRuleById deve retornar regra convertida`() = runBlocking {
         val ruleId = "1"
-        val ruleEntity = RuleMapper.mapToEntity(Rule(ruleId, "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0))))
+        val ruleEntity =
+            RuleMapper.mapToEntity(Rule(ruleId, "Teste", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)), null))
         `when`(ruleDao.getRuleById(ruleId)).thenReturn(ruleEntity)
 
         val result = repository.getRuleById(ruleId)
@@ -105,8 +106,8 @@ class RuleRepositoryImplTest {
     @Test
     fun `getAllRules deve retornar lista de regras convertidas`() = runBlocking {
         val ruleEntityList = listOf(
-            RuleMapper.mapToEntity(Rule("1", "Teste 1", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)))),
-            RuleMapper.mapToEntity(Rule("2", "Teste 2", listOf(WeekDay.TUESDAY), listOf(TimeRange(10, 0, 14, 0))))
+            RuleMapper.mapToEntity(Rule("1", "Teste 1", listOf(WeekDay.MONDAY), listOf(TimeRange(8, 0, 12, 0)), null)),
+            RuleMapper.mapToEntity(Rule("2", "Teste 2", listOf(WeekDay.TUESDAY), listOf(TimeRange(10, 0, 14, 0)), null))
         )
         `when`(ruleDao.getAllRules()).thenReturn(ruleEntityList)
 

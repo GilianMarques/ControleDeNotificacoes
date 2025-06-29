@@ -1,6 +1,5 @@
 package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
-import android.app.Notification
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -9,12 +8,16 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
+import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
+import dev.gmarques.controledenotificacoes.domain.model.ConditionExtensionFun.isSatisfiedBy
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
+import dev.gmarques.controledenotificacoes.domain.model.enums.ConditionType
+import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.GetManagedAppByPackageIdUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GetRuleByIdUseCase
@@ -40,41 +43,68 @@ class RuleEnforcerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : RuleEnforcer, CoroutineScope by CoroutineScope(IO) {
 
-    private lateinit var notification: AppNotification
+    private lateinit var callback: RuleEnforcer.Callback
 
-    override suspend fun enforceOnNotification(
-        sbn: StatusBarNotification,
-        callback: RuleEnforcer.Callback,
-    ) = withContext(IO) {
+    override suspend fun enforceOnNotification(sbn: StatusBarNotification, callback: RuleEnforcer.Callback) = withContext(IO) {
 
-        val title = sbn.notification.extras.getString(Notification.EXTRA_TITLE).orEmpty()
-        val content = sbn.notification.extras.getString(Notification.EXTRA_TEXT).orEmpty()
+        this@RuleEnforcerImpl.callback = callback
 
-        notification = AppNotification(sbn.packageName, title, content, sbn.postTime)
+        val notification = AppNotificationExtensionFun.createFromStatusBarNotification(sbn)
 
         val managedApp = getManagedAppByPackageIdUseCase(notification.packageId)
 
-        if (managedApp == null) {
-            callback.appNotManaged()
-            return@withContext
+        if (managedApp != null) {
+            val rule = getRuleByIdUseCase(managedApp.ruleId)
+                ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
+
+            enforceRuleAndCondition(rule, managedApp, sbn, notification)
+
+        } else callback.appNotManaged()
+
+    }
+
+    private fun enforceRuleAndCondition(
+        rule: Rule,
+        managedApp: ManagedApp,
+        sbn: StatusBarNotification,
+        notification: AppNotification,
+    ) {
+
+        val condition = rule.condition
+        val appInBlockPeriod = rule.isAppInBlockPeriod()
+
+        val cancelNotification = { saveAndCancelNotification(rule, managedApp, sbn, notification) }
+        val allowNotification = { callback.allowNotification() }
+
+        if (condition == null) {
+            if (appInBlockPeriod) cancelNotification()
+            else callback.allowNotification()
+            return
         }
 
-        val rule = getRuleByIdUseCase(managedApp.ruleId)
-            ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
+        val conditionSatisfied = condition.isSatisfiedBy(notification)
 
-        rule.condition
-        rule.isAppInBlockPeriod()
+        if (rule.ruleType == RuleType.RESTRICTIVE && appInBlockPeriod) {
+            when (condition.type) {
+                ConditionType.ONLY_IF -> if (conditionSatisfied) cancelNotification() else allowNotification()
+                ConditionType.EXCEPT -> if (conditionSatisfied) allowNotification() else cancelNotification()
+            }
+        }
 
-        if (rule.isAppInBlockPeriod()) saveAndCancelNotification(callback, rule, managedApp, sbn)
-        else callback.allowNotification()
+        if (rule.ruleType == RuleType.PERMISSIVE && !appInBlockPeriod) {
+            when (condition.type) {
+                ConditionType.ONLY_IF -> if (conditionSatisfied) allowNotification() else cancelNotification()
+                ConditionType.EXCEPT -> if (conditionSatisfied) cancelNotification() else allowNotification()
+            }
+        }
 
     }
 
     private fun saveAndCancelNotification(
-        callback: RuleEnforcer.Callback,
         rule: Rule,
         managedApp: ManagedApp,
         sbn: StatusBarNotification,
+        notification: AppNotification,
     ) {
         callback.cancelNotification(notification, rule, managedApp)
         launch {
@@ -92,14 +122,13 @@ class RuleEnforcerImpl @Inject constructor(
 
         sbn.notification.contentIntent?.let {
             PendingIntentCache.add(
-                notification.pendingIntentId(),
-                sbn.notification.contentIntent
+                notification.pendingIntentId(), sbn.notification.contentIntent
             )
         }
-        saveLargeIcon(sbn)
+        saveLargeIcon(sbn, notification)
     }
 
-    override suspend fun saveLargeIcon(sbn: StatusBarNotification) = withContext(IO) {
+    override suspend fun saveLargeIcon(sbn: StatusBarNotification, notification: AppNotification) = withContext(IO) {
 
         try {
             val icon = sbn.notification.getLargeIcon() ?: return@withContext
