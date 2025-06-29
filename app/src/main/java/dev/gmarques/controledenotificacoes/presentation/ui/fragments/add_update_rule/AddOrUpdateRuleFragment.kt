@@ -251,7 +251,6 @@ class AddOrUpdateRuleFragment : MyFragment() {
         })
     }
 
-
     private fun setupBtnRemoveCondition() = with(binding) {
         ivRemoveCondition.setOnClickListener(AnimatedClickListener {
             viewModel.removeCondition()

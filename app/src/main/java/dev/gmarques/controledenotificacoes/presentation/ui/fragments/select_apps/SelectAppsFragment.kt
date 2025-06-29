@@ -72,7 +72,7 @@ class SelectAppsFragment : MyFragment() {
         setupFabConclude()
         showHintDialog(
             PreferencesImpl.showHintSelectFirstApp,
-            "Cuidado! Alguns apps de despertador, podem não despertar se você bloquear as notificações deles. Apps de mídia como o Youtube Music também não reproduzem se tiverem suas notificações restringidas.\n\nAo bloquear as notificações de apps importantes para você, certifique-se de testar se eles não vão deixar de funcionar corretamente."
+            getString(R.string.Cuidado_alguns_apps_de_despertador_podem_n_o_despertar_se_voc_bloquear_as_notifica_es_deles)
         )
 
     }

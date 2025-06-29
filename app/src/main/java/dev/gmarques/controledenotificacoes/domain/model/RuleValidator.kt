@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes.domain.model
 import TimeRangeValidator
 import dev.gmarques.controledenotificacoes.domain.OperationResult
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.BlankIdException
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.ConditionValidationException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.NameOutOfRangeException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateDays
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.validateId
@@ -48,7 +49,10 @@ object RuleValidator {
 
         validateId(rule.id).getOrThrow()
 
+        validateCondition(rule.condition)
+
     }
+
 
     /**
      * Valida uma string de nome fornecida de acordo com as seguintes regras:
@@ -105,6 +109,10 @@ object RuleValidator {
         } else OperationResult.success(days)
     }
 
+    private fun validateTimeRanges(ranges: List<TimeRange>): OperationResult<TimeRangeValidator.TimeRangeValidatorException, List<TimeRange>> {
+        return TimeRangeValidator.validateTimeRanges(ranges)
+    }
+
     /**
      * Valida o ID fornecido, verificando se ele está vazio.
      *
@@ -125,8 +133,17 @@ object RuleValidator {
         return OperationResult.success(id)
     }
 
-    private fun validateTimeRanges(ranges: List<TimeRange>): OperationResult<TimeRangeValidator.TimeRangeValidatorException, List<TimeRange>> {
-        return TimeRangeValidator.validateTimeRanges(ranges)
+    private fun validateCondition(condition: Condition?): OperationResult<RuleValidatorException, Condition?> {
+
+        if (condition == null) return OperationResult.success(condition)
+
+        try {
+            ConditionValidator.validate(condition)
+            return OperationResult.success(condition)
+        } catch (ex: ConditionValidationException) {
+            return OperationResult.failure(ConditionValidationException(ex))
+        }
+
     }
 
     /**
@@ -168,8 +185,15 @@ object RuleValidator {
          *
          * Serve para encapsular as exceções retornadas pelo [TimeRangeValidator.TimeRangeValidatorException]
          */
-        class EncapsulatedTimeRangeException(val exception: TimeRangeValidator.TimeRangeValidatorException) :
+        class TimeRangeValidationException(val exception: TimeRangeValidator.TimeRangeValidatorException) :
             RuleValidatorException("O seguinte erro foi lançado durante a validação de timeranges: ${exception.message} ")
+
+        /**
+         * Criado por Gilian Marques
+         * Em 29/06/2025 as 10:47
+         * */
+        class ConditionValidationException(val exception: ConditionValidationException) :
+            RuleValidatorException("Erro durante a validação da condição: ${exception.message}")
 
     }
 }

@@ -53,6 +53,7 @@ class HomeViewModel @Inject constructor(
         Rule(
             name = context.getString(R.string.Regra_nao_encontrada),
             days = listOf(WeekDay.SUNDAY),
+            condition = null,
             timeRanges = listOf(TimeRange(1, 2, 3, 4))
         )
     }

@@ -11,6 +11,8 @@ import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.pendingIntentId
+import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
+import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.isAppInBlockPeriod
 import dev.gmarques.controledenotificacoes.domain.model.RuleExtensionFun.nextAppUnlockPeriodFromNow
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
@@ -60,15 +62,26 @@ class RuleEnforcerImpl @Inject constructor(
         val rule = getRuleByIdUseCase(managedApp.ruleId)
             ?: error("Um app gerenciado deve ter uma regra. Isso é um Bug $managedApp")
 
-        if (rule.isAppInBlockPeriod()) {
-            callback.cancelNotification(notification, rule, managedApp)
-            launch {
-                scheduleManager.scheduleAlarm(notification.packageId, rule.nextAppUnlockPeriodFromNow())
-                updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true))
-                saveNotificationOnHistory(sbn, notification)
-            }
-        } else callback.allowNotification()
+        rule.condition
+        rule.isAppInBlockPeriod()
 
+        if (rule.isAppInBlockPeriod()) saveAndCancelNotification(callback, rule, managedApp, sbn)
+        else callback.allowNotification()
+
+    }
+
+    private fun saveAndCancelNotification(
+        callback: RuleEnforcer.Callback,
+        rule: Rule,
+        managedApp: ManagedApp,
+        sbn: StatusBarNotification,
+    ) {
+        callback.cancelNotification(notification, rule, managedApp)
+        launch {
+            scheduleManager.scheduleAlarm(notification.packageId, rule.nextAppUnlockPeriodFromNow())
+            updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true))
+            saveNotificationOnHistory(sbn, notification)
+        }
     }
 
     override suspend fun saveNotificationOnHistory(sbn: StatusBarNotification, notification: AppNotification) {

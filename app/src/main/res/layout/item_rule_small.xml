@@ -59,7 +59,7 @@
             android:backgroundTint="?colorSecondaryContainer"
             android:contentDescription="@string/Bot_o_para_trocar_a_regra_selecionada"
             android:padding="6dp"
-            android:src="@drawable/vec_change_rule"
+            android:src="@drawable/vec_edit"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

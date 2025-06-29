@@ -23,8 +23,8 @@ import dev.gmarques.controledenotificacoes.domain.model.RuleValidator
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.BlankIdException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.DaysOutOfRangeException
-import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.EncapsulatedTimeRangeException
 import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.NameOutOfRangeException
+import dev.gmarques.controledenotificacoes.domain.model.RuleValidator.RuleValidatorException.TimeRangeValidationException
 import dev.gmarques.controledenotificacoes.domain.model.TimeRange
 import dev.gmarques.controledenotificacoes.domain.model.enums.RuleType
 import dev.gmarques.controledenotificacoes.domain.model.enums.WeekDay
@@ -53,20 +53,20 @@ class AddOrUpdateRuleViewModel @Inject constructor(
 
     private var editingRule: Rule? = null
 
-    private val _ruleType = MutableStateFlow(RuleType.RESTRICTIVE)
-    val ruleType: StateFlow<RuleType> = _ruleType
+    private val _ruleTypeFlow = MutableStateFlow(RuleType.RESTRICTIVE)
+    val ruleType: StateFlow<RuleType> = _ruleTypeFlow
 
-    private val _ruleName = MutableStateFlow("")
-    val ruleName: StateFlow<String> = _ruleName
+    private val _ruleNameFlow = MutableStateFlow("")
+    val ruleName: StateFlow<String> = _ruleNameFlow
 
-    private val _selectedDays = MutableStateFlow<List<WeekDay>>(emptyList())
-    val selectedDays: StateFlow<List<WeekDay>> = _selectedDays
+    private val _selectedDaysFlow = MutableStateFlow<List<WeekDay>>(emptyList())
+    val selectedDays: StateFlow<List<WeekDay>> = _selectedDaysFlow
 
     private val _conditionFlow = MutableStateFlow<Condition?>(null)
     val conditionFlow: StateFlow<Condition?> = _conditionFlow
 
-    private val _timeRanges = MutableStateFlow(LinkedHashMap<String, TimeRange>())
-    val timeRanges: StateFlow<LinkedHashMap<String, TimeRange>> = _timeRanges
+    private val _timeRangesFlow = MutableStateFlow(LinkedHashMap<String, TimeRange>())
+    val timeRanges: StateFlow<LinkedHashMap<String, TimeRange>> = _timeRangesFlow
 
     private val _eventsChannel = Channel<Event>(Channel.BUFFERED)
     val eventsFlow: Flow<Event> get() = _eventsChannel.receiveAsFlow()
@@ -77,7 +77,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @param type O novo [RuleType] a ser definido.
      */
     fun updateRuleType(type: RuleType) {
-        _ruleType.tryEmit(type)
+        _ruleTypeFlow.tryEmit(type)
     }
 
     /**
@@ -88,7 +88,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     private fun addTimeRange(range: TimeRange) {
         val ranges = LinkedHashMap(timeRanges.value)
         ranges[range.id] = range
-        _timeRanges.tryEmit(ranges)
+        _timeRangesFlow.tryEmit(ranges)
     }
 
     /**
@@ -101,7 +101,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
     fun deleteTimeRange(range: TimeRange) {
         val ranges = LinkedHashMap(timeRanges.value)
         ranges.remove(range.id)
-        _timeRanges.tryEmit(ranges)
+        _timeRangesFlow.tryEmit(ranges)
     }
 
     /**
@@ -111,7 +111,18 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @throws IllegalArgumentException Se a lista `days` for nula.
      */
     fun updateSelectedDays(days: List<WeekDay>) {
-        _selectedDays.tryEmit(days)
+        _selectedDaysFlow.tryEmit(days)
+    }
+
+    /**
+     * Atualiza a condição atual da regra.
+     *
+     * Emite a nova condição (que pode ser nula) para o `_conditionFlow`,
+     * notificando quaisquer observadores sobre a mudança.
+     * @param condition A [Condition] a ser definida, ou `null`
+     */
+    private fun updateCondition(condition: Condition?) {
+        _conditionFlow.tryEmit(condition)
     }
 
     /**
@@ -124,7 +135,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @see ruleName
      */
     private fun updateRuleName(name: String) {
-        _ruleName.tryEmit(name)
+        _ruleNameFlow.tryEmit(name)
     }
 
     /**
@@ -136,7 +147,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      * @return `true` se o usuário pode adicionar mais intervalos, `false` caso contrário.
      */
     fun canAddMoreRanges(): Boolean {
-        return _timeRanges.value.size < MAX_RANGES
+        return _timeRangesFlow.value.size < MAX_RANGES
     }
 
     /**
@@ -148,7 +159,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      */
     fun validateRangesWithSequenceAndAdd(range: TimeRange): OperationResult<TimeRangeValidator.TimeRangeValidatorException, List<TimeRange>> {
 
-        val ranges = _timeRanges.value.values + range
+        val ranges = _timeRangesFlow.value.values + range
         val result = TimeRangeValidator.validateTimeRanges(ranges)
 
         if (result.isSuccess) addTimeRange(range)
@@ -199,6 +210,7 @@ class AddOrUpdateRuleViewModel @Inject constructor(
         updateRuleName(rule.name)
         updateRuleType(rule.ruleType)
         updateSelectedDays(rule.days)
+        updateCondition(rule.condition)
         viewModelScope.launch {
             rule.timeRanges.forEach {
                 addTimeRange(it)
@@ -221,17 +233,22 @@ class AddOrUpdateRuleViewModel @Inject constructor(
      */
     fun validateAndSaveRule() {
 
-        val ruleName = _ruleName.value
-        val selectedDays = _selectedDays.value
-        val timeRanges = _timeRanges.value
-        val ruleType = _ruleType.value
+        val ruleName = _ruleNameFlow.value
+        val selectedDays = _selectedDaysFlow.value
+        val timeRanges = _timeRangesFlow.value
+        val ruleType = _ruleTypeFlow.value
+        val condition = _conditionFlow.value
 
         if (validateName(ruleName).isFailure) return
         if (validateDays(selectedDays).isFailure) return
         if (validateRanges(timeRanges.map { it.value }).isFailure) return
 
         val rule = Rule(
-            name = ruleName, ruleType = ruleType, days = selectedDays, timeRanges = timeRanges.values.toList()
+            name = ruleName,
+            ruleType = ruleType,
+            days = selectedDays,
+            condition = condition,
+            timeRanges = timeRanges.values.toList()
         )
 
         if (editingRule == null) saveRule(rule)
@@ -311,12 +328,13 @@ class AddOrUpdateRuleViewModel @Inject constructor(
 
             is DaysOutOfRangeException -> viewModelScope.launch {
                 delay(200)
-                if (_selectedDays.value.isEmpty()) _eventsChannel.trySend(SimpleErrorMessage(context.getString(R.string.Selecione_pelo_menos_um_dia_da_semana)))
+                if (_selectedDaysFlow.value.isEmpty()) _eventsChannel.trySend(SimpleErrorMessage(context.getString(R.string.Selecione_pelo_menos_um_dia_da_semana)))
             }
 
             is BlankIdException -> throw exception
-            is EncapsulatedTimeRangeException -> throw exception
+            is TimeRangeValidationException -> throw exception
             is NameOutOfRangeException -> throw exception
+            is RuleValidatorException.ConditionValidationException -> throw exception
             null -> throw CantBeNullException()
         }
 
@@ -345,10 +363,12 @@ class AddOrUpdateRuleViewModel @Inject constructor(
                 _eventsChannel.trySend(NameErrorMessage(errorMessage))
             }
 
-            null -> throw CantBeNullException()
             is BlankIdException -> throw exception
             is DaysOutOfRangeException -> throw exception
-            is EncapsulatedTimeRangeException -> throw exception
+            is TimeRangeValidationException -> throw exception
+            is RuleValidatorException.ConditionValidationException -> throw exception
+            null -> throw CantBeNullException()
+
         }
 
 

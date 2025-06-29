@@ -9,6 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  *
  * Essa migração adiciona um valor hasPendingNotifications referente ao [dev.gmarques.controledenotificacoes.domain.model.ManagedApp]
  */
+@Suppress("ClassName")
 object MIGRATION_1_2 : Migration(1, 2) {
 
     override fun migrate(database: SupportSQLiteDatabase) {

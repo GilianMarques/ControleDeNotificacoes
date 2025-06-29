@@ -43,6 +43,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     private val ruleEnforcer = HiltEntryPoints.ruleEnforcer()
     private var cancelingNotificationKey = ""
     private var errorJob: Job? = null
+    private var validationCallbackErrorJob: Job? = null
 
     companion object {
         private const val ACTION_KEY = "ACTION"
@@ -129,10 +130,10 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     private fun manageNotification(sbn: StatusBarNotification) {
 
         if (sbn.isOngoing) return
-        if (sbn.packageName == BuildConfig.APPLICATION_ID) return
-
+        if (sbn.packageName.contains(BuildConfig.APPLICATION_ID)) return
 
         runBlocking {
+            crashIfCallbackNotCalled()
             ruleEnforcer.enforceOnNotification(sbn, object : RuleEnforcer.Callback {
 
                 override fun cancelNotification(
@@ -140,18 +141,54 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
                     rule: Rule,
                     managedApp: ManagedApp,
                 ) {
+                    Log.d("USUK", "NotificationListener.cancelNotification: ")
+                    cancelValidationCallbackTimer()
                     crashIfNotificationWasNotRemovedInDebugBuild(sbn)
                     cancelNotification(sbn.key)
                 }
 
                 override fun appNotManaged() {
+                    Log.d("USUK", "NotificationListener.appNotManaged: ")
+                    cancelValidationCallbackTimer()
                     validateAndEchoNotification(sbn)
                 }
 
                 override fun allowNotification() {
+                    Log.d("USUK", "NotificationListener.allowNotification: ")
+                    cancelValidationCallbackTimer()
                     validateAndEchoNotification(sbn)
                 }
             })
+        }
+    }
+
+    /**
+     * Cancela o temporizador que monitora se o callback de validação da notificação foi chamado.
+     * Esta função é usada em conjunto com [crashIfCallbackNotCalled] para garantir que,
+     * em builds de debug, o aplicativo falhe se o callback não for invocado dentro de um
+     * período esperado. Isso ajuda a identificar problemas onde o RuleEnforcer não está
+     * chamando o callback corretamente, o que poderia afetar a função de eco.
+     */
+    private fun cancelValidationCallbackTimer() {
+        validationCallbackErrorJob?.cancel()
+    }
+
+    /**
+     * Inicia um temporizador que, se não for cancelado a tempo, causará uma falha no aplicativo.
+     * Esta função é destinada a evitar bugs. Ela garante que alterações no RuleEnforcer
+     * não impeçam que o callback seja chamado nos casos onde:
+     * - A notificação deve ser bloqueada.
+     * - A notificação não deve ser bloqueada.
+     * - O aplicativo não é gerenciado.
+     * Isso serve para impedir que bugs sejam introduzidos no código.
+     *
+     * @see  cancelValidationCallbackTimer
+     * @see manageNotification
+     */
+    private fun crashIfCallbackNotCalled() {
+        validationCallbackErrorJob = CoroutineScope(Main).launch {
+            delay(1000)
+            error("O callback de validação passado para o RuleEnforcer não foi chamado.")
         }
     }
 
@@ -163,7 +200,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     }
 
     private fun repostNotificationIfEnabled(sbn: StatusBarNotification) {
-
         val original = sbn.notification
         val notificationId = sbn.id + 10000
         val notificationTag = sbn.tag
@@ -203,7 +239,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
         // Verifica se há estilo de media (MediaStyle)
         return sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE)?.contains("MediaStyle") == true
     }
-
 
     /**
      * Essa função serve pra testes apenas e nao sera usada em produção.

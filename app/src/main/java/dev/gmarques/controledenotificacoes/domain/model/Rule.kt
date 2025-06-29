@@ -20,5 +20,6 @@ data class Rule(
     val name: String,
     val days: List<WeekDay>,
     val timeRanges: List<TimeRange>,
+    val condition: Condition?,
     val ruleType: RuleType = RuleType.RESTRICTIVE,
 ) : Serializable
