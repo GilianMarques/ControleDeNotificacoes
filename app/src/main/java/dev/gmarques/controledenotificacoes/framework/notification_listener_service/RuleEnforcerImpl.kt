@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
@@ -73,8 +74,16 @@ class RuleEnforcerImpl @Inject constructor(
         val condition = rule.condition
         val appInBlockPeriod = rule.isAppInBlockPeriod()
 
-        val cancelNotification = { saveAndCancelNotification(rule, managedApp, sbn, notification) }
-        val allowNotification = { callback.allowNotification() }
+        var callbackCalled = false
+
+        val cancelNotification = {
+            callbackCalled = true
+            saveAndCancelNotification(rule, managedApp, sbn, notification)
+        }
+        val allowNotification = {
+            callbackCalled = true
+            callback.allowNotification()
+        }
 
         if (condition == null) {
             if (appInBlockPeriod) cancelNotification()
@@ -83,6 +92,7 @@ class RuleEnforcerImpl @Inject constructor(
         }
 
         val conditionSatisfied = condition.isSatisfiedBy(notification)
+
 
         if (rule.ruleType == RuleType.RESTRICTIVE && appInBlockPeriod) {
             when (condition.type) {
@@ -98,6 +108,9 @@ class RuleEnforcerImpl @Inject constructor(
             }
         }
 
+        if (!callbackCalled) allowNotification().also {
+            Log.w("USUK", "RuleEnforcerImpl.enforceRuleAndCondition: notificaçção permitida pq nao caiu em nenhuma pré-condição")
+        }
     }
 
     private fun saveAndCancelNotification(
@@ -128,7 +141,7 @@ class RuleEnforcerImpl @Inject constructor(
         saveLargeIcon(sbn, notification)
     }
 
-    override suspend fun saveLargeIcon(sbn: StatusBarNotification, notification: AppNotification) = withContext(IO) {
+    suspend fun saveLargeIcon(sbn: StatusBarNotification, notification: AppNotification) = withContext(IO) {
 
         try {
             val icon = sbn.notification.getLargeIcon() ?: return@withContext

@@ -15,11 +15,10 @@ import dev.gmarques.controledenotificacoes.domain.model.Rule
  */
 interface RuleEnforcer {
     suspend fun enforceOnNotification(
-        notification: StatusBarNotification,
+        sbn: StatusBarNotification,
         callback: Callback,
     )
 
-    suspend fun saveLargeIcon(sbn: StatusBarNotification, notification: AppNotification)
     suspend fun saveNotificationOnHistory(sbn: StatusBarNotification, notification: AppNotification)
 
     interface Callback {

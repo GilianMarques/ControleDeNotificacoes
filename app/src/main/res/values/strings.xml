@@ -259,7 +259,7 @@
     <string name="Buscar_palavras_chave_apenas_no_conte_do_da_notifica_o">Buscar palavras-chave apenas no conteúdo da notificação</string>
     <string name="Buscar_palavras_chave_no_t_tulo_e_conte_do_da_notifica_o">Buscar palavras-chave no título e conteúdo da notificação</string>
     <string name="Nao_poss_vel_adicionar_uma_palavra_vazia">Não é possível adicionar uma palavra vazia</string>
-    <string name="Palavra_chave_com_comprimento_inv_lido_m_x">Palavra-chave com comprimento inválido (%1$) máx. %2$d</string>
+    <string name="Palavra_chave_com_comprimento_inv_lido_m_x">Palavra-chave com comprimento inválido (%1$d) máx. %2$d</string>
     <string name="A_lista_de_palavras_chave_n_o_pode_estar_vazia">A lista de palavras-chave não pode estar vazia</string>
     <string name="Numero_m_ximo_de_palavras_chave_aceito_atual">Número máximo de palavras-chave aceito é %1$d, atual %2$d</string>
     <string name="Verifique_os_campos">Verifique os campos</string>
