@@ -75,6 +75,7 @@ class AddManagedAppsFragment() : MyFragment() {
         setupSelectAppsListener()
         setupSelectRuleListener()
         setupSelectAppsButton()
+        setupSelectNotificationsButton()
         setupAddRuleButton()
         setupConcludeFab()
         observeViewModel()
@@ -142,6 +143,20 @@ class AddManagedAppsFragment() : MyFragment() {
 
     }
 
+    private fun setupSelectNotificationsButton() = with(binding) {
+
+        tvSelectNotification.setOnClickListener(AnimatedClickListener {
+
+            findNavController().navigate(
+                AddManagedAppsFragmentDirections.toSelectNotificationFragment(), FragmentNavigatorExtras(
+                    fabConclude to fabConclude.transitionName
+                )
+            )
+
+        })
+
+    }
+
     /**
      * Configura um listener para receber o resultado do `SelectAppsFragment`.
      *
@@ -170,7 +185,7 @@ class AddManagedAppsFragment() : MyFragment() {
             lifecycleScope.launch {
 
                 val preSelectedApps = viewModel.selectedApps.value?.size ?: 0
-                var awaitUntilAppsAreLoadedOnUi = preSelectedApps > 0
+                val awaitUntilAppsAreLoadedOnUi = preSelectedApps > 0
 
                 if (awaitUntilAppsAreLoadedOnUi) do {
                     delay(100)

@@ -288,6 +288,8 @@
     <string name="Defina_pelo_menos_uma_palavra_chave">Defina pelo menos uma palavra chave</string>
     <string name="Selecione_um_campo_aplic_vel">Selecione um campo aplicável</string>
     <string name="Cuidado_alguns_apps_de_despertador_podem_n_o_despertar_se_voc_bloquear_as_notifica_es_deles">Cuidado! Alguns apps de despertador, podem não despertar se você bloquear as notificações deles. Apps de mídia como o Youtube Music também não reproduzem se tiverem suas notificações restringidas.\n\nAo bloquear as notificações desses apps, certifique-se de testar se eles não vão deixar de funcionar corretamente.</string>
+    <string name="ou_">ou</string>
+    <string name="Selecionar_notificacao">Selecionar notificação</string>
 
 
 </resources>

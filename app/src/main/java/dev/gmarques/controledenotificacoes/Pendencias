@@ -1,0 +1,12 @@
+revisar tudo
+NotificationsAdapter
+SelectNotificationFragment
+SelectNotificationViewModel
+ActiveNotificationRepository
+ActiveNotificationRepositoryImpl
+NotificationListener
+
+remover esse monte de print
+voltar o navgraph pro lugar
+remover codigo duplicado
+padronizar codigo relacionado a obroadcast

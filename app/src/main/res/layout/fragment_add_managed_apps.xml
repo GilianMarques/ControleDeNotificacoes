@@ -183,6 +183,75 @@
                     tools:text="+ 50 apps" />
             </LinearLayout>
 
+
+            <TextView
+                android:id="@+id/tv_or"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/urbanist_extrabold"
+                android:gravity="center"
+                android:padding="4dp"
+                android:text="@string/ou_"
+                android:textAlignment="gravity"
+                android:textSize="14sp" />
+
+
+            <LinearLayout
+                android:id="@+id/notification_container"
+                style="@style/containers_margins"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
+                android:background="@drawable/back_container"
+                android:orientation="vertical"
+                android:transitionName="notification_container">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_sel_not"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/urbanist_extrabold"
+                        android:text="Selecione uma notificação"
+                        android:textAlignment="center"
+                        android:textSize="20sp"
+                        android:transitionName="tv_target_app"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+
+                        android:id="@+id/tv_select_notification"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="24dp"
+                        android:background="@drawable/back_round"
+                        android:backgroundTint="?colorSecondaryContainer"
+                        android:drawablePadding="4dp"
+                        android:paddingStart="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="12dp"
+                        android:paddingBottom="8dp"
+                        android:text="@string/Selecionar_notificacao"
+                        android:textColor="?colorOnSecondaryContainer"
+                        app:drawableStartCompat="@drawable/vec_add"
+                        app:drawableTint="?colorOnSecondaryContainer"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_sel_not" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>

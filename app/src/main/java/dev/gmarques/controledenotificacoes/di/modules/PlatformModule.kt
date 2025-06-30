@@ -6,10 +6,12 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dev.gmarques.controledenotificacoes.domain.framework.ActiveNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.framework.RuleStringsProvider
 import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.framework.VibratorInterface
+import dev.gmarques.controledenotificacoes.framework.ActiveNotificationRepositoryImpl
 import dev.gmarques.controledenotificacoes.framework.RuleStringsProviderImpl
 import dev.gmarques.controledenotificacoes.framework.ScheduleManagerImpl
 import dev.gmarques.controledenotificacoes.framework.VibratorImpl
@@ -26,15 +28,18 @@ import dev.gmarques.controledenotificacoes.framework.notification_listener_servi
 abstract class PlatformModule {
 
     @Binds
-    abstract fun bindVibrator(vibrator: VibratorImpl): VibratorInterface
+    abstract fun bindVibrator(impl: VibratorImpl): VibratorInterface
 
     @Binds
-    abstract fun bindRuleStringsProvider(strProvider: RuleStringsProviderImpl): RuleStringsProvider
+    abstract fun bindRuleStringsProvider(impl: RuleStringsProviderImpl): RuleStringsProvider
 
     @Binds
-    abstract fun bindRuleEnforcer(strProvider: RuleEnforcerImpl): RuleEnforcer
+    abstract fun bindRuleEnforcer(impl: RuleEnforcerImpl): RuleEnforcer
 
     @Binds
-    abstract fun bindScheduleManager(strProvider: ScheduleManagerImpl): ScheduleManager
+    abstract fun bindScheduleManager(impl: ScheduleManagerImpl): ScheduleManager
+
+    @Binds
+    abstract fun bindNotificationDataSource(impl: ActiveNotificationRepositoryImpl): ActiveNotificationRepository
 
 }

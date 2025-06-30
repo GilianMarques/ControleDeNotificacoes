@@ -24,6 +24,7 @@ import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
+import dev.gmarques.controledenotificacoes.framework.ActiveNotificationRepositoryImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -74,6 +75,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     override fun onCreate() {
         super.onCreate()
 
+        // TODO: criar uma fuinção no app pra evitar repetiçao desse codigo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(commandReceiver, IntentFilter(INTENT_FILTER_FOR_BROADCAST), RECEIVER_NOT_EXPORTED)
         } else {
@@ -114,11 +116,27 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * Processa cada notificação ativa usando o mét.odo [manageNotification].
      */
     private fun readActiveNotifications() {
-        Log.d("USUK", "NotificationListener.readActiveNotifications: ")
         val active = activeNotifications ?: return
         active.forEach { sbn ->
             manageNotification(sbn)
         }
+
+        postActiveNotifications(active)
+    }
+
+    // TODO: documentar
+    private fun postActiveNotifications(notifications: Array<StatusBarNotification>) {
+        Log.d("USUK", "NotificationListener.".plus("postActiveNotifications() notifications = $notifications"))
+        val filtered = notifications.filter {
+            !it.isOngoing && it.packageName != BuildConfig.APPLICATION_ID
+        }
+
+        val intent = Intent(ActiveNotificationRepositoryImpl.INTENT_FILTER_FOR_BROADCAST).apply {
+            putParcelableArrayListExtra(ActiveNotificationRepositoryImpl.EXTRA_NOTIFICATIONS, ArrayList(filtered))
+            setPackage(packageName)
+        }
+
+        sendBroadcast(intent)
     }
 
     /**
