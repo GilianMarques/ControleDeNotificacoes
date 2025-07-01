@@ -1,8 +1,7 @@
 package dev.gmarques.controledenotificacoes.domain.usecase
 
-import android.service.notification.StatusBarNotification
-import android.util.Log
 import dev.gmarques.controledenotificacoes.domain.framework.ActiveNotificationRepository
+import dev.gmarques.controledenotificacoes.presentation.model.ActiveStatusBarNotification
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -16,20 +15,18 @@ class GetActiveNotificationsUseCase @Inject constructor(
     private val repository: ActiveNotificationRepository,
 ) {
 
-    operator fun invoke(): Flow<List<StatusBarNotification>> = callbackFlow {
+    operator fun invoke(): Flow<List<ActiveStatusBarNotification>> = callbackFlow {
 
         val callback = object : ActiveNotificationRepository.Callback {
-            override fun onActiveNotificationsReceived(notifications: List<StatusBarNotification>) {
+            override fun done(notifications: List<ActiveStatusBarNotification>) {
                 trySend(notifications).isSuccess
                 close() // garante emissão única e encerramento do flow
             }
         }
-        Log.d("USUK", "GetActiveNotificationsUseCase.invoke: ")
+
         repository.getActiveNotifications(callback)
 
-        awaitClose {
-            // nada a limpar, pois o receptor é removido internamente (TODO futuro)
-        }
+        awaitClose { }
     }
 
 

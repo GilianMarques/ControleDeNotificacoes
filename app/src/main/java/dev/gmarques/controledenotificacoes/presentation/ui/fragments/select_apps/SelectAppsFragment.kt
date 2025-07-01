@@ -58,7 +58,7 @@ class SelectAppsFragment : MyFragment() {
         savedInstanceState: Bundle?,
     ) = FragmentSelectAppsBinding.inflate(inflater, container, false).also {
         binding = it
-        setupActionBar(binding.toolbar)
+        setupActionBar(binding.actionbar)
     }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

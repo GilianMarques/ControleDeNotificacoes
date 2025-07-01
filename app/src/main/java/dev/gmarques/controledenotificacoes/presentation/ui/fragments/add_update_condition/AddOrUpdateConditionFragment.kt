@@ -42,7 +42,7 @@ class AddOrUpdateConditionFragment : MyFragment() {
     ): View {
         return FragmentAddOrUpdateConditionBinding.inflate(inflater, container, false).also {
             binding = it
-            setupActionBar(binding.toolbar)
+            setupActionBar(binding.actionbar)
         }.root
     }
 

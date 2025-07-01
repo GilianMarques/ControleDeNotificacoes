@@ -8,7 +8,7 @@
     tools:background="?attr/AppColorBackground">
 
     <include
-        android:id="@+id/toolbar"
+        android:id="@+id/actionbar"
         layout="@layout/view_activity_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintTop_toBottomOf="@id/actionbar"
         tools:listitem="@layout/item_app_notification" />
 
     <ProgressBar

@@ -61,7 +61,7 @@ class AddManagedAppsFragment() : MyFragment() {
     ): View {
         return FragmentAddManagedAppsBinding.inflate(inflater, container, false).also {
             binding = it
-            setupActionBar(binding.toolbar)
+            setupActionBar(binding.actionbar)
         }.root
     }
 
@@ -69,7 +69,7 @@ class AddManagedAppsFragment() : MyFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupActionBar(binding.toolbar)
+        setupActionBar(binding.actionbar)
         containerController = ContainerController(viewLifecycleOwner, binding.llContainerApps, maxAppsViews)
 
         setupSelectAppsListener()

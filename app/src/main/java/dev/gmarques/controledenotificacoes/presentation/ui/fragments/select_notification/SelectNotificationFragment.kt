@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_notification
 
 import android.os.Bundle
-import android.service.notification.StatusBarNotification
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import dev.gmarques.controledenotificacoes.databinding.FragmentSelectNotificationBinding
+import dev.gmarques.controledenotificacoes.presentation.model.ActiveStatusBarNotification
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 
 /**
@@ -35,6 +35,7 @@ class SelectNotificationFragment : MyFragment() {
     ): View {
         return FragmentSelectNotificationBinding.inflate(inflater, container, false).also {
             binding = it
+            setupActionBar(binding.actionbar)
         }.root
     }
 
@@ -52,8 +53,8 @@ class SelectNotificationFragment : MyFragment() {
         }
     }
 
-    private fun onNotificationSelected(sbn: StatusBarNotification) {
-        val result = bundleOf(BUNDLED_PACKAGE_NAME_KEY to sbn.packageName)
+    private fun onNotificationSelected(notification: ActiveStatusBarNotification) {
+        val result = bundleOf(BUNDLED_PACKAGE_NAME_KEY to notification.packageId)
         setFragmentResult(RESULT_LISTENER_KEY, result)
         goBack()
     }

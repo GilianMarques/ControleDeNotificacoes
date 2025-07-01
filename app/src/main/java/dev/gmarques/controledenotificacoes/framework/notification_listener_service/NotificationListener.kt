@@ -47,8 +47,14 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     private var validationCallbackErrorJob: Job? = null
 
     companion object {
+        /**Chave que identifica o tipo de açao a executar*/
         private const val ACTION_KEY = "ACTION"
+
+        /**Tipo de açao a executar*/
         private const val ACTION_READ_ACTIVE_NOTIFICATIONS = "READ_ACTIVE_NOTIFICATIONS"
+        private const val ACTION_POST_ACTIVE_NOTIFICATIONS = "ACTION_POST_ACTIVE_NOTIFICATIONS"
+
+        /**filtro pro receiver saber que ele deve tratar a intent*/
         private const val INTENT_FILTER_FOR_BROADCAST = "NotificationListener.BroadcastReceiver"
 
         /**
@@ -62,12 +68,21 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             App.context.sendBroadcast(intent)
         }
 
+        fun sendBroadcastToPostActiveNotifications() {
+            val intent = Intent(INTENT_FILTER_FOR_BROADCAST).apply {
+                setPackage(App.context.packageName)
+                putExtra(ACTION_KEY, ACTION_POST_ACTIVE_NOTIFICATIONS)
+            }
+            App.context.sendBroadcast(intent)
+        }
+
     }
 
     private val commandReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.getStringExtra(ACTION_KEY)) {
                 ACTION_READ_ACTIVE_NOTIFICATIONS -> readActiveNotifications()
+                ACTION_POST_ACTIVE_NOTIFICATIONS -> postActiveNotifications()
             }
         }
     }
@@ -75,7 +90,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     override fun onCreate() {
         super.onCreate()
 
-        // TODO: criar uma fuinção no app pra evitar repetiçao desse codigo
+        // TODO: criar uma função no app pra evitar repetiçao desse codigo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             registerReceiver(commandReceiver, IntentFilter(INTENT_FILTER_FOR_BROADCAST), RECEIVER_NOT_EXPORTED)
         } else {
@@ -115,18 +130,23 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * Lê todas as notificações ativas no momento em que o serviço é conectado.
      * Processa cada notificação ativa usando o mét.odo [manageNotification].
      */
+
     private fun readActiveNotifications() {
         val active = activeNotifications ?: return
         active.forEach { sbn ->
             manageNotification(sbn)
         }
 
-        postActiveNotifications(active)
     }
 
     // TODO: documentar
-    private fun postActiveNotifications(notifications: Array<StatusBarNotification>) {
-        Log.d("USUK", "NotificationListener.".plus("postActiveNotifications() notifications = $notifications"))
+    private fun postActiveNotifications() {
+
+        val notifications = mutableListOf<StatusBarNotification>()
+        activeNotifications?.let {
+            notifications.addAll(it)
+        }
+
         val filtered = notifications.filter {
             !it.isOngoing && it.packageName != BuildConfig.APPLICATION_ID
         }
@@ -135,7 +155,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             putParcelableArrayListExtra(ActiveNotificationRepositoryImpl.EXTRA_NOTIFICATIONS, ArrayList(filtered))
             setPackage(packageName)
         }
-
+// TODO: ta dando bosta aqui
         sendBroadcast(intent)
     }
 

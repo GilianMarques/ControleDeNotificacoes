@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <include
-        android:id="@+id/toolbar"
+        android:id="@+id/actionbar"
         layout="@layout/view_activity_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        app:layout_constraintTop_toBottomOf="@id/actionbar">
 
         <LinearLayout
 
@@ -46,7 +46,7 @@
             android:animateLayoutChanges="true"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/toolbar">
+            app:layout_constraintTop_toBottomOf="@id/actionbar">
 
             <LinearLayout
                 style="@style/containers_margins"

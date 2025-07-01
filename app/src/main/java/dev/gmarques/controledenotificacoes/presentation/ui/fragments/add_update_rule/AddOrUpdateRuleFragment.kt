@@ -61,7 +61,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
         savedInstanceState: Bundle?,
     ) = FragmentAddOrUpdateRuleBinding.inflate(inflater, container, false).also {
         binding = it
-        setupActionBar(binding.toolbar)
+        setupActionBar(binding.actionbar)
     }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -101,7 +101,7 @@ class AddOrUpdateRuleFragment : MyFragment() {
     private fun setupEditingModeIfNeeded() {
         args.editingRule?.let {
             viewModel.setEditingRule(it)
-            binding.toolbar.tvTitle.text = getString(R.string.Editar_regra)
+            binding.actionbar.tvTitle.text = getString(R.string.Editar_regra)
 
             showHintDialog(
                 PreferencesImpl.showHintEditFirstRule,

@@ -47,7 +47,7 @@ class SelectRuleFragment : MyFragment() {
     ): View {
         return FragmentSelectRuleBinding.inflate(inflater, container, false).also {
             binding = it
-            setupActionBar(binding.toolbar)
+            setupActionBar(binding.actionbar)
         }.root
 
     }

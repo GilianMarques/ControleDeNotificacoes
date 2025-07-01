@@ -30,7 +30,7 @@
                     android:layout_height="match_parent">
 
                     <include
-                        android:id="@+id/toolbar"
+                        android:id="@+id/actionbar"
                         layout="@layout/view_activity_header"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
                         app:layout_constraintBottom_toTopOf="@id/tv_user_name"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/toolbar"
+                        app:layout_constraintTop_toBottomOf="@id/actionbar"
                         tools:src="@drawable/vec_try_again" />
 
                     <TextView
