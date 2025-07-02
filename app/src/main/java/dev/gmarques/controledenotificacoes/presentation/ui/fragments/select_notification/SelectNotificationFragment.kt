@@ -1,7 +1,6 @@
 package dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_notification
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +23,8 @@ class SelectNotificationFragment : MyFragment() {
     companion object {
         const val RESULT_LISTENER_KEY = "select_notification_listener_key"
         const val BUNDLED_PACKAGE_NAME_KEY = "bundled_package_name"
+
+
     }
 
     private lateinit var binding: FragmentSelectNotificationBinding
@@ -63,7 +64,6 @@ class SelectNotificationFragment : MyFragment() {
         collectFlow(viewModel.notificationsFlow) { list ->
             binding.progressBar.isVisible = false
             adapter.submitList(list)
-            Log.d("USUK", "SelectNotificationFragment.observeViewModel: $list")
         }
     }
 }

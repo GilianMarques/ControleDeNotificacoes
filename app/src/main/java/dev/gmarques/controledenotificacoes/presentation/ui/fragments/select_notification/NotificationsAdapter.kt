@@ -31,15 +31,17 @@ class NotificationsAdapter(
         fun bind(notification: ActiveStatusBarNotification) = with(binding) {
 
             tvTitle.text = notification.title
+
             tvContent.text = notification.content
+            tvContent.isVisible = true
 
             ivAppIcon.setImageIcon(notification.smallIcon)
+
             ivLargeIcon.setImageIcon(notification.largeIcon)
+            ivLargeIcon.isVisible = notification.largeIcon != null
 
             tvOpenNotification.isVisible = false
             tvTime.isVisible = false
-            ivLargeIcon.isVisible = true
-            tvContent.isVisible = true
 
             parent.setOnClickListener {
                 onItemClick(notification)

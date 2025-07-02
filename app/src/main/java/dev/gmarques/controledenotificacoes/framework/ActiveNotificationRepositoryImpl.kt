@@ -1,16 +1,14 @@
 package dev.gmarques.controledenotificacoes.framework
 
 
-import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Context.RECEIVER_NOT_EXPORTED
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.service.notification.StatusBarNotification
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.domain.framework.ActiveNotificationRepository
+import dev.gmarques.controledenotificacoes.App
+import dev.gmarques.controledenotificacoes.domain.data.repository.ActiveNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
 import dev.gmarques.controledenotificacoes.presentation.model.ActiveStatusBarNotification
@@ -35,7 +33,7 @@ class ActiveNotificationRepositoryImpl @Inject constructor(@ApplicationContext p
             }
         }
 
-        registerThisReceiver(receiver!!)
+        App.context.registerLocalReceiver(receiver!!, INTENT_FILTER_FOR_BROADCAST)
 
         /** faz o [NotificationListener] disparar um broadcast com "todas" as notificações ativas */
         NotificationListener.sendBroadcastToPostActiveNotifications()
@@ -77,17 +75,6 @@ class ActiveNotificationRepositoryImpl @Inject constructor(@ApplicationContext p
                 postTime = appNot.timestamp,
                 smallIcon = sbn.notification.smallIcon,
                 largeIcon = sbn.notification.getLargeIcon(),
-            )
-        }
-    }
-
-    private fun registerThisReceiver(receiver: BroadcastReceiver) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            appContext.registerReceiver(receiver, IntentFilter(INTENT_FILTER_FOR_BROADCAST), RECEIVER_NOT_EXPORTED)
-        } else {
-            @Suppress("DEPRECATION") @SuppressLint("UnspecifiedRegisterReceiverFlag") appContext.registerReceiver(
-                receiver,
-                IntentFilter(INTENT_FILTER_FOR_BROADCAST)
             )
         }
     }

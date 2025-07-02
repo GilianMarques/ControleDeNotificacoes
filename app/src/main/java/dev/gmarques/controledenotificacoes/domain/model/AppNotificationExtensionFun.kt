@@ -2,6 +2,7 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import android.app.Notification
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -63,17 +64,25 @@ object AppNotificationExtensionFun {
      * @return Uma instância de [AppNotification] com os dados extraídos.
      */
     fun createFromStatusBarNotification(sbn: StatusBarNotification): AppNotification {
-
+        Log.d("USUK", "AppNotificationExtensionFun.createFromStatusBarNotification: $sbn")
         val extras = sbn.notification.extras
 
         val title = extras.getString(Notification.EXTRA_TITLE).orEmpty()
-        val content: String
+        val content: String = when {
 
-        val textLines = extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)
-        content = if (!textLines.isNullOrEmpty()) {
-            textLines.joinToString(separator = "\n") { it.toString() }
-        } else {
-            extras.getString(Notification.EXTRA_TEXT).orEmpty()
+            // 1. Tenta obter múltiplas linhas (ex: InboxStyle)
+            extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)?.isNotEmpty() == true -> {
+                extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)!!
+                    .joinToString(separator = "\n") { it.toString() }
+            }
+
+            // 2. Tenta texto grande (ex: BigTextStyle)
+            extras.getCharSequence(Notification.EXTRA_BIG_TEXT) != null -> {
+                extras.getCharSequence(Notification.EXTRA_BIG_TEXT).toString()
+            }
+
+            // 3. Fallback padrão
+            else -> extras.getString(Notification.EXTRA_TEXT).orEmpty()
         }
 
         return AppNotification(
@@ -83,7 +92,6 @@ object AppNotificationExtensionFun {
             timestamp = sbn.postTime
         )
     }
-
 
 
 }

@@ -13,6 +13,7 @@ import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmOnAppsRuleChangeUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.installed_apps.GetInstalledAppByPackageOrDefaultUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.AddManagedAppUseCase
 import dev.gmarques.controledenotificacoes.presentation.EventWrapper
 import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
@@ -29,18 +30,17 @@ class AddManagedAppsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val addManagedAppUseCase: AddManagedAppUseCase,
     private val rescheduleAlarmOnAppsRuleChangeUseCase: RescheduleAlarmOnAppsRuleChangeUseCase,
-) : ViewModel() {
+    private val getInstalledAppByPackageOrDefaultUseCase: GetInstalledAppByPackageOrDefaultUseCase,
+
+    ) : ViewModel() {
 
 
     private val _selectedApps = MutableLiveData<Map<String, InstalledApp>>(emptyMap())
     val selectedApps: LiveData<Map<String, InstalledApp>> = _selectedApps
-
     private val _selectedRule = MutableLiveData<Rule?>()
     val selectedRule: LiveData<Rule?> = _selectedRule
-
     private val _showError = MutableLiveData<EventWrapper<String>>()
     val showError: LiveData<EventWrapper<String>> = _showError
-
     private val _successCloseFragment = MutableLiveData<EventWrapper<Unit>>()
     val successCloseFragment: LiveData<EventWrapper<Unit>> = _successCloseFragment
 
@@ -54,7 +54,6 @@ class AddManagedAppsViewModel @Inject constructor(
         _selectedRule.value = rule
         rule?.let { PreferencesImpl.lastSelectedRule(rule.id) }
     }
-
 
     fun getSelectedPackages(): Array<String> {
         return selectedApps.value!!.values.map { it.packageId }.toTypedArray()
@@ -87,7 +86,6 @@ class AddManagedAppsViewModel @Inject constructor(
      * que as atualizações da UI ocorram na thread principal.
      */
     fun validateSelection() = viewModelScope.launch(Main) {
-// TODO: delay enorme pra salvar os dados msms quando é só um app
 
         val rule = _selectedRule.value
         val apps = _selectedApps.value!!.values.toList()
@@ -147,6 +145,17 @@ class AddManagedAppsViewModel @Inject constructor(
      */
     private suspend fun addManagedApp(app: ManagedApp) {
         addManagedAppUseCase(app)
+    }
+
+    fun addSelectedAppByPkgId(pkgId: String) = viewModelScope.launch {
+        val installedApp = getInstalledAppByPackageOrDefaultUseCase(pkgId)
+
+        if (installedApp.uninstalled) {
+            _showError.postValue(EventWrapper(context.getString(R.string.O_aplicativo_n_o_pode_ser_selecionado)))
+            return@launch
+        }
+
+        addNewlySelectedApps(listOf(installedApp))
     }
 
 }

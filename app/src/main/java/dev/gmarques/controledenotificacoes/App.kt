@@ -1,6 +1,10 @@
 package dev.gmarques.controledenotificacoes
 
+import android.annotation.SuppressLint
 import android.app.Application
+import android.content.BroadcastReceiver
+import android.content.IntentFilter
+import android.os.Build
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.setCustomKeys
@@ -50,7 +54,6 @@ class App() : Application(), CoroutineScope by MainScope() {
         }
     }
 
-
     private fun setupRemoteConfig() = CoroutineScope(IO).launch {
 
         val remoteConfig = Firebase.remoteConfig
@@ -84,6 +87,25 @@ class App() : Application(), CoroutineScope by MainScope() {
         }
 
 
+    }
+
+    /**
+     * Registra um broadcast receiver localmente no app, com comportamento especifico
+     * de acordo com a versao do SDK para garantir compatibilidade
+     * e atender os requisitos do google play.
+     */
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    @Suppress("DEPRECATION")
+    fun registerLocalReceiver(
+        receiver: BroadcastReceiver,
+        intentFilter: String,
+    ) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) registerReceiver(
+            receiver,
+            IntentFilter(intentFilter),
+            RECEIVER_NOT_EXPORTED
+        )
+        else registerReceiver(receiver, IntentFilter(intentFilter))
     }
 
 

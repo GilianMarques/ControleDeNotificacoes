@@ -24,6 +24,7 @@ import dev.gmarques.controledenotificacoes.presentation.model.InstalledApp
 import dev.gmarques.controledenotificacoes.presentation.ui.MyFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.add_update_rule.AddOrUpdateRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_apps.SelectAppsFragment
+import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_notification.SelectNotificationFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment
 import dev.gmarques.controledenotificacoes.presentation.ui.fragments.select_rule.SelectRuleFragment.Companion.BUNDLED_RULE_KEY
 import dev.gmarques.controledenotificacoes.presentation.utils.AnimatedClickListener
@@ -74,6 +75,7 @@ class AddManagedAppsFragment() : MyFragment() {
 
         setupSelectAppsListener()
         setupSelectRuleListener()
+        setupSelectActiveNotificationListener()
         setupSelectAppsButton()
         setupSelectNotificationsButton()
         setupAddRuleButton()
@@ -177,7 +179,7 @@ class AddManagedAppsFragment() : MyFragment() {
      */
     private fun setupSelectAppsListener() {
 
-        setFragmentResultListener(SelectAppsFragment.RESULT_KEY) { _, bundle ->
+        setFragmentResultListener(SelectAppsFragment.RESULT_LISTENER_KEY) { _, bundle ->
 
             @Suppress("UNCHECKED_CAST") val selectedApps = requireSerializableOf(
                 bundle, SelectAppsFragment.BUNDLED_PACKAGES_KEY, ArrayList::class.java
@@ -237,6 +239,22 @@ class AddManagedAppsFragment() : MyFragment() {
         setFragmentResultListener(AddOrUpdateRuleFragment.RESULT_LISTENER_KEY) { _, bundle ->
             val rule = requireSerializableOf(bundle, AddOrUpdateRuleFragment.RULE_KEY, Rule::class.java)
             viewModel.setRule(rule!!)
+        }
+    }
+
+
+    private fun setupSelectActiveNotificationListener() {
+
+        setFragmentResultListener(SelectNotificationFragment.RESULT_LISTENER_KEY) { _, bundle ->
+
+            val pkgId = requireSerializableOf(
+                bundle, SelectNotificationFragment.BUNDLED_PACKAGE_NAME_KEY, String()::class.java
+            ) as String
+
+            lifecycleScope.launch {
+                viewModel.addSelectedAppByPkgId(pkgId)
+            }
+
         }
     }
 

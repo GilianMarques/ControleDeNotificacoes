@@ -1,24 +1,13 @@
 package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
-import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
-import androidx.core.app.NotificationCompat
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.BuildConfig
-import dev.gmarques.controledenotificacoes.R
-import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
@@ -42,6 +31,7 @@ import kotlinx.coroutines.runBlocking
 class NotificationListener : NotificationListenerService(), CoroutineScope by MainScope() {
 
     private val ruleEnforcer = HiltEntryPoints.ruleEnforcer()
+    private val echoImpl = HiltEntryPoints.echo()
     private var cancelingNotificationKey = ""
     private var errorJob: Job? = null
     private var validationCallbackErrorJob: Job? = null
@@ -90,14 +80,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     override fun onCreate() {
         super.onCreate()
 
-        // TODO: criar uma função no app pra evitar repetiçao desse codigo
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(commandReceiver, IntentFilter(INTENT_FILTER_FOR_BROADCAST), RECEIVER_NOT_EXPORTED)
-        } else {
-            @Suppress("DEPRECATION") @SuppressLint("UnspecifiedRegisterReceiverFlag") registerReceiver(
-                commandReceiver, IntentFilter(INTENT_FILTER_FOR_BROADCAST)
-            )
-        }
+        App.context.registerLocalReceiver(commandReceiver, INTENT_FILTER_FOR_BROADCAST)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -139,7 +122,11 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     }
 
-    // TODO: documentar
+    /**
+     * Publica as notificações ativas para que outras partes do aplicativo possam acessá-las.
+     * Filtra as notificações para excluir aquelas que são contínuas (ongoing) ou que pertencem ao próprio aplicativo.
+     * Envia um broadcast com a lista de notificações filtradas.
+     */
     private fun postActiveNotifications() {
 
         val notifications = mutableListOf<StatusBarNotification>()
@@ -155,7 +142,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             putParcelableArrayListExtra(ActiveNotificationRepositoryImpl.EXTRA_NOTIFICATIONS, ArrayList(filtered))
             setPackage(packageName)
         }
-// TODO: ta dando bosta aqui
         sendBroadcast(intent)
     }
 
@@ -188,13 +174,13 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
                 override fun appNotManaged() {
                     Log.d("USUK", "NotificationListener.appNotManaged: ")
                     cancelValidationCallbackTimer()
-                    validateAndEchoNotification(sbn)
+                    echoImpl.repostIfNotification(sbn)
                 }
 
                 override fun allowNotification() {
                     Log.d("USUK", "NotificationListener.allowNotification: ")
                     cancelValidationCallbackTimer()
-                    validateAndEchoNotification(sbn)
+                    echoImpl.repostIfNotification(sbn)
                 }
             })
         }
@@ -207,9 +193,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * período esperado. Isso ajuda a identificar problemas onde o RuleEnforcer não está
      * chamando o callback corretamente, o que poderia afetar a função de eco.
      */
-    private fun cancelValidationCallbackTimer() {
-        validationCallbackErrorJob?.cancel()
-    }
+    private fun cancelValidationCallbackTimer() = validationCallbackErrorJob?.cancel()
 
     /**
      * Inicia um temporizador que, se não for cancelado a tempo, causará uma falha no aplicativo.
@@ -228,54 +212,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
             delay(3000)
             error("O callback de validação passado para o RuleEnforcer não foi chamado.")
         }
-    }
-
-    private fun validateAndEchoNotification(sbn: StatusBarNotification) {
-        if (PreferencesImpl.echoEnabled.isDefault()) return
-        if (isMediaPlaybackNotification(sbn)) return
-
-        repostNotificationIfEnabled(sbn)
-    }
-
-    private fun repostNotificationIfEnabled(sbn: StatusBarNotification) {
-        val original = sbn.notification
-        val notificationId = sbn.id + 10000
-        val notificationTag = sbn.tag
-
-        val notificationManager = baseContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val echoChannel = "echo_channel_id"
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                echoChannel, getString(R.string.Canal_echo), NotificationManager.IMPORTANCE_DEFAULT
-            )
-            notificationManager.createNotificationChannel(channel)
-        }
-
-        val echoedNotification = NotificationCompat.Builder(baseContext, echoChannel).setSmallIcon(R.drawable.vec_echo)
-            .setContentTitle(original.extras.getCharSequence(Notification.EXTRA_TITLE))
-            .setContentText(original.extras.getCharSequence(Notification.EXTRA_TEXT))
-            .setSubText(original.extras.getCharSequence(Notification.EXTRA_SUB_TEXT))
-            .setStyle(NotificationCompat.BigTextStyle().bigText(original.extras.getCharSequence(Notification.EXTRA_TEXT)))
-            .setWhen(System.currentTimeMillis()).setAutoCancel(true).setGroup("${System.currentTimeMillis()}")
-            .setGroupSummary(false).setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
-
-        notificationManager.notify(notificationTag, notificationId, echoedNotification)
-
-        Log.d(
-            "USUK",
-            "NotificationListener.echoNotification: reposting ${original.extras.getCharSequence(Notification.EXTRA_TITLE)}"
-        )
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            notificationManager.cancel(notificationTag, notificationId)
-        }, 1000)
-    }
-
-    /**Não reposta notificações de apps de musica ou video*/
-    private fun isMediaPlaybackNotification(sbn: StatusBarNotification): Boolean {
-        // Verifica se há estilo de media (MediaStyle)
-        return sbn.notification.extras.getString(Notification.EXTRA_TEMPLATE)?.contains("MediaStyle") == true
     }
 
     /**
@@ -311,7 +247,6 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     override fun onListenerDisconnected() {
         cancel()
         super.onListenerDisconnected()
-        Log.d("USUK", "NotificationListener.".plus("onListenerDisconnected() "))
     }
 
 }

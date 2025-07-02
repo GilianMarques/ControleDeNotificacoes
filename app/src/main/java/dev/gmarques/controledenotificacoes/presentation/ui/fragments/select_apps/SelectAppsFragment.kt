@@ -35,7 +35,7 @@ import javax.inject.Inject
 class SelectAppsFragment : MyFragment() {
 
     companion object {
-        const val RESULT_KEY = "selectAppsResult"
+        const val RESULT_LISTENER_KEY = "selectAppsResult"
         const val BUNDLED_PACKAGES_KEY = "bundled_packages"
     }
 
@@ -197,7 +197,7 @@ class SelectAppsFragment : MyFragment() {
             )
         }
 
-        setFragmentResult(RESULT_KEY, result)
+        setFragmentResult(RESULT_LISTENER_KEY, result)
         goBack()
     }
 

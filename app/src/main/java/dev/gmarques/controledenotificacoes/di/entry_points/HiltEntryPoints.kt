@@ -13,6 +13,7 @@ import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePrefer
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
+import dev.gmarques.controledenotificacoes.framework.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.ScheduleManagerImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
@@ -60,6 +61,10 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     override fun savePreferenceUseCase(): SavePreferenceUseCase {
         return entryPoint<FrameworkEntryPoint>().savePreferenceUseCase()
+    }
+
+    override fun echo(): EchoImpl {
+        return entryPoint<FrameworkEntryPoint>().echo()
     }
 
     override fun getAppUserUseCase(): GetUserUseCase {

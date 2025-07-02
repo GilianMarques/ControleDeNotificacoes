@@ -6,6 +6,7 @@ import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
+import dev.gmarques.controledenotificacoes.framework.EchoImpl
 import dev.gmarques.controledenotificacoes.framework.ScheduleManagerImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
@@ -21,4 +22,5 @@ interface FrameworkEntryPoint {
     fun scheduleManager(): ScheduleManagerImpl
     fun readPreferenceUseCase(): ReadPreferenceUseCase
     fun savePreferenceUseCase(): SavePreferenceUseCase
+    fun echo(): EchoImpl
 }
