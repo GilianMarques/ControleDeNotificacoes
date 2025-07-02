@@ -1,19 +1,15 @@
 package dev.gmarques.controledenotificacoes.framework.notification_listener_service
 
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
-import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.BuildConfig
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.ManagedApp
 import dev.gmarques.controledenotificacoes.domain.model.Rule
-import dev.gmarques.controledenotificacoes.framework.ActiveNotificationRepositoryImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -37,51 +33,10 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     private var validationCallbackErrorJob: Job? = null
 
     companion object {
-        /**Chave que identifica o tipo de açao a executar*/
-        private const val ACTION_KEY = "ACTION"
-
-        /**Tipo de açao a executar*/
-        private const val ACTION_READ_ACTIVE_NOTIFICATIONS = "READ_ACTIVE_NOTIFICATIONS"
-        private const val ACTION_POST_ACTIVE_NOTIFICATIONS = "ACTION_POST_ACTIVE_NOTIFICATIONS"
-
-        /**filtro pro receiver saber que ele deve tratar a intent*/
-        private const val INTENT_FILTER_FOR_BROADCAST = "NotificationListener.BroadcastReceiver"
-
-        /**
-         * Envia um broadcast para a instancia desse seviço em execução para re-executar a validação das notificações ativas.
-         */
-        fun sendBroadcastToReadActiveNotifications() {
-            val intent = Intent(INTENT_FILTER_FOR_BROADCAST).apply {
-                setPackage(App.context.packageName)
-                putExtra(ACTION_KEY, ACTION_READ_ACTIVE_NOTIFICATIONS)
-            }
-            App.context.sendBroadcast(intent)
-        }
-
-        fun sendBroadcastToPostActiveNotifications() {
-            val intent = Intent(INTENT_FILTER_FOR_BROADCAST).apply {
-                setPackage(App.context.packageName)
-                putExtra(ACTION_KEY, ACTION_POST_ACTIVE_NOTIFICATIONS)
-            }
-            App.context.sendBroadcast(intent)
-        }
-
+        var instance: NotificationListener? = null
+            private set
     }
 
-    private val commandReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            when (intent?.getStringExtra(ACTION_KEY)) {
-                ACTION_READ_ACTIVE_NOTIFICATIONS -> readActiveNotifications()
-                ACTION_POST_ACTIVE_NOTIFICATIONS -> postActiveNotifications()
-            }
-        }
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-
-        App.context.registerLocalReceiver(commandReceiver, INTENT_FILTER_FOR_BROADCAST)
-    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_REDELIVER_INTENT //https://blog.stackademic.com/exploring-the-notification-listener-service-in-android-7db54d65eca7
@@ -89,19 +44,19 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     override fun onListenerConnected() {
         super.onListenerConnected()
-        Log.d("USUK", "NotificationListener.onListenerConnected: ")
+        instance = this@NotificationListener
         observeRulesChanges()
     }
 
     /**
      * Observa mudanças nas regras de notificação.
      * Quando uma mudança é detectada (uma regra é adicionada, removida ou atualizada),
-     * o mét.odo [readActiveNotifications] é chamado para reavaliar todas as notificações ativas
+     * o mét.odo [reEvaluateActiveNotifications] é chamado para reavaliar todas as notificações ativas
      * com base nas regras atualizadas. Isso garante que as regras sejam aplicadas dinamicamente.
      */
     private fun observeRulesChanges() = launch(IO) {
         HiltEntryPoints.observeAllRulesUseCase().invoke().collect { rules ->
-            readActiveNotifications()
+            reEvaluateActiveNotifications()
         }
     }
 
@@ -114,7 +69,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
      * Processa cada notificação ativa usando o mét.odo [manageNotification].
      */
 
-    private fun readActiveNotifications() {
+    fun reEvaluateActiveNotifications() {
         val active = activeNotifications ?: return
         active.forEach { sbn ->
             manageNotification(sbn)
@@ -122,27 +77,17 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
 
     }
 
-    /**
-     * Publica as notificações ativas para que outras partes do aplicativo possam acessá-las.
-     * Filtra as notificações para excluir aquelas que são contínuas (ongoing) ou que pertencem ao próprio aplicativo.
-     * Envia um broadcast com a lista de notificações filtradas.
-     */
-    private fun postActiveNotifications() {
+    fun getFilteredActiveNotifications(): List<StatusBarNotification> {
 
         val notifications = mutableListOf<StatusBarNotification>()
         activeNotifications?.let {
             notifications.addAll(it)
         }
 
-        val filtered = notifications.filter {
+        return notifications.filter {
             !it.isOngoing && it.packageName != BuildConfig.APPLICATION_ID
         }
 
-        val intent = Intent(ActiveNotificationRepositoryImpl.INTENT_FILTER_FOR_BROADCAST).apply {
-            putParcelableArrayListExtra(ActiveNotificationRepositoryImpl.EXTRA_NOTIFICATIONS, ArrayList(filtered))
-            setPackage(packageName)
-        }
-        sendBroadcast(intent)
     }
 
     /**
@@ -245,6 +190,7 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
     }
 
     override fun onListenerDisconnected() {
+        instance = null
         cancel()
         super.onListenerDisconnected()
     }

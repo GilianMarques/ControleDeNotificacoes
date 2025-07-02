@@ -2,7 +2,6 @@ package dev.gmarques.controledenotificacoes.domain.model
 
 import android.app.Notification
 import android.service.notification.StatusBarNotification
-import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -64,7 +63,7 @@ object AppNotificationExtensionFun {
      * @return Uma instância de [AppNotification] com os dados extraídos.
      */
     fun createFromStatusBarNotification(sbn: StatusBarNotification): AppNotification {
-        Log.d("USUK", "AppNotificationExtensionFun.createFromStatusBarNotification: $sbn")
+
         val extras = sbn.notification.extras
 
         val title = extras.getString(Notification.EXTRA_TITLE).orEmpty()

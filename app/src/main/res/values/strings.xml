@@ -291,6 +291,8 @@
     <string name="ou_">ou</string>
     <string name="Selecionar_notificacao">Selecionar notificação</string>
     <string name="O_aplicativo_n_o_pode_ser_selecionado">O aplicativo não pode ser selecionado.</string>
+    <string name="Selecione_uma_notifica_o">Selecione uma notificação</string>
+    <string name="O_echo_est_ligado">O Echo está ligado!</string>
 
 
 </resources>

@@ -39,7 +39,7 @@
         android:maxWidth="500dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:text="O Echo está ligado!"
+        android:text="@string/O_echo_est_ligado"
         android:textAlignment="center"
         android:textColor="?colorSecondary"
         android:textSize="22sp"

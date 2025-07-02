@@ -16,16 +16,8 @@ class GetActiveNotificationsUseCase @Inject constructor(
 ) {
 
     operator fun invoke(): Flow<List<ActiveStatusBarNotification>> = callbackFlow {
-
-        val callback = object : ActiveNotificationRepository.Callback {
-            override fun done(notifications: List<ActiveStatusBarNotification>) {
-                trySend(notifications).isSuccess
-                close() // garante emissão única e encerramento do flow
-            }
-        }
-
-        repository.getActiveNotifications(callback)
-
+        trySend(repository.getActiveNotifications()).isSuccess
+        close() // garante emissão única e encerramento do flow
         awaitClose { }
     }
 

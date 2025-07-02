@@ -1,13 +1,9 @@
 package dev.gmarques.controledenotificacoes.framework
 
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.os.Build
 import android.service.notification.StatusBarNotification
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.domain.data.repository.ActiveNotificationRepository
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationListener
@@ -20,40 +16,12 @@ import javax.inject.Inject
  */
 class ActiveNotificationRepositoryImpl @Inject constructor(@ApplicationContext private val appContext: Context) :
     ActiveNotificationRepository {
-    var receiver: BroadcastReceiver? = null
 
-    override fun getActiveNotifications(callback: ActiveNotificationRepository.Callback) {
+    override fun getActiveNotifications(): List<ActiveStatusBarNotification> {
 
-        receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-
-                val activeNotifications = extractNotificationsFromIntent(intent)
-                callback.done(mapStatusBarNotificationsToActiveStatusBarNotifications(activeNotifications))
-                appContext.unregisterReceiver(receiver)
-            }
-        }
-
-        App.context.registerLocalReceiver(receiver!!, INTENT_FILTER_FOR_BROADCAST)
-
-        /** faz o [NotificationListener] disparar um broadcast com "todas" as notificações ativas */
-        NotificationListener.sendBroadcastToPostActiveNotifications()
+        val nots = NotificationListener.instance?.getFilteredActiveNotifications() ?: emptyList()
+        return mapStatusBarNotificationsToActiveStatusBarNotifications(nots)
     }
-
-    /**
-     * Extrai a lista de [StatusBarNotification] de um [Intent].
-     *
-     * Esta função é responsável por obter a lista de notificações ativas que foram
-     * enviadas através de um Intent. Ela lida com as diferenças de API entre as versões
-     * do Android para garantir a compatibilidade.
-     */
-    private fun extractNotificationsFromIntent(intent: Intent?): List<StatusBarNotification> {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent?.getParcelableArrayListExtra(EXTRA_NOTIFICATIONS, StatusBarNotification::class.java)
-        } else {
-            @Suppress("DEPRECATION") intent?.getParcelableArrayListExtra(EXTRA_NOTIFICATIONS)
-        }.orEmpty()
-    }
-
     /**
      * Mapeia uma lista de [StatusBarNotification] para uma lista de [ActiveStatusBarNotification].
      *
