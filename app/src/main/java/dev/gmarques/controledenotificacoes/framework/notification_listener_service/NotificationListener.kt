@@ -110,20 +110,20 @@ class NotificationListener : NotificationListenerService(), CoroutineScope by Ma
                     rule: Rule,
                     managedApp: ManagedApp,
                 ) {
-                    Log.d("USUK", "NotificationListener.cancelNotification: ")
+                    Log.d("USUK", "NotificationListener.cancelNotification: ${sbn.packageName} ")
                     cancelValidationCallbackTimer()
                     crashIfNotificationWasNotRemovedInDebugBuild(sbn)
                     cancelNotification(sbn.key)
                 }
 
                 override fun appNotManaged() {
-                    Log.d("USUK", "NotificationListener.appNotManaged: ")
+                    Log.d("USUK", "NotificationListener.appNotManaged: ${sbn.packageName}")
                     cancelValidationCallbackTimer()
                     echoImpl.repostIfNotification(sbn)
                 }
 
                 override fun allowNotification() {
-                    Log.d("USUK", "NotificationListener.allowNotification: ")
+                    Log.d("USUK", "NotificationListener.allowNotification: ${sbn.packageName}")
                     cancelValidationCallbackTimer()
                     echoImpl.repostIfNotification(sbn)
                 }

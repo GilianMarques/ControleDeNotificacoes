@@ -63,12 +63,14 @@ object AppNotificationExtensionFun {
      * @return Uma instância de [AppNotification] com os dados extraídos.
      */
     fun createFromStatusBarNotification(sbn: StatusBarNotification): AppNotification {
-
         val extras = sbn.notification.extras
 
-        val title = extras.getString(Notification.EXTRA_TITLE).orEmpty()
-        val content: String = when {
+        val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString()
+            ?: extras.getCharSequence(Notification.EXTRA_TITLE_BIG)?.toString()
+            ?: extras.getCharSequence(Notification.EXTRA_SUB_TEXT)?.toString()
+            ?: "" // Fallback final
 
+        val content: String = when {
             // 1. Tenta obter múltiplas linhas (ex: InboxStyle)
             extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)?.isNotEmpty() == true -> {
                 extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)!!
@@ -81,7 +83,7 @@ object AppNotificationExtensionFun {
             }
 
             // 3. Fallback padrão
-            else -> extras.getString(Notification.EXTRA_TEXT).orEmpty()
+            else -> extras.getCharSequence(Notification.EXTRA_TEXT)?.toString().orEmpty()
         }
 
         return AppNotification(
