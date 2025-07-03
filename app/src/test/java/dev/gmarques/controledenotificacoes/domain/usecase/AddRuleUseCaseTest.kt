@@ -28,7 +28,9 @@ class AddRuleUseCaseTest {
         val rule = Rule(
             name = "Regra Teste",
             days = listOf(WeekDay.FRIDAY),
-            timeRanges = listOf(TimeRange(10, 30, 11, 35))
+            timeRanges = listOf(TimeRange(10, 30, 11, 35)),
+            condition = null
+
         )
 
         useCase(rule)

@@ -25,7 +25,7 @@ import dev.gmarques.controledenotificacoes.framework.notification_listener_servi
  */
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class PlatformModule {
+abstract class FrameworkModule {
 
     @Binds
     abstract fun bindVibrator(impl: VibratorImpl): VibratorInterface

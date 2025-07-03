@@ -27,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.annotations.TestOnly
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
@@ -74,43 +75,51 @@ class RuleEnforcerImpl @Inject constructor(
         val condition = rule.condition
         val appInBlockPeriod = rule.isAppInBlockPeriod()
 
-        var callbackCalled = false
-
-        val cancelNotification = {
-            callbackCalled = true
-            saveAndCancelNotification(rule, managedApp, sbn, notification)
-        }
-        val allowNotification = {
-            callbackCalled = true
-            callback.allowNotification()
-        }
-
         if (condition == null) {
-            if (appInBlockPeriod) cancelNotification()
+            if (appInBlockPeriod) saveAndCancelNotification(rule, managedApp, sbn, notification)
             else callback.allowNotification()
             return
         }
 
-        val conditionSatisfied = condition.isSatisfiedBy(notification)
+        val shouldAllowNotification = shouldAllowNotification(
+            ruleType = rule.ruleType,
+            conditionType = condition.type,
+            isConditionSatisfied = condition.isSatisfiedBy(notification),
+            isAppInBlockPeriod = appInBlockPeriod
+        )
 
+        if (shouldAllowNotification) callback.allowNotification()
+        else saveAndCancelNotification(rule, managedApp, sbn, notification)
+    }
 
-        if (rule.ruleType == RuleType.RESTRICTIVE && appInBlockPeriod) {
-            when (condition.type) {
-                ConditionType.ONLY_IF -> if (conditionSatisfied) cancelNotification() else allowNotification()
-                ConditionType.EXCEPT -> if (conditionSatisfied) allowNotification() else cancelNotification()
+    @TestOnly // TODO: testar
+    fun shouldAllowNotification(
+        ruleType: RuleType,
+        conditionType: ConditionType,
+        isConditionSatisfied: Boolean,
+        isAppInBlockPeriod: Boolean,
+    ): Boolean {
+
+        if (ruleType == RuleType.RESTRICTIVE && isAppInBlockPeriod) {
+            return when (conditionType) {
+                ConditionType.ONLY_IF -> !isConditionSatisfied
+                ConditionType.EXCEPT -> isConditionSatisfied
             }
         }
 
-        if (rule.ruleType == RuleType.PERMISSIVE && !appInBlockPeriod) {
-            when (condition.type) {
-                ConditionType.ONLY_IF -> if (conditionSatisfied) allowNotification() else cancelNotification()
-                ConditionType.EXCEPT -> if (conditionSatisfied) cancelNotification() else allowNotification()
+        if (ruleType == RuleType.PERMISSIVE && !isAppInBlockPeriod) {
+            return when (conditionType) {
+                ConditionType.ONLY_IF -> isConditionSatisfied
+                ConditionType.EXCEPT -> !isConditionSatisfied
             }
         }
 
-        if (!callbackCalled) allowNotification().also {
-            Log.w("USUK", "RuleEnforcerImpl.enforceRuleAndCondition: notificaçção permitida pq nao caiu em nenhuma pré-condição")
-        }
+        Log.w(
+            "USUK",
+            "RuleEnforcerImpl.shouldAllowNotification: notificaçção permitida pq nao caiu em nenhuma pré-condição"
+        )
+
+        return true
     }
 
     private fun saveAndCancelNotification(
@@ -127,7 +136,7 @@ class RuleEnforcerImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveNotificationOnHistory(sbn: StatusBarNotification, notification: AppNotification) {
+    suspend fun saveNotificationOnHistory(sbn: StatusBarNotification, notification: AppNotification) {
 
         if (notification.title.isEmpty() && notification.content.isEmpty()) return
 

@@ -116,7 +116,8 @@ class RuleValidatorTest {
         val rule = Rule(
             name = "Regra Válida",
             days = listOf(WeekDay.MONDAY, WeekDay.FRIDAY),
-            timeRanges = listOf(TimeRange(8, 0, 12, 0))
+            timeRanges = listOf(TimeRange(8, 0, 12, 0)),
+            condition = null
         )
         RuleValidator.validate(rule) // Se lancar excecão, o teste falha
     }

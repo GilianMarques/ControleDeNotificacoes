@@ -19,8 +19,6 @@ interface RuleEnforcer {
         callback: Callback,
     )
 
-    suspend fun saveNotificationOnHistory(sbn: StatusBarNotification, notification: AppNotification)
-
     interface Callback {
         fun cancelNotification(appNotification: AppNotification, rule: Rule, managedApp: ManagedApp)
         fun appNotManaged()

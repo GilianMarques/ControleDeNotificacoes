@@ -7,6 +7,13 @@ package dev.gmarques.controledenotificacoes.domain
  * ou ter sucesso com um valor [Value].
  * Criado por Gilian Marques
  * Em 20/06/2025 as 17:34
+ *
+ * É um alternativa ao Result padrão do kotlin, que permite especificar o tipo de exceçao e retorno, permitidno o
+ * uso de exceçoes com classes seladas e when.
+ *
+ *  @param Exception O tipo de exceção que pode ser lançada durante a operação.
+ * @param Value O tipo de valor que será retornado em caso de sucesso.
+ *
  */
 sealed class OperationResult<out Exception, out Value> {
 
@@ -63,40 +70,5 @@ sealed class OperationResult<out Exception, out Value> {
         is success -> value
         is failure -> throw mapError(error)
     }
-
-    /**
-     * Aplica a função `onSuccess` ao valor se a operação foi bem-sucedida, ou a função `onError` à exceção se falhou.
-     * @param onSuccess A função a ser aplicada em caso de sucesso.
-     * @param onError A função a ser aplicada em caso de falha.
-     * @return O resultado da aplicação da função correspondente.
-     */
-    inline fun <R> fold(
-        onSuccess: (Value) -> R,
-        onError: (Exception) -> R,
-    ): R = when (this) {
-        is success -> onSuccess(value)
-        is failure -> onError(error)
-    }
-
-    /**
-     * Transforma o valor de um resultado de sucesso usando a função `transform`.
-     * Se o resultado for uma falha, retorna a falha original.
-     * @param transform A função para transformar o valor de sucesso.
-     * @return Um novo `OperationResult` com o valor transformado (se sucesso) ou a falha original.
-     */
-    inline fun <V2> map(transform: (Value) -> V2): OperationResult<Exception, V2> = when (this) {
-        is success -> success(transform(value))
-        is failure -> this
-    }
-
-    /**
-     * Transforma a exceção de um resultado de falha usando a função `transform`.
-     * Se o resultado for um sucesso, retorna o sucesso original.
-     * @param transform A função para transformar a exceção de falha.
-     * @return Um novo `OperationResult` com a exceção transformada (se falha) ou o sucesso original.
-     */
-    inline fun <E2> mapError(transform: (Exception) -> E2): OperationResult<E2, Value> = when (this) {
-        is success -> this
-        is failure -> failure(transform(error))
-    }
 }
+
