@@ -90,10 +90,11 @@
     <TextView
         android:id="@+id/tv_rule_name"
         android:layout_width="0dp"
+        android:ellipsize="end"
         android:layout_height="wrap_content"
         android:drawablePadding="8dp"
         android:gravity="center_vertical"
-        android:maxLines="2"
+        android:maxLines="3"
         android:paddingTop="4dp"
         android:paddingEnd="4dp"
         android:textAlignment="gravity"
@@ -105,7 +106,7 @@
         app:layout_constraintStart_toStartOf="@id/tv_app_name"
         app:layout_constraintTop_toBottomOf="@id/tv_app_name"
         tools:ignore="RtlSymmetry"
-        tools:text="Bloq. Seg-Sex. 08:00 as 18:00" />
+        tools:text="Bloq. Seg-Sex. 08:00 as 18:00\nnefffffffffffffffffffffffffffffffffffffffffffffffffffffs\nefffffffffffffffffffffffffffffffffffffffffffffffffffff" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/iv_menu"
@@ -131,7 +132,7 @@
         android:layout_marginTop="16dp"
         android:background="?android:attr/listDivider"
         android:transitionName="divider"
-        app:layout_constraintTop_toBottomOf="@id/iv_app_icon" />
+        app:layout_constraintTop_toBottomOf="@id/tv_rule_name" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_open_app"

@@ -33,7 +33,7 @@
             app:layout_constraintBottom_toBottomOf="@id/tv_rule_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_app_name"
-            tools:src="@drawable/vec_edit_rule" />
+            tools:src="@drawable/vec_edit" />
 
         <TextView
             android:id="@+id/tv_app_name"
@@ -77,8 +77,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:drawablePadding="8dp"
+            android:ellipsize="end"
             android:gravity="center_vertical"
-            android:maxLines="2"
+            android:maxLines="3"
             android:textAlignment="gravity"
             android:textSize="12sp"
             android:transitionName="rule_name"

@@ -192,7 +192,7 @@ class ViewManagedAppFragment() : MyFragment() {
 
                 item {
                     label = getString(R.string.Editar_regra)
-                    icon = R.drawable.vec_edit_rule
+                    icon = R.drawable.vec_edit
                     callback = {
                         navigateToEditRule()
                     }
