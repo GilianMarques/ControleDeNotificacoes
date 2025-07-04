@@ -20,13 +20,10 @@ class AutoTurnOnReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         Log.d("USUK", "AutoTurnOnReceiver.onReceive: ")
         if (context == null || intent == null) return
-        turnNotificationServiceOn()
+        App.instance.startNotificationService()
         scheduleAutoTurnOn()
     }
 
-    private fun turnNotificationServiceOn() {
-        App.instance.startNotificationService()
-    }
 
     private fun scheduleAutoTurnOn() = runBlocking {
         val scheduleAutoBootUseCase = HiltEntryPoints.scheduleAutoTurnOnUseCase()

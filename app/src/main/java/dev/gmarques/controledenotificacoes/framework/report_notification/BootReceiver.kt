@@ -3,7 +3,6 @@ package dev.gmarques.controledenotificacoes.framework.report_notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
@@ -24,7 +23,6 @@ class BootReceiver : BroadcastReceiver(), CoroutineScope by MainScope() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            startNotificationServiceManager()
             rescheduleAlarmsIfAny()
             scheduleAutoTurnOn()
         }
@@ -42,8 +40,5 @@ class BootReceiver : BroadcastReceiver(), CoroutineScope by MainScope() {
 
     }
 
-    private fun startNotificationServiceManager() {
-        App.instance.startNotificationService()
-    }
 
 }
