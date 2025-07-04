@@ -50,6 +50,27 @@ class ScheduleManagerImpl @Inject constructor(
         saveScheduleData(packageId)
     }
 
+    override fun scheduleAutoBoot(time: Long) {
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, time, createAutoTurnOnPendingIntent())
+    }
+
+    /**
+     * Cria a PendingIntent que vai ser usada para agendar o "inicio automatico" do app, responsavel por abrir
+     * o app caso ele seja fechado
+     */
+    private fun createAutoTurnOnPendingIntent(): PendingIntent {
+
+        val intent = Intent(context, AutoTurnOnReceiver::class.java)
+
+        return PendingIntent.getBroadcast(
+            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    override fun cancelAutoBoot() {
+        TODO("Not yet implemented")
+    }
+
     /**
      * Cancela um alarme agendado para um pacote específico.
      *
@@ -97,23 +118,16 @@ class ScheduleManagerImpl @Inject constructor(
      * @return Um [PendingIntent] configurado para enviar um broadcast.
      */
     private fun createPendingIntent(packageId: String): PendingIntent {
+
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            putExtra("packageId", packageId)
+        }
+
         return PendingIntent.getBroadcast(
-            context, 0, createIntent(packageId), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }
 
-    /**
-     * Cria um [Intent] para ser usado na criação do [PendingIntent].
-     * Este [Intent] é configurado para iniciar o [dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver] e inclui o `packageId` como um extra.
-     *
-     * @param packageId O ID do pacote a ser incluído como extra no [Intent].
-     * @return Um [Intent] configurado para o [dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver].
-     */
-    private fun createIntent(packageId: String): Intent {
-        return Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("packageId", packageId)
-        }
-    }
 
     /**
      * Salva o pacote  indicando que um alarme foi agendado para o aplicativo especificado.

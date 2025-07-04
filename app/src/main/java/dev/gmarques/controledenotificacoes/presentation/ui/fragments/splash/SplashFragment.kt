@@ -67,7 +67,7 @@ class SplashFragment : MyFragment() {
      * com base no status de bloqueio do aplicativo.
      */
     private fun observeRemoteConfig() {
-        collectFlow(App.context.remoteConfigValues) {
+        collectFlow(App.instance.remoteConfigValues) {
             it?.blockApp?.let {
                 if (!it) viewModel.addNavigationRequirement(NavigationRequirements.Requirement.APP_NOT_BLOCKED)
             }

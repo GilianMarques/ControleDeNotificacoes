@@ -3,7 +3,9 @@ package dev.gmarques.controledenotificacoes.di.entry_points
 import dagger.hilt.android.EntryPointAccessors
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.CancelAutoTurnOnUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.IsAppInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
@@ -40,7 +42,7 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
      * @return A instância do EntryPoint correspondente ao tipo [T].
      */
     private inline fun <reified T> entryPoint(): T {
-        return EntryPointAccessors.fromApplication(App.context, T::class.java)
+        return EntryPointAccessors.fromApplication(App.instance, T::class.java)
     }
 
     override fun reportNotificationManager(): ReportNotificationManager {
@@ -61,6 +63,14 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     override fun savePreferenceUseCase(): SavePreferenceUseCase {
         return entryPoint<FrameworkEntryPoint>().savePreferenceUseCase()
+    }
+
+    override fun scheduleAutoTurnOnUseCase(): ScheduleAutoTurnOnUseCase {
+        return entryPoint<FrameworkEntryPoint>().scheduleAutoTurnOnUseCase()
+    }
+
+    override fun cancelAutoTurnOnUseCase(): CancelAutoTurnOnUseCase {
+        return entryPoint<FrameworkEntryPoint>().cancelAutoTurnOnUseCase()
     }
 
     override fun echo(): EchoImpl {

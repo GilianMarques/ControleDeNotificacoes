@@ -3,6 +3,7 @@ package dev.gmarques.controledenotificacoes
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.BroadcastReceiver
+import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import com.google.firebase.Firebase
@@ -13,6 +14,7 @@ import com.google.firebase.remoteconfig.remoteConfigSettings
 import dagger.hilt.android.HiltAndroidApp
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.framework.model.RemoteConfigValues
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
@@ -29,16 +31,18 @@ import kotlinx.coroutines.withTimeoutOrNull
 class App() : Application(), CoroutineScope by MainScope() {
 
     companion object {
-        lateinit var context: App
+        lateinit var instance: App
+            private set
     }
 
     private val _remoteConfigValues = MutableStateFlow<RemoteConfigValues?>(null)
     val remoteConfigValues get() = _remoteConfigValues
 
     override fun onCreate() {
-        context = this
+        instance = this
         setupRemoteConfig()
         setupCrashLytics()
+        startNotificationService()
         super.onCreate()
     }
 
@@ -106,6 +110,26 @@ class App() : Application(), CoroutineScope by MainScope() {
             RECEIVER_NOT_EXPORTED
         )
         else registerReceiver(receiver, IntentFilter(intentFilter))
+    }
+
+    fun startNotificationService() {
+
+        val serviceIntent = Intent(instance, NotificationServiceManager::class.java)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            instance.startForegroundService(serviceIntent)
+        } else {
+            instance.startService(serviceIntent)
+        }
+    }
+
+
+    fun restartNotificationService() {
+
+        val serviceIntent = Intent(instance, NotificationServiceManager::class.java)
+        stopService(serviceIntent)
+
+        startNotificationService()
     }
 
 

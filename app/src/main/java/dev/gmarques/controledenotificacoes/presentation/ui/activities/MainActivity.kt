@@ -30,13 +30,15 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
+import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 /**
@@ -95,10 +97,10 @@ class MainActivity() : AppCompatActivity() {
         }
 
         observeNavigationChanges()
-        startNotificationListenerServiceManager()
-
-
+// TODO: remover se nao der problema deixar o service ligar pela classe App         App.instance.startNotificationService()
         checkForAppUpdate()
+
+        runBlocking { HiltEntryPoints.scheduleAutoTurnOnUseCase().invoke() } // TODO: remover
     }
 
     private fun checkForAppUpdate() {
@@ -183,7 +185,7 @@ class MainActivity() : AppCompatActivity() {
                     PreferencesImpl.showWarningCardPostNotification(false)
                 }
             } else {
-                restartNotificationListenerServiceManager()
+                App.instance.restartNotificationService()
             }
 
         }
@@ -260,18 +262,6 @@ class MainActivity() : AppCompatActivity() {
 
     }
 
-    fun startNotificationListenerServiceManager() {
-        ContextCompat.startForegroundService(this, Intent(this, NotificationServiceManager::class.java))
-    }
-
-    fun restartNotificationListenerServiceManager() {
-
-        val intent = Intent(this, NotificationServiceManager::class.java)
-        stopService(intent)
-
-        startNotificationListenerServiceManager()
-
-    }
 
     override fun onDestroy() {
         appUpdateManager.unregisterListener(installStateUpdatedListener)

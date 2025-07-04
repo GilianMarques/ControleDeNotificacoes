@@ -14,6 +14,10 @@ interface ScheduleManager {
      */
     fun scheduleAlarm(packageId: String, millis: Long)
 
+    fun scheduleAutoBoot(time: Long)
+
+    fun cancelAutoBoot()
+
     /**
      * Cancela o agendamento de um alarme alarme  e
      * remove o dados do agendamento das preferencias.

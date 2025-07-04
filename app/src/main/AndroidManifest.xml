@@ -78,6 +78,10 @@
             android:name=".framework.report_notification.AlarmReceiver"
             android:exported="false" />
 
+        <receiver
+            android:name=".framework.AutoTurnOnReceiver"
+            android:exported="false" />
+
     </application>
 
 </manifest>

@@ -389,7 +389,7 @@ open class MyFragment() : Fragment() {
      */
     private fun blockAppIfNeeded() {
 
-        collectFlow(App.context.remoteConfigValues) {
+        collectFlow(App.instance.remoteConfigValues) {
             if (it == null || !it.blockApp) return@collectFlow
 
             vibrator.error()
@@ -422,10 +422,10 @@ open class MyFragment() : Fragment() {
      * Utiliza um link do Firebase Remote Config se disponível, caso contrário, usa o nome do pacote do aplicativo.
      */
     protected fun openPlayStore() {
-        val appPackageName = App.context.packageName
+        val appPackageName = App.instance.packageName
         // TODO: otimizar depois dos testes
 
-        val playStoreLink = App.context.remoteConfigValues.value?.playStoreAppLink
+        val playStoreLink = App.instance.remoteConfigValues.value?.playStoreAppLink
         if (!playStoreLink.isNullOrBlank()) {
 
             try {

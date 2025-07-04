@@ -3,8 +3,7 @@ package dev.gmarques.controledenotificacoes.framework.report_notification
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.util.Log
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
 import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
@@ -25,28 +24,26 @@ class BootReceiver : BroadcastReceiver(), CoroutineScope by MainScope() {
 
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            startNotificationServiceManager(context)
+            startNotificationServiceManager()
             rescheduleAlarmsIfAny()
+            scheduleAutoTurnOn()
         }
     }
 
-    private fun rescheduleAlarmsIfAny() {
-        Log.d("USUK", "BootReceiver.".plus("rescheduleAlarmsIfAny() "))
+    private fun scheduleAutoTurnOn() = launch {
+        val scheduleAutoBootUseCase = HiltEntryPoints.scheduleAutoTurnOnUseCase()
+        scheduleAutoBootUseCase()
+    }
 
+    private fun rescheduleAlarmsIfAny() {
         val rescheduleAlarmsOnBootUseCase = HiltEntryPoints.rescheduleAlarmsOnBootUseCase()
 
         launch(IO) { rescheduleAlarmsOnBootUseCase() }
 
     }
 
-    private fun startNotificationServiceManager(context: Context) {
-        val serviceIntent = Intent(context, NotificationServiceManager::class.java)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(serviceIntent)
-        } else {
-            context.startService(serviceIntent)
-        }
+    private fun startNotificationServiceManager() {
+        App.instance.startNotificationService()
     }
 
 }

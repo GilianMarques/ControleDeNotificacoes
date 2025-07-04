@@ -4,6 +4,8 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.CancelAutoTurnOnUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.ReadPreferenceUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.framework.EchoImpl
@@ -22,5 +24,7 @@ interface FrameworkEntryPoint {
     fun scheduleManager(): ScheduleManagerImpl
     fun readPreferenceUseCase(): ReadPreferenceUseCase
     fun savePreferenceUseCase(): SavePreferenceUseCase
+    fun scheduleAutoTurnOnUseCase(): ScheduleAutoTurnOnUseCase
+    fun cancelAutoTurnOnUseCase(): CancelAutoTurnOnUseCase
     fun echo(): EchoImpl
 }
