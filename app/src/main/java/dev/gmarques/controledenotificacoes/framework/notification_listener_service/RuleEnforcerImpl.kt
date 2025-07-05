@@ -92,7 +92,7 @@ class RuleEnforcerImpl @Inject constructor(
         else saveAndCancelNotification(rule, managedApp, sbn, notification)
     }
 
-    @TestOnly // TODO: testar
+    @TestOnly
     fun shouldAllowNotification(
         ruleType: RuleType,
         conditionType: ConditionType,
