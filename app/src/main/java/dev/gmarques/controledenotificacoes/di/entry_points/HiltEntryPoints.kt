@@ -4,6 +4,7 @@ import dagger.hilt.android.EntryPointAccessors
 import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
 import dev.gmarques.controledenotificacoes.domain.usecase.alarms.RescheduleAlarmsOnBootUseCase
+import dev.gmarques.controledenotificacoes.domain.usecase.alarms.ScheduleAutoTurnOnUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.app_notification.InsertAppNotificationUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.IsAppInBlockPeriodUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
@@ -13,8 +14,8 @@ import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePrefer
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.GenerateRuleDescriptionUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.rules.ObserveAllRulesUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.user.GetUserUseCase
+import dev.gmarques.controledenotificacoes.framework.AlarmSchedulerImpl
 import dev.gmarques.controledenotificacoes.framework.EchoImpl
-import dev.gmarques.controledenotificacoes.framework.ScheduleManagerImpl
 import dev.gmarques.controledenotificacoes.framework.report_notification.ReportNotificationManager
 
 /**
@@ -40,7 +41,7 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
      * @return A instância do EntryPoint correspondente ao tipo [T].
      */
     private inline fun <reified T> entryPoint(): T {
-        return EntryPointAccessors.fromApplication(App.context, T::class.java)
+        return EntryPointAccessors.fromApplication(App.instance, T::class.java)
     }
 
     override fun reportNotificationManager(): ReportNotificationManager {
@@ -51,7 +52,7 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
         return entryPoint<FrameworkEntryPoint>().ruleEnforcer()
     }
 
-    override fun scheduleManager(): ScheduleManagerImpl {
+    override fun scheduleManager(): AlarmSchedulerImpl {
         return entryPoint<FrameworkEntryPoint>().scheduleManager()
     }
 
@@ -97,6 +98,10 @@ object HiltEntryPoints : FrameworkEntryPoint, UseCasesEntryPoint {
 
     override fun observeAllRulesUseCase(): ObserveAllRulesUseCase {
         return entryPoint<UseCasesEntryPoint>().observeAllRulesUseCase()
+    }
+
+    override fun scheduleAutoTurnOnUseCase(): ScheduleAutoTurnOnUseCase {
+        return entryPoint<UseCasesEntryPoint>().scheduleAutoTurnOnUseCase()
     }
 
 }

@@ -1,9 +1,7 @@
 package dev.gmarques.controledenotificacoes
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.content.BroadcastReceiver
-import android.content.IntentFilter
+import android.content.Intent
 import android.os.Build
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -13,6 +11,7 @@ import com.google.firebase.remoteconfig.remoteConfigSettings
 import dagger.hilt.android.HiltAndroidApp
 import dev.gmarques.controledenotificacoes.di.entry_points.HiltEntryPoints
 import dev.gmarques.controledenotificacoes.framework.model.RemoteConfigValues
+import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.MainScope
@@ -29,16 +28,23 @@ import kotlinx.coroutines.withTimeoutOrNull
 class App() : Application(), CoroutineScope by MainScope() {
 
     companion object {
-        lateinit var context: App
+        lateinit var instance: App
     }
 
     private val _remoteConfigValues = MutableStateFlow<RemoteConfigValues?>(null)
     val remoteConfigValues get() = _remoteConfigValues
 
     override fun onCreate() {
-        context = this
+
+        instance = this
+
         setupRemoteConfig()
         setupCrashLytics()
+        startNotificationService()
+
+        /** Vai agendar em loop um broadcast que liga o serviço de notificações */
+        HiltEntryPoints.scheduleAutoTurnOnUseCase().invoke()
+
         super.onCreate()
     }
 
@@ -89,23 +95,21 @@ class App() : Application(), CoroutineScope by MainScope() {
 
     }
 
-    /**
-     * Registra um broadcast receiver localmente no app, com comportamento especifico
-     * de acordo com a versao do SDK para garantir compatibilidade
-     * e atender os requisitos do google play.
-     */
-    @SuppressLint("UnspecifiedRegisterReceiverFlag")
-    @Suppress("DEPRECATION")
-    fun registerLocalReceiver(
-        receiver: BroadcastReceiver,
-        intentFilter: String,
-    ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) registerReceiver(
-            receiver,
-            IntentFilter(intentFilter),
-            RECEIVER_NOT_EXPORTED
-        )
-        else registerReceiver(receiver, IntentFilter(intentFilter))
+    fun startNotificationService() {
+        val serviceIntent = Intent(this, NotificationServiceManager::class.java)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent)
+        } else {
+            startService(serviceIntent)
+        }
+    }
+
+    fun restartNotificationService() {
+
+        val intent = Intent(this, NotificationServiceManager::class.java)
+        stopService(intent)
+        startNotificationService()
     }
 
 

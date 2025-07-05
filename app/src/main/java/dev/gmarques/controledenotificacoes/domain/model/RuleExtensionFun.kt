@@ -79,7 +79,7 @@ object RuleExtensionFun {
         if (name.isNotBlank()) return name
 
         return HiltEntryPoints.generateRuleNameUseCase()(this) + " " +
-                condition?.description(App.context).orEmpty().trim()
+                condition?.description(App.instance).orEmpty().trim()
     }
 
     /**

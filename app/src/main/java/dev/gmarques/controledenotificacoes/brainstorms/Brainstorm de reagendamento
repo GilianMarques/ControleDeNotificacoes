@@ -23,7 +23,7 @@ Nota: Relatorio é a notificação que avisa caso um app bloqueado tenha recebid
 
 Implementações
 
-# Criar scheduleManager para:
+# Criar alarmScheduler para:
 - agendar (e escrever prefs)
 - cancelar agendamentos (e apagar prefs)
 - escrever agendamentos feitos

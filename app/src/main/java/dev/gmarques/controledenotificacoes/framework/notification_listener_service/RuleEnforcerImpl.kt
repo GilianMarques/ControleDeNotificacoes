@@ -6,8 +6,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.framework.RuleEnforcer
-import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
 import dev.gmarques.controledenotificacoes.domain.model.AppNotification
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun
 import dev.gmarques.controledenotificacoes.domain.model.AppNotificationExtensionFun.bitmapId
@@ -39,7 +39,7 @@ import javax.inject.Inject
 class RuleEnforcerImpl @Inject constructor(
     private val getManagedAppByPackageIdUseCase: GetManagedAppByPackageIdUseCase,
     private val getRuleByIdUseCase: GetRuleByIdUseCase,
-    private val scheduleManager: ScheduleManager,
+    private val alarmScheduler: AlarmScheduler,
     private val updateManagedAppUseCase: dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.UpdateManagedAppUseCase,
     private val insertAppNotificationUseCase: InsertAppNotificationUseCase,
     @ApplicationContext private val context: Context,
@@ -130,7 +130,7 @@ class RuleEnforcerImpl @Inject constructor(
     ) {
         callback.cancelNotification(notification, rule, managedApp)
         launch {
-            scheduleManager.scheduleAlarm(notification.packageId, rule.nextAppUnlockPeriodFromNow())
+            alarmScheduler.scheduleAlarm(notification.packageId, rule.nextAppUnlockPeriodFromNow())
             updateManagedAppUseCase(managedApp.copy(hasPendingNotifications = true))
             saveNotificationOnHistory(sbn, notification)
         }

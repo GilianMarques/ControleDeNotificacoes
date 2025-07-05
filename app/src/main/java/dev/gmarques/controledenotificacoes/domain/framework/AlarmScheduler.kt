@@ -6,13 +6,14 @@ package dev.gmarques.controledenotificacoes.domain.framework
  *
  * gerencia o agendamento e cancelamento de alarmes no sistema
  */
-interface ScheduleManager {
+interface AlarmScheduler {
 
     /**
      * Agenda uma alarme para disparar em determinado horario e
      * escreve o dados do agendamento nas preferencias.
      */
     fun scheduleAlarm(packageId: String, millis: Long)
+    fun scheduleAutoTurnOnAlarm(millis: Long)
 
     /**
      * Cancela o agendamento de um alarme alarme  e

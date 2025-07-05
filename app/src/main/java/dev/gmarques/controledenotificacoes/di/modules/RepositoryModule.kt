@@ -33,7 +33,6 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindRuleRepository(impl: RuleRepositoryImpl): RuleRepository
 
-
     @Binds
     @Singleton
     abstract fun bindAppRepository(impl: InstalledInstalledAppRepositoryImpl): InstalledAppRepository

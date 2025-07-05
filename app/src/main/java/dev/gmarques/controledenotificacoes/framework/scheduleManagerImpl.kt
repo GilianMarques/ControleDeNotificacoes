@@ -9,7 +9,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
-import dev.gmarques.controledenotificacoes.domain.framework.ScheduleManager
+import dev.gmarques.controledenotificacoes.domain.framework.AlarmScheduler
 import dev.gmarques.controledenotificacoes.domain.usecase.managed_apps.NextAppUnlockTimeUseCase
 import dev.gmarques.controledenotificacoes.domain.usecase.preferences.SavePreferenceUseCase
 import dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver
@@ -21,9 +21,9 @@ import javax.inject.Inject
  *
  * Gerencia o agendamento e cancelamento de alarmes no sistema usados para emitir notificações
  */
-class ScheduleManagerImpl @Inject constructor(
+class AlarmSchedulerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-) : ScheduleManager {
+) : AlarmScheduler {
 
     private val alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
 
@@ -41,13 +41,20 @@ class ScheduleManagerImpl @Inject constructor(
 
         if (millis == NextAppUnlockTimeUseCase.INFINITE) return
 
-        //    Log.d("USUK", "ScheduleManagerImpl.scheduleAlarm: $packageId scheduled at ${LocalDateTime(millis)}")
+        //    Log.d("USUK", "AlarmSchedulerImpl.scheduleAlarm: $packageId scheduled at ${LocalDateTime(millis)}")
 
         val pIntent = createPendingIntent(packageId)
 
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, millis, pIntent)
 
         saveScheduleData(packageId)
+    }
+
+    /**
+     * Agenda o alarme responsavel por ligar o serviço de escuta de notificações de tempos em tempos
+     */
+    override fun scheduleAutoTurnOnAlarm(millis: Long) {
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, millis, createAutoTurnOnPendingIntent())
     }
 
     /**
@@ -97,22 +104,28 @@ class ScheduleManagerImpl @Inject constructor(
      * @return Um [PendingIntent] configurado para enviar um broadcast.
      */
     private fun createPendingIntent(packageId: String): PendingIntent {
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            putExtra("packageId", packageId)
+        }
+
         return PendingIntent.getBroadcast(
-            context, 0, createIntent(packageId), PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }
 
     /**
-     * Cria um [Intent] para ser usado na criação do [PendingIntent].
-     * Este [Intent] é configurado para iniciar o [dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver] e inclui o `packageId` como um extra.
+     * Cria um [PendingIntent] para ser usado com o [AlarmManager] para ligar o serviço de escuta
+     * de notificações.
+     * Este [PendingIntent] será acionado quando o alarme disparar, enviando um broadcast para o [AutoTurnOnReceiver].
      *
-     * @param packageId O ID do pacote a ser incluído como extra no [Intent].
-     * @return Um [Intent] configurado para o [dev.gmarques.controledenotificacoes.framework.report_notification.AlarmReceiver].
+     * @return Um [PendingIntent] configurado para enviar um broadcast.
      */
-    private fun createIntent(packageId: String): Intent {
-        return Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("packageId", packageId)
-        }
+    private fun createAutoTurnOnPendingIntent(): PendingIntent {
+        val intent = Intent(context, AutoTurnOnReceiver::class.java)
+
+        return PendingIntent.getBroadcast(
+            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     /**

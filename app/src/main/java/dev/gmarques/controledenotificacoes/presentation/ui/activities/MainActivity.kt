@@ -30,10 +30,10 @@ import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
 import dagger.hilt.android.AndroidEntryPoint
+import dev.gmarques.controledenotificacoes.App
 import dev.gmarques.controledenotificacoes.R
 import dev.gmarques.controledenotificacoes.data.local.PreferencesImpl
 import dev.gmarques.controledenotificacoes.databinding.ActivityMainBinding
-import dev.gmarques.controledenotificacoes.framework.notification_listener_service.NotificationServiceManager
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -95,9 +95,6 @@ class MainActivity() : AppCompatActivity() {
         }
 
         observeNavigationChanges()
-        startNotificationListenerServiceManager()
-
-
         checkForAppUpdate()
     }
 
@@ -183,7 +180,7 @@ class MainActivity() : AppCompatActivity() {
                     PreferencesImpl.showWarningCardPostNotification(false)
                 }
             } else {
-                restartNotificationListenerServiceManager()
+                App.instance.restartNotificationService()
             }
 
         }
@@ -257,19 +254,6 @@ class MainActivity() : AppCompatActivity() {
         MaterialAlertDialogBuilder(this@MainActivity).setTitle(getString(R.string.Erro))
             .setMessage(getString(R.string.Nao_foi_poss_vel_abrir_a_tela_de_configuracoes))
             .setPositiveButton(R.string.Entendi) { _, _ -> }.setIcon(R.drawable.vec_alert).show()
-
-    }
-
-    fun startNotificationListenerServiceManager() {
-        ContextCompat.startForegroundService(this, Intent(this, NotificationServiceManager::class.java))
-    }
-
-    fun restartNotificationListenerServiceManager() {
-
-        val intent = Intent(this, NotificationServiceManager::class.java)
-        stopService(intent)
-
-        startNotificationListenerServiceManager()
 
     }
 

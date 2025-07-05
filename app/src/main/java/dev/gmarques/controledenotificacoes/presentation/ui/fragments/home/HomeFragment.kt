@@ -356,7 +356,7 @@ class HomeFragment : MyFragment() {
     }
 
     private fun openMailToSendFeedback() {
-        val email = App.context.remoteConfigValues.value?.contactEmail
+        val email = App.instance.remoteConfigValues.value?.contactEmail
         if (email == null) return
 
         val intent = Intent(Intent.ACTION_SENDTO).apply {
@@ -369,10 +369,10 @@ class HomeFragment : MyFragment() {
             putExtra(Intent.EXTRA_SUBJECT, getString(R.string.Feedback_do_app))
         }
 
-        if (intent.resolveActivity(App.context.packageManager) != null) {
-            App.context.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        if (intent.resolveActivity(App.instance.packageManager) != null) {
+            App.instance.startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         } else {
-            Toast.makeText(App.context, getString(R.string.Nenhum_app_de_e_mail_encontrado), Toast.LENGTH_SHORT).show()
+            Toast.makeText(App.instance, getString(R.string.Nenhum_app_de_e_mail_encontrado), Toast.LENGTH_SHORT).show()
         }
     }
 
