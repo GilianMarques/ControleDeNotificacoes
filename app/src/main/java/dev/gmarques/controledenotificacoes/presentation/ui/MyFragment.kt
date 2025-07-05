@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.OvershootInterpolator
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.net.toUri
@@ -110,8 +109,8 @@ open class MyFragment() : Fragment() {
             addTransition(ChangeBounds())
             addTransition(Fade())
             addTransition(SlideTransition())
-            interpolator = OvershootInterpolator(1f)
-            duration = 400
+            interpolator = AccelerateDecelerateInterpolator()
+            duration = 250
         }
 
         // Transição de retorno
@@ -119,8 +118,8 @@ open class MyFragment() : Fragment() {
             addTransition(ChangeBounds())
             addTransition(Fade())
             addTransition(SlideTransition())
-            interpolator = OvershootInterpolator(1f)
-            duration = 400
+            interpolator = AccelerateDecelerateInterpolator()
+            duration = 250
         }
 
     }
