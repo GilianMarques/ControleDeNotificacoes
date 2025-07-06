@@ -85,101 +85,68 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.16.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.activity:activity-ktx:1.10.1")
+    implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.0") // TODO: remover
-    implementation("androidx.fragment:fragment-ktx:1.8.6")
-
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1")
-
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    implementation("com.google.firebase:firebase-auth:23.2.0")
+    implementation("androidx.core:core-ktx:1.16.0")
     implementation("androidx.credentials:credentials:1.5.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.5.0")
-    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+    implementation("androidx.datastore:datastore-preferences:1.1.7")
+    implementation("androidx.fragment:fragment-ktx:1.8.8")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.9.1") // TODO: remover
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.1")
+    implementation("androidx.navigation:navigation-common-ktx:2.9.1") // Permite usar NavDeepLinkBuilder para abrir fragmentos especificos via notificação com argumentos
+    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.9.1") // Feature module support for Fragments
+    implementation("androidx.navigation:navigation-fragment-ktx:2.9.1") // Views/Fragments integration
+    implementation("androidx.navigation:navigation-ui-ktx:2.9.1")
+    implementation("androidx.room:room-ktx:2.7.2")
+    implementation("androidx.room:room-runtime:2.7.2")
 
+    implementation("com.airbnb.android:lottie:6.6.7")
     implementation("com.firebaseui:firebase-ui-auth:9.0.0")
-    implementation("com.google.firebase:firebase-crashlytics:19.4.3")
-    implementation("com.google.firebase:firebase-config:22.1.2")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.github.zawadz88:MaterialPopupMenu:4.1.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+    implementation("com.google.android.material:material:1.12.0")
     implementation("com.google.android.play:app-update:2.1.0")
     implementation("com.google.android.play:app-update-ktx:2.1.0")
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    implementation("com.google.firebase:firebase-auth:23.2.1")
+    implementation("com.google.firebase:firebase-config:22.1.2")
+    implementation("com.google.firebase:firebase-crashlytics:19.4.4")
 
-    implementation("androidx.room:room-runtime:2.7.1")
-    implementation("androidx.room:room-ktx:2.7.1")
+    implementation("com.squareup.moshi:moshi:1.15.2")
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.2") // Para suporte a Kotlin
+    implementation("net.danlew:android.joda:2.13.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     //noinspection KaptUsageInsteadOfKsp
-    kapt("androidx.room:room-compiler:2.7.1")
-    // optional - Test helpers
-    testImplementation("androidx.room:room-testing:2.7.1")
-
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0")
-    implementation("androidx.activity:activity-ktx:1.10.1")
-
-    // https://mvnrepository.com/artifact/com.github.zawadz88.materialpopupmenu/material-popup-menu
-    implementation("com.github.zawadz88:MaterialPopupMenu:4.1.0")
-
-    implementation("com.airbnb.android:lottie:6.4.0")
-
-    //moshi pra uso com json
-    implementation("com.squareup.moshi:moshi:1.15.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.13.0") // Para suporte a Kotlin
-
-    // https://mvnrepository.com/artifact/org.mockito/mockito-core
-    testImplementation("org.mockito:mockito-core:5.16.1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
-
-    //testar corrotinas
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
-
-    testImplementation("org.junit.jupiter:junit-jupiter:5.12.1") // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.12.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.12.1")
-    testImplementation("org.junit.vintage:junit-vintage-engine:5.12.1") // Necessário para rodar JUnit 4 com o 5
-    testImplementation(kotlin("test"))
-
-    //navigation
-    // Views/Fragments integration
-    implementation("androidx.navigation:navigation-fragment-ktx:2.9.0")
-    implementation("androidx.navigation:navigation-ui-ktx:2.9.0")
-
-    // Permite usar NavDeepLinkBuilder para abrir fragmentos especificos via notificação com argumentos
-    implementation("androidx.navigation:navigation-common-ktx:2.9.0")
-
-    // Feature module support for Fragments
-    implementation("androidx.navigation:navigation-dynamic-features-fragment:2.9.0")
-
-    // Testing Navigation
-    androidTestImplementation("androidx.navigation:navigation-testing:2.9.0")
-
-    // necessario para testes instrumentados pois ainda usam junit4 como padrao
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test:runner:1.6.2")
-    androidTestImplementation("androidx.test:core:1.6.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")// imitar classes
-    testImplementation("io.mockk:mockk:1.13.10")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
-
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    kapt("androidx.room:room-compiler:2.7.2")
     //noinspection KaptUsageInsteadOfKsp
     kapt("com.github.bumptech.glide:compiler:4.16.0")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
-    implementation("androidx.datastore:datastore-preferences:1.1.7")
+    // optional - Test helpers
+    testImplementation("androidx.room:room-testing:2.7.2")
+    testImplementation("io.mockk:mockk:1.14.4")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.13.3") // JUnit 5
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.3")
+    testImplementation("org.mockito:mockito-core:5.18.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0") // imitar classes
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.13.3")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.13.3") // Necessário para rodar JUnit 4 com o 5
+    testImplementation(kotlin("test"))
 
-
-    implementation("net.danlew:android.joda:2.10.9")
-
+    // Testing Navigation
+    androidTestImplementation("androidx.navigation:navigation-testing:2.9.1")
+    // necessario para testes instrumentados pois ainda usam junit4 como padrao
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test:core:1.6.1")
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
 }
 
